@@ -28,3 +28,5 @@ svg_path_csg_tangent_order_test.gleam
 svg_path_csg_face_winding_test.gleam
 svg_path_paper_boolean_full_overlap_test.gleam
 svg_path_paper_crossings_1409_test.gleam
+svg_path_paper_intersection_addresses_test.gleam
+svg_path_paper_boolean_adapters_test.gleam

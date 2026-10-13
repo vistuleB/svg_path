@@ -264,10 +264,10 @@
     "block": 7,
     "title": "#757 (path1.intersect(pat2, { trace: false }))",
     "operation": null,
-    "status": "adapter-required",
+    "status": "adapted-geometry-match",
     "derivedOperands": false,
-    "portableRegression": false,
-    "evidence": "Open-path clipping / divided-result selection requires a separate adapter."
+    "portableRegression": true,
+    "evidence": "Portable Erlang and JavaScript checks pass using clip then bridge-join. See BOOLEAN_ADAPTERS.md. Existing API composition; original area-only screen remains unchanged."
   },
   {
     "id": 27,
@@ -444,10 +444,10 @@
     "block": 18,
     "title": "#877",
     "operation": "subtract",
-    "status": "adapter-required",
+    "status": "adapted-geometry-match",
     "derivedOperands": false,
-    "portableRegression": false,
-    "evidence": "Operands use different fill rules; Gleam binary CSG takes one common rule."
+    "portableRegression": true,
+    "evidence": "Portable Erlang and JavaScript checks pass using common even-odd rule with equivalent simple-rectangle fill. See BOOLEAN_ADAPTERS.md. Existing API composition; original area-only screen remains unchanged."
   },
   {
     "id": 45,
@@ -714,10 +714,10 @@
     "block": 37,
     "title": "#1221",
     "operation": "subtract",
-    "status": "adapter-required",
+    "status": "adapted-geometry-match",
     "derivedOperands": false,
-    "portableRegression": false,
-    "evidence": "Open-path clipping / divided-result selection requires a separate adapter."
+    "portableRegression": true,
+    "evidence": "Portable Erlang and JavaScript checks pass using cut and select outside pieces. See BOOLEAN_ADAPTERS.md. Existing API composition; original area-only screen remains unchanged."
   },
   {
     "id": 72,
@@ -734,10 +734,10 @@
     "block": 37,
     "title": "#1221",
     "operation": "subtract",
-    "status": "adapter-required",
+    "status": "adapted-geometry-match",
     "derivedOperands": false,
-    "portableRegression": false,
-    "evidence": "Open-path clipping / divided-result selection requires a separate adapter."
+    "portableRegression": true,
+    "evidence": "Portable Erlang and JavaScript checks pass using cut and select outside pieces. See BOOLEAN_ADAPTERS.md. Existing API composition; original area-only screen remains unchanged."
   },
   {
     "id": 74,
@@ -754,10 +754,10 @@
     "block": 37,
     "title": "#1221",
     "operation": "subtract",
-    "status": "adapter-required",
+    "status": "adapted-geometry-match",
     "derivedOperands": false,
-    "portableRegression": false,
-    "evidence": "Open-path clipping / divided-result selection requires a separate adapter."
+    "portableRegression": true,
+    "evidence": "Portable Erlang and JavaScript checks pass using cut and select outside pieces. See BOOLEAN_ADAPTERS.md. Existing API composition; original area-only screen remains unchanged."
   },
   {
     "id": 76,
@@ -774,20 +774,20 @@
     "block": 37,
     "title": "#1221",
     "operation": null,
-    "status": "adapter-required",
+    "status": "adapted-geometry-match",
     "derivedOperands": false,
-    "portableRegression": false,
-    "evidence": "Open-path clipping / divided-result selection requires a separate adapter."
+    "portableRegression": true,
+    "evidence": "Portable Erlang and JavaScript checks pass using cut and select first piece. See BOOLEAN_ADAPTERS.md. Existing API composition; original area-only screen remains unchanged."
   },
   {
     "id": 78,
     "block": 37,
     "title": "#1221",
     "operation": null,
-    "status": "adapter-required",
+    "status": "adapted-geometry-match",
     "derivedOperands": false,
-    "portableRegression": false,
-    "evidence": "Open-path clipping / divided-result selection requires a separate adapter."
+    "portableRegression": true,
+    "evidence": "Portable Erlang and JavaScript checks pass using cut and select second piece. See BOOLEAN_ADAPTERS.md. Existing API composition; original area-only screen remains unchanged."
   },
   {
     "id": 79,

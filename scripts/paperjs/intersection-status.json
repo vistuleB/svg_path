@@ -4,84 +4,132 @@
     "upstream": "#565",
     "assertion": 1,
     "status": "point-locations-pass",
-    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+    "note": "Point locations, address reconstruction and supplied index/time/crossing assertions pass on both runtimes. See INTERSECTION_ADDRESSES.md.",
+    "addressAudit": {
+      "status": "portable-contract-aware-pass",
+      "report": "INTERSECTION_ADDRESSES.md"
+    }
   },
   {
     "id": 1,
     "upstream": "#565",
     "assertion": 2,
     "status": "point-locations-pass",
-    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+    "note": "Point locations, address reconstruction and supplied index/time/crossing assertions pass on both runtimes. See INTERSECTION_ADDRESSES.md.",
+    "addressAudit": {
+      "status": "portable-contract-aware-pass",
+      "report": "INTERSECTION_ADDRESSES.md"
+    }
   },
   {
     "id": 2,
     "upstream": "#568",
     "assertion": 1,
     "status": "point-locations-pass",
-    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+    "note": "Point locations, address reconstruction and supplied index/time/crossing assertions pass on both runtimes. See INTERSECTION_ADDRESSES.md.",
+    "addressAudit": {
+      "status": "portable-contract-aware-pass",
+      "report": "INTERSECTION_ADDRESSES.md"
+    }
   },
   {
     "id": 3,
     "upstream": "#568",
     "assertion": 2,
     "status": "point-locations-pass",
-    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+    "note": "Point locations, address reconstruction and supplied index/time/crossing assertions pass on both runtimes. See INTERSECTION_ADDRESSES.md.",
+    "addressAudit": {
+      "status": "portable-contract-aware-pass",
+      "report": "INTERSECTION_ADDRESSES.md"
+    }
   },
   {
     "id": 4,
     "upstream": "#570",
     "assertion": 1,
     "status": "point-locations-pass",
-    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+    "note": "Point locations, address reconstruction and supplied index/time/crossing assertions pass on both runtimes. See INTERSECTION_ADDRESSES.md.",
+    "addressAudit": {
+      "status": "portable-contract-aware-pass",
+      "report": "INTERSECTION_ADDRESSES.md"
+    }
   },
   {
     "id": 5,
     "upstream": "#571",
     "assertion": 1,
     "status": "point-locations-pass",
-    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+    "note": "Point locations, address reconstruction and supplied index/time/crossing assertions pass on both runtimes. See INTERSECTION_ADDRESSES.md.",
+    "addressAudit": {
+      "status": "portable-contract-aware-pass",
+      "report": "INTERSECTION_ADDRESSES.md"
+    }
   },
   {
     "id": 6,
     "upstream": "overlapping circles",
     "assertion": 1,
     "status": "point-locations-pass",
-    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+    "note": "Point locations, address reconstruction and supplied index/time/crossing assertions pass on both runtimes. See INTERSECTION_ADDRESSES.md.",
+    "addressAudit": {
+      "status": "portable-contract-aware-pass",
+      "report": "INTERSECTION_ADDRESSES.md"
+    }
   },
   {
     "id": 7,
     "upstream": "circle and square (existing segments overlaps on curves)",
     "assertion": 1,
     "status": "point-locations-pass",
-    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+    "note": "Point locations, address reconstruction and supplied index/time/crossing assertions pass on both runtimes. See INTERSECTION_ADDRESSES.md.",
+    "addressAudit": {
+      "status": "portable-contract-aware-pass",
+      "report": "INTERSECTION_ADDRESSES.md"
+    }
   },
   {
     "id": 8,
     "upstream": "intersecting paths with applyMatrix = true / false",
     "assertion": 1,
     "status": "point-locations-pass",
-    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+    "note": "Point locations, address reconstruction and supplied index/time/crossing assertions pass on both runtimes. See INTERSECTION_ADDRESSES.md.",
+    "addressAudit": {
+      "status": "portable-contract-aware-pass",
+      "report": "INTERSECTION_ADDRESSES.md"
+    }
   },
   {
     "id": 9,
     "upstream": "intersecting paths with applyMatrix = true / false",
     "assertion": 2,
     "status": "point-locations-pass",
-    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+    "note": "Point locations, address reconstruction and supplied index/time/crossing assertions pass on both runtimes. See INTERSECTION_ADDRESSES.md.",
+    "addressAudit": {
+      "status": "portable-contract-aware-pass",
+      "report": "INTERSECTION_ADDRESSES.md"
+    }
   },
   {
     "id": 10,
     "upstream": "#904",
     "assertion": 1,
     "status": "point-locations-pass",
-    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+    "note": "Point locations, address reconstruction and supplied index/time/crossing assertions pass on both runtimes. See INTERSECTION_ADDRESSES.md.",
+    "addressAudit": {
+      "status": "portable-contract-aware-pass",
+      "report": "INTERSECTION_ADDRESSES.md"
+    }
   },
   {
     "id": 11,
     "upstream": "#1066",
     "assertion": 1,
     "status": "point-locations-pass",
-    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+    "note": "Point locations, address reconstruction and supplied index/time/crossing assertions pass on both runtimes. See INTERSECTION_ADDRESSES.md.",
+    "addressAudit": {
+      "status": "portable-contract-aware-pass",
+      "report": "INTERSECTION_ADDRESSES.md"
+    }
   },
   {
     "id": 12,
@@ -89,7 +137,12 @@
     "assertion": 1,
     "status": "different-api-expectations",
     "note": "Different API expectations: a genuine tolerance-certified partial cubic overlap. The point-only query intentionally returns OverlappingSegments; Paper.js includes overlap boundaries among point locations.",
-    "classification_date": "2026-10-12"
+    "classification_date": "2026-10-12",
+    "addressAudit": {
+      "status": "portable-contract-aware-pass",
+      "report": "INTERSECTION_ADDRESSES.md",
+      "adaptation": "First two expected crossing flags are overlap boundaries: local Touching versus Paper overlap-plus-crossing."
+    }
   },
   {
     "id": 13,
@@ -97,35 +150,55 @@
     "assertion": 1,
     "status": "different-api-expectations",
     "note": "Different API expectations: multiple near-tangent candidates are explicitly permitted. Every reported parameter pair satisfies the 1e-9 distance tolerance; both upstream contacts are retained.",
-    "classification_date": "2026-10-12"
+    "classification_date": "2026-10-12",
+    "addressAudit": {
+      "status": "portable-contract-aware-pass",
+      "report": "INTERSECTION_ADDRESSES.md"
+    }
   },
   {
     "id": 14,
     "upstream": "#1088",
     "assertion": 1,
     "status": "point-locations-pass",
-    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+    "note": "Point locations, address reconstruction and supplied index/time/crossing assertions pass on both runtimes. See INTERSECTION_ADDRESSES.md.",
+    "addressAudit": {
+      "status": "portable-contract-aware-pass",
+      "report": "INTERSECTION_ADDRESSES.md"
+    }
   },
   {
     "id": 15,
     "upstream": "#1165",
     "assertion": 1,
     "status": "point-locations-pass",
-    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+    "note": "Point locations, address reconstruction and supplied index/time/crossing assertions pass on both runtimes. See INTERSECTION_ADDRESSES.md.",
+    "addressAudit": {
+      "status": "portable-contract-aware-pass",
+      "report": "INTERSECTION_ADDRESSES.md"
+    }
   },
   {
     "id": 16,
     "upstream": "#1174",
     "assertion": 1,
     "status": "point-locations-pass",
-    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+    "note": "Point locations, address reconstruction and supplied index/time/crossing assertions pass on both runtimes. See INTERSECTION_ADDRESSES.md.",
+    "addressAudit": {
+      "status": "portable-contract-aware-pass",
+      "report": "INTERSECTION_ADDRESSES.md"
+    }
   },
   {
     "id": 17,
     "upstream": "#1197",
     "assertion": 1,
     "status": "point-locations-pass",
-    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+    "note": "Point locations, address reconstruction and supplied index/time/crossing assertions pass on both runtimes. See INTERSECTION_ADDRESSES.md.",
+    "addressAudit": {
+      "status": "portable-contract-aware-pass",
+      "report": "INTERSECTION_ADDRESSES.md"
+    }
   },
   {
     "id": 18,
@@ -133,7 +206,12 @@
     "assertion": 1,
     "status": "different-api-expectations",
     "note": "Different API expectations: Paper.js includes a near endpoint contact outside our 1e-9 coincidence tolerance. The three genuine crossings are retained; this is not an arc-length-separation exclusion.",
-    "classification_date": "2026-10-12"
+    "classification_date": "2026-10-12",
+    "addressAudit": {
+      "status": "portable-contract-aware-pass",
+      "report": "INTERSECTION_ADDRESSES.md",
+      "adaptation": "First expected near-contact remains absent under default tolerance; other three match."
+    }
   },
   {
     "id": 19,
@@ -141,28 +219,44 @@
     "assertion": 1,
     "status": "different-api-expectations",
     "note": "Different API expectations: an exactly identical constituent segment is a continuous overlap, intentionally rejected by the point-only API. Use overlap-aware encounters.",
-    "classification_date": "2026-10-12"
+    "classification_date": "2026-10-12",
+    "addressAudit": {
+      "status": "portable-contract-aware-pass",
+      "report": "INTERSECTION_ADDRESSES.md"
+    }
   },
   {
     "id": 20,
     "upstream": "#1270",
     "assertion": 1,
     "status": "point-locations-pass",
-    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+    "note": "Point locations, address reconstruction and supplied index/time/crossing assertions pass on both runtimes. See INTERSECTION_ADDRESSES.md.",
+    "addressAudit": {
+      "status": "portable-contract-aware-pass",
+      "report": "INTERSECTION_ADDRESSES.md"
+    }
   },
   {
     "id": 21,
     "upstream": "#1284",
     "assertion": 1,
     "status": "point-locations-pass",
-    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+    "note": "Point locations, address reconstruction and supplied index/time/crossing assertions pass on both runtimes. See INTERSECTION_ADDRESSES.md.",
+    "addressAudit": {
+      "status": "portable-contract-aware-pass",
+      "report": "INTERSECTION_ADDRESSES.md"
+    }
   },
   {
     "id": 22,
     "upstream": "#1284",
     "assertion": 2,
     "status": "point-locations-pass",
-    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+    "note": "Point locations, address reconstruction and supplied index/time/crossing assertions pass on both runtimes. See INTERSECTION_ADDRESSES.md.",
+    "addressAudit": {
+      "status": "portable-contract-aware-pass",
+      "report": "INTERSECTION_ADDRESSES.md"
+    }
   },
   {
     "id": 23,
@@ -170,7 +264,11 @@
     "assertion": 3,
     "status": "different-api-expectations",
     "note": "Different API expectations: both near-tangent candidates satisfy the 1e-9 distance tolerance, and our API explicitly permits multiple candidates near tangency.",
-    "classification_date": "2026-10-12"
+    "classification_date": "2026-10-12",
+    "addressAudit": {
+      "status": "portable-contract-aware-pass",
+      "report": "INTERSECTION_ADDRESSES.md"
+    }
   },
   {
     "id": 24,
@@ -178,21 +276,33 @@
     "assertion": 4,
     "status": "different-api-expectations",
     "note": "Different API expectations: same geometry and result as fixture 23, exercised upstream through the Path API.",
-    "classification_date": "2026-10-12"
+    "classification_date": "2026-10-12",
+    "addressAudit": {
+      "status": "portable-contract-aware-pass",
+      "report": "INTERSECTION_ADDRESSES.md"
+    }
   },
   {
     "id": 25,
     "upstream": "#1638",
     "assertion": 1,
     "status": "point-locations-pass",
-    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+    "note": "Point locations, address reconstruction and supplied index/time/crossing assertions pass on both runtimes. See INTERSECTION_ADDRESSES.md.",
+    "addressAudit": {
+      "status": "portable-contract-aware-pass",
+      "report": "INTERSECTION_ADDRESSES.md"
+    }
   },
   {
     "id": 26,
     "upstream": "#1263",
     "assertion": 1,
     "status": "point-locations-pass",
-    "note": "Count and unordered point positions only; parameters and classification remain to audit."
+    "note": "Point locations, address reconstruction and supplied index/time/crossing assertions pass on both runtimes. See INTERSECTION_ADDRESSES.md.",
+    "addressAudit": {
+      "status": "portable-contract-aware-pass",
+      "report": "INTERSECTION_ADDRESSES.md"
+    }
   },
   {
     "id": 27,
@@ -200,7 +310,11 @@
     "assertion": 1,
     "status": "different-api-expectations",
     "note": "Different API expectations: six tolerance-valid candidates versus two mathematical endpoint roots. Our documented API does not promise one returned candidate per root near tangency.",
-    "classification_date": "2026-10-12"
+    "classification_date": "2026-10-12",
+    "addressAudit": {
+      "status": "portable-contract-aware-pass",
+      "report": "INTERSECTION_ADDRESSES.md"
+    }
   },
   {
     "id": 28,
@@ -232,6 +346,10 @@
     "assertion": 1,
     "status": "different-api-expectations",
     "note": "Different API expectations: three near-tangent candidates all meet 1e-9 coincidence tolerance; the expected endpoint remains present.",
-    "classification_date": "2026-10-12"
+    "classification_date": "2026-10-12",
+    "addressAudit": {
+      "status": "portable-contract-aware-pass",
+      "report": "INTERSECTION_ADDRESSES.md"
+    }
   }
 ]

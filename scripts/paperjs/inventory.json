@@ -558,91 +558,113 @@
       "test_blocks": [
         {
           "title_expression": "'#565'",
-          "status": "initial-location-audit"
+          "status": "extracted-address-and-classification-audit",
+          "comparison_report": "INTERSECTION_ADDRESSES.md"
         },
         {
           "title_expression": "'#568'",
-          "status": "initial-location-audit"
+          "status": "extracted-address-and-classification-audit",
+          "comparison_report": "INTERSECTION_ADDRESSES.md"
         },
         {
           "title_expression": "'#570'",
-          "status": "initial-location-audit"
+          "status": "extracted-address-and-classification-audit",
+          "comparison_report": "INTERSECTION_ADDRESSES.md"
         },
         {
           "title_expression": "'#571'",
-          "status": "initial-location-audit"
+          "status": "extracted-address-and-classification-audit",
+          "comparison_report": "INTERSECTION_ADDRESSES.md"
         },
         {
           "title_expression": "'overlapping circles'",
-          "status": "initial-location-audit"
+          "status": "extracted-address-and-classification-audit",
+          "comparison_report": "INTERSECTION_ADDRESSES.md"
         },
         {
           "title_expression": "'circle and square (existing segments overlaps on curves)'",
-          "status": "initial-location-audit"
+          "status": "extracted-address-and-classification-audit",
+          "comparison_report": "INTERSECTION_ADDRESSES.md"
         },
         {
           "title_expression": "'intersecting paths with applyMatrix = true / false'",
-          "status": "initial-location-audit"
+          "status": "extracted-address-and-classification-audit",
+          "comparison_report": "INTERSECTION_ADDRESSES.md"
         },
         {
           "title_expression": "'#904'",
-          "status": "initial-location-audit"
+          "status": "extracted-address-and-classification-audit",
+          "comparison_report": "INTERSECTION_ADDRESSES.md"
         },
         {
           "title_expression": "'#1066'",
-          "status": "initial-location-audit"
+          "status": "extracted-address-and-classification-audit",
+          "comparison_report": "INTERSECTION_ADDRESSES.md"
         },
         {
           "title_expression": "'#1073#issuecomment-234305530'",
-          "status": "initial-location-audit"
+          "status": "extracted-address-and-classification-audit",
+          "comparison_report": "INTERSECTION_ADDRESSES.md"
         },
         {
           "title_expression": "'#1074'",
-          "status": "initial-location-audit"
+          "status": "extracted-address-and-classification-audit",
+          "comparison_report": "INTERSECTION_ADDRESSES.md"
         },
         {
           "title_expression": "'#1088'",
-          "status": "initial-location-audit"
+          "status": "extracted-address-and-classification-audit",
+          "comparison_report": "INTERSECTION_ADDRESSES.md"
         },
         {
           "title_expression": "'#1165'",
-          "status": "initial-location-audit"
+          "status": "extracted-address-and-classification-audit",
+          "comparison_report": "INTERSECTION_ADDRESSES.md"
         },
         {
           "title_expression": "'#1174'",
-          "status": "initial-location-audit"
+          "status": "extracted-address-and-classification-audit",
+          "comparison_report": "INTERSECTION_ADDRESSES.md"
         },
         {
           "title_expression": "'#1197'",
-          "status": "initial-location-audit"
+          "status": "extracted-address-and-classification-audit",
+          "comparison_report": "INTERSECTION_ADDRESSES.md"
         },
         {
           "title_expression": "'#1233'",
-          "status": "initial-location-audit"
+          "status": "extracted-address-and-classification-audit",
+          "comparison_report": "INTERSECTION_ADDRESSES.md"
         },
         {
           "title_expression": "'#1239'",
-          "status": "initial-location-audit"
+          "status": "extracted-address-and-classification-audit",
+          "comparison_report": "INTERSECTION_ADDRESSES.md"
         },
         {
           "title_expression": "'#1270'",
-          "status": "initial-location-audit"
+          "status": "extracted-address-and-classification-audit",
+          "comparison_report": "INTERSECTION_ADDRESSES.md"
         },
         {
           "title_expression": "'#1284'",
-          "status": "initial-location-audit"
+          "status": "extracted-address-and-classification-audit",
+          "comparison_report": "INTERSECTION_ADDRESSES.md"
         },
         {
           "title_expression": "'#1638'",
-          "status": "initial-location-audit"
+          "status": "extracted-address-and-classification-audit",
+          "comparison_report": "INTERSECTION_ADDRESSES.md"
         },
         {
           "title_expression": "'#1263'",
-          "status": "initial-location-audit"
+          "status": "extracted-address-and-classification-audit",
+          "comparison_report": "INTERSECTION_ADDRESSES.md"
         },
         {
           "title_expression": "'#1262'",
-          "status": "initial-location-audit"
+          "status": "extracted-address-and-classification-audit",
+          "comparison_report": "INTERSECTION_ADDRESSES.md"
         },
         {
           "title_expression": "'#1409'",
@@ -651,7 +673,8 @@
         },
         {
           "title_expression": "'#1255'",
-          "status": "initial-location-audit"
+          "status": "extracted-address-and-classification-audit",
+          "comparison_report": "INTERSECTION_ADDRESSES.md"
         }
       ]
     },

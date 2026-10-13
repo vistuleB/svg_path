@@ -11,11 +11,14 @@ errors. The [tangent-order fix](BOOLEAN_TANGENT_FIX.md) recovered fixtures 69
 and 172; the [Bernstein line-root fallback](CROSSING_BERNSTEIN_FIX.md) recovers
 103, 168 and 169. The [face-winding classifier](FACE_WINDING_FIX.md) recovers
 79 and 113. The [certified full-overlap fix](FULL_OVERLAP_FIX.md) recovers
-107, 122 and 123. The latest 178-case screen has **112 sampled matches**,
-**59 understood overlap-contract limitations**, and **seven adapter cases**.
-All 109 pre-overlap-fix matches remain matches; the 59 errors are unchanged.
-No unclassified Boolean discrepancy remains in this screen. Classification and
-sampled comparisons do not establish complete parity.
+107, 122 and 123. The area-only 178-case screen has **112 sampled matches**,
+**59 understood overlap-contract limitations**, and seven cases requiring
+adapters. All 109 pre-overlap-fix matches remain matches; the 59 errors are unchanged.
+The [seven adapter cases](BOOLEAN_ADAPTERS.md) now pass separate portable
+regressions on Erlang and JavaScript, bringing the combined inventory to
+**119 matched/adapted comparisons and 59 understood limitations**. No unclassified
+Boolean discrepancy or unexecuted adapter case remains in this 178-case set.
+Classification and sampled comparisons do not establish complete parity.
 
 The [128–131 investigation](NEW_OVERLAP_REJECTIONS.md) independently classified
 all four newly exposed rejections as documented overlap-contract limitations.
@@ -27,10 +30,17 @@ The [three #1409 crossing assertions](CROSSINGS_1409.md) now pass through the
 overlap-aware API on Erlang and JavaScript, with a transverse-crossing positive
 control. No production change was needed.
 
-Other intersection parameter/crossing coverage, unadapted assertions,
-diagnostic-to-regression promotion, and upstream files
-outside the 13-file inventory remain incomplete. See the final section of the
-triage document before planning release validation.
+The [address and classification audit](INTERSECTION_ADDRESSES.md) now covers
+all 29 other extracted intersection fixtures on both runtimes. All returned
+addresses reconstruct within the library tolerance. Of 54 expected contacts,
+45 crossing flags agree, six have no flag assertion, two use a different
+shared-arc convention, and one is the previously understood absent near-contact.
+Together with #1409, all 32 extracted intersection assertions now have
+contract-aware address/classification coverage; no new confirmed bug was found.
+
+Unextracted assertions, additional scale/transform variants,
+diagnostic-to-regression promotion elsewhere, and upstream files outside the
+13-file inventory remain incomplete. Full Paper.js parity is not established.
 
 ## Historical investigation log
 

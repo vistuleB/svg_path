@@ -1,0 +1,969 @@
+{
+  "fixtures": 29,
+  "returnedParameterPairs": 81,
+  "maximumPairSeparation": 1.7479351299698465e-12,
+  "maximumPointResidual": 8.810729923425242e-13,
+  "counts": {
+    "address-and-crossing-match": 45,
+    "understood-overlap-boundary-classification": 2,
+    "understood-absent-near-contact": 1,
+    "address-match-no-upstream-crossing-assertion": 6
+  },
+  "comparisons": [
+    {
+      "fixture": 0,
+      "expectation": 0,
+      "upstream": {
+        "point": [
+          354.13635,
+          220.81369
+        ],
+        "index": 0,
+        "time": 0.46725,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 0,
+      "expectation": 1,
+      "upstream": {
+        "point": [
+          390.24772,
+          224.27351
+        ],
+        "index": 0,
+        "time": 0.71605,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 1,
+      "expectation": 0,
+      "upstream": {
+        "point": [
+          335.62744,
+          338.15939
+        ],
+        "index": 0,
+        "time": 0.26516,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 2,
+      "expectation": 0,
+      "upstream": {
+        "point": [
+          547.96568,
+          396.66339
+        ],
+        "index": 0,
+        "time": 0.07024,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 2,
+      "expectation": 1,
+      "upstream": {
+        "point": [
+          504.79973,
+          383.37886
+        ],
+        "index": 0,
+        "time": 0.48077,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 3,
+      "expectation": 0,
+      "upstream": {
+        "point": [
+          50,
+          50
+        ],
+        "index": 0,
+        "time": 1,
+        "crossing": false
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "EndpointContact"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 4,
+      "expectation": 0,
+      "upstream": {
+        "point": [
+          311.16035,
+          406.29853
+        ],
+        "index": 0,
+        "time": 1,
+        "crossing": false
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "EndpointContact"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 5,
+      "expectation": 0,
+      "upstream": {
+        "point": [
+          352.39945,
+          330.44135
+        ],
+        "index": 0,
+        "time": 0.41159,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 5,
+      "expectation": 1,
+      "upstream": {
+        "point": [
+          420.12359,
+          275.83519
+        ],
+        "index": 0,
+        "time": 1,
+        "crossing": false
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "EndpointContact"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 6,
+      "expectation": 0,
+      "upstream": {
+        "point": [
+          100,
+          50
+        ],
+        "index": 2,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 6,
+      "expectation": 1,
+      "upstream": {
+        "point": [
+          50,
+          100
+        ],
+        "index": 3,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 7,
+      "expectation": 0,
+      "upstream": {
+        "point": [
+          190,
+          110
+        ],
+        "index": 2,
+        "time": 0,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 7,
+      "expectation": 1,
+      "upstream": {
+        "point": [
+          110,
+          190
+        ],
+        "index": 3,
+        "time": 0,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 8,
+      "expectation": 0,
+      "upstream": {
+        "point": [
+          200,
+          300
+        ],
+        "index": 0,
+        "time": 0.5,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 8,
+      "expectation": 1,
+      "upstream": {
+        "point": [
+          300,
+          200
+        ],
+        "index": 1,
+        "time": 0.5,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 9,
+      "expectation": 0,
+      "upstream": {
+        "point": [
+          200,
+          300
+        ],
+        "index": 0,
+        "time": 0.5,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 9,
+      "expectation": 1,
+      "upstream": {
+        "point": [
+          300,
+          200
+        ],
+        "index": 1,
+        "time": 0.5,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 10,
+      "expectation": 0,
+      "upstream": {
+        "point": [
+          347.65684,
+          270.43159
+        ],
+        "index": 0,
+        "time": 0,
+        "crossing": false
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "EndpointContact"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 10,
+      "expectation": 1,
+      "upstream": {
+        "point": [
+          383.05787,
+          179.36393
+        ],
+        "index": 0,
+        "time": 0.99583,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 11,
+      "expectation": 0,
+      "upstream": {
+        "point": [
+          230.44479,
+          216.05441
+        ],
+        "index": 0,
+        "time": 0.63642,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 12,
+      "expectation": 0,
+      "upstream": {
+        "point": [
+          426.61172,
+          448
+        ],
+        "index": 0,
+        "time": 0.27769,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Touching"
+      ],
+      "status": "understood-overlap-boundary-classification"
+    },
+    {
+      "fixture": 12,
+      "expectation": 1,
+      "upstream": {
+        "point": [
+          376,
+          480
+        ],
+        "index": 1,
+        "time": 0,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Touching"
+      ],
+      "status": "understood-overlap-boundary-classification"
+    },
+    {
+      "fixture": 12,
+      "expectation": 2,
+      "upstream": {
+        "point": [
+          343.68011,
+          469.7389
+        ],
+        "index": 1,
+        "time": 0.77843,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 12,
+      "expectation": 3,
+      "upstream": {
+        "point": [
+          336.40125,
+          463.59875
+        ],
+        "index": 2,
+        "time": 0.00608,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 13,
+      "expectation": 0,
+      "upstream": {
+        "point": [
+          349.98644,
+          0
+        ],
+        "index": 0,
+        "time": 0,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 13,
+      "expectation": 1,
+      "upstream": {
+        "point": [
+          349.98644,
+          126.84
+        ],
+        "index": 4,
+        "time": 0,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 14,
+      "expectation": 0,
+      "upstream": {
+        "point": [
+          309.99726,
+          309.5004975367957
+        ],
+        "index": 0,
+        "time": 0.17182,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 15,
+      "expectation": 0,
+      "upstream": {
+        "point": [
+          163.04,
+          335.68
+        ],
+        "index": 0,
+        "time": 0,
+        "crossing": false
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "EndpointContact"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 16,
+      "expectation": 0,
+      "upstream": {
+        "point": [
+          20,
+          100
+        ],
+        "index": 1,
+        "time": 4e-05,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 17,
+      "expectation": 0,
+      "upstream": {
+        "point": [
+          99,
+          148.74959
+        ],
+        "index": 0,
+        "time": 0.46982,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 17,
+      "expectation": 1,
+      "upstream": {
+        "point": [
+          99,
+          167.82203
+        ],
+        "index": 0,
+        "time": 0.60674,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 18,
+      "expectation": 0,
+      "upstream": {
+        "point": [
+          366.12645,
+          320.20927
+        ],
+        "index": 1,
+        "time": 0,
+        "crossing": false
+      },
+      "matchedAddresses": 0,
+      "classifications": [],
+      "status": "understood-absent-near-contact"
+    },
+    {
+      "fixture": 18,
+      "expectation": 1,
+      "upstream": {
+        "point": [
+          366.07584,
+          320.28024
+        ],
+        "index": 1,
+        "time": 0.00027,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 18,
+      "expectation": 2,
+      "upstream": {
+        "point": [
+          366.02122,
+          320.3568
+        ],
+        "index": 1,
+        "time": 0.00057,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 18,
+      "expectation": 3,
+      "upstream": {
+        "point": [
+          300.67554,
+          391.76337
+        ],
+        "index": 1,
+        "time": 0.30838,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 19,
+      "expectation": 0,
+      "upstream": {
+        "point": [
+          956.28999,
+          351.925
+        ],
+        "index": 1,
+        "time": 0.000577,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 19,
+      "expectation": 1,
+      "upstream": {
+        "point": [
+          956.28948,
+          352.2327
+        ],
+        "index": 1,
+        "time": 0.003804,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 19,
+      "expectation": 2,
+      "upstream": {
+        "point": [
+          939.50932,
+          415.17952
+        ],
+        "index": 1,
+        "time": 0.701801,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 19,
+      "expectation": 3,
+      "upstream": {
+        "point": [
+          922.9625,
+          437.995
+        ],
+        "index": 2,
+        "time": 0,
+        "crossing": false
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Touching"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 19,
+      "expectation": 4,
+      "upstream": {
+        "point": [
+          911.15,
+          427.245
+        ],
+        "index": 3,
+        "time": 0,
+        "crossing": false
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Touching"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 19,
+      "expectation": 5,
+      "upstream": {
+        "point": [
+          932.08099,
+          394.02288
+        ],
+        "index": 3,
+        "time": 0.477224,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 19,
+      "expectation": 6,
+      "upstream": {
+        "point": [
+          940.28956,
+          352.18697
+        ],
+        "index": 3,
+        "time": 0.996218,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 20,
+      "expectation": 0,
+      "upstream": {
+        "point": [
+          500.36244,
+          522.99072
+        ],
+        "index": 0,
+        "time": 0.03613,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 20,
+      "expectation": 1,
+      "upstream": {
+        "point": [
+          463.83556,
+          476.44545
+        ],
+        "index": 0,
+        "time": 0.52936,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 21,
+      "expectation": 0,
+      "upstream": {
+        "point": [
+          664.03868,
+          382.45193
+        ],
+        "time": 0
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "EndpointContact"
+      ],
+      "status": "address-match-no-upstream-crossing-assertion"
+    },
+    {
+      "fixture": 22,
+      "expectation": 0,
+      "upstream": {
+        "point": [
+          664.03868,
+          382.45193
+        ],
+        "time": 0
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "EndpointContact"
+      ],
+      "status": "address-match-no-upstream-crossing-assertion"
+    },
+    {
+      "fixture": 23,
+      "expectation": 0,
+      "upstream": {
+        "point": [
+          725.96132,
+          385.54807
+        ],
+        "time": 0
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "EndpointContact"
+      ],
+      "status": "address-match-no-upstream-crossing-assertion"
+    },
+    {
+      "fixture": 24,
+      "expectation": 0,
+      "upstream": {
+        "point": [
+          725.96132,
+          385.54807
+        ],
+        "time": 0
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "EndpointContact"
+      ],
+      "status": "address-match-no-upstream-crossing-assertion"
+    },
+    {
+      "fixture": 25,
+      "expectation": 0,
+      "upstream": {
+        "point": [
+          191.16238,
+          58.83762
+        ],
+        "index": 1,
+        "time": 0.73431,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 25,
+      "expectation": 1,
+      "upstream": {
+        "point": [
+          58.83762,
+          191.16238
+        ],
+        "index": 3,
+        "time": 0.26569,
+        "crossing": true
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "Crossing"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 26,
+      "expectation": 0,
+      "upstream": {
+        "point": [
+          479,
+          495
+        ],
+        "index": 0,
+        "time": 0,
+        "crossing": false
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "EndpointContact"
+      ],
+      "status": "address-and-crossing-match"
+    },
+    {
+      "fixture": 27,
+      "expectation": 0,
+      "upstream": {
+        "point": [
+          561.55005,
+          629.11487
+        ],
+        "time": 0
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "EndpointContact"
+      ],
+      "status": "address-match-no-upstream-crossing-assertion"
+    },
+    {
+      "fixture": 27,
+      "expectation": 1,
+      "upstream": {
+        "point": [
+          567.05562,
+          634.62043
+        ],
+        "time": 1
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "EndpointContact"
+      ],
+      "status": "address-match-no-upstream-crossing-assertion"
+    },
+    {
+      "fixture": 31,
+      "expectation": 0,
+      "upstream": {
+        "point": [
+          439.38241,
+          216.13904
+        ],
+        "time": 0,
+        "crossing": false
+      },
+      "matchedAddresses": 1,
+      "classifications": [
+        "EndpointContact"
+      ],
+      "status": "address-and-crossing-match"
+    }
+  ]
+}

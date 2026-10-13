@@ -1,0 +1,5220 @@
+{
+  "tolerance": 1e-9,
+  "results": [
+    {
+      "id": 0,
+      "title": "#565",
+      "query": "Ok",
+      "expected": [
+        {
+          "point": [
+            354.13635,
+            220.81369
+          ],
+          "index": 0,
+          "time": 0.46725,
+          "crossing": true
+        },
+        {
+          "point": [
+            390.24772,
+            224.27351
+          ],
+          "index": 0,
+          "time": 0.71605,
+          "crossing": true
+        }
+      ],
+      "hits": [
+        {
+          "point": {
+            "x": 354.13634311449925,
+            "y": 220.81369835319995
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0.4672453070841176
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 0.34135602285074085
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 354.13634311449925,
+                  "y": 220.81369835319995
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 354.13634311449925,
+                  "y": 220.81369835319995
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Clockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 5.5369559647432425,
+                    "first_incoming_to_second_outgoing": 5.536955964743299,
+                    "first_outgoing_to_second_incoming": 5.536955964743299,
+                    "first_outgoing_to_second_outgoing": 5.536955964743356
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 390.2477203098814,
+            "y": 224.2735111722318
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0.7160461561099584
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 0.541748058275672
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 390.2477203098814,
+                  "y": 224.2735111722318
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 390.2477203098814,
+                  "y": 224.2735111722318
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Counterclockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 339.84109438658504,
+                    "first_incoming_to_second_outgoing": 339.8410943865851,
+                    "first_outgoing_to_second_incoming": 339.8410943865849,
+                    "first_outgoing_to_second_outgoing": 339.841094386585
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "title": "#565",
+      "query": "Ok",
+      "expected": [
+        {
+          "point": [
+            335.62744,
+            338.15939
+          ],
+          "index": 0,
+          "time": 0.26516,
+          "crossing": true
+        }
+      ],
+      "hits": [
+        {
+          "point": {
+            "x": 335.6274365759713,
+            "y": 338.1593888387839
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0.2651626443816941
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 0.6392499336732717
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 335.6274365759713,
+                  "y": 338.1593888387839
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 335.6274365759713,
+                  "y": 338.15938883878397
+                },
+                "type": "Ok"
+              },
+              "separation": 5.684341886080802e-14,
+              "leftPointResidual": 0,
+              "rightPointResidual": 5.684341886080802e-14,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Counterclockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 180.23883150616217,
+                    "first_incoming_to_second_outgoing": 180.23883150616211,
+                    "first_outgoing_to_second_incoming": 180.23883150616211,
+                    "first_outgoing_to_second_outgoing": 180.23883150616206
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "#568",
+      "query": "Ok",
+      "expected": [
+        {
+          "point": [
+            547.96568,
+            396.66339
+          ],
+          "index": 0,
+          "time": 0.07024,
+          "crossing": true
+        },
+        {
+          "point": [
+            504.79973,
+            383.37886
+          ],
+          "index": 0,
+          "time": 0.48077,
+          "crossing": true
+        }
+      ],
+      "hits": [
+        {
+          "point": {
+            "x": 547.9656809835625,
+            "y": 396.66338495777785
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0.07024188777070776
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 0.7527066817924156
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 547.9656809835625,
+                  "y": 396.66338495777785
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 547.9656809835625,
+                  "y": 396.66338495777785
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Counterclockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 254.52215191140112,
+                    "first_incoming_to_second_outgoing": 254.52215191140112,
+                    "first_outgoing_to_second_incoming": 254.52215191140118,
+                    "first_outgoing_to_second_outgoing": 254.52215191140118
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 504.7997347782981,
+            "y": 383.37885715192914
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0.48077414330696666
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 0.8485047162274898
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 504.79973477829816,
+                  "y": 383.37885715192914
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 504.7997347782981,
+                  "y": 383.37885715192914
+                },
+                "type": "Ok"
+              },
+              "separation": 5.684341886080802e-14,
+              "leftPointResidual": 5.684341886080802e-14,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Clockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 46.72688870832579,
+                    "first_incoming_to_second_outgoing": 46.72688870832576,
+                    "first_outgoing_to_second_incoming": 46.72688870832579,
+                    "first_outgoing_to_second_outgoing": 46.72688870832576
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "#568",
+      "query": "Ok",
+      "expected": [
+        {
+          "point": [
+            50,
+            50
+          ],
+          "index": 0,
+          "time": 1,
+          "crossing": false
+        }
+      ],
+      "hits": [
+        {
+          "point": {
+            "x": 50,
+            "y": 50
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 1
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 0
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 50,
+                  "y": 50
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 50,
+                  "y": 50
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "0": {
+                    "type": "EndpointToEndpoint",
+                    "first": {
+                      "type": "EndEndpoint"
+                    },
+                    "second": {
+                      "type": "StartEndpoint"
+                    }
+                  },
+                  "type": "EndpointContact"
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "#570",
+      "query": "Ok",
+      "expected": [
+        {
+          "point": [
+            311.16035,
+            406.29853
+          ],
+          "index": 0,
+          "time": 1,
+          "crossing": false
+        }
+      ],
+      "hits": [
+        {
+          "point": {
+            "x": 311.16034791674826,
+            "y": 406.2985255840872
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 1
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 0
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 311.16034791674826,
+                  "y": 406.2985255840872
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 311.16034791674826,
+                  "y": 406.2985255840872
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "0": {
+                    "type": "EndpointToEndpoint",
+                    "first": {
+                      "type": "EndEndpoint"
+                    },
+                    "second": {
+                      "type": "StartEndpoint"
+                    }
+                  },
+                  "type": "EndpointContact"
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "#571",
+      "query": "Ok",
+      "expected": [
+        {
+          "point": [
+            352.39945,
+            330.44135
+          ],
+          "index": 0,
+          "time": 0.41159,
+          "crossing": true
+        },
+        {
+          "point": [
+            420.12359,
+            275.83519
+          ],
+          "index": 0,
+          "time": 1,
+          "crossing": false
+        }
+      ],
+      "hits": [
+        {
+          "point": {
+            "x": 352.39944965285946,
+            "y": 330.4413538443165
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0.4115881348238753
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 0.7732104275485274
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 352.39944965285946,
+                  "y": 330.4413538443165
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 352.39944965285946,
+                  "y": 330.44135384431655
+                },
+                "type": "Ok"
+              },
+              "separation": 5.684341886080802e-14,
+              "leftPointResidual": 0,
+              "rightPointResidual": 5.684341886080802e-14,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Clockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 77.7791315895654,
+                    "first_incoming_to_second_outgoing": 77.77913158956534,
+                    "first_outgoing_to_second_incoming": 77.7791315895654,
+                    "first_outgoing_to_second_outgoing": 77.77913158956534
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 420.1235851920127,
+            "y": 275.8351912321666
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 1
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 0
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 420.1235851920127,
+                  "y": 275.8351912321666
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 420.1235851920127,
+                  "y": 275.8351912321666
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "0": {
+                    "type": "EndpointToEndpoint",
+                    "first": {
+                      "type": "EndEndpoint"
+                    },
+                    "second": {
+                      "type": "StartEndpoint"
+                    }
+                  },
+                  "type": "EndpointContact"
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "overlapping circles",
+      "query": "Ok",
+      "expected": [
+        {
+          "point": [
+            100,
+            50
+          ],
+          "index": 2,
+          "crossing": true
+        },
+        {
+          "point": [
+            50,
+            100
+          ],
+          "index": 3,
+          "crossing": true
+        }
+      ],
+      "hits": [
+        {
+          "point": {
+            "x": 100,
+            "y": 50
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 2,
+                "t": 0
+              },
+              "right": {
+                "segment_index": 1,
+                "t": 0
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 100,
+                  "y": 50
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 100,
+                  "y": 50
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Counterclockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 270,
+                    "first_incoming_to_second_outgoing": 270,
+                    "first_outgoing_to_second_incoming": 270,
+                    "first_outgoing_to_second_outgoing": 270
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 50,
+            "y": 100
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 3,
+                "t": 0
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 0
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 50,
+                  "y": 100
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 50,
+                  "y": 100
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Clockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 90,
+                    "first_incoming_to_second_outgoing": 90,
+                    "first_outgoing_to_second_incoming": 90,
+                    "first_outgoing_to_second_outgoing": 90
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "circle and square (existing segments overlaps on curves)",
+      "query": "Ok",
+      "expected": [
+        {
+          "point": [
+            190,
+            110
+          ],
+          "index": 2,
+          "time": 0,
+          "crossing": true
+        },
+        {
+          "point": [
+            110,
+            190
+          ],
+          "index": 3,
+          "time": 0,
+          "crossing": true
+        }
+      ],
+      "hits": [
+        {
+          "point": {
+            "x": 190,
+            "y": 110
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 2,
+                "t": 0
+              },
+              "right": {
+                "segment_index": 1,
+                "t": 0.7128592745832596
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 190,
+                  "y": 110
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 190,
+                  "y": 110
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Counterclockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 270,
+                    "first_incoming_to_second_outgoing": 270,
+                    "first_outgoing_to_second_incoming": 270,
+                    "first_outgoing_to_second_outgoing": 270
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 110,
+            "y": 190
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 3,
+                "t": 0
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 0.2871407254167405
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 110,
+                  "y": 190
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 110,
+                  "y": 190
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Clockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 90,
+                    "first_incoming_to_second_outgoing": 90,
+                    "first_outgoing_to_second_incoming": 90,
+                    "first_outgoing_to_second_outgoing": 90
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "intersecting paths with applyMatrix = true / false",
+      "query": "Ok",
+      "expected": [
+        {
+          "point": [
+            200,
+            300
+          ],
+          "index": 0,
+          "time": 0.5,
+          "crossing": true
+        },
+        {
+          "point": [
+            300,
+            200
+          ],
+          "index": 1,
+          "time": 0.5,
+          "crossing": true
+        }
+      ],
+      "hits": [
+        {
+          "point": {
+            "x": 200,
+            "y": 300
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0.5
+              },
+              "right": {
+                "segment_index": 3,
+                "t": 0.49999999999999994
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 200,
+                  "y": 300
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 200,
+                  "y": 300
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Counterclockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 270,
+                    "first_incoming_to_second_outgoing": 270,
+                    "first_outgoing_to_second_incoming": 270,
+                    "first_outgoing_to_second_outgoing": 270
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 300,
+            "y": 200
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 1,
+                "t": 0.5
+              },
+              "right": {
+                "segment_index": 2,
+                "t": 0.49999999999999994
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 300,
+                  "y": 200
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 300,
+                  "y": 200
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Clockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 90,
+                    "first_incoming_to_second_outgoing": 90,
+                    "first_outgoing_to_second_incoming": 90,
+                    "first_outgoing_to_second_outgoing": 90
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "title": "intersecting paths with applyMatrix = true / false",
+      "query": "Ok",
+      "expected": [
+        {
+          "point": [
+            200,
+            300
+          ],
+          "index": 0,
+          "time": 0.5,
+          "crossing": true
+        },
+        {
+          "point": [
+            300,
+            200
+          ],
+          "index": 1,
+          "time": 0.5,
+          "crossing": true
+        }
+      ],
+      "hits": [
+        {
+          "point": {
+            "x": 200,
+            "y": 300
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0.5
+              },
+              "right": {
+                "segment_index": 3,
+                "t": 0.49999999999999994
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 200,
+                  "y": 300
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 200,
+                  "y": 300
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Counterclockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 270,
+                    "first_incoming_to_second_outgoing": 270,
+                    "first_outgoing_to_second_incoming": 270,
+                    "first_outgoing_to_second_outgoing": 270
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 300,
+            "y": 200
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 1,
+                "t": 0.5
+              },
+              "right": {
+                "segment_index": 2,
+                "t": 0.49999999999999994
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 300,
+                  "y": 200
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 300,
+                  "y": 200
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Clockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 90,
+                    "first_incoming_to_second_outgoing": 90,
+                    "first_outgoing_to_second_incoming": 90,
+                    "first_outgoing_to_second_outgoing": 90
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "title": "#904",
+      "query": "Ok",
+      "expected": [
+        {
+          "point": [
+            347.65684,
+            270.43159
+          ],
+          "index": 0,
+          "time": 0,
+          "crossing": false
+        },
+        {
+          "point": [
+            383.05787,
+            179.36393
+          ],
+          "index": 0,
+          "time": 0.99583,
+          "crossing": true
+        }
+      ],
+      "hits": [
+        {
+          "point": {
+            "x": 347.65684372173973,
+            "y": 270.4315945523045
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 0
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 347.65684372173973,
+                  "y": 270.4315945523045
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 347.65684372173973,
+                  "y": 270.4315945523045
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "0": {
+                    "type": "EndpointToEndpoint",
+                    "first": {
+                      "type": "StartEndpoint"
+                    },
+                    "second": {
+                      "type": "StartEndpoint"
+                    }
+                  },
+                  "type": "EndpointContact"
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 383.0578650747957,
+            "y": 179.36393020898362
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0.9958286065533458
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 0.9949145931647503
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 383.0578650747957,
+                  "y": 179.36393020898362
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 383.0578650747957,
+                  "y": 179.36393020898362
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Counterclockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 359.99572974045094,
+                    "first_incoming_to_second_outgoing": 359.99572974044247,
+                    "first_outgoing_to_second_incoming": 359.99572974046026,
+                    "first_outgoing_to_second_outgoing": 359.9957297404518
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "title": "#1066",
+      "query": "Ok",
+      "expected": [
+        {
+          "point": [
+            230.44479,
+            216.05441
+          ],
+          "index": 0,
+          "time": 0.63642,
+          "crossing": true
+        }
+      ],
+      "hits": [
+        {
+          "point": {
+            "x": 230.4447915660904,
+            "y": 216.05440892387935
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0.636415864352571
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 0.31544455555586803
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 230.4447915660904,
+                  "y": 216.05440892387935
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 230.4447915660904,
+                  "y": 216.05440892387935
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Clockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 161.56505053746645,
+                    "first_incoming_to_second_outgoing": 161.5650505374664,
+                    "first_outgoing_to_second_incoming": 161.56505053746645,
+                    "first_outgoing_to_second_outgoing": 161.5650505374664
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "title": "#1073#issuecomment-234305530",
+      "query": "OverlappingSegments",
+      "expected": [
+        {
+          "point": [
+            426.61172,
+            448
+          ],
+          "index": 0,
+          "time": 0.27769,
+          "crossing": true
+        },
+        {
+          "point": [
+            376,
+            480
+          ],
+          "index": 1,
+          "time": 0,
+          "crossing": true
+        },
+        {
+          "point": [
+            343.68011,
+            469.7389
+          ],
+          "index": 1,
+          "time": 0.77843,
+          "crossing": true
+        },
+        {
+          "point": [
+            336.40125,
+            463.59875
+          ],
+          "index": 2,
+          "time": 0.00608,
+          "crossing": true
+        }
+      ],
+      "hits": [
+        {
+          "point": {
+            "x": 426.61171800037505,
+            "y": 448.00000000000017
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0.2776914759760697
+              },
+              "right": {
+                "segment_index": 1,
+                "t": 0
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 426.61171800037494,
+                  "y": 448.00000000000034
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 426.61171800037516,
+                  "y": 448
+                },
+                "type": "Ok"
+              },
+              "separation": 4.099037227506403e-13,
+              "leftPointResidual": 2.0495186137532014e-13,
+              "rightPointResidual": 2.0495186137532014e-13,
+              "classification": {
+                "0": {
+                  "type": "Touching",
+                  "direction": {
+                    "type": "SimilarlyDirected"
+                  },
+                  "incoming_order": {
+                    "type": "ClockwiseFromFirstToSecond"
+                  },
+                  "outgoing_order": {
+                    "type": "ClockwiseFromFirstToSecond"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 64.59244314004559,
+                    "first_incoming_to_second_outgoing": 359.99999999999955,
+                    "first_outgoing_to_second_incoming": 64.59244314004584,
+                    "first_outgoing_to_second_outgoing": 359.9999999999998
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 420.7517208057521,
+            "y": 457.6713113035164
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0.40864104548415414
+              },
+              "right": {
+                "segment_index": 1,
+                "t": 0.18129312496352243
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 420.7517208057521,
+                  "y": 457.6713113035164
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 420.7517208057521,
+                  "y": 457.6713113035164
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Counterclockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 359.99999999999994,
+                    "first_incoming_to_second_outgoing": 359.9999999999998,
+                    "first_outgoing_to_second_incoming": 1.2789769243681803e-13,
+                    "first_outgoing_to_second_outgoing": 0
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 417.90357936960044,
+            "y": 461.1521222037269
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0.46090824945887426
+              },
+              "right": {
+                "segment_index": 1,
+                "t": 0.25365445289517047
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 417.90357936960044,
+                  "y": 461.1521222037269
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 417.90357936960044,
+                  "y": 461.1521222037269
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Clockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 1.9895196601282805e-13,
+                    "first_incoming_to_second_outgoing": 1.4210854715202004e-13,
+                    "first_outgoing_to_second_incoming": 1.9895196601282805e-13,
+                    "first_outgoing_to_second_outgoing": 1.4210854715202004e-13
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 415.21346243691363,
+            "y": 463.9803471970935
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0.5063064380285975
+              },
+              "right": {
+                "segment_index": 1,
+                "t": 0.3165059727925305
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 415.21346243691363,
+                  "y": 463.9803471970935
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 415.21346243691363,
+                  "y": 463.9803471970935
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Clockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 359.99999999999994,
+                    "first_incoming_to_second_outgoing": 0,
+                    "first_outgoing_to_second_incoming": 359.9999999999998,
+                    "first_outgoing_to_second_outgoing": 359.99999999999983
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 406.0310375350659,
+            "y": 471.2761306266675
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0.6427310422738011
+              },
+              "right": {
+                "segment_index": 1,
+                "t": 0.505379009324331
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 406.0310375350659,
+                  "y": 471.2761306266675
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 406.0310375350659,
+                  "y": 471.2761306266675
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Clockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 1.1368683772161603e-13,
+                    "first_incoming_to_second_outgoing": 359.9999999999999,
+                    "first_outgoing_to_second_incoming": 2.5579538487363607e-13,
+                    "first_outgoing_to_second_outgoing": 0
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 398.6854347000561,
+            "y": 475.2153458602647
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0.738920215283784
+              },
+              "right": {
+                "segment_index": 1,
+                "t": 0.6385481050926038
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 398.6854347000561,
+                  "y": 475.2153458602647
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 398.6854347000561,
+                  "y": 475.2153458602647
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Clockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 0,
+                    "first_incoming_to_second_outgoing": 359.9999999999999,
+                    "first_outgoing_to_second_incoming": 1.4210854715202004e-13,
+                    "first_outgoing_to_second_outgoing": 0
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 394.87063026129647,
+            "y": 476.7414689958652
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0.7859161436484788
+              },
+              "right": {
+                "segment_index": 1,
+                "t": 0.7036116157692931
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 394.87063026129647,
+                  "y": 476.7414689958652
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 394.87063026129647,
+                  "y": 476.7414689958652
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Touching",
+                  "direction": {
+                    "type": "SimilarlyDirected"
+                  },
+                  "incoming_order": {
+                    "type": "ClockwiseFromFirstToSecond"
+                  },
+                  "outgoing_order": {
+                    "type": "ClockwiseFromSecondToFirst"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 5.684341886080802e-14,
+                    "first_incoming_to_second_outgoing": 359.9999999999998,
+                    "first_outgoing_to_second_incoming": 2.5579538487363607e-13,
+                    "first_outgoing_to_second_outgoing": 0
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 386.76807462666727,
+            "y": 478.9658850860215
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0.880915854929407
+              },
+              "right": {
+                "segment_index": 1,
+                "t": 0.8351339613061983
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 386.76807462666727,
+                  "y": 478.9658850860215
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 386.76807462666727,
+                  "y": 478.9658850860215
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Clockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 2.842170943040401e-14,
+                    "first_incoming_to_second_outgoing": 359.99999999999966,
+                    "first_outgoing_to_second_incoming": 3.410605131648481e-13,
+                    "first_outgoing_to_second_outgoing": 0
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 376,
+            "y": 480
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 1,
+                "t": 0
+              },
+              "right": {
+                "segment_index": 2,
+                "t": 0
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 376,
+                  "y": 480
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 376,
+                  "y": 480
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Touching",
+                  "direction": {
+                    "type": "SimilarlyDirected"
+                  },
+                  "incoming_order": {
+                    "type": "IndeterminateTouchingOrder"
+                  },
+                  "outgoing_order": {
+                    "type": "ClockwiseFromSecondToFirst"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 0,
+                    "first_incoming_to_second_outgoing": 0,
+                    "first_outgoing_to_second_incoming": 0,
+                    "first_outgoing_to_second_outgoing": 0
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 375.99999500467993,
+            "y": 479.9999999999998
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 1,
+                "t": 1.0766936367081764e-7
+              },
+              "right": {
+                "segment_index": 2,
+                "t": 7.453142211071851e-8
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 375.99999500467993,
+                  "y": 479.9999999999998
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 375.99999500467993,
+                  "y": 479.9999999999998
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Touching",
+                  "direction": {
+                    "type": "SimilarlyDirected"
+                  },
+                  "incoming_order": {
+                    "type": "IndeterminateTouchingOrder"
+                  },
+                  "outgoing_order": {
+                    "type": "ClockwiseFromSecondToFirst"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 0,
+                    "first_incoming_to_second_outgoing": 359.99999913233,
+                    "first_outgoing_to_second_incoming": 8.656753607283463e-7,
+                    "first_outgoing_to_second_outgoing": 359.99999999800536
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 375.99997844435217,
+            "y": 479.9999999999959
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 1,
+                "t": 4.6461146250837524e-7
+              },
+              "right": {
+                "segment_index": 2,
+                "t": 3.216156577272779e-7
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 375.99997844435217,
+                  "y": 479.9999999999959
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 375.99997844435217,
+                  "y": 479.9999999999959
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Touching",
+                  "direction": {
+                    "type": "SimilarlyDirected"
+                  },
+                  "incoming_order": {
+                    "type": "IndeterminateTouchingOrder"
+                  },
+                  "outgoing_order": {
+                    "type": "ClockwiseFromSecondToFirst"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 0,
+                    "first_incoming_to_second_outgoing": 359.9999998195337,
+                    "first_outgoing_to_second_incoming": 1.718596820410312e-7,
+                    "first_outgoing_to_second_outgoing": 359.99999999139334
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 375.9999046348167,
+            "y": 479.99999999992053
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 1,
+                "t": 0.0000020555060210690016
+              },
+              "right": {
+                "segment_index": 2,
+                "t": 0.0000014228726039318993
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 375.9999046348167,
+                  "y": 479.99999999992053
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 375.9999046348167,
+                  "y": 479.99999999992053
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Touching",
+                  "direction": {
+                    "type": "SimilarlyDirected"
+                  },
+                  "incoming_order": {
+                    "type": "ClockwiseFromFirstToSecond"
+                  },
+                  "outgoing_order": {
+                    "type": "ClockwiseFromSecondToFirst"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 0,
+                    "first_incoming_to_second_outgoing": 359.99999997044745,
+                    "first_outgoing_to_second_incoming": 359.99999999147553,
+                    "first_outgoing_to_second_outgoing": 359.99999996192304
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 375.99978740750595,
+            "y": 479.99999999960517
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 1,
+                "t": 0.000004582230548988851
+              },
+              "right": {
+                "segment_index": 2,
+                "t": 0.0000031719344270810713
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 375.99978740750595,
+                  "y": 479.99999999960505
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 375.99978740750595,
+                  "y": 479.9999999996052
+                },
+                "type": "Ok"
+              },
+              "separation": 1.7053025658242404e-13,
+              "leftPointResidual": 1.1368683772161603e-13,
+              "rightPointResidual": 5.684341886080802e-14,
+              "classification": {
+                "0": {
+                  "type": "Touching",
+                  "direction": {
+                    "type": "SimilarlyDirected"
+                  },
+                  "incoming_order": {
+                    "type": "ClockwiseFromFirstToSecond"
+                  },
+                  "outgoing_order": {
+                    "type": "ClockwiseFromSecondToFirst"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 359.9999999080808,
+                    "first_incoming_to_second_outgoing": 359.99999991623804,
+                    "first_outgoing_to_second_incoming": 359.9999999069605,
+                    "first_outgoing_to_second_outgoing": 359.99999991511777
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 343.6801105197346,
+            "y": 469.7388995436541
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 1,
+                "t": 0.7784258939636073
+              },
+              "right": {
+                "segment_index": 2,
+                "t": 0.5388574440483336
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 343.6801105197346,
+                  "y": 469.7388995436541
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 343.6801105197347,
+                  "y": 469.7388995436541
+                },
+                "type": "Ok"
+              },
+              "separation": 5.684341886080802e-14,
+              "leftPointResidual": 0,
+              "rightPointResidual": 5.684341886080802e-14,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Clockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 0.007070216021418219,
+                    "first_incoming_to_second_outgoing": 0.007070216021503484,
+                    "first_outgoing_to_second_incoming": 0.007070216021304532,
+                    "first_outgoing_to_second_outgoing": 0.007070216021389797
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 336.40124999999995,
+            "y": 463.59875000000005
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 2,
+                "t": 0.006080301502484237
+              },
+              "right": {
+                "segment_index": 2,
+                "t": 0.692224975021104
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 336.40124999999995,
+                  "y": 463.59875000000005
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 336.40124999999995,
+                  "y": 463.59875000000005
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Counterclockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 269.9999999999999,
+                    "first_incoming_to_second_outgoing": 269.99999999999966,
+                    "first_outgoing_to_second_incoming": 269.9999999999999,
+                    "first_outgoing_to_second_outgoing": 269.99999999999966
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        }
+      ],
+      "overlaps": [
+        {
+          "type": "SubpathOverlap",
+          "start": {
+            "type": "Point",
+            "x": 426.6117180004418,
+            "y": 447.9999999998597
+          },
+          "end": {
+            "type": "Point",
+            "x": 376,
+            "y": 480
+          },
+          "pieces": {
+            "type": "NonEmpty",
+            "head": {
+              "type": "SubpathOverlapPiece",
+              "left_segment_index": 0,
+              "right_segment_index": 1,
+              "correspondence": {
+                "type": "SegmentOverlap",
+                "left_from": 0.27769147597427946,
+                "left_to": 1,
+                "right_from": 0,
+                "right_to": 1,
+                "start": {
+                  "type": "Point",
+                  "x": 426.6117180004418,
+                  "y": 447.9999999998597
+                },
+                "end": {
+                  "type": "Point",
+                  "x": 376,
+                  "y": 480
+                }
+              }
+            },
+            "tail": {
+              "type": "Empty"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "title": "#1074",
+      "query": "Ok",
+      "expected": [
+        {
+          "point": [
+            349.98644,
+            0
+          ],
+          "index": 0,
+          "time": 0,
+          "crossing": true
+        },
+        {
+          "point": [
+            349.98644,
+            126.84
+          ],
+          "index": 4,
+          "time": 0,
+          "crossing": true
+        }
+      ],
+      "hits": [
+        {
+          "point": {
+            "x": 349.98644,
+            "y": 0
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 0
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 349.98644,
+                  "y": 0
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 349.98644,
+                  "y": 0
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Counterclockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 0,
+                    "first_incoming_to_second_outgoing": 0,
+                    "first_outgoing_to_second_incoming": 0,
+                    "first_outgoing_to_second_outgoing": 0
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 349.98644,
+            "y": 126.84
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 4,
+                "t": 0
+              },
+              "right": {
+                "segment_index": 2,
+                "t": 0
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 349.98644,
+                  "y": 126.84
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 349.98644,
+                  "y": 126.84
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Clockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 0,
+                    "first_incoming_to_second_outgoing": 0,
+                    "first_outgoing_to_second_incoming": 0,
+                    "first_outgoing_to_second_outgoing": 0
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 349.9864533242433,
+            "y": 126.83999999999952
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 4,
+                "t": 1.2680021164291073e-7
+              },
+              "right": {
+                "segment_index": 2,
+                "t": 7.494837462231172e-8
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 349.9864533242433,
+                  "y": 126.83999999999864
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 349.9864533242433,
+                  "y": 126.84000000000039
+                },
+                "type": "Ok"
+              },
+              "separation": 1.7479351299698465e-12,
+              "leftPointResidual": 8.810729923425242e-13,
+              "rightPointResidual": 8.668621376273222e-13,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Clockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 0.00001503264473967647,
+                    "first_incoming_to_second_outgoing": 0.000015004017939190817,
+                    "first_outgoing_to_second_incoming": 0.000015078201272444858,
+                    "first_outgoing_to_second_outgoing": 0.000015049574471959204
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 349.9864553584788,
+            "y": 1.0790802506508183e-12
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 5,
+                "t": 0.9999998538409773
+              },
+              "right": {
+                "segment_index": 5,
+                "t": 0.9999999435499056
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 349.98645535847885,
+                  "y": 1.8196412343622842e-12
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 349.9864553584788,
+                  "y": 3.3851926693935237e-13
+                },
+                "type": "Ok"
+              },
+              "separation": 1.4822123520773136e-12,
+              "leftPointResidual": 7.427393519017821e-13,
+              "rightPointResidual": 7.405609837114659e-13,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Counterclockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 359.999988949161,
+                    "first_incoming_to_second_outgoing": 359.999988949161,
+                    "first_outgoing_to_second_incoming": 359.999988949161,
+                    "first_outgoing_to_second_outgoing": 359.999988949161
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "title": "#1088",
+      "query": "Ok",
+      "expected": [
+        {
+          "point": [
+            309.99726,
+            309.5004975367957
+          ],
+          "index": 0,
+          "time": 0.17182,
+          "crossing": true
+        }
+      ],
+      "hits": [
+        {
+          "point": {
+            "x": 309.99725696512024,
+            "y": 309.50049753688677
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0.17181896558482923
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 0.9304588650945951
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 309.99725696512024,
+                  "y": 309.50049753688677
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 309.99725696512024,
+                  "y": 309.50049753688677
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Counterclockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 336.49201779008393,
+                    "first_incoming_to_second_outgoing": 336.49201779007785,
+                    "first_outgoing_to_second_incoming": 336.4920177900829,
+                    "first_outgoing_to_second_outgoing": 336.49201779007683
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "title": "#1165",
+      "query": "Ok",
+      "expected": [
+        {
+          "point": [
+            163.04,
+            335.68
+          ],
+          "index": 0,
+          "time": 0,
+          "crossing": false
+        }
+      ],
+      "hits": [
+        {
+          "point": {
+            "x": 163.04000000000002,
+            "y": 335.67999999999995
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 0.5794007132193549
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 163.04000000000002,
+                  "y": 335.67999999999995
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 163.04000000000002,
+                  "y": 335.67999999999995
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "0": {
+                    "type": "FirstEndpointToSecondInterior",
+                    "first": {
+                      "type": "StartEndpoint"
+                    }
+                  },
+                  "type": "EndpointContact"
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "title": "#1174",
+      "query": "Ok",
+      "expected": [
+        {
+          "point": [
+            20,
+            100
+          ],
+          "index": 1,
+          "time": 0.00004,
+          "crossing": true
+        }
+      ],
+      "hits": [
+        {
+          "point": {
+            "x": 20.000000649999254,
+            "y": 100
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 1,
+                "t": 0.00004082536120718423
+              },
+              "right": {
+                "segment_index": 1,
+                "t": 0.00004082536126259163
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 20.000000649999254,
+                  "y": 100
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 20.000000649999254,
+                  "y": 100
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Counterclockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 359.11859607567004,
+                    "first_incoming_to_second_outgoing": 359.11859599907393,
+                    "first_outgoing_to_second_incoming": 359.11859607567004,
+                    "first_outgoing_to_second_outgoing": 359.11859599907393
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "title": "#1197",
+      "query": "Ok",
+      "expected": [
+        {
+          "point": [
+            99,
+            148.74959
+          ],
+          "index": 0,
+          "time": 0.46982,
+          "crossing": true
+        },
+        {
+          "point": [
+            99,
+            167.82203
+          ],
+          "index": 0,
+          "time": 0.60674,
+          "crossing": true
+        }
+      ],
+      "hits": [
+        {
+          "point": {
+            "x": 99,
+            "y": 148.74958656186175
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0.4698185667250741
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 0.38484119210830187
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 99,
+                  "y": 148.74958656186175
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 99,
+                  "y": 148.74958656186175
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Counterclockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 182.72481120562492,
+                    "first_incoming_to_second_outgoing": 182.72481120562497,
+                    "first_outgoing_to_second_incoming": 182.72481120562492,
+                    "first_outgoing_to_second_outgoing": 182.72481120562497
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 99,
+            "y": 167.82202778590457
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0.6067423857866516
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 0.2345891289524715
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 99,
+                  "y": 167.82202778590457
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 99,
+                  "y": 167.82202778590457
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Clockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 177.98952609492954,
+                    "first_incoming_to_second_outgoing": 177.98952609492954,
+                    "first_outgoing_to_second_incoming": 177.98952609492954,
+                    "first_outgoing_to_second_outgoing": 177.98952609492954
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "title": "#1233",
+      "query": "Ok",
+      "expected": [
+        {
+          "point": [
+            366.12645,
+            320.20927
+          ],
+          "index": 1,
+          "time": 0,
+          "crossing": false
+        },
+        {
+          "point": [
+            366.07584,
+            320.28024
+          ],
+          "index": 1,
+          "time": 0.00027,
+          "crossing": true
+        },
+        {
+          "point": [
+            366.02122,
+            320.3568
+          ],
+          "index": 1,
+          "time": 0.00057,
+          "crossing": true
+        },
+        {
+          "point": [
+            300.67554,
+            391.76337
+          ],
+          "index": 1,
+          "time": 0.30838,
+          "crossing": true
+        }
+      ],
+      "hits": [
+        {
+          "point": {
+            "x": 366.0758435428664,
+            "y": 320.28023574942733
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 1,
+                "t": 0.00027385796381620877
+              },
+              "right": {
+                "segment_index": 3,
+                "t": 0.999726170230285
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 366.0758435428664,
+                  "y": 320.28023574942733
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 366.0758435428664,
+                  "y": 320.28023574942733
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Clockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 0.000036104288554383857,
+                    "first_incoming_to_second_outgoing": 0.00003610426162481417,
+                    "first_outgoing_to_second_incoming": 0.00003610429969569395,
+                    "first_outgoing_to_second_outgoing": 0.00003610427276612427
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 366.02121878770265,
+            "y": 320.3567972534483
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 1,
+                "t": 0.0005693520264919584
+              },
+              "right": {
+                "segment_index": 4,
+                "t": 0.003997941949322148
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 366.02121878770265,
+                  "y": 320.3567972534483
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 366.02121878770265,
+                  "y": 320.3567972534483
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Counterclockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 359.99905091908244,
+                    "first_incoming_to_second_outgoing": 359.99905091884517,
+                    "first_outgoing_to_second_incoming": 359.99905091908283,
+                    "first_outgoing_to_second_outgoing": 359.99905091884557
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 300.6755355463506,
+            "y": 391.76337009488543
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 1,
+                "t": 0.3083783607170702
+              },
+              "right": {
+                "segment_index": 5,
+                "t": 0.44128040538549906
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 300.6755355463506,
+                  "y": 391.76337009488543
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 300.6755355463506,
+                  "y": 391.76337009488543
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Clockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 152.36616021177684,
+                    "first_incoming_to_second_outgoing": 152.3661602117768,
+                    "first_outgoing_to_second_incoming": 152.3661602117769,
+                    "first_outgoing_to_second_outgoing": 152.36616021177684
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "title": "#1239",
+      "query": "OverlappingSegments",
+      "expected": [
+        {
+          "point": [
+            956.28999,
+            351.925
+          ],
+          "index": 1,
+          "time": 0.000577,
+          "crossing": true
+        },
+        {
+          "point": [
+            956.28948,
+            352.2327
+          ],
+          "index": 1,
+          "time": 0.003804,
+          "crossing": true
+        },
+        {
+          "point": [
+            939.50932,
+            415.17952
+          ],
+          "index": 1,
+          "time": 0.701801,
+          "crossing": true
+        },
+        {
+          "point": [
+            922.9625,
+            437.995
+          ],
+          "index": 2,
+          "time": 0,
+          "crossing": false
+        },
+        {
+          "point": [
+            911.15,
+            427.245
+          ],
+          "index": 3,
+          "time": 0,
+          "crossing": false
+        },
+        {
+          "point": [
+            932.08099,
+            394.02288
+          ],
+          "index": 3,
+          "time": 0.477224,
+          "crossing": true
+        },
+        {
+          "point": [
+            940.28956,
+            352.18697
+          ],
+          "index": 3,
+          "time": 0.996218,
+          "crossing": true
+        }
+      ],
+      "hits": [
+        {
+          "point": {
+            "x": 956.2899880850171,
+            "y": 351.92499999999995
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 1,
+                "t": 0.0005767566836725942
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 0.9995016915623227
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 956.2899880850171,
+                  "y": 351.92499999999995
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 956.2899880850171,
+                  "y": 351.92499999999995
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Counterclockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 269.9751754030125,
+                    "first_incoming_to_second_outgoing": 269.9751754030125,
+                    "first_outgoing_to_second_incoming": 269.97517540317193,
+                    "first_outgoing_to_second_outgoing": 269.97517540317193
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 956.2894818472843,
+            "y": 352.2327027908477
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 1,
+                "t": 0.0038038517478902853
+              },
+              "right": {
+                "segment_index": 1,
+                "t": 0.0032290132275222504
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 956.2894818472843,
+                  "y": 352.2327027908477
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 956.2894818472843,
+                  "y": 352.23270279084767
+                },
+                "type": "Ok"
+              },
+              "separation": 5.684341886080802e-14,
+              "leftPointResidual": 0,
+              "rightPointResidual": 5.684341886080802e-14,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Clockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 0.002207860066732792,
+                    "first_incoming_to_second_outgoing": 0.002207860058987876,
+                    "first_outgoing_to_second_incoming": 0.0022078600730139897,
+                    "first_outgoing_to_second_outgoing": 0.002207860065269074
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 939.5093156983361,
+            "y": 415.17952075291737
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 1,
+                "t": 0.7018008900984761
+              },
+              "right": {
+                "segment_index": 1,
+                "t": 0.7016223263627929
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 939.5093156983361,
+                  "y": 415.17952075291737
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 939.5093156983361,
+                  "y": 415.17952075291737
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Counterclockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 359.9989998606752,
+                    "first_incoming_to_second_outgoing": 359.998999860675,
+                    "first_outgoing_to_second_incoming": 359.99899986067555,
+                    "first_outgoing_to_second_outgoing": 359.9989998606753
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 922.9625,
+            "y": 437.99499999999995
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 2,
+                "t": 0
+              },
+              "right": {
+                "segment_index": 2,
+                "t": 0
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 922.9625,
+                  "y": 437.99499999999995
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 922.9625,
+                  "y": 437.99499999999995
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Touching",
+                  "direction": {
+                    "type": "SimilarlyDirected"
+                  },
+                  "incoming_order": {
+                    "type": "ClockwiseFromFirstToSecond"
+                  },
+                  "outgoing_order": {
+                    "type": "IndeterminateTouchingOrder"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 0.0015288424348227636,
+                    "first_incoming_to_second_outgoing": 90.01045808592244,
+                    "first_outgoing_to_second_incoming": 269.9910707565124,
+                    "first_outgoing_to_second_outgoing": 0
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 922.8287699218081,
+            "y": 437.8732985531798
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 2,
+                "t": 0.06275720164609054
+              },
+              "right": {
+                "segment_index": 2,
+                "t": 0.06275720164609054
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 922.8287699218081,
+                  "y": 437.8732985531798
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 922.8287699218081,
+                  "y": 437.8732985531798
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Touching",
+                  "direction": {
+                    "type": "SimilarlyDirected"
+                  },
+                  "incoming_order": {
+                    "type": "IndeterminateTouchingOrder"
+                  },
+                  "outgoing_order": {
+                    "type": "IndeterminateTouchingOrder"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 0,
+                    "first_incoming_to_second_outgoing": 359.99999999999034,
+                    "first_outgoing_to_second_incoming": 9.634959496906959e-12,
+                    "first_outgoing_to_second_outgoing": 0
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 922.1862468505441,
+            "y": 437.28856856239986
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 2,
+                "t": 0.15637860082304525
+              },
+              "right": {
+                "segment_index": 2,
+                "t": 0.15637860082304525
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 922.1862468505441,
+                  "y": 437.28856856239986
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 922.1862468505441,
+                  "y": 437.28856856239986
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Touching",
+                  "direction": {
+                    "type": "SimilarlyDirected"
+                  },
+                  "incoming_order": {
+                    "type": "IndeterminateTouchingOrder"
+                  },
+                  "outgoing_order": {
+                    "type": "IndeterminateTouchingOrder"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 0,
+                    "first_incoming_to_second_outgoing": 359.9999999999967,
+                    "first_outgoing_to_second_incoming": 3.268496584496461e-12,
+                    "first_outgoing_to_second_outgoing": 0
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 920.900472895697,
+            "y": 436.11844623312106
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 2,
+                "t": 0.26594650205761317
+              },
+              "right": {
+                "segment_index": 2,
+                "t": 0.26594650205761317
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 920.900472895697,
+                  "y": 436.11844623312106
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 920.900472895697,
+                  "y": 436.11844623312106
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Touching",
+                  "direction": {
+                    "type": "SimilarlyDirected"
+                  },
+                  "incoming_order": {
+                    "type": "IndeterminateTouchingOrder"
+                  },
+                  "outgoing_order": {
+                    "type": "IndeterminateTouchingOrder"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 0,
+                    "first_incoming_to_second_outgoing": 359.9999999999993,
+                    "first_outgoing_to_second_incoming": 6.821210263296962e-13,
+                    "first_outgoing_to_second_outgoing": 0
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 919.9242773373,
+            "y": 435.2300566244212
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 2,
+                "t": 0.3317901234567901
+              },
+              "right": {
+                "segment_index": 2,
+                "t": 0.3317901234567901
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 919.9242773373,
+                  "y": 435.2300566244212
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 919.9242773373,
+                  "y": 435.2300566244212
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Touching",
+                  "direction": {
+                    "type": "SimilarlyDirected"
+                  },
+                  "incoming_order": {
+                    "type": "IndeterminateTouchingOrder"
+                  },
+                  "outgoing_order": {
+                    "type": "IndeterminateTouchingOrder"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 0,
+                    "first_incoming_to_second_outgoing": 359.99999999999994,
+                    "first_outgoing_to_second_incoming": 5.684341886080802e-14,
+                    "first_outgoing_to_second_outgoing": 0
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 917.05625,
+            "y": 432.61999999999995
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 2,
+                "t": 0.5
+              },
+              "right": {
+                "segment_index": 2,
+                "t": 0.5
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 917.05625,
+                  "y": 432.61999999999995
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 917.05625,
+                  "y": 432.61999999999995
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Touching",
+                  "direction": {
+                    "type": "SimilarlyDirected"
+                  },
+                  "incoming_order": {
+                    "type": "IndeterminateTouchingOrder"
+                  },
+                  "outgoing_order": {
+                    "type": "IndeterminateTouchingOrder"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 0,
+                    "first_incoming_to_second_outgoing": 0,
+                    "first_outgoing_to_second_incoming": 0,
+                    "first_outgoing_to_second_outgoing": 0
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 914.3593273105281,
+            "y": 430.16565765825834
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 2,
+                "t": 0.6574074074074074
+              },
+              "right": {
+                "segment_index": 2,
+                "t": 0.6574074074074074
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 914.3593273105281,
+                  "y": 430.16565765825834
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 914.3593273105281,
+                  "y": 430.16565765825834
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Touching",
+                  "direction": {
+                    "type": "SimilarlyDirected"
+                  },
+                  "incoming_order": {
+                    "type": "IndeterminateTouchingOrder"
+                  },
+                  "outgoing_order": {
+                    "type": "IndeterminateTouchingOrder"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 0,
+                    "first_incoming_to_second_outgoing": 359.9999999999998,
+                    "first_outgoing_to_second_incoming": 2.5579538487363607e-13,
+                    "first_outgoing_to_second_outgoing": 0
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 912.5844520935142,
+            "y": 428.5504273020341
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 2,
+                "t": 0.7824074074074074
+              },
+              "right": {
+                "segment_index": 2,
+                "t": 0.7824074074074074
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 912.5844520935142,
+                  "y": 428.5504273020341
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 912.5844520935142,
+                  "y": 428.5504273020341
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Touching",
+                  "direction": {
+                    "type": "SimilarlyDirected"
+                  },
+                  "incoming_order": {
+                    "type": "IndeterminateTouchingOrder"
+                  },
+                  "outgoing_order": {
+                    "type": "IndeterminateTouchingOrder"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 0,
+                    "first_incoming_to_second_outgoing": 2.1032064978498966e-12,
+                    "first_outgoing_to_second_incoming": 359.9999999999979,
+                    "first_outgoing_to_second_outgoing": 0
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 911.15,
+            "y": 427.24499999999995
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 3,
+                "t": 0
+              },
+              "right": {
+                "segment_index": 3,
+                "t": 0
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 911.15,
+                  "y": 427.24499999999995
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 911.15,
+                  "y": 427.24499999999995
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Touching",
+                  "direction": {
+                    "type": "SimilarlyDirected"
+                  },
+                  "incoming_order": {
+                    "type": "IndeterminateTouchingOrder"
+                  },
+                  "outgoing_order": {
+                    "type": "ClockwiseFromFirstToSecond"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 0,
+                    "first_incoming_to_second_outgoing": 89.98881753104831,
+                    "first_outgoing_to_second_incoming": 270.0129200751498,
+                    "first_outgoing_to_second_outgoing": 0.001737606198105368
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 932.0809924903125,
+            "y": 394.0228848198101
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 3,
+                "t": 0.4772238795902665
+              },
+              "right": {
+                "segment_index": 3,
+                "t": 0.47755577560776435
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 932.0809924903125,
+                  "y": 394.0228848198101
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 932.0809924903125,
+                  "y": 394.0228848198101
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Counterclockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 359.99879668915673,
+                    "first_incoming_to_second_outgoing": 359.9987966891569,
+                    "first_outgoing_to_second_incoming": 359.99879668915696,
+                    "first_outgoing_to_second_outgoing": 359.99879668915713
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 940.2895563013698,
+            "y": 352.186966020776
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 3,
+                "t": 0.9962175523008062
+              },
+              "right": {
+                "segment_index": 3,
+                "t": 0.996872008263854
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 940.2895563013698,
+                  "y": 352.186966020776
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 940.2895563013698,
+                  "y": 352.1869660207761
+                },
+                "type": "Ok"
+              },
+              "separation": 5.684341886080802e-14,
+              "leftPointResidual": 0,
+              "rightPointResidual": 5.684341886080802e-14,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Clockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 0.0028936234938896632,
+                    "first_incoming_to_second_outgoing": 0.0028936234834873176,
+                    "first_outgoing_to_second_incoming": 0.002893623509066856,
+                    "first_outgoing_to_second_outgoing": 0.0028936234986645104
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        }
+      ],
+      "overlaps": [
+        {
+          "type": "SubpathOverlap",
+          "start": {
+            "type": "Point",
+            "x": 922.9625,
+            "y": 437.99499999999995
+          },
+          "end": {
+            "type": "Point",
+            "x": 911.15,
+            "y": 427.24499999999995
+          },
+          "pieces": {
+            "type": "NonEmpty",
+            "head": {
+              "type": "SubpathOverlapPiece",
+              "left_segment_index": 2,
+              "right_segment_index": 2,
+              "correspondence": {
+                "type": "SegmentOverlap",
+                "left_from": 0,
+                "left_to": 1,
+                "right_from": 0,
+                "right_to": 1,
+                "start": {
+                  "type": "Point",
+                  "x": 922.9625,
+                  "y": 437.99499999999995
+                },
+                "end": {
+                  "type": "Point",
+                  "x": 911.15,
+                  "y": 427.24499999999995
+                }
+              }
+            },
+            "tail": {
+              "type": "Empty"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "title": "#1270",
+      "query": "Ok",
+      "expected": [
+        {
+          "point": [
+            500.36244,
+            522.99072
+          ],
+          "index": 0,
+          "time": 0.03613,
+          "crossing": true
+        },
+        {
+          "point": [
+            463.83556,
+            476.44545
+          ],
+          "index": 0,
+          "time": 0.52936,
+          "crossing": true
+        }
+      ],
+      "hits": [
+        {
+          "point": {
+            "x": 500.3624350154788,
+            "y": 522.9907246461498
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0.036129353409972774
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 0.4714911362555429
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 500.3624350154788,
+                  "y": 522.9907246461498
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 500.3624350154788,
+                  "y": 522.9907246461498
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Clockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 43.401730227840005,
+                    "first_incoming_to_second_outgoing": 43.401730227840034,
+                    "first_outgoing_to_second_incoming": 43.40173022783952,
+                    "first_outgoing_to_second_outgoing": 43.40173022783955
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 463.8355593910699,
+            "y": 476.4454544602969
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0.5293627432527128
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 0.7362273208090506
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 463.8355593910699,
+                  "y": 476.4454544602969
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 463.8355593910699,
+                  "y": 476.4454544602969
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Counterclockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 264.2279258252657,
+                    "first_incoming_to_second_outgoing": 264.22792582526574,
+                    "first_outgoing_to_second_incoming": 264.22792582526563,
+                    "first_outgoing_to_second_outgoing": 264.22792582526563
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "title": "#1284",
+      "query": "Ok",
+      "expected": [
+        {
+          "point": [
+            664.03868,
+            382.45193
+          ],
+          "time": 0
+        }
+      ],
+      "hits": [
+        {
+          "point": {
+            "x": 664.0386774947868,
+            "y": 382.4519338747393
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 0
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 664.0386774947868,
+                  "y": 382.45193387473927
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 664.0386774947868,
+                  "y": 382.4519338747394
+                },
+                "type": "Ok"
+              },
+              "separation": 1.1368683772161603e-13,
+              "leftPointResidual": 5.684341886080802e-14,
+              "rightPointResidual": 5.684341886080802e-14,
+              "classification": {
+                "0": {
+                  "0": {
+                    "type": "EndpointToEndpoint",
+                    "first": {
+                      "type": "StartEndpoint"
+                    },
+                    "second": {
+                      "type": "StartEndpoint"
+                    }
+                  },
+                  "type": "EndpointContact"
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "title": "#1284",
+      "query": "Ok",
+      "expected": [
+        {
+          "point": [
+            664.03868,
+            382.45193
+          ],
+          "time": 0
+        }
+      ],
+      "hits": [
+        {
+          "point": {
+            "x": 664.0386774947868,
+            "y": 382.4519338747393
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 0
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 664.0386774947868,
+                  "y": 382.45193387473927
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 664.0386774947868,
+                  "y": 382.4519338747394
+                },
+                "type": "Ok"
+              },
+              "separation": 1.1368683772161603e-13,
+              "leftPointResidual": 5.684341886080802e-14,
+              "rightPointResidual": 5.684341886080802e-14,
+              "classification": {
+                "0": {
+                  "0": {
+                    "type": "EndpointToEndpoint",
+                    "first": {
+                      "type": "StartEndpoint"
+                    },
+                    "second": {
+                      "type": "StartEndpoint"
+                    }
+                  },
+                  "type": "EndpointContact"
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 23,
+      "title": "#1284",
+      "query": "Ok",
+      "expected": [
+        {
+          "point": [
+            725.96132,
+            385.54807
+          ],
+          "time": 0
+        }
+      ],
+      "hits": [
+        {
+          "point": {
+            "x": 725.9613225052132,
+            "y": 385.5480661252607
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 0
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 725.9613225052132,
+                  "y": 385.5480661252606
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 725.9613225052132,
+                  "y": 385.54806612526073
+                },
+                "type": "Ok"
+              },
+              "separation": 1.1368683772161603e-13,
+              "leftPointResidual": 5.684341886080802e-14,
+              "rightPointResidual": 5.684341886080802e-14,
+              "classification": {
+                "0": {
+                  "0": {
+                    "type": "EndpointToEndpoint",
+                    "first": {
+                      "type": "StartEndpoint"
+                    },
+                    "second": {
+                      "type": "StartEndpoint"
+                    }
+                  },
+                  "type": "EndpointContact"
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 725.961324001147,
+            "y": 385.5480362065491
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 1.2099256836155604e-7
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 2.8447425672855584e-7
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 725.9613240011475,
+                  "y": 385.5480362065491
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 725.9613240011465,
+                  "y": 385.54803620654917
+                },
+                "type": "Ok"
+              },
+              "separation": 1.0247593068766006e-12,
+              "leftPointResidual": 5.684341886080801e-13,
+              "rightPointResidual": 4.582862941503293e-13,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Counterclockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 359.9999961234642,
+                    "first_incoming_to_second_outgoing": 359.99999591845955,
+                    "first_outgoing_to_second_incoming": 359.9999962934041,
+                    "first_outgoing_to_second_outgoing": 359.9999960883994
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "title": "#1284",
+      "query": "Ok",
+      "expected": [
+        {
+          "point": [
+            725.96132,
+            385.54807
+          ],
+          "time": 0
+        }
+      ],
+      "hits": [
+        {
+          "point": {
+            "x": 725.9613225052132,
+            "y": 385.5480661252607
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 0
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 725.9613225052132,
+                  "y": 385.5480661252606
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 725.9613225052132,
+                  "y": 385.54806612526073
+                },
+                "type": "Ok"
+              },
+              "separation": 1.1368683772161603e-13,
+              "leftPointResidual": 5.684341886080802e-14,
+              "rightPointResidual": 5.684341886080802e-14,
+              "classification": {
+                "0": {
+                  "0": {
+                    "type": "EndpointToEndpoint",
+                    "first": {
+                      "type": "StartEndpoint"
+                    },
+                    "second": {
+                      "type": "StartEndpoint"
+                    }
+                  },
+                  "type": "EndpointContact"
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 725.961324001147,
+            "y": 385.5480362065491
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 1.2099256836155604e-7
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 2.8447425672855584e-7
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 725.9613240011475,
+                  "y": 385.5480362065491
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 725.9613240011465,
+                  "y": 385.54803620654917
+                },
+                "type": "Ok"
+              },
+              "separation": 1.0247593068766006e-12,
+              "leftPointResidual": 5.684341886080801e-13,
+              "rightPointResidual": 4.582862941503293e-13,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Counterclockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 359.9999961234642,
+                    "first_incoming_to_second_outgoing": 359.99999591845955,
+                    "first_outgoing_to_second_incoming": 359.9999962934041,
+                    "first_outgoing_to_second_outgoing": 359.9999960883994
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 25,
+      "title": "#1638",
+      "query": "Ok",
+      "expected": [
+        {
+          "point": [
+            191.16238,
+            58.83762
+          ],
+          "index": 1,
+          "time": 0.73431,
+          "crossing": true
+        },
+        {
+          "point": [
+            58.83762,
+            191.16238
+          ],
+          "index": 3,
+          "time": 0.26569,
+          "crossing": true
+        }
+      ],
+      "hits": [
+        {
+          "point": {
+            "x": 191.16238109787483,
+            "y": 58.83761890212517
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 1,
+                "t": 0.7343134690245959
+              },
+              "right": {
+                "segment_index": 1,
+                "t": 0.26568653097540396
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 191.16238109787483,
+                  "y": 58.83761890212517
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 191.16238109787483,
+                  "y": 58.83761890212517
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Counterclockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 318.6686490198683,
+                    "first_incoming_to_second_outgoing": 318.6686490198683,
+                    "first_outgoing_to_second_incoming": 318.66864901986827,
+                    "first_outgoing_to_second_outgoing": 318.66864901986827
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 58.83761890212517,
+            "y": 191.16238109787483
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 3,
+                "t": 0.265686530975404
+              },
+              "right": {
+                "segment_index": 3,
+                "t": 0.734313469024596
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 58.83761890212518,
+                  "y": 191.16238109787483
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 58.83761890212517,
+                  "y": 191.16238109787483
+                },
+                "type": "Ok"
+              },
+              "separation": 7.105427357601002e-15,
+              "leftPointResidual": 7.105427357601002e-15,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Clockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 41.3313509801317,
+                    "first_incoming_to_second_outgoing": 41.33135098013173,
+                    "first_outgoing_to_second_incoming": 41.3313509801317,
+                    "first_outgoing_to_second_outgoing": 41.33135098013173
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 26,
+      "title": "#1263",
+      "query": "Ok",
+      "expected": [
+        {
+          "point": [
+            479,
+            495
+          ],
+          "index": 0,
+          "time": 0,
+          "crossing": false
+        }
+      ],
+      "hits": [
+        {
+          "point": {
+            "x": 479,
+            "y": 495
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0
+              },
+              "right": {
+                "segment_index": 1,
+                "t": 1
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 479,
+                  "y": 495
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 479,
+                  "y": 495
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "0": {
+                    "type": "EndpointToEndpoint",
+                    "first": {
+                      "type": "StartEndpoint"
+                    },
+                    "second": {
+                      "type": "EndEndpoint"
+                    }
+                  },
+                  "type": "EndpointContact"
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 27,
+      "title": "#1262",
+      "query": "Ok",
+      "expected": [
+        {
+          "point": [
+            561.55005,
+            629.11487
+          ],
+          "time": 0
+        },
+        {
+          "point": [
+            567.05562,
+            634.62043
+          ],
+          "time": 1
+        }
+      ],
+      "hits": [
+        {
+          "point": {
+            "x": 561.5500544,
+            "y": 629.1148694240001
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 0
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 561.5500544,
+                  "y": 629.1148694240001
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 561.5500544,
+                  "y": 629.1148694240001
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "0": {
+                    "type": "EndpointToEndpoint",
+                    "first": {
+                      "type": "StartEndpoint"
+                    },
+                    "second": {
+                      "type": "StartEndpoint"
+                    }
+                  },
+                  "type": "EndpointContact"
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 561.5500558260753,
+            "y": 629.1148694240003
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 1.5680636859657663e-7
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 1.5680636859657663e-7
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 561.5500558260753,
+                  "y": 629.1148694240003
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 561.5500558260753,
+                  "y": 629.1148694240003
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Touching",
+                  "direction": {
+                    "type": "SimilarlyDirected"
+                  },
+                  "incoming_order": {
+                    "type": "IndeterminateTouchingOrder"
+                  },
+                  "outgoing_order": {
+                    "type": "ClockwiseFromFirstToSecond"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 0,
+                    "first_incoming_to_second_outgoing": 9.82091798306783e-7,
+                    "first_outgoing_to_second_incoming": 359.9999990383058,
+                    "first_outgoing_to_second_outgoing": 2.03975891967542e-8
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 561.5500672346757,
+            "y": 629.1148694240148
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0.00000141125731736919
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 0.00000141125731736919
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 561.5500672346757,
+                  "y": 629.1148694240148
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 561.5500672346757,
+                  "y": 629.1148694240148
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Touching",
+                  "direction": {
+                    "type": "SimilarlyDirected"
+                  },
+                  "incoming_order": {
+                    "type": "IndeterminateTouchingOrder"
+                  },
+                  "outgoing_order": {
+                    "type": "ClockwiseFromFirstToSecond"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 0,
+                    "first_incoming_to_second_outgoing": 359.9999997035227,
+                    "first_outgoing_to_second_incoming": 4.800365670646657e-7,
+                    "first_outgoing_to_second_outgoing": 1.8355927943855175e-7
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 561.5500736520112,
+            "y": 629.1148694240334
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0.000002116885976053785
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 0.000002116885976053785
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 561.5500736520112,
+                  "y": 629.1148694240334
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 561.5500736520112,
+                  "y": 629.1148694240334
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Touching",
+                  "direction": {
+                    "type": "SimilarlyDirected"
+                  },
+                  "incoming_order": {
+                    "type": "ClockwiseFromSecondToFirst"
+                  },
+                  "outgoing_order": {
+                    "type": "ClockwiseFromFirstToSecond"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 0,
+                    "first_incoming_to_second_outgoing": 3.165056995644872e-7,
+                    "first_outgoing_to_second_incoming": 359.9999999588378,
+                    "first_outgoing_to_second_outgoing": 2.7534348230305876e-7
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 561.5500750780855,
+            "y": 629.1148694240385
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0.0000022736923446503617
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 0.0000022736923446503617
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 561.5500750780855,
+                  "y": 629.1148694240385
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 561.5500750780855,
+                  "y": 629.1148694240385
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "type": "Touching",
+                  "direction": {
+                    "type": "SimilarlyDirected"
+                  },
+                  "incoming_order": {
+                    "type": "ClockwiseFromSecondToFirst"
+                  },
+                  "outgoing_order": {
+                    "type": "ClockwiseFromFirstToSecond"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 0,
+                    "first_incoming_to_second_outgoing": 3.0104704868140725e-7,
+                    "first_outgoing_to_second_incoming": 359.9999999946941,
+                    "first_outgoing_to_second_outgoing": 2.9574118961267905e-7
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 567.0556160000001,
+            "y": 634.620431024
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 1
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 1
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 567.0556160000001,
+                  "y": 634.620431024
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 567.0556160000001,
+                  "y": 634.620431024
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "0": {
+                    "type": "EndpointToEndpoint",
+                    "first": {
+                      "type": "EndEndpoint"
+                    },
+                    "second": {
+                      "type": "EndEndpoint"
+                    }
+                  },
+                  "type": "EndpointContact"
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 31,
+      "title": "#1255",
+      "query": "Ok",
+      "expected": [
+        {
+          "point": [
+            439.38241,
+            216.13904
+          ],
+          "time": 0,
+          "crossing": false
+        }
+      ],
+      "hits": [
+        {
+          "point": {
+            "x": 439.3824078319993,
+            "y": 216.13903749801196
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 0
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 1
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 439.3824078319993,
+                  "y": 216.13903749801196
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 439.3824078319993,
+                  "y": 216.13903749801196
+                },
+                "type": "Ok"
+              },
+              "separation": 0,
+              "leftPointResidual": 0,
+              "rightPointResidual": 0,
+              "classification": {
+                "0": {
+                  "0": {
+                    "type": "EndpointToEndpoint",
+                    "first": {
+                      "type": "StartEndpoint"
+                    },
+                    "second": {
+                      "type": "EndEndpoint"
+                    }
+                  },
+                  "type": "EndpointContact"
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 439.38240780820325,
+            "y": 216.13903352404486
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 1.1983965503148722e-7
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 0.9999999583785565
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 439.38240780820337,
+                  "y": 216.13903352404483
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 439.38240780820314,
+                  "y": 216.13903352404486
+                },
+                "type": "Ok"
+              },
+              "separation": 2.2914314707516465e-13,
+              "leftPointResidual": 1.1718571004216928e-13,
+              "rightPointResidual": 1.1368683772161603e-13,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Clockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 179.9999918723887,
+                    "first_incoming_to_second_outgoing": 179.9999926242618,
+                    "first_outgoing_to_second_incoming": 179.99999280799096,
+                    "first_outgoing_to_second_outgoing": 179.99999355986407
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        },
+        {
+          "point": {
+            "x": 439.3824077870247,
+            "y": 216.13902998717637
+          },
+          "pairs": [
+            {
+              "left": {
+                "segment_index": 0,
+                "t": 2.2649808797283292e-7
+              },
+              "right": {
+                "segment_index": 0,
+                "t": 0.9999999213350758
+              },
+              "leftEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 439.3824077870251,
+                  "y": 216.13902998717637
+                },
+                "type": "Ok"
+              },
+              "rightEvaluation": {
+                "0": {
+                  "type": "Point",
+                  "x": 439.38240778702425,
+                  "y": 216.13902998717637
+                },
+                "type": "Ok"
+              },
+              "separation": 8.526512829121202e-13,
+              "leftPointResidual": 3.979039320256561e-13,
+              "rightPointResidual": 4.547473508864641e-13,
+              "classification": {
+                "0": {
+                  "type": "Crossing",
+                  "direction": {
+                    "type": "Clockwise"
+                  },
+                  "apertures": {
+                    "type": "IntersectionApertures",
+                    "first_incoming_to_second_incoming": 179.99998694701875,
+                    "first_incoming_to_second_outgoing": 179.99998699170857,
+                    "first_outgoing_to_second_incoming": 179.99998640703396,
+                    "first_outgoing_to_second_outgoing": 179.99998645172377
+                  }
+                },
+                "type": "Ok"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "version": "0.12.18",
+  "fixture": 12,
+  "results": [
+    {
+      "point": [
+        426.61171800037516,
+        448
+      ],
+      "index": 0,
+      "time": 0.27769147597606525,
+      "crossing": true,
+      "overlap": true
+    },
+    {
+      "point": [
+        376,
+        480
+      ],
+      "index": 1,
+      "time": 0,
+      "crossing": true,
+      "overlap": true
+    },
+    {
+      "point": [
+        343.6801105200444,
+        469.73889954387334
+      ],
+      "index": 1,
+      "time": 0.7784258939548042,
+      "crossing": true,
+      "overlap": false
+    },
+    {
+      "point": [
+        336.40124999999995,
+        463.59875000000005
+      ],
+      "index": 2,
+      "time": 0.006080301502562137,
+      "crossing": true,
+      "overlap": false
+    }
+  ]
+}

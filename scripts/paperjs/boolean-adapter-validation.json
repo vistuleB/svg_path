@@ -1,0 +1,61 @@
+{
+  "command": "scripts/test-portable",
+  "erlang": {
+    "passed": 711,
+    "failed": 0
+  },
+  "javascript": {
+    "passed": 711,
+    "failed": 0
+  },
+  "cases": [
+    {
+      "id": 26,
+      "adapter": "clip then bridge-join",
+      "erlang": "pass",
+      "javascript": "pass"
+    },
+    {
+      "id": 44,
+      "adapter": "common even-odd rule with equivalent simple-rectangle fill",
+      "erlang": "pass",
+      "javascript": "pass"
+    },
+    {
+      "id": 71,
+      "adapter": "cut and select outside pieces",
+      "erlang": "pass",
+      "javascript": "pass"
+    },
+    {
+      "id": 73,
+      "adapter": "cut and select outside pieces",
+      "erlang": "pass",
+      "javascript": "pass"
+    },
+    {
+      "id": 75,
+      "adapter": "cut and select outside pieces",
+      "erlang": "pass",
+      "javascript": "pass"
+    },
+    {
+      "id": 77,
+      "adapter": "cut and select first piece",
+      "erlang": "pass",
+      "javascript": "pass"
+    },
+    {
+      "id": 78,
+      "adapter": "cut and select second piece",
+      "erlang": "pass",
+      "javascript": "pass"
+    }
+  ],
+  "productionChanged": false,
+  "combinedBooleanInventory": {
+    "sampled-geometry-match": 112,
+    "understood-overlap-contract-limitation": 59,
+    "adapted-geometry-match": 7
+  }
+}
