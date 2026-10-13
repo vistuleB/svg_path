@@ -23,7 +23,11 @@ The [107/122/123 investigation](FINAL_BOOLEAN_INVESTIGATION.md) records the
 pre-fix overlap-merging defect and its downstream construction errors/timeout.
 [Dead-code cleanup](DEFERRED_CLEANUP.md) is deferred until later.
 
-Intersection parameter/crossing coverage, unadapted assertions,
+The [three #1409 crossing assertions](CROSSINGS_1409.md) now pass through the
+overlap-aware API on Erlang and JavaScript, with a transverse-crossing positive
+control. No production change was needed.
+
+Other intersection parameter/crossing coverage, unadapted assertions,
 diagnostic-to-regression promotion, and upstream files
 outside the 13-file inventory remain incomplete. See the final section of the
 triage document before planning release validation.

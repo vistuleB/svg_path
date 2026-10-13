@@ -206,22 +206,25 @@
     "id": 28,
     "upstream": "#1409",
     "assertion": 1,
-    "status": "pending-crossings",
-    "note": "Crossing classification not yet adapted."
+    "status": "adapted-crossings-pass",
+    "note": "All raw encounter address pairs classify Touching; overlap-aware filtering preserves overlaps and leaves zero isolated crossings. Point-only OverlappingSegments is the documented API difference. Portable regression passes on Erlang and JavaScript; see CROSSINGS_1409.md.",
+    "classification_date": "2026-10-13"
   },
   {
     "id": 29,
     "upstream": "#1409",
     "assertion": 2,
-    "status": "pending-crossings",
-    "note": "Crossing classification not yet adapted."
+    "status": "adapted-crossings-pass",
+    "note": "All raw encounter address pairs classify Touching; overlap-aware filtering preserves overlaps and leaves zero isolated crossings. Point-only OverlappingSegments is the documented API difference. Portable regression passes on Erlang and JavaScript; see CROSSINGS_1409.md.",
+    "classification_date": "2026-10-13"
   },
   {
     "id": 30,
     "upstream": "#1409",
     "assertion": 3,
-    "status": "pending-crossings",
-    "note": "Crossing classification not yet adapted."
+    "status": "adapted-crossings-pass",
+    "note": "All raw encounter address pairs classify Touching; overlap-aware filtering preserves overlaps and leaves zero isolated crossings. Point-only OverlappingSegments is the documented API difference. Portable regression passes on Erlang and JavaScript; see CROSSINGS_1409.md.",
+    "classification_date": "2026-10-13"
   },
   {
     "id": 31,

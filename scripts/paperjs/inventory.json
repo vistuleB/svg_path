@@ -646,7 +646,8 @@
         },
         {
           "title_expression": "'#1409'",
-          "status": "initial-location-audit"
+          "status": "adapted-crossing-checks",
+          "comparison_report": "CROSSINGS_1409.md"
         },
         {
           "title_expression": "'#1255'",
