@@ -1034,10 +1034,10 @@
     "block": 42,
     "title": "Selected test-cases provided by @iconexperience",
     "operation": "unite",
-    "status": "confirmed-our-failure",
+    "status": "sampled-geometry-match",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. Default operation fails; identified mechanism: crossing-root-isolation. No production fix applied."
+    "evidence": "Recovered by Bernstein line-root fallback; see boolean-screening-after-bernstein.json and CROSSING_BERNSTEIN_FIX.md. Original projected scalar witnesses are portable regressions; complete Boolean geometry is currently diagnostic screening only."
   },
   {
     "id": 104,
@@ -1074,10 +1074,10 @@
     "block": 42,
     "title": "Selected test-cases provided by @iconexperience",
     "operation": "unite",
-    "status": "confirmed-our-failure",
+    "status": "unresolved-downstream-timeout",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. Default operation fails; identified mechanism: crossing-root-isolation. No production fix applied."
+    "evidence": "Both scalar roots are covered by portable regressions. The complete CSG operation now exceeds the 30-second screen limit in later curve-pair processing; not a passing Boolean comparison. See boolean-screening-after-bernstein.json and CROSSING_BERNSTEIN_FIX.md."
   },
   {
     "id": 108,
@@ -1284,40 +1284,40 @@
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "unite",
-    "status": "confirmed-our-failure",
+    "status": "unclassified-overlap-rejection",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. Default operation fails; identified mechanism: crossing-root-isolation. No production fix applied."
+    "evidence": "Bernstein fallback clears the original scalar-root failure; the operation now reaches NonAffineOverlapCorrespondence. These newly exposed overlap witnesses are not yet independently classified. See boolean-screening-after-bernstein.json and CROSSING_BERNSTEIN_FIX.md."
   },
   {
     "id": 129,
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "intersect",
-    "status": "confirmed-our-failure",
+    "status": "unclassified-overlap-rejection",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. Default operation fails; identified mechanism: crossing-root-isolation. No production fix applied."
+    "evidence": "Bernstein fallback clears the original scalar-root failure; the operation now reaches NonAffineOverlapCorrespondence. These newly exposed overlap witnesses are not yet independently classified. See boolean-screening-after-bernstein.json and CROSSING_BERNSTEIN_FIX.md."
   },
   {
     "id": 130,
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "unite",
-    "status": "confirmed-our-failure",
+    "status": "unclassified-overlap-rejection",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. Default operation fails; identified mechanism: crossing-root-isolation. No production fix applied."
+    "evidence": "Bernstein fallback clears the original scalar-root failure; the operation now reaches NonAffineOverlapCorrespondence. These newly exposed overlap witnesses are not yet independently classified. See boolean-screening-after-bernstein.json and CROSSING_BERNSTEIN_FIX.md."
   },
   {
     "id": 131,
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "intersect",
-    "status": "confirmed-our-failure",
+    "status": "unclassified-overlap-rejection",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. Default operation fails; identified mechanism: crossing-root-isolation. No production fix applied."
+    "evidence": "Bernstein fallback clears the original scalar-root failure; the operation now reaches NonAffineOverlapCorrespondence. These newly exposed overlap witnesses are not yet independently classified. See boolean-screening-after-bernstein.json and CROSSING_BERNSTEIN_FIX.md."
   },
   {
     "id": 132,
@@ -1684,20 +1684,20 @@
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "unite",
-    "status": "confirmed-our-failure",
+    "status": "sampled-geometry-match",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. Default operation fails; identified mechanism: crossing-root-isolation. No production fix applied."
+    "evidence": "Recovered by Bernstein line-root fallback; see boolean-screening-after-bernstein.json and CROSSING_BERNSTEIN_FIX.md. Original projected scalar witnesses are portable regressions; complete Boolean geometry is currently diagnostic screening only."
   },
   {
     "id": 169,
     "block": 43,
     "title": "Isolated edge-cases from @iconexperience's boolean-test suite",
     "operation": "intersect",
-    "status": "confirmed-our-failure",
+    "status": "sampled-geometry-match",
     "derivedOperands": false,
     "portableRegression": false,
-    "evidence": "Reproduced on Erlang and JavaScript 2026-10-13; see boolean-error-findings.json and BOOLEAN_ERROR_TRIAGE.md. Default operation fails; identified mechanism: crossing-root-isolation. No production fix applied."
+    "evidence": "Recovered by Bernstein line-root fallback; see boolean-screening-after-bernstein.json and CROSSING_BERNSTEIN_FIX.md. Original projected scalar witnesses are portable regressions; complete Boolean geometry is currently diagnostic screening only."
   },
   {
     "id": 170,

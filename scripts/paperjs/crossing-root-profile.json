@@ -1,0 +1,113 @@
+{
+  "scope": "30-second experimental screen; the busy long-lived worker is fixture 107, main thread is idle. Sample counts are diagnostic, not benchmarks.",
+  "profiles": [
+    {
+      "seconds": 30.82875,
+      "totalSamples": 25999,
+      "top": [
+        {
+          "functionName": ":(idle)",
+          "samples": 25977
+        },
+        {
+          "functionName": ":(program)",
+          "samples": 5
+        },
+        {
+          "functionName": "node:internal/bootstrap/realm:compileForInternalLoader",
+          "samples": 2
+        },
+        {
+          "functionName": "probe.mjs:",
+          "samples": 2
+        },
+        {
+          "functionName": ":(garbage collector)",
+          "samples": 2
+        },
+        {
+          "functionName": "node:path:isPosixPathSeparator",
+          "samples": 1
+        },
+        {
+          "functionName": "node:internal/modules/esm/resolve:",
+          "samples": 1
+        },
+        {
+          "functionName": "node:internal/modules/esm/utils:compileSourceTextModule",
+          "samples": 1
+        },
+        {
+          "functionName": "node:internal/bootstrap/realm:internalBinding",
+          "samples": 1
+        },
+        {
+          "functionName": "node:internal/modules/esm/load:defaultLoad",
+          "samples": 1
+        },
+        {
+          "functionName": ":read",
+          "samples": 1
+        },
+        {
+          "functionName": "node:internal/modules/esm/initialize_import_meta:initializeImportMeta",
+          "samples": 1
+        }
+      ]
+    },
+    {
+      "seconds": 29.996708,
+      "totalSamples": 25706,
+      "top": [
+        {
+          "functionName": "svg_path/svg_path/intersections.mjs:spatial_diversity_pass",
+          "samples": 6005
+        },
+        {
+          "functionName": "prelude.mjs:Ok",
+          "samples": 3085
+        },
+        {
+          "functionName": "svg_path/svg_path/intersections.mjs:",
+          "samples": 2914
+        },
+        {
+          "functionName": "prelude.mjs:isEqual",
+          "samples": 1878
+        },
+        {
+          "functionName": "prelude.mjs:",
+          "samples": 1381
+        },
+        {
+          "functionName": ":(garbage collector)",
+          "samples": 1230
+        },
+        {
+          "functionName": "svg_path/svg_path.mjs:assert_split_segment_preserves_endpoints",
+          "samples": 1176
+        },
+        {
+          "functionName": "gleam_stdlib/dict.mjs:getHash",
+          "samples": 1147
+        },
+        {
+          "functionName": "gleam_stdlib/dict.mjs:insertIntoNode",
+          "samples": 677
+        },
+        {
+          "functionName": "svg_path/svg_path/internal/query.mjs:",
+          "samples": 512
+        },
+        {
+          "functionName": "gleam_stdlib/dict.mjs:hashObject",
+          "samples": 326
+        },
+        {
+          "functionName": "svg_path/svg_path.mjs:segment_to_bezier_data",
+          "samples": 301
+        }
+      ]
+    }
+  ]
+}

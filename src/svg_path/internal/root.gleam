@@ -213,6 +213,115 @@ pub fn evaluate_polynomial(coefficients: List(Float), at x: Float) -> Float {
   })
 }
 
+/// Find scalar Bézier roots in `[0, 1]` without coefficient-relative zero tests.
+///
+/// Derivative roots partition the Bernstein polynomial. Exact hits are retained;
+/// strict sign changes are bisected to floating-point parameter resolution.
+/// This fallback does not certify completeness for uncertain tangent contacts.
+/// Its caller must validate geometric residuals and must not interpret an empty
+/// result as proof of separation without independent control-polygon evidence.
+@internal
+pub fn bernstein_roots_with(
+  controls: List(Float),
+  options options: PolynomialOptions,
+) -> Result(List(Float), Error) {
+  case options.max_iterations <= 0 {
+    True -> Error(InvalidMaxIterations(options.max_iterations))
+    False -> bernstein_roots_valid(controls, options)
+  }
+}
+
+fn evaluate_bernstein(controls: List(Float), t: Float) -> Float {
+  case controls {
+    [] -> 0.0
+    [value] -> value
+    [_, ..rest] ->
+      evaluate_bernstein(
+        list.map2(controls, rest, fn(a, b) { a *. { 1.0 -. t } +. b *. t }),
+        t,
+      )
+  }
+}
+
+fn bernstein_roots_valid(
+  controls: List(Float),
+  options: PolynomialOptions,
+) -> Result(List(Float), Error) {
+  case controls {
+    [] | [_] -> Ok([])
+    [a, b] -> {
+      case number.is_zero(a), number.is_zero(b), same_sign(a, b) {
+        True, True, _ -> Ok([])
+        True, False, _ -> Ok([0.0])
+        False, True, _ -> Ok([1.0])
+        _, _, True -> Ok([])
+        _, _, False -> Ok([a /. { a -. b }])
+      }
+    }
+    [_, ..rest] -> {
+      // The positive degree factor does not affect derivative root locations.
+      let derivative = list.map2(controls, rest, fn(a, b) { b -. a })
+      use critical <- result.try(bernstein_roots_valid(derivative, options))
+      let boundaries = [
+        0.0,
+        ..list.append(strictly_inside(critical, 0.0, 1.0), [1.0])
+      ]
+      let exact =
+        list.filter(boundaries, fn(t) {
+          number.is_zero(evaluate_bernstein(controls, t))
+        })
+      use crossings <- result.try(bernstein_crossing_roots(
+        controls,
+        boundaries,
+        options,
+      ))
+      Ok(
+        list.append(exact, crossings)
+        |> list.map(number.normalize_zero)
+        |> list.sort(float.compare)
+        |> list.unique,
+      )
+    }
+  }
+}
+
+fn bernstein_crossing_roots(
+  controls: List(Float),
+  boundaries: List(Float),
+  options: PolynomialOptions,
+) -> Result(List(Float), Error) {
+  case boundaries {
+    [] | [_] -> Ok([])
+    [a, b, ..rest] -> {
+      let fa = evaluate_bernstein(controls, a)
+      let fb = evaluate_bernstein(controls, b)
+      use crossing <- result.try(
+        case !number.is_zero(fa) && !number.is_zero(fb) && !same_sign(fa, fb) {
+          False -> Ok([])
+          True -> {
+            use isolation <- result.try(
+              bisect_isolation_until(
+                fn(t) { evaluate_bernstein(controls, t) },
+                from: a,
+                to: b,
+                max_iterations: options.max_iterations,
+                certified: fn(_, _) { False },
+              ),
+            )
+            Ok([isolation.estimate])
+          }
+        },
+      )
+      use remaining <- result.try(bernstein_crossing_roots(
+        controls,
+        [b, ..rest],
+        options,
+      ))
+      Ok(list.append(crossing, remaining))
+    }
+  }
+}
+
 /// Differentiate power-basis coefficients ordered from highest power to the
 /// constant term.
 @internal

@@ -108,6 +108,12 @@ Bernstein residuals below `1e-20`, versus the requested `1e-12`. Thus these are
 not cases where coordinate precision makes the requested accuracy unattainable.
 See `boolean-crossing-witnesses.json`. No solver modification was made.
 
+The subsequent [root-finding investigation](CROSSING_ROOT_INVESTIGATION.md)
+reduces both failure families, reproduces a signed-zero duplicate on Erlang,
+and traces the later blockers exposed by an isolated experimental fallback.
+The later [Bernstein fix report](CROSSING_BERNSTEIN_FIX.md) records the
+production recovery and remaining downstream failures.
+
 ## Topology failures
 
 ### 69 and 172: CSG discards the arrangement's geometric ordering

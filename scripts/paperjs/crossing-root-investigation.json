@@ -1,0 +1,1226 @@
+{
+  "sourceSha256": {
+    "src/svg_path.gleam": "9c28f28073b67b7641f9e4abc517289397f32f6f0f4496f35f8ff8e4f6e15630",
+    "src/svg_path/internal/root.gleam": "293feb24d5f3b694873633b6b2609700f23739fec3ef79d8802e227be72da719",
+    "src/svg_path/csg.gleam": "4c895659c56e203fae2ff1c1a214c2a19d0c1cceda8442e6e291d7ec2b809e6a"
+  },
+  "scope": "All eight captured crossing witnesses; experimental scalar isolation only, no production changes.",
+  "results": [
+    {
+      "id": 103,
+      "line": {
+        "axis": "y",
+        "sign": -1,
+        "origin": 273.3127999999945
+      },
+      "values": [
+        7.635199999994541,
+        1.9887999999945123,
+        -5.4569682106375694e-12,
+        -5.4569682106375694e-12
+      ],
+      "coefficients": [
+        -1.668799999999976,
+        10.972800000000177,
+        -16.939200000000085,
+        7.635199999994541
+      ],
+      "relativeZeroThreshold": 1.6939200000000086e-11,
+      "critical": [
+        3.383509108341485,
+        0.9999999999999715
+      ],
+      "candidates": {
+        "0": [
+          {
+            "type": "ClassifiedRoot",
+            "isolation": {
+              "type": "RootIsolation",
+              "lower": 0.9999999994999714,
+              "estimate": 0.9999999999999715,
+              "upper": 0.9999999999999858
+            },
+            "kind": {
+              "type": "PositiveToPositive"
+            }
+          },
+          {
+            "type": "ClassifiedRoot",
+            "isolation": {
+              "type": "RootIsolation",
+              "lower": 0.9999999999999858,
+              "estimate": 1,
+              "upper": 1
+            },
+            "kind": {
+              "type": "PositiveToPositive"
+            }
+          }
+        ],
+        "type": "Ok"
+      },
+      "baseline": {
+        "0": {
+          "type": "CrossingMaxIterationsReached",
+          "estimate": 0.9999999999999715,
+          "value": -5.4569682106375694e-12
+        },
+        "type": "Error"
+      },
+      "moreIterations": {
+        "0": {
+          "type": "CrossingMaxIterationsReached",
+          "estimate": 0.9999999999999715,
+          "value": -5.4569682106375694e-12
+        },
+        "type": "Error"
+      },
+      "roots": [
+        {
+          "t": 0.9999990436442556,
+          "bernsteinResidual": -1.5781862917430177e-22,
+          "geometricResidual": 0
+        }
+      ]
+    },
+    {
+      "id": 107,
+      "line": {
+        "axis": "y",
+        "sign": -1,
+        "origin": 332.0799999999999
+      },
+      "values": [
+        -307.9200000000001,
+        -307.9200000000001,
+        0.000053268689669039304,
+        0
+      ],
+      "coefficients": [
+        -615.8401598060691,
+        923.7601598060692,
+        0,
+        -307.9200000000001
+      ],
+      "relativeZeroThreshold": 9.237601598060692e-10,
+      "critical": [
+        0.99999991350241,
+        0
+      ],
+      "candidates": {
+        "0": [
+          {
+            "type": "ClassifiedRoot",
+            "isolation": {
+              "type": "RootIsolation",
+              "lower": 0.99999991300241,
+              "estimate": 0.99999991350241,
+              "upper": 0.9999999140024101
+            },
+            "kind": {
+              "type": "NegativeToNegative"
+            }
+          },
+          {
+            "type": "ClassifiedRoot",
+            "isolation": {
+              "type": "RootIsolation",
+              "lower": 0.9999999995,
+              "estimate": 1,
+              "upper": 1
+            },
+            "kind": {
+              "type": "PositiveToNegative"
+            }
+          }
+        ],
+        "type": "Ok"
+      },
+      "baseline": {
+        "0": {
+          "type": "CrossingMaxIterationsReached",
+          "estimate": 0.99999991350241,
+          "value": 6.934897101018578e-12
+        },
+        "type": "Error"
+      },
+      "moreIterations": {
+        "0": {
+          "type": "CrossingMaxIterationsReached",
+          "estimate": 0.99999991350241,
+          "value": 6.934897101018578e-12
+        },
+        "type": "Error"
+      },
+      "roots": [
+        {
+          "t": 0.9999998270048149,
+          "bernsteinResidual": -1.7871931836675737e-21,
+          "geometricResidual": 0
+        },
+        {
+          "t": 1,
+          "bernsteinResidual": 0,
+          "geometricResidual": 0
+        }
+      ]
+    },
+    {
+      "id": 128,
+      "line": {
+        "axis": "x",
+        "sign": 1,
+        "origin": 529.402539303881
+      },
+      "values": [
+        -41.520432561286384,
+        -41.520432561286384,
+        5.331912689143792e-11,
+        5.331912689143792e-11
+      ],
+      "coefficients": [
+        -83.04086512267963,
+        124.56129768401911,
+        0,
+        -41.520432561286384
+      ],
+      "relativeZeroThreshold": 1.2456129768401912e-10,
+      "critical": [
+        0.9999999999999972,
+        0
+      ],
+      "candidates": {
+        "0": [
+          {
+            "type": "ClassifiedRoot",
+            "isolation": {
+              "type": "RootIsolation",
+              "lower": 0.9999999994999972,
+              "estimate": 0.9999999999999972,
+              "upper": 0.9999999999999987
+            },
+            "kind": {
+              "type": "NegativeToNegative"
+            }
+          },
+          {
+            "type": "ClassifiedRoot",
+            "isolation": {
+              "type": "RootIsolation",
+              "lower": 0.9999999999999987,
+              "estimate": 1,
+              "upper": 1
+            },
+            "kind": {
+              "type": "NegativeToNegative"
+            }
+          }
+        ],
+        "type": "Ok"
+      },
+      "baseline": {
+        "0": {
+          "type": "CrossingMaxIterationsReached",
+          "estimate": 0.9999999999999972,
+          "value": 5.331912689143792e-11
+        },
+        "type": "Error"
+      },
+      "moreIterations": {
+        "0": {
+          "type": "CrossingMaxIterationsReached",
+          "estimate": 0.9999999999999972,
+          "value": 5.331912689143792e-11
+        },
+        "type": "Error"
+      },
+      "roots": [
+        {
+          "t": 0.9999993457404852,
+          "bernsteinResidual": 6.371959666603504e-21,
+          "geometricResidual": 0
+        }
+      ]
+    },
+    {
+      "id": 129,
+      "line": {
+        "axis": "x",
+        "sign": 1,
+        "origin": 529.402539303881
+      },
+      "values": [
+        -41.520432561286384,
+        -41.520432561286384,
+        5.331912689143792e-11,
+        5.331912689143792e-11
+      ],
+      "coefficients": [
+        -83.04086512267963,
+        124.56129768401911,
+        0,
+        -41.520432561286384
+      ],
+      "relativeZeroThreshold": 1.2456129768401912e-10,
+      "critical": [
+        0.9999999999999972,
+        0
+      ],
+      "candidates": {
+        "0": [
+          {
+            "type": "ClassifiedRoot",
+            "isolation": {
+              "type": "RootIsolation",
+              "lower": 0.9999999994999972,
+              "estimate": 0.9999999999999972,
+              "upper": 0.9999999999999987
+            },
+            "kind": {
+              "type": "NegativeToNegative"
+            }
+          },
+          {
+            "type": "ClassifiedRoot",
+            "isolation": {
+              "type": "RootIsolation",
+              "lower": 0.9999999999999987,
+              "estimate": 1,
+              "upper": 1
+            },
+            "kind": {
+              "type": "NegativeToNegative"
+            }
+          }
+        ],
+        "type": "Ok"
+      },
+      "baseline": {
+        "0": {
+          "type": "CrossingMaxIterationsReached",
+          "estimate": 0.9999999999999972,
+          "value": 5.331912689143792e-11
+        },
+        "type": "Error"
+      },
+      "moreIterations": {
+        "0": {
+          "type": "CrossingMaxIterationsReached",
+          "estimate": 0.9999999999999972,
+          "value": 5.331912689143792e-11
+        },
+        "type": "Error"
+      },
+      "roots": [
+        {
+          "t": 0.9999993457404852,
+          "bernsteinResidual": 6.371959666603504e-21,
+          "geometricResidual": 0
+        }
+      ]
+    },
+    {
+      "id": 130,
+      "line": {
+        "axis": "y",
+        "sign": -1,
+        "origin": 381.03840618333726
+      },
+      "values": [
+        81.20239975584343,
+        81.20239975584343,
+        -4.217781679471955e-11,
+        -4.217781679471955e-11
+      ],
+      "coefficients": [
+        162.40479951177127,
+        -243.60719926765682,
+        0,
+        81.20239975584343
+      ],
+      "relativeZeroThreshold": 2.436071992676568e-10,
+      "critical": [
+        0,
+        0.9999999999999997
+      ],
+      "candidates": {
+        "0": [
+          {
+            "type": "ClassifiedRoot",
+            "isolation": {
+              "type": "RootIsolation",
+              "lower": 0.9999999994999996,
+              "estimate": 0.9999999999999997,
+              "upper": 0.9999999999999998
+            },
+            "kind": {
+              "type": "PositiveToPositive"
+            }
+          },
+          {
+            "type": "ClassifiedRoot",
+            "isolation": {
+              "type": "RootIsolation",
+              "lower": 0.9999999999999998,
+              "estimate": 1,
+              "upper": 1
+            },
+            "kind": {
+              "type": "PositiveToPositive"
+            }
+          }
+        ],
+        "type": "Ok"
+      },
+      "baseline": {
+        "0": {
+          "type": "CrossingMaxIterationsReached",
+          "estimate": 0.9999999999999997,
+          "value": -4.217781679471955e-11
+        },
+        "type": "Error"
+      },
+      "moreIterations": {
+        "0": {
+          "type": "CrossingMaxIterationsReached",
+          "estimate": 0.9999999999999997,
+          "value": -4.217781679471955e-11
+        },
+        "type": "Error"
+      },
+      "roots": [
+        {
+          "t": 0.9999995839006389,
+          "bernsteinResidual": 8.183368885820994e-21,
+          "geometricResidual": 0
+        }
+      ]
+    },
+    {
+      "id": 131,
+      "line": {
+        "axis": "y",
+        "sign": -1,
+        "origin": 381.03840618333726
+      },
+      "values": [
+        81.20239975584343,
+        81.20239975584343,
+        -4.217781679471955e-11,
+        -4.217781679471955e-11
+      ],
+      "coefficients": [
+        162.40479951177127,
+        -243.60719926765682,
+        0,
+        81.20239975584343
+      ],
+      "relativeZeroThreshold": 2.436071992676568e-10,
+      "critical": [
+        0,
+        0.9999999999999997
+      ],
+      "candidates": {
+        "0": [
+          {
+            "type": "ClassifiedRoot",
+            "isolation": {
+              "type": "RootIsolation",
+              "lower": 0.9999999994999996,
+              "estimate": 0.9999999999999997,
+              "upper": 0.9999999999999998
+            },
+            "kind": {
+              "type": "PositiveToPositive"
+            }
+          },
+          {
+            "type": "ClassifiedRoot",
+            "isolation": {
+              "type": "RootIsolation",
+              "lower": 0.9999999999999998,
+              "estimate": 1,
+              "upper": 1
+            },
+            "kind": {
+              "type": "PositiveToPositive"
+            }
+          }
+        ],
+        "type": "Ok"
+      },
+      "baseline": {
+        "0": {
+          "type": "CrossingMaxIterationsReached",
+          "estimate": 0.9999999999999997,
+          "value": -4.217781679471955e-11
+        },
+        "type": "Error"
+      },
+      "moreIterations": {
+        "0": {
+          "type": "CrossingMaxIterationsReached",
+          "estimate": 0.9999999999999997,
+          "value": -4.217781679471955e-11
+        },
+        "type": "Error"
+      },
+      "roots": [
+        {
+          "t": 0.9999995839006389,
+          "bernsteinResidual": 8.183368885820994e-21,
+          "geometricResidual": 0
+        }
+      ]
+    },
+    {
+      "id": 168,
+      "line": {
+        "axis": "x",
+        "sign": 1,
+        "origin": 450.67092429122897
+      },
+      "values": [
+        29.195384965872563,
+        14.597480722440139,
+        -2.97859514830634e-11,
+        -2.97859514830634e-11
+      ],
+      "coefficients": [
+        14.597057201507596,
+        0.0012705628874982722,
+        -43.79371273029727,
+        29.195384965872563
+      ],
+      "relativeZeroThreshold": 4.379371273029727e-11,
+      "critical": [
+        -1.0000580282664664,
+        0.9999999999999941
+      ],
+      "candidates": {
+        "0": [
+          {
+            "type": "ClassifiedRoot",
+            "isolation": {
+              "type": "RootIsolation",
+              "lower": 0.9999999994999941,
+              "estimate": 0.9999999999999941,
+              "upper": 0.9999999999999971
+            },
+            "kind": {
+              "type": "PositiveToPositive"
+            }
+          },
+          {
+            "type": "ClassifiedRoot",
+            "isolation": {
+              "type": "RootIsolation",
+              "lower": 0.9999999999999971,
+              "estimate": 1,
+              "upper": 1
+            },
+            "kind": {
+              "type": "PositiveToPositive"
+            }
+          }
+        ],
+        "type": "Ok"
+      },
+      "baseline": {
+        "0": {
+          "type": "CrossingMaxIterationsReached",
+          "estimate": 0.9999999999999941,
+          "value": -2.97859514830634e-11
+        },
+        "type": "Error"
+      },
+      "moreIterations": {
+        "0": {
+          "type": "CrossingMaxIterationsReached",
+          "estimate": 0.9999999999999941,
+          "value": -2.97859514830634e-11
+        },
+        "type": "Error"
+      },
+      "roots": [
+        {
+          "t": 0.9999991752805898,
+          "bernsteinResidual": 1.6594632492748883e-21,
+          "geometricResidual": 0
+        }
+      ]
+    },
+    {
+      "id": 169,
+      "line": {
+        "axis": "x",
+        "sign": 1,
+        "origin": 450.67092429122897
+      },
+      "values": [
+        29.195384965872563,
+        14.597480722440139,
+        -2.97859514830634e-11,
+        -2.97859514830634e-11
+      ],
+      "coefficients": [
+        14.597057201507596,
+        0.0012705628874982722,
+        -43.79371273029727,
+        29.195384965872563
+      ],
+      "relativeZeroThreshold": 4.379371273029727e-11,
+      "critical": [
+        -1.0000580282664664,
+        0.9999999999999941
+      ],
+      "candidates": {
+        "0": [
+          {
+            "type": "ClassifiedRoot",
+            "isolation": {
+              "type": "RootIsolation",
+              "lower": 0.9999999994999941,
+              "estimate": 0.9999999999999941,
+              "upper": 0.9999999999999971
+            },
+            "kind": {
+              "type": "PositiveToPositive"
+            }
+          },
+          {
+            "type": "ClassifiedRoot",
+            "isolation": {
+              "type": "RootIsolation",
+              "lower": 0.9999999999999971,
+              "estimate": 1,
+              "upper": 1
+            },
+            "kind": {
+              "type": "PositiveToPositive"
+            }
+          }
+        ],
+        "type": "Ok"
+      },
+      "baseline": {
+        "0": {
+          "type": "CrossingMaxIterationsReached",
+          "estimate": 0.9999999999999941,
+          "value": -2.97859514830634e-11
+        },
+        "type": "Error"
+      },
+      "moreIterations": {
+        "0": {
+          "type": "CrossingMaxIterationsReached",
+          "estimate": 0.9999999999999941,
+          "value": -2.97859514830634e-11
+        },
+        "type": "Error"
+      },
+      "roots": [
+        {
+          "t": 0.9999991752805898,
+          "bernsteinResidual": 1.6594632492748883e-21,
+          "geometricResidual": 0
+        }
+      ]
+    }
+  ],
+  "reductions": [
+    {
+      "reversed": false,
+      "values": [
+        1,
+        1,
+        -1e-11,
+        -1e-11
+      ],
+      "coefficients": [
+        2.00000000002,
+        -3.00000000003,
+        0,
+        1
+      ],
+      "relativeZeroThreshold": 3.00000000003e-12,
+      "critical": [
+        0,
+        1
+      ],
+      "candidates": {
+        "0": [
+          {
+            "type": "ClassifiedRoot",
+            "isolation": {
+              "type": "RootIsolation",
+              "lower": 0.9999981736764312,
+              "estimate": 0.9999981741420925,
+              "upper": 0.9999981746077538
+            },
+            "kind": {
+              "type": "PositiveToNegative"
+            }
+          }
+        ],
+        "type": "Ok"
+      },
+      "baseline": {
+        "0": [
+          0.9999981741420925
+        ],
+        "type": "Ok"
+      },
+      "moreIterations": {
+        "0": [
+          0.9999981741420925
+        ],
+        "type": "Ok"
+      },
+      "roots": [
+        {
+          "t": 0.9999981742570305,
+          "bernsteinResidual": 2.22909827005269e-22,
+          "geometricResidual": 0
+        }
+      ]
+    },
+    {
+      "reversed": true,
+      "values": [
+        -1e-11,
+        -1e-11,
+        1,
+        1
+      ],
+      "coefficients": [
+        -2.00000000002,
+        3.00000000003,
+        0,
+        -1e-11
+      ],
+      "relativeZeroThreshold": 3.00000000003e-12,
+      "critical": [
+        1,
+        0
+      ],
+      "candidates": {
+        "0": [
+          {
+            "type": "ClassifiedRoot",
+            "isolation": {
+              "type": "RootIsolation",
+              "lower": 0.0000018253922462463379,
+              "estimate": 0.0000018258579075336456,
+              "upper": 0.0000018263235688209534
+            },
+            "kind": {
+              "type": "NegativeToPositive"
+            }
+          }
+        ],
+        "type": "Ok"
+      },
+      "baseline": {
+        "0": [
+          0.0000018258579075336456
+        ],
+        "type": "Ok"
+      },
+      "moreIterations": {
+        "0": [
+          0.0000018258579075336456
+        ],
+        "type": "Ok"
+      },
+      "roots": [
+        {
+          "t": 0.0000018257429694542266,
+          "bernsteinResidual": 8.077935669463161e-28,
+          "geometricResidual": 0
+        }
+      ]
+    },
+    {
+      "reversed": false,
+      "values": [
+        -1000,
+        -1000,
+        0.0001,
+        0
+      ],
+      "coefficients": [
+        -2000.0003,
+        3000.0002999999997,
+        0,
+        -1000
+      ],
+      "relativeZeroThreshold": 3.0000002999999997e-9,
+      "critical": [
+        0.9999999500000074,
+        0
+      ],
+      "candidates": {
+        "0": [
+          {
+            "type": "ClassifiedRoot",
+            "isolation": {
+              "type": "RootIsolation",
+              "lower": 0.9999999495000074,
+              "estimate": 0.9999999500000074,
+              "upper": 0.9999999505000075
+            },
+            "kind": {
+              "type": "NegativeToNegative"
+            }
+          },
+          {
+            "type": "ClassifiedRoot",
+            "isolation": {
+              "type": "RootIsolation",
+              "lower": 0.9999999995,
+              "estimate": 1,
+              "upper": 1
+            },
+            "kind": {
+              "type": "PositiveToNegative"
+            }
+          }
+        ],
+        "type": "Ok"
+      },
+      "baseline": {
+        "0": {
+          "type": "CrossingMaxIterationsReached",
+          "estimate": 0.9999999500000074,
+          "value": 7.499998745878244e-12
+        },
+        "type": "Error"
+      },
+      "moreIterations": {
+        "0": {
+          "type": "CrossingMaxIterationsReached",
+          "estimate": 0.9999999500000074,
+          "value": 7.499998745878244e-12
+        },
+        "type": "Error"
+      },
+      "roots": [
+        {
+          "t": 0.9999999000000134,
+          "bernsteinResidual": 1.2594131787675286e-20,
+          "geometricResidual": 0
+        },
+        {
+          "t": 1,
+          "bernsteinResidual": 0,
+          "geometricResidual": 0
+        }
+      ]
+    },
+    {
+      "reversed": true,
+      "values": [
+        0,
+        0.0001,
+        -1000,
+        -1000
+      ],
+      "coefficients": [
+        2000.0003000000002,
+        -3000.0006,
+        0.00030000000000000003,
+        0
+      ],
+      "relativeZeroThreshold": 3.0000005999999998e-9,
+      "critical": [
+        4.9999992500001135e-8,
+        0.9999999999999997
+      ],
+      "candidates": {
+        "0": [
+          {
+            "type": "ClassifiedRoot",
+            "isolation": {
+              "type": "RootIsolation",
+              "lower": 0,
+              "estimate": 0,
+              "upper": 5e-10
+            },
+            "kind": {
+              "type": "NegativeToPositive"
+            }
+          },
+          {
+            "type": "ClassifiedRoot",
+            "isolation": {
+              "type": "RootIsolation",
+              "lower": 4.949999250000114e-8,
+              "estimate": 4.9999992500001135e-8,
+              "upper": 5.049999250000113e-8
+            },
+            "kind": {
+              "type": "NegativeToNegative"
+            }
+          }
+        ],
+        "type": "Ok"
+      },
+      "baseline": {
+        "0": {
+          "type": "CrossingMaxIterationsReached",
+          "estimate": 4.9999992500001135e-8,
+          "value": 7.499998750000208e-12
+        },
+        "type": "Error"
+      },
+      "moreIterations": {
+        "0": {
+          "type": "CrossingMaxIterationsReached",
+          "estimate": 4.9999992500001135e-8,
+          "value": 7.499998750000208e-12
+        },
+        "type": "Error"
+      },
+      "roots": [
+        {
+          "t": 0,
+          "bernsteinResidual": 0,
+          "geometricResidual": 0
+        },
+        {
+          "t": 9.999998666666857e-8,
+          "bernsteinResidual": 1.6155871338926322e-27,
+          "geometricResidual": -1.6155871338926322e-27
+        }
+      ]
+    }
+  ],
+  "translatedReductions": [
+    {
+      "coords": [
+        7.6,
+        2,
+        0,
+        0
+      ],
+      "values": [
+        7.599999999995,
+        1.999999999995,
+        -5e-12,
+        -5e-12
+      ],
+      "coefficients": [
+        -1.5999999999999996,
+        10.799999999999999,
+        -16.799999999999997,
+        7.599999999995
+      ],
+      "relativeZeroThreshold": 1.6799999999999996e-11,
+      "critical": [
+        3.5,
+        1
+      ],
+      "candidates": {
+        "0": [
+          {
+            "type": "ClassifiedRoot",
+            "isolation": {
+              "type": "RootIsolation",
+              "lower": 0.9999999995,
+              "estimate": 1,
+              "upper": 1
+            },
+            "kind": {
+              "type": "PositiveToPositive"
+            }
+          }
+        ],
+        "type": "Ok"
+      },
+      "baseline": {
+        "0": [
+          0.9999990463256836
+        ],
+        "type": "Ok"
+      },
+      "moreIterations": {
+        "0": [
+          0.9999990463256836
+        ],
+        "type": "Ok"
+      },
+      "roots": [
+        {
+          "t": 0.999999087129182,
+          "bernsteinResidual": -1.7349830620551324e-22,
+          "geometricResidual": -4.972559093858446e-22
+        }
+      ]
+    },
+    {
+      "coords": [
+        8,
+        1.9,
+        0,
+        0
+      ],
+      "values": [
+        7.999999999995,
+        1.899999999995,
+        -5e-12,
+        -5e-12
+      ],
+      "coefficients": [
+        -2.3000000000000007,
+        12.600000000000001,
+        -18.299999999999997,
+        7.999999999995
+      ],
+      "relativeZeroThreshold": 1.8299999999999998e-11,
+      "critical": [
+        2.652173913043478,
+        0.9999999999999997
+      ],
+      "candidates": {
+        "0": [
+          {
+            "type": "ClassifiedRoot",
+            "isolation": {
+              "type": "RootIsolation",
+              "lower": 0.9999999994999996,
+              "estimate": 0.9999999999999997,
+              "upper": 0.9999999999999998
+            },
+            "kind": {
+              "type": "PositiveToPositive"
+            }
+          },
+          {
+            "type": "ClassifiedRoot",
+            "isolation": {
+              "type": "RootIsolation",
+              "lower": 0.9999999999999998,
+              "estimate": 1,
+              "upper": 1
+            },
+            "kind": {
+              "type": "PositiveToPositive"
+            }
+          }
+        ],
+        "type": "Ok"
+      },
+      "baseline": {
+        "0": {
+          "type": "CrossingMaxIterationsReached",
+          "estimate": 0.9999999999999997,
+          "value": -5e-12
+        },
+        "type": "Error"
+      },
+      "moreIterations": {
+        "0": {
+          "type": "CrossingMaxIterationsReached",
+          "estimate": 0.9999999999999997,
+          "value": -5e-12
+        },
+        "type": "Error"
+      },
+      "roots": [
+        {
+          "t": 0.9999990634143654,
+          "bernsteinResidual": -1.0057029908481635e-23,
+          "geometricResidual": -7.373943575869446e-23
+        }
+      ]
+    },
+    {
+      "coords": [
+        30,
+        15,
+        0,
+        0
+      ],
+      "values": [
+        29.999999999995,
+        14.999999999995,
+        -5e-12,
+        -5e-12
+      ],
+      "coefficients": [
+        15,
+        0,
+        -45,
+        29.999999999995
+      ],
+      "relativeZeroThreshold": 4.5e-11,
+      "critical": [
+        -1,
+        1
+      ],
+      "candidates": {
+        "0": [
+          {
+            "type": "ClassifiedRoot",
+            "isolation": {
+              "type": "RootIsolation",
+              "lower": 0.9999999995,
+              "estimate": 1,
+              "upper": 1
+            },
+            "kind": {
+              "type": "PositiveToPositive"
+            }
+          }
+        ],
+        "type": "Ok"
+      },
+      "baseline": {
+        "0": [
+          0.9999996423721313
+        ],
+        "type": "Ok"
+      },
+      "moreIterations": {
+        "0": [
+          0.9999996423721313
+        ],
+        "type": "Ok"
+      },
+      "roots": [
+        {
+          "t": 0.9999996666666482,
+          "bernsteinResidual": -1.2667867184466146e-21,
+          "geometricResidual": -1.344288856640145e-21
+        }
+      ]
+    },
+    {
+      "coords": [
+        7.6,
+        1.9,
+        0,
+        0
+      ],
+      "values": [
+        7.599999999995,
+        1.899999999995,
+        -5e-12,
+        -5e-12
+      ],
+      "coefficients": [
+        -1.9000000000000004,
+        11.399999999999999,
+        -17.099999999999998,
+        7.599999999995
+      ],
+      "relativeZeroThreshold": 1.7099999999999998e-11,
+      "critical": [
+        2.9999999999999982,
+        1.0000000000000002
+      ],
+      "candidates": {
+        "0": [
+          {
+            "type": "ClassifiedRoot",
+            "isolation": {
+              "type": "RootIsolation",
+              "lower": 0.9999999995,
+              "estimate": 1,
+              "upper": 1
+            },
+            "kind": {
+              "type": "PositiveToPositive"
+            }
+          }
+        ],
+        "type": "Ok"
+      },
+      "baseline": {
+        "0": [
+          0.9999990463256836
+        ],
+        "type": "Ok"
+      },
+      "moreIterations": {
+        "0": [
+          0.9999990463256836
+        ],
+        "type": "Ok"
+      },
+      "roots": [
+        {
+          "t": 0.9999990634143346,
+          "bernsteinResidual": -2.8228790483400836e-22,
+          "geometricResidual": -7.373943575869446e-23
+        }
+      ]
+    }
+  ],
+  "subsequent128": {
+    "values": [
+      30.943504188286397,
+      30.943504188286397,
+      3.6493474908638746e-11,
+      3.6493474908638746e-11
+    ],
+    "coefficients": [
+      61.88700837649992,
+      -92.83051256474971,
+      0,
+      30.943504188286397
+    ],
+    "relativeZeroThreshold": 9.283051256474971e-11,
+    "critical": [
+      0,
+      0.9999999999999981
+    ],
+    "candidates": {
+      "0": [
+        {
+          "type": "ClassifiedRoot",
+          "isolation": {
+            "type": "RootIsolation",
+            "lower": 0.9999999994999981,
+            "estimate": 0.9999999999999981,
+            "upper": 0.9999999999999991
+          },
+          "kind": {
+            "type": "PositiveToPositive"
+          }
+        },
+        {
+          "type": "ClassifiedRoot",
+          "isolation": {
+            "type": "RootIsolation",
+            "lower": 0.9999999999999991,
+            "estimate": 1,
+            "upper": 1
+          },
+          "kind": {
+            "type": "PositiveToPositive"
+          }
+        }
+      ],
+      "type": "Ok"
+    },
+    "baseline": {
+      "0": {
+        "type": "CrossingMaxIterationsReached",
+        "estimate": 0.9999999999999981,
+        "value": 3.6493474908638746e-11
+      },
+      "type": "Error"
+    },
+    "moreIterations": {
+      "0": {
+        "type": "CrossingMaxIterationsReached",
+        "estimate": 0.9999999999999981,
+        "value": 3.6493474908638746e-11
+      },
+      "type": "Error"
+    },
+    "roots": []
+  }
+}

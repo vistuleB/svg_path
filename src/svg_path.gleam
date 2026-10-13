@@ -2794,22 +2794,91 @@ fn segment_line_crossings_with(
     options.signed_line_distance_tolerance
     *. float_square_root(distance_squared(normal, Point(0.0, 0.0)))
 
-  use roots <- result.try(segment_line_classified_roots(
-    segment,
-    point,
-    normal,
-    signed_line_distance_tolerance,
-    options.max_iterations,
-  ))
+  let crossing_function = line_crossing_function(point, normal)
+  let original = {
+    use roots <- result.try(segment_line_classified_roots(
+      segment,
+      point,
+      normal,
+      signed_line_distance_tolerance,
+      options.max_iterations,
+    ))
+    polish_line_crossing_roots(
+      segment,
+      crossing_function,
+      roots,
+      options,
+      signed_line_distance_tolerance,
+      crossings: [],
+    )
+  }
+  case original {
+    Error(CrossingMaxIterationsReached(..) as error) ->
+      recover_bernstein_line_crossings(
+        segment,
+        crossing_function,
+        options,
+        signed_line_distance_tolerance,
+        error,
+      )
+    _ -> original
+  }
+}
 
-  polish_line_crossing_roots(
-    segment,
-    line_crossing_function(point, normal),
-    roots,
-    options,
-    signed_line_distance_tolerance,
-    crossings: [],
-  )
+// Retry rejected power-basis candidates against the projected Bézier controls.
+// Successful queries and arc solving keep their existing behavior. In
+// particular, do not snap a near-endpoint extremum onto an endpoint: a separate
+// interior root can lie between them.
+fn recover_bernstein_line_crossings(
+  segment: Segment,
+  f: fn(Point) -> Float,
+  options: CrossingOptions,
+  tolerance: Float,
+  original_error: Error,
+) -> Result(List(Float), Error) {
+  let controls = case segment {
+    Line(start:, end:) -> [f(start), f(end)]
+    QuadraticBezier(start:, control:, end:) -> [f(start), f(control), f(end)]
+    CubicBezier(start:, control1:, control2:, end:) -> [
+      f(start),
+      f(control1),
+      f(control2),
+      f(end),
+    ]
+    Arc(..) -> []
+  }
+  let separated =
+    list.all(controls, fn(value) { value >. tolerance })
+    || list.all(controls, fn(value) { value <. 0.0 -. tolerance })
+  case controls {
+    [] -> Error(original_error)
+    _ if separated -> Ok([])
+    _ -> {
+      use roots <- result.try(
+        root.bernstein_roots_with(
+          controls,
+          options: root.PolynomialOptions(options.max_iterations),
+        )
+        |> result.map_error(crossing_root_error),
+      )
+      case roots {
+        [] -> Error(original_error)
+        _ -> {
+          use values <- result.try(
+            list.try_map(roots, fn(t) { crossing_value(segment, f, t) }),
+          )
+          case
+            list.all(values, fn(value) {
+              float.absolute_value(value) <=. tolerance
+            })
+          {
+            True -> Ok(roots)
+            False -> Error(original_error)
+          }
+        }
+      }
+    }
+  }
 }
 
 /// Evaluate a path at a path parameter.
