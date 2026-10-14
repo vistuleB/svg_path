@@ -3840,51 +3840,45 @@ fn line_segment_intersections(
   let line_parameter_tolerance =
     parameter_tolerance_for_chord(line_direction, options.tolerance)
 
-  case segment_lies_on_line(segment, line_start, line_end, options.tolerance) {
-    True -> Error(OverlappingSegments)
-    False -> {
+  case
+    overlap_detection.collinear_parameters(
+      segment,
+      line_start,
+      line_end,
+      options.tolerance,
+    )
+  {
+    Some(parameters) ->
       case segment {
-        Line(start: segment_start, end: segment_end) -> {
-          case
-            line_segments_are_collinear(
-              line_start,
-              line_end,
-              segment_start,
-              segment_end,
-              options.tolerance,
-            )
-          {
-            True ->
-              collinear_line_point_intersections(
-                line_start,
-                line_end,
-                segment_start,
-                segment_end,
-                line_is_left,
-                line_parameter_tolerance,
-              )
-            False ->
-              line_segment_intersections_by_ray(
-                line_start,
-                line_end,
-                line_is_left,
-                segment,
-                options,
-                line_parameter_tolerance,
-              )
-          }
-        }
+        Line(start: segment_start, end: segment_end) ->
+          collinear_line_point_intersections(
+            line_start,
+            line_end,
+            segment_start,
+            segment_end,
+            line_is_left,
+            line_parameter_tolerance,
+          )
         _ ->
-          line_segment_intersections_by_ray(
+          collinear_curve_point_intersections(
             line_start,
             line_end,
             line_is_left,
             segment,
-            options,
+            parameters,
+            options.tolerance,
             line_parameter_tolerance,
           )
       }
-    }
+    None ->
+      line_segment_intersections_by_ray(
+        line_start,
+        line_end,
+        line_is_left,
+        segment,
+        options,
+        line_parameter_tolerance,
+      )
   }
 }
 
@@ -3944,30 +3938,6 @@ fn line_segment_intersections_by_ray(
       )
     }
   }
-}
-
-fn line_segments_are_collinear(
-  line_start: Point,
-  line_end: Point,
-  segment_start: Point,
-  segment_end: Point,
-  tolerance: Float,
-) -> Bool {
-  let direction = point_difference(line_end, line_start)
-  let direction_length = distance(Point(0.0, 0.0), direction)
-  direction_length >. 0.0
-  && float.absolute_value(cross(
-    direction,
-    point_difference(segment_start, line_start),
-  ))
-  /. direction_length
-  <=. tolerance
-  && float.absolute_value(cross(
-    direction,
-    point_difference(segment_end, line_start),
-  ))
-  /. direction_length
-  <=. tolerance
 }
 
 fn collinear_line_point_intersections(
@@ -6138,67 +6108,64 @@ fn boxes_overlap(
   && left.max.y +. tolerance >=. right.min.y
 }
 
-fn segment_lies_on_line(
+// Compare actual curve extrema, not the (potentially much larger) control hull.
+fn collinear_curve_point_intersections(
+  line_start: Point,
+  line_end: Point,
+  line_is_left: Bool,
   segment: Segment,
-  line_start: Point,
-  line_end: Point,
+  parameters: List(Float),
   tolerance: Float,
-) -> Bool {
-  let direction = point_difference(line_end, line_start)
-  let direction_length = distance(Point(0.0, 0.0), direction)
-
-  case direction_length <=. 0.0, segment_defining_points(segment) {
-    True, _ -> False
-    False, None -> False
-    False, Some(points) -> {
-      list.all(points, fn(point) {
-        float.absolute_value(cross(
-          direction,
-          point_difference(point, line_start),
-        ))
-        /. direction_length
-        <=. tolerance
-      })
-      && segment_projection_overlaps_line(
-        points,
-        line_start,
-        line_end,
-        tolerance,
-      )
-    }
-  }
-}
-
-fn segment_projection_overlaps_line(
-  points: List(Point),
-  line_start: Point,
-  line_end: Point,
-  tolerance: Float,
-) -> Bool {
-  case points {
-    [] -> False
-    [first, ..rest] -> {
-      let first_t = line_projection_t(first, line_start, line_end)
-      let #(min_t, max_t) =
-        list.fold(rest, #(first_t, first_t), fn(range, point) {
-          let #(min_t, max_t) = range
-          let t = line_projection_t(point, line_start, line_end)
-
-          #(float.min(min_t, t), float.max(max_t, t))
-        })
-
-      float.min(1.0, max_t) -. float.max(0.0, min_t) >. tolerance
-    }
-  }
-}
-
-fn segment_defining_points(segment: Segment) -> Option(List(Point)) {
-  case segment {
-    Line(start:, end:) -> Some([start, end])
-    QuadraticBezier(start:, control:, end:) -> Some([start, control, end])
-    CubicBezier(start:, control1:, control2:, end:) ->
-      Some([start, control1, control2, end])
-    Arc(..) -> None
+  parameter_tolerance: Float,
+) -> Result(List(SegmentIntersection), svg_path.Error) {
+  use positions <- result.try(
+    list.try_map(parameters, fn(t) {
+      use p <- result.try(svg_path.segment_point(segment, at: t))
+      Ok(line_projection_t(p, line_start, line_end))
+    }),
+  )
+  // The boundary inventory always includes both original endpoints.
+  let assert [first, ..rest] = positions
+  let minimum = list.fold(rest, first, float.min)
+  let maximum = list.fold(rest, first, float.max)
+  let low = float.max(0.0, minimum)
+  let high = float.min(1.0, maximum)
+  case high -. low >. parameter_tolerance {
+    True -> Error(OverlappingSegments)
+    False ->
+      case high <. low -. parameter_tolerance {
+        True -> Ok([])
+        False -> {
+          let line_t = clamp01({ low +. high } /. 2.0)
+          let p = interpolate(line_start, line_end, line_t)
+          // At a scalar extremum, coordinate-root refinement is ill-conditioned.
+          // Prefer the known boundary parameters when they realize this contact.
+          use boundaries <- result.try(
+            list.try_map(parameters, fn(t) {
+              use at <- result.try(svg_path.segment_point(segment, at: t))
+              Ok(#(t, distance(at, p)))
+            }),
+          )
+          let contacts =
+            boundaries
+            |> list.filter(fn(boundary) { boundary.1 <=. tolerance })
+            |> list.map(fn(boundary) { boundary.0 })
+          use matches <- result.try(case contacts {
+            [] -> overlap_detection.point_parameters(segment, p, tolerance)
+            _ -> Ok(contacts)
+          })
+          Ok(
+            list.map(matches, fn(t) {
+              case line_is_left {
+                True ->
+                  SegmentIntersection(left_t: line_t, right_t: t, point: p)
+                False ->
+                  SegmentIntersection(left_t: t, right_t: line_t, point: p)
+              }
+            }),
+          )
+        }
+      }
   }
 }
 

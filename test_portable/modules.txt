@@ -46,3 +46,5 @@ svg_path_large_construction_test.gleam
 svg_path_parse_tokenizer_stack_test.gleam
 svg_path_parse_dispatch_stack_test.gleam
 svg_path_paper_boolean_tangent_test.gleam
+
+svg_path_flobezier_overlap_test.gleam

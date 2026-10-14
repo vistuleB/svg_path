@@ -6,6 +6,7 @@ import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
 import svg_path
+import svg_path/bezier
 import svg_path/internal/number
 import svg_path/internal/query
 import svg_path/point
@@ -258,7 +259,8 @@ fn insert_overlap_loop(
 /// Find sampled overlap intervals proposed by endpoint matches.
 ///
 /// This sampled overlap detector assumes non-degenerate segments and that every
-/// overlap boundary is an endpoint of at least one input segment. Every pair
+/// overlap boundary is an endpoint of at least one input segment, except for
+/// collinear polynomial segments where interior turning points are included. Every pair
 /// of endpoint matches within `tolerance` proposes an interval. Matches include
 /// explicit target endpoints and roots of both coordinate equations, alongside
 /// the closest projection. Interior
@@ -313,7 +315,17 @@ pub fn detect_with_samples(
             )
           {
             Ok(merged) -> Ok(merged)
-            Error(Nil) -> Ok([])
+            Error(Nil) ->
+              case collinear_boundaries(left, right, tolerance) {
+                // Conflicting traversal branches cannot be represented by the
+                // detector's single-valued correspondence. Never erase them.
+                Some(#(a, b)) ->
+                  case list.length(a) > 2 || list.length(b) > 2 {
+                    True -> Error(svg_path.NonAffineOverlapCorrespondence)
+                    False -> Ok([])
+                  }
+                _ -> Ok([])
+              }
           }
       }
     }
@@ -544,35 +556,107 @@ fn endpoint_projections(
   right: svg_path.Segment,
   tolerance: Float,
 ) -> Result(List(EndpointProjection), svg_path.Error) {
-  use left_start <- result.try(endpoint_projection_alternatives(
+  let #(left_parameters, right_parameters) = case
+    collinear_boundaries(left, right, tolerance)
+  {
+    Some(parameters) -> parameters
+    None -> #([0.0, 1.0], [0.0, 1.0])
+  }
+  use left_matches <- result.try(boundary_projections(
     LeftEndpoint,
-    0.0,
-    svg_path.segment_start(left),
-    right,
-    tolerance,
-  ))
-  use left_end <- result.try(endpoint_projection_alternatives(
-    LeftEndpoint,
-    1.0,
-    svg_path.segment_end(left),
-    right,
-    tolerance,
-  ))
-  use right_start <- result.try(endpoint_projection_alternatives(
-    RightEndpoint,
-    0.0,
-    svg_path.segment_start(right),
     left,
+    right,
+    left_parameters,
     tolerance,
   ))
-  use right_end <- result.try(endpoint_projection_alternatives(
+  use right_matches <- result.try(boundary_projections(
     RightEndpoint,
-    1.0,
-    svg_path.segment_end(right),
+    right,
     left,
+    right_parameters,
     tolerance,
   ))
-  Ok(list.unique(list.flatten([left_start, left_end, right_start, right_end])))
+  Ok(list.unique(list.append(left_matches, right_matches)))
+}
+
+fn boundary_projections(
+  source: ProjectionSource,
+  segment: svg_path.Segment,
+  target: svg_path.Segment,
+  parameters: List(Float),
+  tolerance: Float,
+) -> Result(List(EndpointProjection), svg_path.Error) {
+  use matches <- result.try(
+    list.try_map(parameters, fn(t) {
+      use at <- result.try(svg_path.segment_point(segment, at: t))
+      endpoint_projection_alternatives(source, t, at, target, tolerance)
+    }),
+  )
+  Ok(list.flatten(matches))
+}
+
+// Include the boundaries of each monotone traversal on a common support line.
+// Interior turns can bound an overlap even when neither original endpoint does.
+fn collinear_boundaries(
+  left: svg_path.Segment,
+  right: svg_path.Segment,
+  tolerance: Float,
+) -> Option(#(List(Float), List(Float))) {
+  let controls =
+    list.append(polynomial_controls(left), polynomial_controls(right))
+  case controls {
+    [] -> None
+    [origin, ..rest] -> {
+      let end =
+        list.fold(rest, origin, fn(best, p) {
+          case point.distance(origin, p) >. point.distance(origin, best) {
+            True -> p
+            False -> best
+          }
+        })
+      case
+        collinear_parameters(left, origin, end, tolerance),
+        collinear_parameters(right, origin, end, tolerance)
+      {
+        Some(a), Some(b) -> Some(#(a, b))
+        _, _ -> None
+      }
+    }
+  }
+}
+
+/// Original parameters delimiting monotone traversals on a support line.
+/// None means non-polynomial, non-collinear, or a degenerate support line.
+@internal
+pub fn collinear_parameters(
+  segment: svg_path.Segment,
+  start: svg_path.Point,
+  end: svg_path.Point,
+  tolerance: Float,
+) -> Option(List(Float)) {
+  let dx = end.x -. start.x
+  let dy = end.y -. start.y
+  let length = point.distance(start, end)
+  let controls = polynomial_controls(segment)
+  case
+    length >. 0.0
+    && !list.is_empty(controls)
+    && list.all(controls, fn(p) {
+      float.absolute_value(dx *. { p.y -. start.y } -. dy *. { p.x -. start.x })
+      /. length
+      <=. tolerance
+    })
+  {
+    False -> None
+    True -> {
+      let turns =
+        bezier.projection_extrema(
+          svg_path.segment_to_bezier_data(segment),
+          direction: bezier.BezierPoint(dx /. length, dy /. length),
+        )
+      Some(list.unique([0.0, 1.0, ..turns]))
+    }
+  }
 }
 
 fn endpoint_projection_alternatives(
