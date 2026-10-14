@@ -394,6 +394,13 @@ pub fn default_self_intersection_options() -> SelfIntersectionOptions {
 
 /// Return point intersections between two segments.
 ///
+/// Exactly constant lines and Beziers use the canonical parameter `0.0`.
+/// A contact between two constant segments has one representative `(0.0, 0.0)`.
+/// A constant segment contributes no continuous overlap; matching addresses on
+/// the other segment are retained, including distinct visits to the same point.
+/// Constancy requires every defining point to be equal, without a tolerance.
+/// Degenerate SVG arcs retain their existing normalization/error behavior.
+///
 /// Overlapping segments return `OverlappingSegments`, since they have more than
 /// a finite list of point intersections.
 pub fn segment(
@@ -2408,6 +2415,49 @@ fn validate_self_intersection_options(
 }
 
 fn segment_intersections_valid_options(
+  left: Segment,
+  right: Segment,
+  options: IntersectionOptions,
+) -> Result(List(SegmentIntersection), svg_path.Error) {
+  case
+    overlap_detection.constant_point(left),
+    overlap_detection.constant_point(right)
+  {
+    Some(a), Some(b) ->
+      case distance(a, b) <=. options.tolerance {
+        True -> Ok([SegmentIntersection(left_t: 0.0, right_t: 0.0, point: a)])
+        False -> Ok([])
+      }
+    Some(p), None ->
+      constant_segment_intersections(p, right, True, options.tolerance)
+    None, Some(p) ->
+      constant_segment_intersections(p, left, False, options.tolerance)
+    None, None -> nonconstant_segment_intersections(left, right, options)
+  }
+}
+
+fn constant_segment_intersections(
+  p: Point,
+  other: Segment,
+  constant_is_left: Bool,
+  tolerance: Float,
+) -> Result(List(SegmentIntersection), svg_path.Error) {
+  use parameters <- result.try(overlap_detection.point_parameters(
+    other,
+    p,
+    tolerance,
+  ))
+  Ok(
+    list.map(list.sort(parameters, by: float.compare), fn(t) {
+      case constant_is_left {
+        True -> SegmentIntersection(left_t: 0.0, right_t: t, point: p)
+        False -> SegmentIntersection(left_t: t, right_t: 0.0, point: p)
+      }
+    }),
+  )
+}
+
+fn nonconstant_segment_intersections(
   left: Segment,
   right: Segment,
   options: IntersectionOptions,

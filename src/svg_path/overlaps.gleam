@@ -85,8 +85,8 @@ pub fn segment_overlap_left_parameter(
 
 /// Find sampled overlap intervals proposed by endpoint projections.
 ///
-/// This algorithm assumes non-degenerate segments and that every overlap
-/// boundary is an endpoint of at least one input segment. `tolerance` is a
+/// Constant polynomial segments have no overlap. Other overlap boundaries
+/// are proposed from endpoints and collinear polynomial turning points. `tolerance` is a
 /// Euclidean distance in path coordinates. `samples` must be positive.
 @internal
 pub fn segment_with_samples(
@@ -135,6 +135,9 @@ pub fn check_parameter_correspondence(
 }
 
 /// Find overlap intervals using the shared five-sample policy.
+///
+/// Exactly constant polynomial segments have no positive-length overlap and
+/// return an empty overlap list; use `intersections` for their point contacts.
 ///
 /// Coincident portions whose parameter correspondence is not affine return
 /// `svg_path.NonAffineOverlapCorrespondence`. Normalize or linearize

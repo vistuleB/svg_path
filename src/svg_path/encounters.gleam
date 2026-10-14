@@ -21,6 +21,9 @@ pub type Encounters(overlap, intersection) {
 
 /// Return overlap intervals and point intersections between two segments.
 ///
+/// Exactly constant polynomial segments follow the `intersections.segment`
+/// convention: canonical parameter `0.0`, with no continuous overlap.
+///
 /// Detected overlap intervals are returned alongside isolated parameter-pair
 /// intersections. For overlapping segments, the point search partitions the
 /// parameter domains at overlap boundaries and skips corresponding overlap

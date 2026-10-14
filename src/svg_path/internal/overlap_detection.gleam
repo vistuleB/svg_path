@@ -47,6 +47,18 @@ type EndpointProjection {
   )
 }
 
+/// Exactly constant polynomial geometry, independent of query tolerance.
+/// Equal endpoints alone do not make a closed or retraced curve constant.
+@internal
+pub fn constant_point(segment: svg_path.Segment) -> Option(svg_path.Point) {
+  case segment {
+    svg_path.Line(a, b) if a == b -> Some(a)
+    svg_path.QuadraticBezier(a, b, c) if a == b && a == c -> Some(a)
+    svg_path.CubicBezier(a, b, c, d) if a == b && a == c && a == d -> Some(a)
+    _ -> None
+  }
+}
+
 fn canonicalize_overlap(overlap: RawOverlap) -> RawOverlap {
   let #(left_from, left_to, right_from, right_to, start, end) = overlap
   case left_from <=. left_to {
@@ -278,57 +290,79 @@ pub fn detect_with_samples(
     True, _ -> Error(svg_path.InvalidOverlapTolerance(tolerance))
     _, True -> Error(svg_path.InvalidOverlapSamples(samples))
     False, False -> {
-      use projections <- result.try(endpoint_projections(left, right, tolerance))
-      let close =
-        projections
-        |> list.filter(fn(projection) {
-          let EndpointProjection(distance:, ..) = projection
-          distance <=. tolerance
-        })
-      use candidates <- result.try(overlap_candidates_from_projection_pairs(
-        close,
-        left,
-        right,
-        tolerance,
-        samples,
-        OverlapCandidates([], []),
-      ))
-      // A failed parameter pairing is not proof of non-affinity when another
-      // pairing explains the same two parameter intervals (e.g. a closed
-      // curve has two endpoint addresses at the same geometric point).
-      case
-        list.any(candidates.non_affine, fn(rejected) {
-          !candidate_covered(rejected, candidates.affine)
-        })
-      {
-        True -> Error(svg_path.NonAffineOverlapCorrespondence)
-        False ->
-          case
-            merge_overlap_list(
-              prefer_certified_full_overlap(
-                candidates.affine,
-                left,
-                right,
-                tolerance,
-              ),
-              tolerance:,
-            )
-          {
-            Ok(merged) -> Ok(merged)
-            Error(Nil) ->
-              case collinear_boundaries(left, right, tolerance) {
-                // Conflicting traversal branches cannot be represented by the
-                // detector's single-valued correspondence. Never erase them.
-                Some(#(a, b)) ->
-                  case list.length(a) > 2 || list.length(b) > 2 {
-                    True -> Error(svg_path.NonAffineOverlapCorrespondence)
-                    False -> Ok([])
-                  }
-                _ -> Ok([])
-              }
+      case constant_point(left), constant_point(right) {
+        None, None ->
+          detect_nonconstant_with_samples(left, right, tolerance, samples)
+        _, _ ->
+          case left, right {
+            // Constant polynomials have no positive-length overlap. Still honor
+            // the existing validation contract of any arc in the pair.
+            svg_path.Arc(..), _ ->
+              result.map(svg_path.arc_center_data(left), fn(_) { [] })
+            _, svg_path.Arc(..) ->
+              result.map(svg_path.arc_center_data(right), fn(_) { [] })
+            _, _ -> Ok([])
           }
       }
     }
+  }
+}
+
+fn detect_nonconstant_with_samples(
+  left: svg_path.Segment,
+  right: svg_path.Segment,
+  tolerance: Float,
+  samples: Int,
+) -> Result(List(RawOverlap), svg_path.Error) {
+  use projections <- result.try(endpoint_projections(left, right, tolerance))
+  let close =
+    projections
+    |> list.filter(fn(projection) {
+      let EndpointProjection(distance:, ..) = projection
+      distance <=. tolerance
+    })
+  use candidates <- result.try(overlap_candidates_from_projection_pairs(
+    close,
+    left,
+    right,
+    tolerance,
+    samples,
+    OverlapCandidates([], []),
+  ))
+  // A failed parameter pairing is not proof of non-affinity when another
+  // pairing explains the same two parameter intervals (e.g. a closed
+  // curve has two endpoint addresses at the same geometric point).
+  case
+    list.any(candidates.non_affine, fn(rejected) {
+      !candidate_covered(rejected, candidates.affine)
+    })
+  {
+    True -> Error(svg_path.NonAffineOverlapCorrespondence)
+    False ->
+      case
+        merge_overlap_list(
+          prefer_certified_full_overlap(
+            candidates.affine,
+            left,
+            right,
+            tolerance,
+          ),
+          tolerance:,
+        )
+      {
+        Ok(merged) -> Ok(merged)
+        Error(Nil) ->
+          case collinear_boundaries(left, right, tolerance) {
+            // Conflicting traversal branches cannot be represented by the
+            // detector's single-valued correspondence. Never erase them.
+            Some(#(a, b)) ->
+              case list.length(a) > 2 || list.length(b) > 2 {
+                True -> Error(svg_path.NonAffineOverlapCorrespondence)
+                False -> Ok([])
+              }
+            _ -> Ok([])
+          }
+      }
   }
 }
 
