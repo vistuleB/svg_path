@@ -32,3 +32,4 @@ svg_path_paper_intersection_addresses_test.gleam
 svg_path_paper_boolean_adapters_test.gleam
 svg_path_stroke_zero_arc_test.gleam
 svg_path_large_construction_test.gleam
+svg_path_parse_tokenizer_stack_test.gleam

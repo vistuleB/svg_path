@@ -925,35 +925,46 @@ fn tokenize_loop(
       case is_whitespace(grapheme), grapheme {
         True, _ ->
           tokenize_loop(rest, tokens, arc_argument_position:, at: at + 1)
-        False, "," ->
-          tokenize_comma(rest, tokens, arc_argument_position, at: at)
-        False, _ ->
-          tokenize_non_separator(
-            graphemes,
-            grapheme,
-            rest,
-            tokens,
-            arc_argument_position,
-            at,
-          )
+        False, "," -> {
+          case tokens, drop_whitespace(rest) {
+            [Number(_, _), ..], [next, ..] ->
+              case is_number_start(next) {
+                True ->
+                  tokenize_loop(
+                    rest,
+                    tokens,
+                    arc_argument_position:,
+                    at: at + 1,
+                  )
+                False -> Error(LocatedError(InvalidSeparator, at))
+              }
+            _, _ -> Error(LocatedError(InvalidSeparator, at))
+          }
+        }
+        False, _ -> {
+          // Helpers return the next state; only this loop advances tokenization.
+          // Mutual recursion (or recursion inside result.try) grows the JS stack.
+          case
+            tokenize_non_separator(
+              graphemes,
+              grapheme,
+              rest,
+              arc_argument_position,
+              at,
+            )
+          {
+            Error(error) -> Error(error)
+            Ok(#(rest, token, position, next_at)) ->
+              tokenize_loop(
+                rest,
+                [token, ..tokens],
+                arc_argument_position: position,
+                at: next_at,
+              )
+          }
+        }
       }
     }
-  }
-}
-
-fn tokenize_comma(
-  rest: List(String),
-  tokens: List(Token),
-  arc_argument_position: Option(Int),
-  at at: Int,
-) -> Result(List(Token), LocatedError) {
-  case tokens, drop_whitespace(rest) {
-    [Number(_, _), ..], [next, ..] ->
-      case is_number_start(next) {
-        True -> tokenize_loop(rest, tokens, arc_argument_position:, at: at + 1)
-        False -> Error(LocatedError(InvalidSeparator, at))
-      }
-    _, _ -> Error(LocatedError(InvalidSeparator, at))
   }
 }
 
@@ -961,21 +972,20 @@ fn tokenize_non_separator(
   graphemes: List(String),
   grapheme: String,
   rest: List(String),
-  tokens: List(Token),
   arc_argument_position: Option(Int),
   at: Int,
-) -> Result(List(Token), LocatedError) {
+) -> Result(#(List(String), Token, Option(Int), Int), LocatedError) {
   case is_command(grapheme) {
     True ->
-      tokenize_loop(
+      Ok(#(
         rest,
-        [Command(grapheme, at:), ..tokens],
-        arc_argument_position: case grapheme {
+        Command(grapheme, at:),
+        case grapheme {
           "A" | "a" -> Some(0)
           _ -> None
         },
-        at: at + 1,
-      )
+        at + 1,
+      ))
     False -> {
       case is_number_start(grapheme) {
         False -> Error(LocatedError(UnsupportedCommand(grapheme), at))
@@ -985,14 +995,12 @@ fn tokenize_non_separator(
 
           case number.parse(raw) {
             Ok(number) ->
-              tokenize_loop(
+              Ok(#(
                 rest,
-                [Number(number, at:), ..tokens],
-                arc_argument_position: next_arc_argument_position(
-                  arc_argument_position,
-                ),
-                at: at + string.length(raw),
-              )
+                Number(number, at:),
+                next_arc_argument_position(arc_argument_position),
+                at + string.length(raw),
+              ))
             Error(_) -> Error(LocatedError(InvalidNumber(raw), at))
           }
         }
