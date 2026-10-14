@@ -3,6 +3,7 @@ svg_path_intersection_contract_support.gleam
 svg_path_intersection_scale_test.gleam
 svg_path_elizabeth_test.gleam
 svg_path_intersections_test.gleam
+svg_path_flobezier_closest_pair_test.gleam
 svg_path_overlaps_test.gleam
 svg_path_svg_arc_normalization_test.gleam
 svg_path_parse_test.gleam

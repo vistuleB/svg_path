@@ -5287,7 +5287,9 @@ fn collect_projection_terminal_windows_generation(
       }
     }
     [ProjectionWindow(left:, right:, remaining_depth:), ..rest] -> {
-      use #(windows, best, next_generation) <- result.try(
+      // Keep the recursive call outside a result.try callback so JavaScript
+      // can process arbitrarily many search windows with a constant stack.
+      case
         inspect_projection_window(
           left,
           right,
@@ -5295,14 +5297,17 @@ fn collect_projection_terminal_windows_generation(
           best:,
           windows:,
           next_generation:,
-        ),
-      )
-      collect_projection_terminal_windows_generation(
-        this_generation: rest,
-        next_generation:,
-        best:,
-        windows:,
-      )
+        )
+      {
+        Error(error) -> Error(error)
+        Ok(#(windows, best, next_generation)) ->
+          collect_projection_terminal_windows_generation(
+            this_generation: rest,
+            next_generation:,
+            best:,
+            windows:,
+          )
+      }
     }
   }
 }
