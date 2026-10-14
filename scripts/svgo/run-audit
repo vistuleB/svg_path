@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/../.."
+(cd test_portable && gleam build --target javascript)
+python3 scripts/svgo/extract.py
+python3 scripts/svgo/extract-extra.py
+node scripts/svgo/audit.mjs > /dev/null
+python3 scripts/svgo/report.py
+node scripts/svgo/numerical-probes.mjs > /dev/null
+node scripts/svgo/path-units.mjs
+node scripts/svgo/transforms.mjs
+node scripts/svgo/shapes.mjs
+node scripts/svgo/merge-paths.mjs
+node scripts/svgo/off-canvas.mjs
+node scripts/svgo/numeric-values.mjs
+node scripts/svgo/secondary.mjs
+node scripts/svgo/upstream-replay.mjs

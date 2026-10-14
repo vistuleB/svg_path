@@ -1,0 +1,1540 @@
+{
+  "repository": "https://github.com/svg/svgo",
+  "version": "4.1.0",
+  "revision": "5765cbe4e0a930dca648c6b81d335b1522cd7375",
+  "retrieved_on": "2026-10-14",
+  "files": [
+    {
+      "path": "test/plugins/convertPathData.01.svg.txt",
+      "sha256": "dbc6188b783dfcdd9db3a314c3bf7c1d23a8668e47ead9020b7939d6455e42df"
+    },
+    {
+      "path": "test/plugins/convertPathData.02.svg.txt",
+      "sha256": "c50a0223b09f86d5dce52bd904035d794999a0802003a596656919df4dd70d8e"
+    },
+    {
+      "path": "test/plugins/convertPathData.03.svg.txt",
+      "sha256": "1b1f963f8c8d14693e1993dab93bb113f62f023e2174d652fb2c9c4d4bce4ead"
+    },
+    {
+      "path": "test/plugins/convertPathData.04.svg.txt",
+      "sha256": "377deef06169f1006451ea487185bf1ecd8a92c37a00728053705b7645d5b61f"
+    },
+    {
+      "path": "test/plugins/convertPathData.05.svg.txt",
+      "sha256": "6c9d6c1dd1a06e6b3c99b24d42c0a1ad551d4ece76aa49e2155db868570d1961"
+    },
+    {
+      "path": "test/plugins/convertPathData.06.svg.txt",
+      "sha256": "79b970920a0de68abfb754260de04df72f00566714f329168a985636df1a2f91"
+    },
+    {
+      "path": "test/plugins/convertPathData.07.svg.txt",
+      "sha256": "c935007eaae7c4fba56fb5a07de985b444a1486de7adf125a558a01d4f052a24"
+    },
+    {
+      "path": "test/plugins/convertPathData.08.svg.txt",
+      "sha256": "a9b4576a6699c153d96606d33768c66c42ef92152d3f914e9903eedca86ba78c"
+    },
+    {
+      "path": "test/plugins/convertPathData.09.svg.txt",
+      "sha256": "1cf48f45b2933df0254074ed392d71129d5cbf5090436e0d3f2f95e98e30bf95"
+    },
+    {
+      "path": "test/plugins/convertPathData.10.svg.txt",
+      "sha256": "a6c68824e7d5caf78f97f2467b6fbc08ae02c7070632920935a353925ef8d971"
+    },
+    {
+      "path": "test/plugins/convertPathData.11.svg.txt",
+      "sha256": "4df9a395c393daee664fef13aa0ee91e44c44fdff20956b90f76d7971ceb403a"
+    },
+    {
+      "path": "test/plugins/convertPathData.12.svg.txt",
+      "sha256": "57f840ed649c4146329107afa4195785b3b21729c104af84d4ebc2f776ecb822"
+    },
+    {
+      "path": "test/plugins/convertPathData.13.svg.txt",
+      "sha256": "c84292c432f0c03439c30feca74f5dbbe98fbc769f7daf592471464d1f7e234f"
+    },
+    {
+      "path": "test/plugins/convertPathData.14.svg.txt",
+      "sha256": "0c9d643066712d0bbbed97781c0a991bb75e1c00708b4c5200af4d46578bdafc"
+    },
+    {
+      "path": "test/plugins/convertPathData.15.svg.txt",
+      "sha256": "d7d4a77c9c969b0aa69b0bcdde2c48cf53aae2c702bc5bd9d3f2faacf0019c29"
+    },
+    {
+      "path": "test/plugins/convertPathData.16.svg.txt",
+      "sha256": "f269baa55bd493451717a3fec37e777279043f1cc603e0960eabe6b9ee9478e9"
+    },
+    {
+      "path": "test/plugins/convertPathData.17.svg.txt",
+      "sha256": "12a5b3ed9d6aaecc30973b288fea65aec92aaf062030d21323b8cc49164418c5"
+    },
+    {
+      "path": "test/plugins/convertPathData.18.svg.txt",
+      "sha256": "528a28c841dc389688712bee8838c6e7cda48e7a35ecffece45b2286141199e8"
+    },
+    {
+      "path": "test/plugins/convertPathData.19.svg.txt",
+      "sha256": "e6dcc741bcf6ff078e0e943efb042da5b8551b1f5359e9717a80ccfc22926b5a"
+    },
+    {
+      "path": "test/plugins/convertPathData.20.svg.txt",
+      "sha256": "6a5daf492e2f25e004cc1740122065148277af544d4dc84b3c70c2d7eae1dc78"
+    },
+    {
+      "path": "test/plugins/convertPathData.21.svg.txt",
+      "sha256": "bf29ed940cfd3dc7746e0eeea70f304bb2958c372ca850edcaf0b1791b7a174e"
+    },
+    {
+      "path": "test/plugins/convertPathData.22.svg.txt",
+      "sha256": "7146390ffcbacb43095062e9706e037f8c1c1cc6089faa1444b1c93687baf81f"
+    },
+    {
+      "path": "test/plugins/convertPathData.23.svg.txt",
+      "sha256": "7ec0ed72a682c44f5c1088d3aafd4e617a449e25d489ffbe6549f6d01fb8708f"
+    },
+    {
+      "path": "test/plugins/convertPathData.24.svg.txt",
+      "sha256": "33314f5807f64c8cb63b50327020049615e125c34f1cf64d6a4e3253f0e3d3c7"
+    },
+    {
+      "path": "test/plugins/convertPathData.25.svg.txt",
+      "sha256": "0f394bcd0e8dc0ea94a4eae66fc87f121bf84bdb0ed309affa15d630f8bbc7c5"
+    },
+    {
+      "path": "test/plugins/convertPathData.26.svg.txt",
+      "sha256": "bc829f68bfee7dddea646a56ac6e0651ce8c98631aef12447f594377568aa695"
+    },
+    {
+      "path": "test/plugins/convertPathData.27.svg.txt",
+      "sha256": "798f30edfec4ebdb54488593a03546d31eebcd293150729aeeeb2356b71c5441"
+    },
+    {
+      "path": "test/plugins/convertPathData.28.svg.txt",
+      "sha256": "980fbf58ba9bbf0b83fbee1b6576280482f1aac15d656c1d3976c14b12f44073"
+    },
+    {
+      "path": "test/plugins/convertPathData.29.svg.txt",
+      "sha256": "87b2d7575cf3dcce9fd15fff0d0e67c7e879a50b284835dbf1138cb41cd37b5c"
+    },
+    {
+      "path": "test/plugins/convertPathData.30.svg.txt",
+      "sha256": "7b23175a86027c511e2f12791e5bdaa905518024ef1f08bd2fc97e0ea6f8b51b"
+    },
+    {
+      "path": "test/plugins/convertPathData.31.svg.txt",
+      "sha256": "2fd53a3c5aa32fc4d0bf35f303bcc0fda83a6a860578fb98880f72f4fec2b514"
+    },
+    {
+      "path": "test/plugins/convertPathData.32.svg.txt",
+      "sha256": "1889373e7be1100d651e5a0c7cc9021e14e3c827a4d2b7c952d0e4dbe0e9ead5"
+    },
+    {
+      "path": "test/plugins/convertPathData.33.svg.txt",
+      "sha256": "b97534b7b3d27068ebb57c55fa268ebf9bf874bd9097fa797ab4609423fa41c6"
+    },
+    {
+      "path": "test/plugins/convertPathData.34.svg.txt",
+      "sha256": "e628a1d58711e108d252ca707eda990d4b6ec224078637c06c53ef00fa4962dc"
+    },
+    {
+      "path": "test/plugins/convertPathData.35.svg.txt",
+      "sha256": "9909716d4c32d2d8943ae2049a6645dd7562d4e01d50323ed44dfdba150a73ce"
+    },
+    {
+      "path": "test/plugins/convertPathData.36.svg.txt",
+      "sha256": "a23ac76f5a74cc052680544e4381fcb11f261b3a596aab86daea2d469613d230"
+    },
+    {
+      "path": "test/plugins/convertPathData.37.svg.txt",
+      "sha256": "3a259dedb22e43ec244491a1ecc72262bfc27be198a32432eb303ba3ec11b776"
+    },
+    {
+      "path": "test/plugins/convertPathData.38.svg.txt",
+      "sha256": "d0628a1e08b57e71fea399604e705f7676ad26f86f50ce828e8b67b5d86d09b5"
+    },
+    {
+      "path": "test/plugins/convertPathData.39.svg.txt",
+      "sha256": "27dcb5bbd3f1b3fc8a0e9af4bfd8f84ee5cd04283b57f24cbedb5c59be4c0e72"
+    },
+    {
+      "path": "test/plugins/convertPathData.40.svg.txt",
+      "sha256": "0cd05ca49f980ae56b7cbfbe3bb64c07f85d91d31c3d1582a81f7bc8aab8da24"
+    },
+    {
+      "path": "test/plugins/_index.test.js",
+      "sha256": "c2a7fb2c6d55d8e2f207005864eacdb12c50c9c9d2a7d4473775d51db1bfd434"
+    },
+    {
+      "path": "plugins/convertPathData.js",
+      "sha256": "475b027cde30bb4011312b59c20579fed1be2b687b995c475b3bebcdae583736"
+    },
+    {
+      "path": "plugins/_path.js",
+      "sha256": "2f3d44599604cb75ad03bd302242095107b5bcdcfcbddcb42df4641effed27a4"
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "d2b5640808aeec9c243152ae733cf9cca3a86189ad7817bf50335290dbb31012"
+    },
+    {
+      "path": "package.json",
+      "sha256": "e7ba4143c2e8353fec3ad82802018be63be9f6ca499fe0c65f0ba5bd32acdb98"
+    },
+    {
+      "path": "lib/path.test.js",
+      "sha256": "ce08de345b57c0cfc5ec356f82730daaecd69e43fdab4015a0623c19ed0c3293"
+    },
+    {
+      "path": "lib/path.js",
+      "sha256": "838b89834b8464a847374fe945696f4881afc9788e6e9df274a9e28199065036"
+    },
+    {
+      "path": "test/plugins/_transforms.test.js",
+      "sha256": "c3ceae58eebc97c1b13feb9183d8f60f073d4c3cab033db157d7472a4ba289f8"
+    },
+    {
+      "path": "test/plugins/removeHiddenElems.12.svg.txt",
+      "sha256": "f1496c64fa6368710fa1613da385e501d32b4c4fd9609636bcfd1d6fe941f8ff"
+    },
+    {
+      "path": "test/plugins/removeHiddenElems.02.svg.txt",
+      "sha256": "254a187a344b23e0d8c5300c94d06b3dcd52e2bd1b3476c85997d4886ad6a8dd"
+    },
+    {
+      "path": "test/plugins/inlineStyles.25.svg.txt",
+      "sha256": "8f633f75791d05268ac1f809d452946c35e3ac6db56b30a1a723e99c1a27fec4"
+    },
+    {
+      "path": "test/plugins/removeUnknownsAndDefaults.17.svg.txt",
+      "sha256": "9e15812bcbb01a9e5c55df4561f9c7a6b17fec3a2c44e3ce633ddb9ffc81407f"
+    },
+    {
+      "path": "test/plugins/removeUnknownsAndDefaults.07.svg.txt",
+      "sha256": "9783ce8bd926da556c1554e7dadf5f676839a8dabe392ee076fc1ba626d1537a"
+    },
+    {
+      "path": "test/plugins/cleanupIds.19.svg.txt",
+      "sha256": "1b3dcaefdbfe70bfa7f50c28a875ab882a3c9d3fca4e47a1d9bd3ae40a93943a"
+    },
+    {
+      "path": "test/plugins/cleanupIds.09.svg.txt",
+      "sha256": "3a7788ed8c7bdcfa59bdc233f35413728aeae38d21fd07587a6824d360edab26"
+    },
+    {
+      "path": "test/plugins/removeViewBox.03.svg.txt",
+      "sha256": "fa1f1396e0a2f47f7cafa9f782010ddc757094c5f369ab9ec07d023ba08e3443"
+    },
+    {
+      "path": "test/plugins/moveElemsAttrsToGroup.06.svg.txt",
+      "sha256": "b2bde169a9329f1591c20aae002f4ce8c70b674676e6cb769916b4dac0e20dbe"
+    },
+    {
+      "path": "test/plugins/removeXlink.01.svg.txt",
+      "sha256": "e1a99099078042b866cf1a23b7e0826b761ad31a22f28977c62596737d1b5038"
+    },
+    {
+      "path": "test/plugins/removeDeprecatedAttrs.08.svg.txt",
+      "sha256": "02580b6d4ae6b8a0165da8c1e18dd7abab1aa0af0ae397646ff76acc41c6e566"
+    },
+    {
+      "path": "test/plugins/mergeStyles.08.svg.txt",
+      "sha256": "4372d5c623d51cd9672293e892692c29d8b690193471e8fb4c732962c9f6990e"
+    },
+    {
+      "path": "test/plugins/convertColors.02.svg.txt",
+      "sha256": "ae9aae0285485de654e9c304e4004bab9f57a4db28ac857361f6e7a12ef57440"
+    },
+    {
+      "path": "test/plugins/removeRasterImages.02.svg.txt",
+      "sha256": "1f189154d8cb894a34aa90d2331b08a7b5a6fbf163cc18679cf70f3bfe19c709"
+    },
+    {
+      "path": "test/plugins/mergePaths.06.svg.txt",
+      "sha256": "656d04ef21b10967269a350c148a13680dd18eb7ee2aa81dc15862cdc11b2b56"
+    },
+    {
+      "path": "test/plugins/removeOffCanvasPaths.05.svg.txt",
+      "sha256": "2aff7a65ee7516b4537fe504545e4b77fc839315807923dfcc5aabe70fe02c0a"
+    },
+    {
+      "path": "test/plugins/cleanupIds.26.svg.txt",
+      "sha256": "894555a6085b9b1ce0baa6a6d233a8304a1cda878b485b83982f225e08aa24ca"
+    },
+    {
+      "path": "test/plugins/collapseGroups.13.svg.txt",
+      "sha256": "7d943fffb01e0c4acc4c209d365b28dfab13813812364fa2177460ac44f96180"
+    },
+    {
+      "path": "test/plugins/removeEmptyContainers.03.svg.txt",
+      "sha256": "126bdde1ad28ac27dc6e029765164be7f02a7ec0a5b83696e53a9ea37fc929f9"
+    },
+    {
+      "path": "test/plugins/removeUnusedNS.04.svg.txt",
+      "sha256": "f9fe9133ca91b4b6db8d4e564d47a69ccf35cbb2c345e28d37f9338b1629d104"
+    },
+    {
+      "path": "test/plugins/convertTransform.11.svg.txt",
+      "sha256": "db7e1d1b7a6d7d64af879139fdf0da060db0960a9d198798ebe214e5ff90570d"
+    },
+    {
+      "path": "test/plugins/convertTransform.01.svg.txt",
+      "sha256": "c82507026a3ef345c0ca35076370198937838159d6cc2b651db5b59181e4f28e"
+    },
+    {
+      "path": "test/plugins/sortAttrs.04.svg.txt",
+      "sha256": "e0dd644726f15bcfa4a463b5b902d024f32d5b45a4bd52dcf238a56e7cd226e5"
+    },
+    {
+      "path": "test/plugins/cleanupAttrs.02.svg.txt",
+      "sha256": "e1dfb9c25c82f5f205b35c71453a6f7794fefb929a83fc9c332d4c9dd9c90c64"
+    },
+    {
+      "path": "test/plugins/removeAttrs.06.svg.txt",
+      "sha256": "62fd57e5908d7acbd0fecd00cc592d5d0a4b6e68a2a53d3c0d2c6d0cef2de51e"
+    },
+    {
+      "path": "test/plugins/prefixIds.11.svg.txt",
+      "sha256": "a62b9d3c800fcce649e37da7e878452dfcf08ff787a4b98efb28dc7f1e342a4b"
+    },
+    {
+      "path": "test/plugins/prefixIds.01.svg.txt",
+      "sha256": "94c490ff0383d44b25c53765f02f8828dedba4771aa19e4ddedf126b37bef52c"
+    },
+    {
+      "path": "test/plugins/minifyStyles.06.svg.txt",
+      "sha256": "8af8fc4286799cf8b41db3d1b33b5747a822fecc4028f8aeada35b25ef537b56"
+    },
+    {
+      "path": "test/plugins/removeDeprecatedAttrs.01.svg.txt",
+      "sha256": "91e580c9d9c93f44cb87fc99566e3a3df31222a127a60a95af06123e5c42d591"
+    },
+    {
+      "path": "test/plugins/removeComments.03.svg.txt",
+      "sha256": "045aa918858cd21b19875ba393ceba8485e383949944bad126f84d7c78b18139"
+    },
+    {
+      "path": "test/plugins/mergeStyles.11.svg.txt",
+      "sha256": "629eed80b5d03d2d2e5445e1466b0e4da3fabf9d82a77088e7f4f8b35020016b"
+    },
+    {
+      "path": "test/plugins/mergeStyles.01.svg.txt",
+      "sha256": "9184d4256f2c3d413970f29e2ff2a172dd834d536134f7b6a0aede51bf78cd73"
+    },
+    {
+      "path": "test/plugins/removeDimensions.05.svg.txt",
+      "sha256": "6cc48c43f0f9ff02da781d11db198b9de4a4a08e7a094308f5e787fa0ddfb22f"
+    },
+    {
+      "path": "test/plugins/removeScripts.04.svg.txt",
+      "sha256": "4b0a86842fb74b1133a8ae4242041e505adb210174d44bbbd8b9be9b536de8cc"
+    },
+    {
+      "path": "test/plugins/sortDefsChildren.01.svg.txt",
+      "sha256": "c35260f74fe63e1a6726799a8cb748347f056ad8dce5a5a6d208b78294d75e5b"
+    },
+    {
+      "path": "test/plugins/cleanupIds.10.svg.txt",
+      "sha256": "845019187213287ea7668e3111f059b0a09973e21bd384700464e2a2c3edd6e6"
+    },
+    {
+      "path": "test/plugins/addClassesToSVGElement.03.svg.txt",
+      "sha256": "549879541d3c80df334da83684137a3dbba417e9ec78c1e972f57f2efc73a84c"
+    },
+    {
+      "path": "test/plugins/cleanupListOfValues.03.svg.txt",
+      "sha256": "4db04ed75e17d4eb3aa01c83a82f280830a1e09524a7a61aa39050d107a9ca5b"
+    },
+    {
+      "path": "test/plugins/prefixIds.08.svg.txt",
+      "sha256": "287d5382515dc521e469e83593119af9ae8297f41a528c6a78ff9625870d3d5e"
+    },
+    {
+      "path": "test/plugins/inlineStyles.03.svg.txt",
+      "sha256": "afc0dad25e88c144e33863ba86e6ca5a5d895e598e5152e9fd3a913ea469eb52"
+    },
+    {
+      "path": "test/plugins/inlineStyles.13.svg.txt",
+      "sha256": "ee455781c2a71bb29652da824ca10e4eb5dd71f43f4238e875563d61c5e459db"
+    },
+    {
+      "path": "test/plugins/removeElementsByAttr.01.svg.txt",
+      "sha256": "645d6f9ece225a11ac3e632fce836c8e9b685a4da5538fb98c0f9f1c190d6cd7"
+    },
+    {
+      "path": "test/plugins/cleanupEnableBackground.04.svg.txt",
+      "sha256": "968b0a90a3bb1b28d50e8f1e4febcc45f67f26e7ffe183581abd18918327d5c6"
+    },
+    {
+      "path": "test/plugins/removeScripts.05.svg.txt",
+      "sha256": "1491829585bed67b230f4e5d96e6fa62000a6f26ba0a287d2b691f3f1e8368c0"
+    },
+    {
+      "path": "test/plugins/removeDimensions.04.svg.txt",
+      "sha256": "37dc20238e92454a3514630a06b2634e1dbba4c443cd827d061ebec9d6d6d3bb"
+    },
+    {
+      "path": "test/plugins/minifyStyles.07.svg.txt",
+      "sha256": "65ab5a7a3860f50f38dfb5ac9aae94f2358a04240820b709066031ae5bd8500a"
+    },
+    {
+      "path": "test/plugins/mergeStyles.10.svg.txt",
+      "sha256": "4bbbc49e640d14e37c2d87fe217bb83f34b2fc366a5710029c8e4ba37be6d6d0"
+    },
+    {
+      "path": "test/plugins/removeComments.02.svg.txt",
+      "sha256": "2e8129908e11c7e57e97229d60e0c8895824624d7a9dbf4e65ceee2cfacbdc8d"
+    },
+    {
+      "path": "test/plugins/cleanupIds.11.svg.txt",
+      "sha256": "dd416fff195ad9f3b48803ad010d102c82b9b984da3d5d2674cc9f7e3f52712c"
+    },
+    {
+      "path": "test/plugins/cleanupIds.01.svg.txt",
+      "sha256": "722a73549a9582ff47f3c513960a161aea7f72fe6657519ebf92b3ff82ffed98"
+    },
+    {
+      "path": "test/plugins/removeAttributesBySelector.01.svg.txt",
+      "sha256": "84c9eddfecd6d92188e9bfe148980634c127183e5a0d2da722f260435b239db0"
+    },
+    {
+      "path": "test/plugins/removeNonInheritableGroupAttrs.01.svg.txt",
+      "sha256": "c2072397c1370173ce98d0301023687599b5c7b93e84ecaa56163760e6b53918"
+    },
+    {
+      "path": "test/plugins/prefixIds.09.svg.txt",
+      "sha256": "e66a4612ed08c6214d137c3d112042c7b19e907e0995a2bc654e83c239ab9272"
+    },
+    {
+      "path": "test/plugins/cleanupListOfValues.02.svg.txt",
+      "sha256": "a7f79e3cee1e6f0b5aedc3b56ce97a84473ba29372463b96a5cac122dffca2c7"
+    },
+    {
+      "path": "test/plugins/addClassesToSVGElement.02.svg.txt",
+      "sha256": "fd0a2b193052244938d570acd7cfbdd39c698dc57ea45c804e076b2cce48760f"
+    },
+    {
+      "path": "test/plugins/inlineStyles.12.svg.txt",
+      "sha256": "bd52c869dd06f1588a5fdd359fecd251fac37128e84a2a859d4612f905cfc931"
+    },
+    {
+      "path": "test/plugins/inlineStyles.02.svg.txt",
+      "sha256": "18fcccdae402b75efd69a67f37754978a7ee74ecfbd41d2a43c2183fd0852ea6"
+    },
+    {
+      "path": "test/plugins/cleanupEnableBackground.05.svg.txt",
+      "sha256": "219deeccf3ed878f4810c5dd051e1f46f05c0377594a9a2bbe17e0c4e24c53f6"
+    },
+    {
+      "path": "test/plugins/removeViewBox.02.svg.txt",
+      "sha256": "32a7877c55f5c2348f33068ae739c6044588fcfad9e5218dc7fc0a7be1883271"
+    },
+    {
+      "path": "test/plugins/cleanupIds.08.svg.txt",
+      "sha256": "fcabf88585d7edd4db5e690841f1474b89999503acab9f23fb7cab454cbb2319"
+    },
+    {
+      "path": "test/plugins/cleanupIds.18.svg.txt",
+      "sha256": "a6f08f46206292ecf331dbde367d89330b6f947ecf0d1e6dfd5c6e9d65c364c9"
+    },
+    {
+      "path": "test/plugins/moveElemsAttrsToGroup.07.svg.txt",
+      "sha256": "c3e6f0c2fa049fdeab42ecb410fe97637378501eb8a63a65e9052a927f54b86f"
+    },
+    {
+      "path": "test/plugins/removeHiddenElems.03.svg.txt",
+      "sha256": "57e61a8b8739d26e4ed64a4cce245911833f596e53ca4e2bcb1fbd06dc922670"
+    },
+    {
+      "path": "test/plugins/removeHiddenElems.13.svg.txt",
+      "sha256": "2764b6c3f0e5cb2c1332c8772692994c1db5a8aa1c5e2c7dc5f906a4926e2aba"
+    },
+    {
+      "path": "test/plugins/removeEmptyAttrs.02.svg.txt",
+      "sha256": "8de0c77cf4fedcececd5a2c8f4f8efe727887f08de3ca4673755468b3de2c2dd"
+    },
+    {
+      "path": "test/plugins/reusePaths.06.svg.txt",
+      "sha256": "d2c69017d1413c7579ab5e8c421f25db81b0a621addd7a9a1098b9e2c678176a"
+    },
+    {
+      "path": "test/plugins/removeUnknownsAndDefaults.06.svg.txt",
+      "sha256": "8a1ffa37adfe5e4c16fdc9c45ad70e983bbe9784331c268b96c745fa3fbb58b0"
+    },
+    {
+      "path": "test/plugins/inlineStyles.24.svg.txt",
+      "sha256": "c651f9e8af687a41e8ddfa9c238193e78a2792435a0fddda63e4f9408a48d9b4"
+    },
+    {
+      "path": "test/plugins/removeUnknownsAndDefaults.16.svg.txt",
+      "sha256": "0489dfaf45115a2107e6f45dafd2cb01d987a2eef0995c178946ebb50a497715"
+    },
+    {
+      "path": "test/plugins/convertColors.03.svg.txt",
+      "sha256": "9943a837de3c553ba35405f7c5f29c111c92ad38d2618d353895569322249399"
+    },
+    {
+      "path": "test/plugins/moveGroupAttrsToElems.06.svg.txt",
+      "sha256": "cc7447c8ddd78754b18a96e569a91c06feb44f6c8b2793cbe65769256639184f"
+    },
+    {
+      "path": "test/plugins/mergeStyles.09.svg.txt",
+      "sha256": "f5bff6feaffaa40f34a2c97e84cf8f4c93e7d42054e6bef2b2b8b2a5546485d9"
+    },
+    {
+      "path": "test/plugins/removeEmptyContainers.02.svg.txt",
+      "sha256": "6dba7b6d33f0cf6fc0f53a932b73dcea23096ac8f81b92213e6db76b6be3dd6a"
+    },
+    {
+      "path": "test/plugins/convertTransform.10.svg.txt",
+      "sha256": "b7f836a74626874cb67d824170876350be53e8a6db60f40a1367c528e283354f"
+    },
+    {
+      "path": "test/plugins/removeUnusedNS.05.svg.txt",
+      "sha256": "4461fd5a8c31efbc859911308e19b6e1f2b61af2c250a9fcf15532fda55834cb"
+    },
+    {
+      "path": "test/plugins/mergePaths.07.svg.txt",
+      "sha256": "47b55589e9ae120ea6981acb104c890f2f9ed196fc368134b8a2c96c0a301861"
+    },
+    {
+      "path": "test/plugins/collapseGroups.02.svg.txt",
+      "sha256": "bd5ff7e2d82b4df1bb978fc9f24b33e6df31541b48868b0506aeae27f25ff3f7"
+    },
+    {
+      "path": "test/plugins/collapseGroups.12.svg.txt",
+      "sha256": "6965b5e8a30b44e23e2031891d683a3195da3edee2e668e5d04db167104b1573"
+    },
+    {
+      "path": "test/plugins/removeOffCanvasPaths.04.svg.txt",
+      "sha256": "b278011313874ac32681d0fd8878a8acf6db50e6dd9691dac82e5430c91ee383"
+    },
+    {
+      "path": "test/plugins/removeXMLProcInst.01.svg.txt",
+      "sha256": "d977df733cc02e9a8917ac1c99d022a2396df1df517ece31e60fba1338191782"
+    },
+    {
+      "path": "test/plugins/prefixIds.10.svg.txt",
+      "sha256": "515b82a73cb1735cf178ad31a3f685a687ed50932edc40262cec347c3b96cb0a"
+    },
+    {
+      "path": "test/plugins/removeAttrs.07.svg.txt",
+      "sha256": "07d10b474bf3342d8be231c6a4ff6a6c9d7e4e87083c6826447e1926ef9f22ad"
+    },
+    {
+      "path": "test/plugins/removeUselessDefs.01.svg.txt",
+      "sha256": "65a5f6b0ea93e663b536dfda62081f56be9641236fa9c50438ca2103c2bbdb49"
+    },
+    {
+      "path": "test/plugins/removeUselessStrokeAndFill.05.svg.txt",
+      "sha256": "8d21c3fb1c9805301fbedec7405296d14d4534b13522d3b213afaec372771b54"
+    },
+    {
+      "path": "test/plugins/removeAttributesBySelector.03.svg.txt",
+      "sha256": "0e834e1373d63d984d942369317b7f0f3393741325a5fcc2070f8d96ded6a33b"
+    },
+    {
+      "path": "test/plugins/cleanupIds.03.svg.txt",
+      "sha256": "ec74ec5cb4ca309a67e49d3471a7718c2ba58e72f442400fd723d1442a764144"
+    },
+    {
+      "path": "test/plugins/cleanupIds.13.svg.txt",
+      "sha256": "bec975cee176f6707fe9e78f16626f7c475bfd41a637cdd7892dcbcbfd04c102"
+    },
+    {
+      "path": "test/plugins/removeHiddenElems.08.svg.txt",
+      "sha256": "7c0f7029d56007d68fa0550db5b03459cdd5eb3df639a4eebbd8a5a187c3779a"
+    },
+    {
+      "path": "test/plugins/removeHiddenElems.18.svg.txt",
+      "sha256": "6cdaa6c8535a5bfb95c2e49525a287ee41f06463dbe66ad89a6ced4efe797836"
+    },
+    {
+      "path": "test/plugins/removeScripts.07.svg.txt",
+      "sha256": "8f52037c200bf899b66bdd14885447aa55a494b2c6d2b6f41e3237f4442ce95f"
+    },
+    {
+      "path": "test/plugins/mergeStyles.12.svg.txt",
+      "sha256": "4892599e97437f728f6cb92ea004a35f21f8416b03635ee5e21cfd5d4f9d0ae2"
+    },
+    {
+      "path": "test/plugins/mergeStyles.02.svg.txt",
+      "sha256": "b681b9e6a5563d15c144917e23762cbc26106e533afe85cbba9f4d1a5d0b1a1b"
+    },
+    {
+      "path": "test/plugins/minifyStyles.05.svg.txt",
+      "sha256": "c8523a9589bae09abe73adf31b982366a04a8817aa272bc9a4e35e6b63053b1b"
+    },
+    {
+      "path": "test/plugins/removeDeprecatedAttrs.02.svg.txt",
+      "sha256": "1ed804dffd688f2188668451dfccaee73b9863a052ca5d978de77f8e126968f7"
+    },
+    {
+      "path": "test/plugins/removeElementsByAttr.02.svg.txt",
+      "sha256": "f21be598358b0260a85cef462d63f661a625c1e9dcb98a816cfb37eb93f4eccd"
+    },
+    {
+      "path": "test/plugins/inlineStyles.10.svg.txt",
+      "sha256": "631b25aab3eb6e838578e32d1a33676ce79dcf5ee8664448e71de1f74e6baae4"
+    },
+    {
+      "path": "test/plugins/collapseGroups.09.svg.txt",
+      "sha256": "5938925afb6805a48591ad2652f47ce4e2447f49a21e74380c779dd8979ef86f"
+    },
+    {
+      "path": "test/plugins/moveGroupAttrsToElems.04.svg.txt",
+      "sha256": "7ce352cd42c0317bde63a9cfde945a37f8b05464d288a80730c4ed83c3a742d8"
+    },
+    {
+      "path": "test/plugins/removeRasterImages.01.svg.txt",
+      "sha256": "dbf10d18bea2a153e47bca544eadc323213441864c3a0d71ff6bd643fcff11fc"
+    },
+    {
+      "path": "test/plugins/convertShapeToPath.04.svg.txt",
+      "sha256": "17cb09e76682c20617951c6bafff165990ffda51a1ede368e66b7ef734dfa71f"
+    },
+    {
+      "path": "test/plugins/convertColors.01.svg.txt",
+      "sha256": "84bc89f74a92500439f75a2421a1853fb908bb08863f888ac693a70c5536a35d"
+    },
+    {
+      "path": "test/plugins/removeXlink.02.svg.txt",
+      "sha256": "e664ea29c33bf6b6f6f4ecc8195144a8c8653ce15036fe6dc3a835e541ef619a"
+    },
+    {
+      "path": "test/plugins/removeUnknownsAndDefaults.14.svg.txt",
+      "sha256": "6a7523f8d8f9119a7bada05a8c26cb51fbe1268f3698a072a3b20a330a05dea6"
+    },
+    {
+      "path": "test/plugins/inlineStyles.26.svg.txt",
+      "sha256": "904ceb5585582a551cb6b7c04076c700f551ab26446d14d3d94f874742e09f45"
+    },
+    {
+      "path": "test/plugins/removeUnknownsAndDefaults.04.svg.txt",
+      "sha256": "880938f4cf0e97ba86a1b839a116bc7da03daef0cd53ec4015da2f78d89b0e89"
+    },
+    {
+      "path": "test/plugins/reusePaths.04.svg.txt",
+      "sha256": "2cb56ad0d94fffd626e4fadd45b32a6cf722f67d377ac3a60a47287e847b7838"
+    },
+    {
+      "path": "test/plugins/removeHiddenElems.11.svg.txt",
+      "sha256": "d91913bfe68c3319e3b22b9e87e2861c21027c77e6b039cd1df8301433cf0c9b"
+    },
+    {
+      "path": "test/plugins/removeHiddenElems.01.svg.txt",
+      "sha256": "11ad9c326ef6a2fa3526526c2fdc72786b7bcc4d70d2573c818218d8768f3827"
+    },
+    {
+      "path": "test/plugins/removeAttrs.05.svg.txt",
+      "sha256": "3a9bd75eec7b1c0968ba90791718ad7eccb3497e8e66f094987841cacf4cf311"
+    },
+    {
+      "path": "test/plugins/prefixIds.12.svg.txt",
+      "sha256": "78d8a15f090275ce3731b064e58c5f1818922926b6cf2cdc26ce1fda9c70fb59"
+    },
+    {
+      "path": "test/plugins/prefixIds.02.svg.txt",
+      "sha256": "5f2e8d6c22a736c6756e556fc4dd8e689cd6ba5b8c125efcd74833df19f0e5fe"
+    },
+    {
+      "path": "test/plugins/cleanupAttrs.01.svg.txt",
+      "sha256": "c2262a1c85523a7ffee010c5eaa75c1d823b9e8872326d8aacf895466bd4af45"
+    },
+    {
+      "path": "test/plugins/removeUselessDefs.03.svg.txt",
+      "sha256": "c47497f116c372d532106eaf49e57930103d461367d07ad147ef25bfaa2334b6"
+    },
+    {
+      "path": "test/plugins/removeUnusedNS.07.svg.txt",
+      "sha256": "69b72a8b2ff5420da5d52e24a5a8044f7397e7c06d7a4ba08ef17d7a0d95c412"
+    },
+    {
+      "path": "test/plugins/convertTransform.12.svg.txt",
+      "sha256": "e6807ae86da0c87dff5b0b80272294406ac11bd9f30591388b5a00ad8948c321"
+    },
+    {
+      "path": "test/plugins/convertTransform.02.svg.txt",
+      "sha256": "48d9b0454340e78cbd7fde7758fe1820e2c3d54795dd99ed12fdf46355e0b7fd"
+    },
+    {
+      "path": "test/plugins/inlineStyles.19.svg.txt",
+      "sha256": "1d08fb7d7b1b8262854f57dbbbb51026f2ae42b423058de25d4f2c233c3a5681"
+    },
+    {
+      "path": "test/plugins/inlineStyles.09.svg.txt",
+      "sha256": "e2161beeb5bd1660bcd08166888a99b95f8c22bbc9245edc41720a057ced35fd"
+    },
+    {
+      "path": "test/plugins/removeOffCanvasPaths.06.svg.txt",
+      "sha256": "aea122f684a6ab7a1ae2f5ec61361466095a864d4bb51e4ec8ca5640709b8577"
+    },
+    {
+      "path": "test/plugins/cleanupIds.25.svg.txt",
+      "sha256": "8e2b81e05eb8979ea8b85cec4a5ef51ceca5db29b083d2d7b8d68982a87b0a34"
+    },
+    {
+      "path": "test/plugins/mergePaths.05.svg.txt",
+      "sha256": "ed68376bde54c60558504749a260995d0339d31b96a5947786aed4650f4cfa2c"
+    },
+    {
+      "path": "test/plugins/convertStyleToAttrs.05.svg.txt",
+      "sha256": "c504acb5dcdd79929574aea6f4ca89000cffc1e334e32e38d1cad8fa76823add"
+    },
+    {
+      "path": "test/plugins/moveGroupAttrsToElems.05.svg.txt",
+      "sha256": "d579e248bb9550bd532768440ef32403d22c797c21540aed030774e79fd6372a"
+    },
+    {
+      "path": "test/plugins/convertShapeToPath.05.svg.txt",
+      "sha256": "2ff156310e387a355cdbac1c17dba61c0939e8403c453eb05c062a1ff66c6fd8"
+    },
+    {
+      "path": "test/plugins/removeUnknownsAndDefaults.05.svg.txt",
+      "sha256": "8745da1f429a896f7cd69a2615976b40cce291ec8200cf002fb580ba52839332"
+    },
+    {
+      "path": "test/plugins/removeUnknownsAndDefaults.15.svg.txt",
+      "sha256": "8c8e4903fb341d7170d2bd617aa43b2bb1aa78c211a919a3f95d5ba06247d748"
+    },
+    {
+      "path": "test/plugins/inlineStyles.27.svg.txt",
+      "sha256": "d0c7e04f1fb6b79edfa1304b0178c9482e7a746b60ab1cf74f1789cabb48700b"
+    },
+    {
+      "path": "test/plugins/removeHiddenElems.10.svg.txt",
+      "sha256": "0b1ae70cd9d2af4e7c23042acb90a7469bd1cdd527b67218e9d036eb7c913ee9"
+    },
+    {
+      "path": "test/plugins/removeEmptyAttrs.01.svg.txt",
+      "sha256": "e9988c524cc6803cd511d4ee59f2082ac935e7c0df2b9dcdf1e3e08d87fc9c50"
+    },
+    {
+      "path": "test/plugins/reusePaths.05.svg.txt",
+      "sha256": "974fe5aa5b0fc161f42f228587240514d0a34ea7487c2098ef53dcdef5b1ca5b"
+    },
+    {
+      "path": "test/plugins/removeXlink.03.svg.txt",
+      "sha256": "69d85a8224e703b9d7fa5282469e2398966f3401912f4594715fee5e25d0aaba"
+    },
+    {
+      "path": "test/plugins/moveElemsAttrsToGroup.04.svg.txt",
+      "sha256": "a26a9a2e2d7adcc7a2b6cfb7d3608049e3a24245476028f408f70c04778380b0"
+    },
+    {
+      "path": "test/plugins/removeViewBox.01.svg.txt",
+      "sha256": "02a9695a12e56a28619410cf6efa7fb1258dff8928818334370dc00e4c40e4c3"
+    },
+    {
+      "path": "test/plugins/removeUselessDefs.02.svg.txt",
+      "sha256": "ef19f132a16690e84dec57aa854975644bc47219dec1f64702e19a864d7d74db"
+    },
+    {
+      "path": "test/plugins/prefixIds.03.svg.txt",
+      "sha256": "f194202d736073dcbe4de96a8b930c0a0829f798881de56ec53e056cd08584b8"
+    },
+    {
+      "path": "test/plugins/removeXMLProcInst.02.svg.txt",
+      "sha256": "3f97c6ab75ac44da71d469adf0fc889b92bdad80475cd723217540e49c9a139d"
+    },
+    {
+      "path": "test/plugins/prefixIds.13.svg.txt",
+      "sha256": "039d43cbb29b0dce8faf8a63fa6a85cc089d2cdb5e7c2f55088790772f0a0753"
+    },
+    {
+      "path": "test/plugins/removeAttrs.04.svg.txt",
+      "sha256": "ffc1cfb22cee03b9565b0e56d110320e423e524c6e314c33cf0946580ee7abaa"
+    },
+    {
+      "path": "test/plugins/collapseGroups.01.svg.txt",
+      "sha256": "28ebcd1793f74ead650c7174ce09b457b78a13f0d2d092a76474f9d48b0c5e31"
+    },
+    {
+      "path": "test/plugins/cleanupIds.24.svg.txt",
+      "sha256": "399bb1b5fc71afd23926064c45e0d9a1d9cb25a44338cf13c1e28b0a6776d866"
+    },
+    {
+      "path": "test/plugins/collapseGroups.11.svg.txt",
+      "sha256": "ab1c3f2bbac3f9cd336296a55801d959ee347a4845bf2414965ad9a0aa380034"
+    },
+    {
+      "path": "test/plugins/convertStyleToAttrs.04.svg.txt",
+      "sha256": "2a76c325ffdfebfd46f57cfe33640cbd9cc781303707c6fbfd572ae764139bea"
+    },
+    {
+      "path": "test/plugins/mergePaths.04.svg.txt",
+      "sha256": "0fba6619a29de8403b8d6e133d2b4b50bb562e816dac9ad0431b059a64e112c8"
+    },
+    {
+      "path": "test/plugins/convertTransform.03.svg.txt",
+      "sha256": "9c14dd79bc96843f3d88fef643a24ad6502cdb44100a7a73f126604e095ec84f"
+    },
+    {
+      "path": "test/plugins/convertTransform.13.svg.txt",
+      "sha256": "7b81135f1ba2bb8a8487d1e23ac6e86142ef559e3e16d0368dc40c47149c823f"
+    },
+    {
+      "path": "test/plugins/removeUnusedNS.06.svg.txt",
+      "sha256": "61ad3e3636209fcd356469e8bbbd04a03afaaf748a23cc8e17fc16d1926ce772"
+    },
+    {
+      "path": "test/plugins/inlineStyles.08.svg.txt",
+      "sha256": "95865fc158af0a09b3af23e0552eecdd63684b4c5fc4c8b5e289a60d077ae674"
+    },
+    {
+      "path": "test/plugins/removeEmptyContainers.01.svg.txt",
+      "sha256": "cac4b54d58648f61fea43ae3af6438df584ecae671f521b9559235b6d5ca396e"
+    },
+    {
+      "path": "test/plugins/inlineStyles.18.svg.txt",
+      "sha256": "bb828ac12c2b3967693d58492e80b6320f04988ebf4e77dbae3a9818c2c2028a"
+    },
+    {
+      "path": "test/plugins/removeNonInheritableGroupAttrs.02.svg.txt",
+      "sha256": "a070daf9f3b80e8f25ca1b0200dc70dfeaaf1b1c9f4a007114cc9f5efc59d7d2"
+    },
+    {
+      "path": "test/plugins/removeHiddenElems.19.svg.txt",
+      "sha256": "7a0760fe9657a6280d4d9bdbbd6bc0f0f455c82840d61689415ac56bb432e955"
+    },
+    {
+      "path": "test/plugins/removeHiddenElems.09.svg.txt",
+      "sha256": "9d4e4f6cd86c91ab735c58f104a6ce7d7e39c018548b86afdba7dfa87cd52368"
+    },
+    {
+      "path": "test/plugins/removeUselessStrokeAndFill.04.svg.txt",
+      "sha256": "c371d7d0687e75c06fb63cb5ba4d29d71f46c1f316bfb2eee5f14c7b3917fa32"
+    },
+    {
+      "path": "test/plugins/cleanupIds.12.svg.txt",
+      "sha256": "4c58047eca3bcafa66d56bf838879b1570877d1de3c91594dfba23d080d3d9b6"
+    },
+    {
+      "path": "test/plugins/cleanupIds.02.svg.txt",
+      "sha256": "903a18ce48259ee54923fb9529c4aae992742bdb79da7d69a83bc2fd0c04a32e"
+    },
+    {
+      "path": "test/plugins/removeAttributesBySelector.02.svg.txt",
+      "sha256": "4503865a312b9376c0f2172ce092840057da521a9542fb146296de782b2a3133"
+    },
+    {
+      "path": "test/plugins/mergeStyles.03.svg.txt",
+      "sha256": "4a213e87ac24b827e653d1a42d78004783097d0a85331aa60ea629a503aaf3d2"
+    },
+    {
+      "path": "test/plugins/addAttributesToSVGElement.04.svg.txt",
+      "sha256": "c034b817875967d21545d9d3f0fe1bbf3a9573c1c1c28a85c46fbac2d0e761d1"
+    },
+    {
+      "path": "test/plugins/removeComments.01.svg.txt",
+      "sha256": "4ea462ae9773e1b95da92df3d3941a81bf2a11fecadfc118e05240add195ef60"
+    },
+    {
+      "path": "test/plugins/removeDeprecatedAttrs.03.svg.txt",
+      "sha256": "a5343da874314d9ce58f3fdd61999e38aa3967d45ab3cd6473026ca32abc20eb"
+    },
+    {
+      "path": "test/plugins/minifyStyles.04.svg.txt",
+      "sha256": "dac6472c60b6f5e008634e229fee9e857610dc4d3001dcc5f560db4c8c378820"
+    },
+    {
+      "path": "test/plugins/removeScripts.06.svg.txt",
+      "sha256": "e599e23cdbd1d42396c77c807b2ea7b6d2188bd185302db8825320cff033a511"
+    },
+    {
+      "path": "test/plugins/collapseGroups.18.svg.txt",
+      "sha256": "f0c8fa8d99e7cf48d5c54e5b26ff8a9679b8a5b8c4def70ed28ca88aa227c116"
+    },
+    {
+      "path": "test/plugins/collapseGroups.08.svg.txt",
+      "sha256": "220c21ac59ab38de394aecb93251b776f242632af207375053480eb625f029c0"
+    },
+    {
+      "path": "test/plugins/removeElementsByAttr.03.svg.txt",
+      "sha256": "e79edbe020789438df24295df7bde1ced21aeca565d918dc14fda01148fb2d93"
+    },
+    {
+      "path": "test/plugins/removeTitle.01.svg.txt",
+      "sha256": "4acb45e5f95d7a55d3483b023c1517437f22a4af8ff23d705e206c85d12c96af"
+    },
+    {
+      "path": "test/plugins/inlineStyles.11.svg.txt",
+      "sha256": "98b39f3b430a2df3051a387396c2bc794b794edd4aace1da92ae5d7b23e55314"
+    },
+    {
+      "path": "test/plugins/inlineStyles.01.svg.txt",
+      "sha256": "dd1cfbda573f5db4783fb023851265c3865e59a269d17edfb122fa90116f12b9"
+    },
+    {
+      "path": "test/plugins/removeEmptyContainers.08.svg.txt",
+      "sha256": "3c27541c1814887c7307008177f2dd9d9187759ea52bbade4a61d4bd68a1380c"
+    },
+    {
+      "path": "test/plugins/cleanupListOfValues.01.svg.txt",
+      "sha256": "cbf65630025ee9d45f22141e4fed14da00adcb92d18cef5ea513c94c49e94dd9"
+    },
+    {
+      "path": "test/plugins/addClassesToSVGElement.01.svg.txt",
+      "sha256": "b8f33edea0968000658c13326e9f80d021668ec6acf8e0313b837485b972dada"
+    },
+    {
+      "path": "test/plugins/removeEmptyText.01.svg.txt",
+      "sha256": "0b4ce48531ec1c369b7455f10afca284d3795dd59c7c3891ac0e538456d02637"
+    },
+    {
+      "path": "test/plugins/mergePaths.08.svg.txt",
+      "sha256": "90f4dcf92a02c5c2952bd0b56cc5158d2007f116593dd33905f3229b0733eeef"
+    },
+    {
+      "path": "test/plugins/inlineStyles.04.svg.txt",
+      "sha256": "aeb1a7bbadf6dfe99f33d560f6bb25666d6659a075c2e834ec82dd0bdaa77bf4"
+    },
+    {
+      "path": "test/plugins/inlineStyles.14.svg.txt",
+      "sha256": "27ffbee9aae3d10a68bf1f76c3d7f721b27cbf155c2f7ad4ca8b1ecb1a701248"
+    },
+    {
+      "path": "test/plugins/cleanupEnableBackground.03.svg.txt",
+      "sha256": "ac8c2e005697ec4bd89672502793b85020bb707dfc2e9c1a92bd66a998f8f291"
+    },
+    {
+      "path": "test/plugins/removeElementsByAttr.06.svg.txt",
+      "sha256": "c7f60ba4d648feb479e9473468a4c1a6b259e2bd494e22ef03d39ac41d437036"
+    },
+    {
+      "path": "test/plugins/removeUnknownsAndDefaults.09.svg.txt",
+      "sha256": "1840d669daa15635ed2d31d37c998bf10a974416b30f5c37a921b152169738bc"
+    },
+    {
+      "path": "test/plugins/cleanupIds.07.svg.txt",
+      "sha256": "9919ca8d0fa0425d39d8487798fafcc751d45861799ad7355dcded395d4fbf08"
+    },
+    {
+      "path": "test/plugins/cleanupIds.17.svg.txt",
+      "sha256": "d216cfbf8b80c2fb929330dcdbc8d8e386baed3a27a56173ba78204b6958ff15"
+    },
+    {
+      "path": "test/plugins/removeUselessStrokeAndFill.01.svg.txt",
+      "sha256": "c7804da557d0c82519493a7157c9b74dfa46e8393351411eaebb9b577e3da8af"
+    },
+    {
+      "path": "test/plugins/moveElemsAttrsToGroup.08.svg.txt",
+      "sha256": "25bb55616b6819d0cae3df99b18efc632e5b581e8154a18a06e0d7f16f2ae418"
+    },
+    {
+      "path": "test/plugins/minifyStyles.01.svg.txt",
+      "sha256": "d65c0eb71d1f11a76db783ae5852d6058447f66039a56cc9b2253d5108818f22"
+    },
+    {
+      "path": "test/plugins/removeDeprecatedAttrs.06.svg.txt",
+      "sha256": "2b80c872dc08eca8c6f4c6b27bcf6ee8d138a8b104daaddf1e7050850981269e"
+    },
+    {
+      "path": "test/plugins/minifyStyles.11.svg.txt",
+      "sha256": "26cb4249aabf59fedf121064eac15621f27a12d1e9a0ed56eb3ca688a894a93e"
+    },
+    {
+      "path": "test/plugins/mergeStyles.06.svg.txt",
+      "sha256": "6fe20ebe7b6755c7c3e9e08f956257d9281aca8b55fecb234b7e7758122b7685"
+    },
+    {
+      "path": "test/plugins/addAttributesToSVGElement.01.svg.txt",
+      "sha256": "f926428f3828340124582d669c32887140b039e1b5dd888a6e8fe3481746769b"
+    },
+    {
+      "path": "test/plugins/removeDimensions.02.svg.txt",
+      "sha256": "f431ce97b4b6b0bb7b5ad42526d21afba2cbb138a8de94dbcdac83d036db388d"
+    },
+    {
+      "path": "test/plugins/removeScripts.03.svg.txt",
+      "sha256": "238d70e95eb3f68f3d2d4b5635d6869f3cd1e52028c9701ef430a40e8f7ca8e6"
+    },
+    {
+      "path": "test/plugins/sortAttrs.03.svg.txt",
+      "sha256": "838efe5fb286febe925d15cb32fab6aad9aaffb474a08122a59e946e1dfeb671"
+    },
+    {
+      "path": "test/plugins/prefixIds.06.svg.txt",
+      "sha256": "10d72d20288b83e5e1f04956cae9ba778c2a5a034c73568bc3c22039d6034337"
+    },
+    {
+      "path": "test/plugins/removeAttrs.01.svg.txt",
+      "sha256": "76a422c9417b835056e04fcf3c2cc826ae41ca1a09116a71b88df785a7db0e6f"
+    },
+    {
+      "path": "test/plugins/mergePaths.01.svg.txt",
+      "sha256": "1dd4f2333b57561476193a0dcaaf158e21b28fd702590658a035a8dd6dfb43a2"
+    },
+    {
+      "path": "test/plugins/mergePaths.11.svg.txt",
+      "sha256": "d38338a4fd1b8e696a0a76f4f466645291b84fd376706e7cff1594044ca54c83"
+    },
+    {
+      "path": "test/plugins/convertStyleToAttrs.01.svg.txt",
+      "sha256": "fc341f205647275758213e52fb8d338538a028dcab1cef2b5661e5b84a1bf902"
+    },
+    {
+      "path": "test/plugins/cleanupIds.21.svg.txt",
+      "sha256": "7386e6151feac0a00cc7a3a674f107c441b8e95420e070c5f6a5bf6e8a9eb9de"
+    },
+    {
+      "path": "test/plugins/collapseGroups.14.svg.txt",
+      "sha256": "41177f958f7980f6e9fd4b095aeb88d887e7adadcac5145e2a658983305c5272"
+    },
+    {
+      "path": "test/plugins/removeOffCanvasPaths.02.svg.txt",
+      "sha256": "aefaa02d3edc0f2a38156a1d28b50412c6b5efedc6e5cd00b1617137da3e6dd8"
+    },
+    {
+      "path": "test/plugins/removeEmptyContainers.04.svg.txt",
+      "sha256": "860afb3fbaf8b98fa99b58948390a888497d9418e66d0bdc877c28df5b122e52"
+    },
+    {
+      "path": "test/plugins/convertTransform.06.svg.txt",
+      "sha256": "4f5a0ea3ffa6f94957170fb73a4f51f66177a550e1b9767d9a22365d5f27e7f2"
+    },
+    {
+      "path": "test/plugins/removeUnusedNS.03.svg.txt",
+      "sha256": "232bbdc3ba5924a684cf34d83b009c073695332755dad8217a00ccfaccb39d48"
+    },
+    {
+      "path": "test/plugins/removeEditorsNSData.02.svg.txt",
+      "sha256": "e9f6ea91430a66017fbb80c49e96a66a92f6b57c2d03751462d200e71793520d"
+    },
+    {
+      "path": "test/plugins/minifyStyles.08.svg.txt",
+      "sha256": "c1ed23d8c79874b57cf2878c37326087af9fcc2e881f84f1e4c13814bb115855"
+    },
+    {
+      "path": "test/plugins/cleanupNumericValues.03.svg.txt",
+      "sha256": "42ba6c2f6bedeabb4a9635442c1aab7bbd17e335c32c8d8a7fbfdd3b0003bda6"
+    },
+    {
+      "path": "test/plugins/convertColors.05.svg.txt",
+      "sha256": "d2ce262f818a1b3c884ed7cf238f91ad5c01774ce955f56dbf47aff347b624d2"
+    },
+    {
+      "path": "test/plugins/removeHiddenElems.15.svg.txt",
+      "sha256": "de2e4cfe8245402847ac70441ea9f833fd6f4526ec001d30659ba24e72bd1f2e"
+    },
+    {
+      "path": "test/plugins/removeHiddenElems.05.svg.txt",
+      "sha256": "5de3b07450fe0e162ba6ae372103d1ea4cfbf4fd2be79f49aa12b1f2066d7860"
+    },
+    {
+      "path": "test/plugins/inlineStyles.22.svg.txt",
+      "sha256": "80eb61c673153b29df35d344b583c20828ea72e0b57968e12f7cbde1dc3855a2"
+    },
+    {
+      "path": "test/plugins/removeUnknownsAndDefaults.10.svg.txt",
+      "sha256": "49959a296f1985c8b741d5266da107d5c0f9be31310d2a0d1fa558edd52dd3e0"
+    },
+    {
+      "path": "test/plugins/removeViewBox.04.svg.txt",
+      "sha256": "833dffca21aab4db9a68901f823148ca28d0bd0dee81d8eae1cf6942c8795500"
+    },
+    {
+      "path": "test/plugins/moveElemsAttrsToGroup.01.svg.txt",
+      "sha256": "3dc9fc99fbaad4667d4f6aceb6678af62ce685a43e294f0f8cd0b50a0b819bb6"
+    },
+    {
+      "path": "test/plugins/convertOneStopGradients.01.svg.txt",
+      "sha256": "6b60f91d8263402eb72a0aee40572b2ced60a095a3ae9155d3374277c9c7e2ca"
+    },
+    {
+      "path": "test/plugins/sortAttrs.02.svg.txt",
+      "sha256": "264291b8a6c4e85a6f3544cccce62efffcded95ab9011e3fbfe1d6e21e41d00d"
+    },
+    {
+      "path": "test/plugins/prefixIds.07.svg.txt",
+      "sha256": "724b70efb8899991eaf5ef0595d93276fa5b71ad13d834558aebddcff0e72d84"
+    },
+    {
+      "path": "test/plugins/removeEmptyContainers.05.svg.txt",
+      "sha256": "a5059084dc9821ab7e56fbf0fde16dc36d5d71b31c71c3da9f662dfd85293236"
+    },
+    {
+      "path": "test/plugins/removeUnusedNS.02.svg.txt",
+      "sha256": "d35ca22b7541caf75216415c1e8b412653f52f586682c483ddc311b63346f328"
+    },
+    {
+      "path": "test/plugins/convertTransform.07.svg.txt",
+      "sha256": "08679249e8032a5ea650ea0203a279142f0da141a68f16f727b2dfc7cd8339b7"
+    },
+    {
+      "path": "test/plugins/mergePaths.10.svg.txt",
+      "sha256": "bd9ef217a4220f3839651267df5c43bab48030d6eec108cf3874a5a3ca8d8741"
+    },
+    {
+      "path": "test/plugins/removeOffCanvasPaths.03.svg.txt",
+      "sha256": "068c080272e2505127f4717a9da1e22647799aa99a1bbc4706f28b0f96106988"
+    },
+    {
+      "path": "test/plugins/collapseGroups.15.svg.txt",
+      "sha256": "ca5a1d8132601b1f223781d5bd5906f591b3e59dbdf199938f18eac27b6883bb"
+    },
+    {
+      "path": "test/plugins/cleanupIds.20.svg.txt",
+      "sha256": "a606a3fe11ff8e99e504b9aef8a75af5ad893ce7af1e512f2e7d032360479ef2"
+    },
+    {
+      "path": "test/plugins/convertShapeToPath.01.svg.txt",
+      "sha256": "e6864cdef77080101ff25e97ab91fa53d0045dd8ef78055c58b8e8e4c75f9d25"
+    },
+    {
+      "path": "test/plugins/convertColors.04.svg.txt",
+      "sha256": "3937caa4e90aa7c28bbd66613b0ed96b2b4fa1747773357b9dbf6092c138364a"
+    },
+    {
+      "path": "test/plugins/moveGroupAttrsToElems.01.svg.txt",
+      "sha256": "50597d1f1f84858f28510ca3e4566516ff089c8a3f50cf10b1a58aafe8952661"
+    },
+    {
+      "path": "test/plugins/minifyStyles.09.svg.txt",
+      "sha256": "23d3f2c74e093e1fd3afafcc20f6cc28e8df6f4a02aa194cc6769571b542a94a"
+    },
+    {
+      "path": "test/plugins/cleanupNumericValues.02.svg.txt",
+      "sha256": "bb61b135b2f8e6aa57e3fcc2c5bd09780e4b7d592d6d55a09727218a21846560"
+    },
+    {
+      "path": "test/plugins/removeViewBox.05.svg.txt",
+      "sha256": "8a4994680dbc5624a64033e5f3f0a4746dee414dbda4b472e596c9c63d44b814"
+    },
+    {
+      "path": "test/plugins/convertEllipseToCircle.01.svg.txt",
+      "sha256": "febf1e2f6b84b408436fc5b49ca5dc85bccac69a36addfe3770983c719b2754c"
+    },
+    {
+      "path": "test/plugins/reusePaths.01.svg.txt",
+      "sha256": "0228754165570bf06289f5f845a142390aeca3e9ee148365b0537a81e142b43a"
+    },
+    {
+      "path": "test/plugins/removeMetadata.01.svg.txt",
+      "sha256": "4dd47b13b187a099dc2f50c639aaa2bb2c48ee0a87b0a56abd7524a209186a08"
+    },
+    {
+      "path": "test/plugins/removeHiddenElems.04.svg.txt",
+      "sha256": "8f1a951b3b77214ed55a2eabf07a83be5d14ee636bd6334962d16b56e1607fe8"
+    },
+    {
+      "path": "test/plugins/removeHiddenElems.14.svg.txt",
+      "sha256": "d6387b1e63fac67755640502988dca9248cb4912041a4d1f612de9b4ff70e3fb"
+    },
+    {
+      "path": "test/plugins/removeUnknownsAndDefaults.01.svg.txt",
+      "sha256": "23792d804fd33df01e52f71aaabed8bb3172ca9074ad0eea9d75eea4e8be2593"
+    },
+    {
+      "path": "test/plugins/inlineStyles.23.svg.txt",
+      "sha256": "84dfffd877726bb2eba04d97103d8e5795e5cd0fa49f604fef93138392123ee2"
+    },
+    {
+      "path": "test/plugins/removeUnknownsAndDefaults.11.svg.txt",
+      "sha256": "e9f5693dcb142dcec025cfc295eb3bb05e98a84f6e41cdbd493ec23dc2afe23f"
+    },
+    {
+      "path": "test/plugins/inlineStyles.15.svg.txt",
+      "sha256": "1612d0fe46b674a140ce9fe13dc05189a729cf604cc8cc3465eb83c4533999a9"
+    },
+    {
+      "path": "test/plugins/inlineStyles.05.svg.txt",
+      "sha256": "3bf49ad8fa7c74525f1e9380b8cccbffb2369d0a3b7fd1ed43fe9ca6b329a8e5"
+    },
+    {
+      "path": "test/plugins/removeElementsByAttr.07.svg.txt",
+      "sha256": "63c4774fac384e903070a1aa0d353381f77d79b0001f67f45aa962a036d953b5"
+    },
+    {
+      "path": "test/plugins/cleanupEnableBackground.02.svg.txt",
+      "sha256": "a57449d69709beb651b61cedf700186f95a868ddaa407d251c08a34e24a92519"
+    },
+    {
+      "path": "test/plugins/mergePaths.09.svg.txt",
+      "sha256": "1e147de2208d351801aaa6e1ee0614211286fe4809730ef660a8714b187b1cbc"
+    },
+    {
+      "path": "test/plugins/removeDoctype.01.svg.txt",
+      "sha256": "c40f60bfe2876d755dc60f8b4b25bbed26db003e4a25b74322e343cede4108fd"
+    },
+    {
+      "path": "test/plugins/removeDesc.01.svg.txt",
+      "sha256": "2b8337f8f3ce44965efdfc6a7419299a915f5a124c0abaf799938ff51de16ea9"
+    },
+    {
+      "path": "test/plugins/cleanupIds.16.svg.txt",
+      "sha256": "9a2f6dfab5dbfc851e8b6371e4340c1f333574ce1de83a992fe806d9593e8a62"
+    },
+    {
+      "path": "test/plugins/cleanupIds.06.svg.txt",
+      "sha256": "ce1acdf72b3adb849251fbdac73f0c312dcf057428543c6930e1bc8bc651e694"
+    },
+    {
+      "path": "test/plugins/removeUnknownsAndDefaults.08.svg.txt",
+      "sha256": "2479a3a48597ae20cef365b50c997efc09056e72f20d3edffa4ec67b1eb00a22"
+    },
+    {
+      "path": "test/plugins/removeScripts.02.svg.txt",
+      "sha256": "71c8f099b6220234ddbc709ef484ec076bdc8704dd54c251f7aa5de76bc89900"
+    },
+    {
+      "path": "test/plugins/removeDimensions.03.svg.txt",
+      "sha256": "a0bcb10a3a3053971cb8f3f47a013f20b3efd6a0ab0ba76e9be9b67093796506"
+    },
+    {
+      "path": "test/plugins/minifyStyles.10.svg.txt",
+      "sha256": "941d981d768077028def1827df0e2690f2b46230b01c33e1177790ad25650344"
+    },
+    {
+      "path": "test/plugins/removeDeprecatedAttrs.07.svg.txt",
+      "sha256": "34f947e4a667c57e150546b3e6880e2d82c510cd4e49cb448063f8f98968398c"
+    },
+    {
+      "path": "test/plugins/mergeStyles.07.svg.txt",
+      "sha256": "8555b22c888a320b08baf626c821faa9ebe60127173d37f34f6fca3b5546ef7a"
+    },
+    {
+      "path": "test/plugins/convertTransform.15.svg.txt",
+      "sha256": "cae71147e31d60377a2e8931d2b08c09687af1bb9e3e08ab236687bb39713756"
+    },
+    {
+      "path": "test/plugins/convertTransform.05.svg.txt",
+      "sha256": "ac9b216a9ce11962565073db50675d9e2c7776a693778bad3bca809c38b967bd"
+    },
+    {
+      "path": "test/plugins/removeEmptyContainers.07.svg.txt",
+      "sha256": "6a4be80b22b703c37c024c6d60573f7ca49036cd90b8e7d2fc8f3536bc03d9ce"
+    },
+    {
+      "path": "test/plugins/collapseGroups.17.svg.txt",
+      "sha256": "a710e3e16fc348c36a0f55a5a276fd4d72479760f3e4ebe855843f9d371933ea"
+    },
+    {
+      "path": "test/plugins/cleanupIds.22.svg.txt",
+      "sha256": "06a623c20d94d9dcdceb15113030589b0ee1be5dbe56086e078dc2fb90f7c2b3"
+    },
+    {
+      "path": "test/plugins/collapseGroups.07.svg.txt",
+      "sha256": "5254f0e4e9f0582c2d4295c95790ae96cc76aa7f9fdc6b217040657ba4e24444"
+    },
+    {
+      "path": "test/plugins/removeOffCanvasPaths.01.svg.txt",
+      "sha256": "75767d913a313ee6b333a94487a3fb13ff5014c83e38230c508de74eb55c5998"
+    },
+    {
+      "path": "test/plugins/mergePaths.02.svg.txt",
+      "sha256": "cc96909ac171dae1a582e7bc85b03a782c7b472a2b573dcb132fa5867b12dfbb"
+    },
+    {
+      "path": "test/plugins/mergePaths.12.svg.txt",
+      "sha256": "b516e59185b0e52d5f027e1ab849c1724139de5c4eae720ccb4c1d362d01dbfa"
+    },
+    {
+      "path": "test/plugins/convertStyleToAttrs.02.svg.txt",
+      "sha256": "8efe30d40c0880dfb293e41a765599fb5786e3c844e45a06f8a970cff884dc31"
+    },
+    {
+      "path": "test/plugins/prefixIds.05.svg.txt",
+      "sha256": "547aa28bcdaf293cefe9132dbef52ff69a3a4efcf4b1dee3489e09d92c1e963b"
+    },
+    {
+      "path": "test/plugins/removeAttrs.02.svg.txt",
+      "sha256": "77d3926a3c8266b4228dcbd4fbd3cdf3f8fd62f339f9c3b63a98d5f9ed991ddf"
+    },
+    {
+      "path": "test/plugins/convertOneStopGradients.03.svg.txt",
+      "sha256": "97b503971e78d0cd96d43d3768de5836679d5efcd632055e2a064600b6a6ae93"
+    },
+    {
+      "path": "test/plugins/removeUselessDefs.04.svg.txt",
+      "sha256": "d937c1b55fdeabfc38efe01f1a4f4c2f1846a0288c8a6017233b9dc14b8c6575"
+    },
+    {
+      "path": "test/plugins/moveElemsAttrsToGroup.02.svg.txt",
+      "sha256": "4be2eabfd1fa278feca6261cd1e7fb57c074c013a06bc019ef42accc346303c0"
+    },
+    {
+      "path": "test/plugins/removeUnknownsAndDefaults.13.svg.txt",
+      "sha256": "20475ef8d2f9e1f0a0e1a25a7d172ebd29139bb52abc2e87b95713ee46a730f0"
+    },
+    {
+      "path": "test/plugins/inlineStyles.21.svg.txt",
+      "sha256": "22dd8e662832f104255b1babea66e8ae538608d89d6b5a0db4a498a5939ba8d2"
+    },
+    {
+      "path": "test/plugins/removeUnknownsAndDefaults.03.svg.txt",
+      "sha256": "182aefa98c932c3a49d42a528be625c405a965d51e314302c804faa6b0924257"
+    },
+    {
+      "path": "test/plugins/removeHiddenElems.16.svg.txt",
+      "sha256": "4d5356316ef29beb16ab4d06387b2175867beb3c405bf8ccde3aa2155ff096ee"
+    },
+    {
+      "path": "test/plugins/removeHiddenElems.06.svg.txt",
+      "sha256": "3a18387f100056a8816d1da9782590dc4f53c687806829b2e241bb1871dad06a"
+    },
+    {
+      "path": "test/plugins/reusePaths.03.svg.txt",
+      "sha256": "9bd1494d90b47c81fbaf40bcead3086ec9503a937007f38dd833ab4537967c0f"
+    },
+    {
+      "path": "test/plugins/moveGroupAttrsToElems.03.svg.txt",
+      "sha256": "97d0695b661cb65fe50b1e2158a02c46b31dba4efa3b5c836a7f69ad8a896027"
+    },
+    {
+      "path": "test/plugins/removeScripts.09.svg.txt",
+      "sha256": "bc493e2eb0022c655ead337c3f8b5b9f067264069727a0942c3cd9353b787724"
+    },
+    {
+      "path": "test/plugins/convertColors.06.svg.txt",
+      "sha256": "f613f9d99155a2a53b2b1543c569cee7d4cd19d432ed3f6a8b575352e54b57a0"
+    },
+    {
+      "path": "test/plugins/convertShapeToPath.03.svg.txt",
+      "sha256": "19205aeec6d86d8b527349ab6d35e9c242c0d3ea879f9db56cf437a5e2af3fb3"
+    },
+    {
+      "path": "test/plugins/removeEditorsNSData.01.svg.txt",
+      "sha256": "d6ca7a7707fa8be9ec078dc4456382d79007646d39b1017ea7d0631fa180eb30"
+    },
+    {
+      "path": "test/plugins/removeElementsByAttr.05.svg.txt",
+      "sha256": "8f0261e7eeab84fb4083e2bfd7755eb9dcbafb2bc31f8dd8265716efd72b8fb8"
+    },
+    {
+      "path": "test/plugins/inlineStyles.07.svg.txt",
+      "sha256": "c6d363c270916a38356b6d1d22250a547f7bf5297e2dc9c03a9a98686f172f29"
+    },
+    {
+      "path": "test/plugins/inlineStyles.17.svg.txt",
+      "sha256": "6e03ecd553f571504a87f3494e8c24c2c9378911de1975b8ddada274bc876f5b"
+    },
+    {
+      "path": "test/plugins/removeEmptyText.02.svg.txt",
+      "sha256": "aab051438c7a8e9ad03595b43f060d58081341f8d96224b653d63e85df6da348"
+    },
+    {
+      "path": "test/plugins/removeScripts.10.svg.txt",
+      "sha256": "15b94c7161c4ab5a0e352ae67856658134b4d8b4db238e3a908c9b68d704a6a1"
+    },
+    {
+      "path": "test/plugins/removeDimensions.01.svg.txt",
+      "sha256": "c0f80e21740fb0c19040cfc91016f252c884c82098753ec61af4baf49120ca67"
+    },
+    {
+      "path": "test/plugins/mergeStyles.05.svg.txt",
+      "sha256": "b351cf5b505c539de1d09cb419a071b935d49c936753c95cf1064cc2ca884bdf"
+    },
+    {
+      "path": "test/plugins/addAttributesToSVGElement.02.svg.txt",
+      "sha256": "a06d11e096c0a110f4a970a6da00197e34ecced389093eaccb6a3776a7553082"
+    },
+    {
+      "path": "test/plugins/minifyStyles.02.svg.txt",
+      "sha256": "e56b1582a53190d5ce0368561b969bb0efd665662206042714f3195759b10687"
+    },
+    {
+      "path": "test/plugins/removeDeprecatedAttrs.05.svg.txt",
+      "sha256": "d5e012f07d770392d03a6c0a05fde3fe9ccc4233013edce7e8566e20fca524dc"
+    },
+    {
+      "path": "test/plugins/removeUselessStrokeAndFill.02.svg.txt",
+      "sha256": "04bb74ffa2cd081a9e0e9a9492adcc65a958010cab65752b6e441f2596ae8d19"
+    },
+    {
+      "path": "test/plugins/cleanupIds.04.svg.txt",
+      "sha256": "42318295b224bb10ff2aaeb44b21278b687df9b6ab3a8f9660731b273cfc9c40"
+    },
+    {
+      "path": "test/plugins/removeXMLNS.01.svg.txt",
+      "sha256": "83a16be67bc210c3f2724942afd7b8dfdcc512e495b1bcbb422af78429741fc2"
+    },
+    {
+      "path": "test/plugins/cleanupIds.14.svg.txt",
+      "sha256": "1f20f797c15f3aa279f772c1b7286436858a847ec1a05ad4715b052aeb41d62c"
+    },
+    {
+      "path": "test/plugins/removeAttributesBySelector.04.svg.txt",
+      "sha256": "6905bdb0e713dbbc419c0882651e248039c1d83d257ccbd7853d8486275060df"
+    },
+    {
+      "path": "test/plugins/inlineStyles.28.svg.txt",
+      "sha256": "dbaa7074bbee72706bf4947cda7ee11ff1b64bd1b8660d98771d1fb2819978fc"
+    },
+    {
+      "path": "test/plugins/removeEmptyText.03.svg.txt",
+      "sha256": "0668250ffaa8af6863e3076f2a51ffb03651628102f2e005856ff59827b73d1a"
+    },
+    {
+      "path": "test/plugins/removeElementsByAttr.04.svg.txt",
+      "sha256": "3505b34a6b99d99e1e2ddc857e73874b3adcc1b3037f9b6eb44402563a319091"
+    },
+    {
+      "path": "test/plugins/cleanupEnableBackground.01.svg.txt",
+      "sha256": "984452934c6fa12b6daded647af0934a56d13fef7e094c5b6e39485ebe71a924"
+    },
+    {
+      "path": "test/plugins/inlineStyles.16.svg.txt",
+      "sha256": "548487ff718c187555adf9cc5ac1ffa5568148f5461005b662fe63bf21dc2d27"
+    },
+    {
+      "path": "test/plugins/inlineStyles.06.svg.txt",
+      "sha256": "b53ed59a87fde650ea53a9915e7feeab707e24ac1db49668c32148f4ba21d8cb"
+    },
+    {
+      "path": "test/plugins/addAttributesToSVGElement.03.svg.txt",
+      "sha256": "b040e605d7c6b593791f930f828e7d2ac71839dfe7a5771d8acf16bb1ccae0f8"
+    },
+    {
+      "path": "test/plugins/mergeStyles.04.svg.txt",
+      "sha256": "fd5b25c1d3403da54833a54a5fa35ef0547ef7a809f62ca1754d1f40a2dfad1b"
+    },
+    {
+      "path": "test/plugins/removeDeprecatedAttrs.04.svg.txt",
+      "sha256": "a1d3d04b3eaa0814796fbca007137a930330b5c73554c48c10a198903c0f2acc"
+    },
+    {
+      "path": "test/plugins/minifyStyles.03.svg.txt",
+      "sha256": "fdfa11844a78983c20d627adc551b3b3034b899d683ec8570509e911ec12f95c"
+    },
+    {
+      "path": "test/plugins/removeStyleElement.01.svg.txt",
+      "sha256": "70514f0d9e2d6f6014a5869d46b4bb3d16d6e3f2eaa8a4884e58078656f256bd"
+    },
+    {
+      "path": "test/plugins/removeScripts.01.svg.txt",
+      "sha256": "32543e272a679b36e3a7d2c023a7252eb3653ab8dff928519e4751a7cc455955"
+    },
+    {
+      "path": "test/plugins/removeScripts.11.svg.txt",
+      "sha256": "43266cc2faad4d861eb5c257e826336581b8962e2c66d763f99f862bb73c85cb"
+    },
+    {
+      "path": "test/plugins/removeUselessStrokeAndFill.03.svg.txt",
+      "sha256": "6f3ea6a6e69f98b6e567bb9a18954111e33a0927196911d0b81cd448e32b36b3"
+    },
+    {
+      "path": "test/plugins/removeAttributesBySelector.05.svg.txt",
+      "sha256": "8e502fb239e3fdf51a5af5f8073e8e62898ae024dc5351b422df43522407d1c8"
+    },
+    {
+      "path": "test/plugins/cleanupIds.15.svg.txt",
+      "sha256": "0eba1c7756e3d82c17702d0072f51fcfd824311bffecf196b8e7647005cccc76"
+    },
+    {
+      "path": "test/plugins/cleanupIds.05.svg.txt",
+      "sha256": "da78691ee7224a81753e7c1edf492585234f71e64c056e1797ae467ec792735f"
+    },
+    {
+      "path": "test/plugins/collapseGroups.06.svg.txt",
+      "sha256": "fb38edede041933b63fcc051c444dddd6dc42c02ee742df028c3a582cf003a14"
+    },
+    {
+      "path": "test/plugins/cleanupIds.23.svg.txt",
+      "sha256": "ad687b8433ef3fdda5336b2bac32fb6c7f061b8fbb460587aa8922734a5f53e6"
+    },
+    {
+      "path": "test/plugins/collapseGroups.16.svg.txt",
+      "sha256": "2ae34ae0abde1055ff590a9e89a574f32930af42c57bad07577098ebe685c9ee"
+    },
+    {
+      "path": "test/plugins/convertStyleToAttrs.03.svg.txt",
+      "sha256": "a4d2e6a498bdf3975036578fd96a36b54aef9693cf6da2c268a5542b6c7a9451"
+    },
+    {
+      "path": "test/plugins/mergePaths.03.svg.txt",
+      "sha256": "acbb28c0d4eabb48f1900cd84cfec53b73e912c5c7eb4451e557e5d9de02da11"
+    },
+    {
+      "path": "test/plugins/removeUnusedNS.01.svg.txt",
+      "sha256": "9c179e943231c2530c631f7f0224356f3ebfe911c0fc77834bde03d76fa82bdb"
+    },
+    {
+      "path": "test/plugins/convertTransform.04.svg.txt",
+      "sha256": "b427afade72a8c69070e42c26000d979b1603cc0dc579d452261d5580d38873c"
+    },
+    {
+      "path": "test/plugins/convertTransform.14.svg.txt",
+      "sha256": "4174fdb83894426d434ada74d35cccd61d8b8a3bf0cab5353a8430e70f1d01c9"
+    },
+    {
+      "path": "test/plugins/removeEmptyContainers.06.svg.txt",
+      "sha256": "0c008e1568ca24f2bff5ef2c4d1344f268e1f7b4c4683c6dac9765a0d99f3e40"
+    },
+    {
+      "path": "test/plugins/removeUselessDefs.05.svg.txt",
+      "sha256": "fb96e40615c6a38f15891053a0ec25b9fd436d96d8c84b4878f6390a02afe69e"
+    },
+    {
+      "path": "test/plugins/removeAttrs.03.svg.txt",
+      "sha256": "d9ebc4012d3136fbd38ae95e0aa85b51070387ff3c57f73ed246e137faf122e2"
+    },
+    {
+      "path": "test/plugins/prefixIds.04.svg.txt",
+      "sha256": "5ad8c8e50598cee25edfe96a61ab25bd71a86a8a848d189f78cc7584c9080981"
+    },
+    {
+      "path": "test/plugins/sortAttrs.01.svg.txt",
+      "sha256": "e4565b91b5ab05c3f227c42d0b4d91e42603369bdbdd10f457deb85e295fd7c6"
+    },
+    {
+      "path": "test/plugins/convertOneStopGradients.02.svg.txt",
+      "sha256": "deb38f7c74ef894950f0245322d776ac5e478bfa044fab9488b3c485e1fa6e95"
+    },
+    {
+      "path": "test/plugins/removeUnknownsAndDefaults.02.svg.txt",
+      "sha256": "9f54542b1e37dbbf34f4248e3dc34d8e7575f01e1e0a2e3d40731c51fb4bc8d6"
+    },
+    {
+      "path": "test/plugins/removeUnknownsAndDefaults.12.svg.txt",
+      "sha256": "4c8e042eefb4a60f574546665bd3d7c96525df0fd1abd5fa3a2ccfbbc71da18d"
+    },
+    {
+      "path": "test/plugins/inlineStyles.20.svg.txt",
+      "sha256": "7f05cbaa7dc2e16e11d0babaa0452ff7674067800102d539dba526840eddee8a"
+    },
+    {
+      "path": "test/plugins/reusePaths.02.svg.txt",
+      "sha256": "0dc9c11fc01dd2d313d8c24b72c38576db5db3a46222024355965afd71415be0"
+    },
+    {
+      "path": "test/plugins/removeHiddenElems.07.svg.txt",
+      "sha256": "c0d394c914c69a36c8e63f2f4540964dc198b5321cca2fdd0f69596a42312dc3"
+    },
+    {
+      "path": "test/plugins/removeHiddenElems.17.svg.txt",
+      "sha256": "fb96e40615c6a38f15891053a0ec25b9fd436d96d8c84b4878f6390a02afe69e"
+    },
+    {
+      "path": "test/plugins/moveElemsAttrsToGroup.03.svg.txt",
+      "sha256": "d9694abfca4b5c022b8b83db08e5c37bfd56b23e63266f1e5bb9c0baf06fb97b"
+    },
+    {
+      "path": "test/plugins/removeXlink.04.svg.txt",
+      "sha256": "a9e0b7b78424706d94901f8fcd5fd5083db92f120fdd750454c31ec844bd4830"
+    },
+    {
+      "path": "test/plugins/cleanupNumericValues.01.svg.txt",
+      "sha256": "e11dc584daf38c105198e178fceb542b3a05790fb86bc2855f898382c91e8707"
+    },
+    {
+      "path": "test/plugins/moveGroupAttrsToElems.02.svg.txt",
+      "sha256": "7f6befecacacacafb268b46324435c879ce1ca5d24334420c1536ae75930b8be"
+    },
+    {
+      "path": "test/plugins/convertShapeToPath.02.svg.txt",
+      "sha256": "4af241ad81c89d1a989d18b2fcb3d1859d592d97a7e59453801c492396bba7ff"
+    },
+    {
+      "path": "test/plugins/removeScripts.08.svg.txt",
+      "sha256": "d6753370bd857c17a98d96834abda27ba5050ec88d1ba39877a6a1a2fea6f689"
+    },
+    {
+      "path": "test/plugins/convertColors.07.svg.txt",
+      "sha256": "99363d18c37d0d59a7bfde4f3c04f578d093413c6b50f925b67476ab12704a47"
+    }
+  ]
+}

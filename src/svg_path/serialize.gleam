@@ -118,6 +118,9 @@ pub fn default_options() -> Options {
 /// Create options that round numbers to the given number of decimal places.
 ///
 /// Trailing zeroes are stripped. Negative decimal places are clamped to zero.
+/// Decimal places control numeric rounding, not geometric error. Endpoint-form
+/// arcs can be sensitive near radius correction; more digits do not guarantee
+/// monotonically smaller geometric error.
 pub fn decimal_options(decimal_places: Int) -> Options {
   Options(
     left_decimals: Succinct,

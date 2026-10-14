@@ -1,0 +1,877 @@
+[
+  {
+    "file": "convertEllipseToCircle.01.svg.txt",
+    "element": 1,
+    "tag": "ellipse",
+    "attributes": {
+      "rx": "5",
+      "ry": "5"
+    },
+    "bounds": {
+      "min": {
+        "x": -5,
+        "y": -5
+      },
+      "max": {
+        "x": 5,
+        "y": 5
+      }
+    },
+    "classification": "same-ellipse-different-start-direction-and-segmentation",
+    "actual": "m5 0a5 5 0 01-5 5 5 5 0 01-5-5 5 5 0 015-5 5 5 0 015 5z"
+  },
+  {
+    "file": "convertEllipseToCircle.01.svg.txt",
+    "element": 2,
+    "tag": "ellipse",
+    "attributes": {
+      "rx": "auto",
+      "ry": "5"
+    },
+    "bounds": {
+      "min": {
+        "x": -5,
+        "y": -5
+      },
+      "max": {
+        "x": 5,
+        "y": 5
+      }
+    },
+    "classification": "same-ellipse-different-start-direction-and-segmentation",
+    "actual": "m5 0a5 5 0 01-5 5 5 5 0 01-5-5 5 5 0 015-5 5 5 0 015 5z"
+  },
+  {
+    "file": "convertEllipseToCircle.01.svg.txt",
+    "element": 3,
+    "tag": "ellipse",
+    "attributes": {
+      "rx": "5",
+      "ry": "auto"
+    },
+    "bounds": {
+      "min": {
+        "x": -5,
+        "y": -5
+      },
+      "max": {
+        "x": 5,
+        "y": 5
+      }
+    },
+    "classification": "same-ellipse-different-start-direction-and-segmentation",
+    "actual": "m5 0a5 5 0 01-5 5 5 5 0 01-5-5 5 5 0 015-5 5 5 0 015 5z"
+  },
+  {
+    "file": "convertEllipseToCircle.01.svg.txt",
+    "element": 4,
+    "tag": "ellipse",
+    "attributes": {},
+    "classification": "disabled-rendering-versus-zero-radius-element"
+  },
+  {
+    "file": "convertShapeToPath.01.svg.txt",
+    "element": 1,
+    "tag": "rect",
+    "attributes": {
+      "width": "100%"
+    },
+    "classification": "unit-resolution-outside-numeric-shape-api"
+  },
+  {
+    "file": "convertShapeToPath.01.svg.txt",
+    "element": 2,
+    "tag": "rect",
+    "attributes": {
+      "width": "100%",
+      "height": "100%"
+    },
+    "classification": "unit-resolution-outside-numeric-shape-api"
+  },
+  {
+    "file": "convertShapeToPath.01.svg.txt",
+    "element": 3,
+    "tag": "rect",
+    "attributes": {
+      "x": "25%",
+      "y": "25%",
+      "width": "50%",
+      "height": "50%"
+    },
+    "classification": "unit-resolution-outside-numeric-shape-api"
+  },
+  {
+    "file": "convertShapeToPath.01.svg.txt",
+    "element": 4,
+    "tag": "rect",
+    "attributes": {
+      "x": "25pt",
+      "y": "25pt",
+      "width": "50pt",
+      "height": "50pt"
+    },
+    "classification": "unit-resolution-outside-numeric-shape-api"
+  },
+  {
+    "file": "convertShapeToPath.01.svg.txt",
+    "element": 5,
+    "tag": "rect",
+    "attributes": {
+      "x": "10",
+      "y": "10",
+      "width": "50",
+      "height": "50",
+      "rx": "4"
+    },
+    "bounds": {
+      "min": {
+        "x": 10,
+        "y": 10
+      },
+      "max": {
+        "x": 60,
+        "y": 60
+      }
+    },
+    "classification": "rounded-rectangle-supported-but-svgo-retains-element",
+    "actual": "m14 10 42 0a4 4 0 014 4v42a4 4 0 01-4 4h-42a4 4 0 01-4-4v-42a4 4 0 014-4z"
+  },
+  {
+    "file": "convertShapeToPath.01.svg.txt",
+    "element": 6,
+    "tag": "rect",
+    "attributes": {
+      "x": "0",
+      "y": "0",
+      "width": "20",
+      "height": "20",
+      "ry": "5"
+    },
+    "bounds": {
+      "min": {
+        "x": 0,
+        "y": 0
+      },
+      "max": {
+        "x": 20,
+        "y": 20
+      }
+    },
+    "classification": "rounded-rectangle-supported-but-svgo-retains-element",
+    "actual": "m5 0 10 0a5 5 0 015 5v10a5 5 0 01-5 5h-10a5 5 0 01-5-5v-10a5 5 0 015-5z"
+  },
+  {
+    "file": "convertShapeToPath.01.svg.txt",
+    "element": 7,
+    "tag": "rect",
+    "attributes": {
+      "width": "32",
+      "height": "32"
+    },
+    "bounds": {
+      "min": {
+        "x": 0,
+        "y": 0
+      },
+      "max": {
+        "x": 32,
+        "y": 32
+      }
+    },
+    "classification": "matching-linear-shape-with-formatting-differences",
+    "expectedBounds": {
+      "min": {
+        "x": 0,
+        "y": 0
+      },
+      "max": {
+        "x": 32,
+        "y": 32
+      }
+    },
+    "boundsDifference": 0,
+    "actual": "m0 0 32 0v32h-32z"
+  },
+  {
+    "file": "convertShapeToPath.01.svg.txt",
+    "element": 8,
+    "tag": "rect",
+    "attributes": {
+      "x": "20",
+      "y": "10",
+      "width": "50",
+      "height": "40"
+    },
+    "bounds": {
+      "min": {
+        "x": 20,
+        "y": 10
+      },
+      "max": {
+        "x": 70,
+        "y": 50
+      }
+    },
+    "classification": "matching-linear-shape-with-formatting-differences",
+    "expectedBounds": {
+      "min": {
+        "x": 20,
+        "y": 10
+      },
+      "max": {
+        "x": 70,
+        "y": 50
+      }
+    },
+    "boundsDifference": 0,
+    "actual": "m20 10 50 0v40h-50z"
+  },
+  {
+    "file": "convertShapeToPath.01.svg.txt",
+    "element": 9,
+    "tag": "rect",
+    "attributes": {
+      "fill": "#666",
+      "x": "10",
+      "y": "10",
+      "width": "10",
+      "height": "10"
+    },
+    "bounds": {
+      "min": {
+        "x": 10,
+        "y": 10
+      },
+      "max": {
+        "x": 20,
+        "y": 20
+      }
+    },
+    "classification": "matching-linear-shape-with-formatting-differences",
+    "expectedBounds": {
+      "min": {
+        "x": 10,
+        "y": 10
+      },
+      "max": {
+        "x": 20,
+        "y": 20
+      }
+    },
+    "boundsDifference": 0,
+    "actual": "m10 10 10 0v10h-10z"
+  },
+  {
+    "file": "convertShapeToPath.02.svg.txt",
+    "element": 1,
+    "tag": "line",
+    "attributes": {
+      "x2": "100%",
+      "y2": "100%"
+    },
+    "classification": "unit-resolution-outside-numeric-shape-api"
+  },
+  {
+    "file": "convertShapeToPath.02.svg.txt",
+    "element": 2,
+    "tag": "line",
+    "attributes": {
+      "x1": "24",
+      "y2": "24"
+    },
+    "bounds": {
+      "min": {
+        "x": 0,
+        "y": 0
+      },
+      "max": {
+        "x": 24,
+        "y": 24
+      }
+    },
+    "classification": "matching-linear-shape-with-formatting-differences",
+    "expectedBounds": {
+      "min": {
+        "x": 0,
+        "y": 0
+      },
+      "max": {
+        "x": 24,
+        "y": 24
+      }
+    },
+    "boundsDifference": 0,
+    "actual": "m24 0-24 24"
+  },
+  {
+    "file": "convertShapeToPath.02.svg.txt",
+    "element": 3,
+    "tag": "line",
+    "attributes": {
+      "x1": "10",
+      "y1": "10",
+      "x2": "50",
+      "y2": "20"
+    },
+    "bounds": {
+      "min": {
+        "x": 10,
+        "y": 10
+      },
+      "max": {
+        "x": 50,
+        "y": 20
+      }
+    },
+    "classification": "matching-linear-shape-with-formatting-differences",
+    "expectedBounds": {
+      "min": {
+        "x": 10,
+        "y": 10
+      },
+      "max": {
+        "x": 50,
+        "y": 20
+      }
+    },
+    "boundsDifference": 0,
+    "actual": "m10 10 40 10"
+  },
+  {
+    "file": "convertShapeToPath.02.svg.txt",
+    "element": 4,
+    "tag": "line",
+    "attributes": {
+      "stroke": "#000",
+      "x1": "10",
+      "y1": "10",
+      "x2": "50",
+      "y2": "20"
+    },
+    "bounds": {
+      "min": {
+        "x": 10,
+        "y": 10
+      },
+      "max": {
+        "x": 50,
+        "y": 20
+      }
+    },
+    "classification": "matching-linear-shape-with-formatting-differences",
+    "expectedBounds": {
+      "min": {
+        "x": 10,
+        "y": 10
+      },
+      "max": {
+        "x": 50,
+        "y": 20
+      }
+    },
+    "boundsDifference": 0,
+    "actual": "m10 10 40 10"
+  },
+  {
+    "file": "convertShapeToPath.03.svg.txt",
+    "element": 1,
+    "tag": "polyline",
+    "attributes": {
+      "points": "10,10 20"
+    },
+    "classification": "malformed-points-attribute-outside-typed-api"
+  },
+  {
+    "file": "convertShapeToPath.03.svg.txt",
+    "element": 2,
+    "tag": "polyline",
+    "attributes": {
+      "points": "10,80 20,50 50,20 80,10"
+    },
+    "bounds": {
+      "min": {
+        "x": 10,
+        "y": 10
+      },
+      "max": {
+        "x": 80,
+        "y": 80
+      }
+    },
+    "classification": "matching-linear-shape-with-formatting-differences",
+    "expectedBounds": {
+      "min": {
+        "x": 10,
+        "y": 10
+      },
+      "max": {
+        "x": 80,
+        "y": 80
+      }
+    },
+    "boundsDifference": 0,
+    "actual": "m10 80 10-30 30-30 30-10"
+  },
+  {
+    "file": "convertShapeToPath.03.svg.txt",
+    "element": 3,
+    "tag": "polyline",
+    "attributes": {
+      "points": "20 ,10  50    40 30.5-1e-1 , 20 10"
+    },
+    "bounds": {
+      "min": {
+        "x": 20,
+        "y": -0.1
+      },
+      "max": {
+        "x": 50,
+        "y": 40
+      }
+    },
+    "classification": "matching-linear-shape-with-formatting-differences",
+    "expectedBounds": {
+      "min": {
+        "x": 20,
+        "y": -0.1
+      },
+      "max": {
+        "x": 50,
+        "y": 40
+      }
+    },
+    "boundsDifference": 0,
+    "actual": "m20 10 30 30-19.5-40.1-10.5 10.1"
+  },
+  {
+    "file": "convertShapeToPath.03.svg.txt",
+    "element": 4,
+    "tag": "polyline",
+    "attributes": {
+      "stroke": "#000",
+      "points": "10,10 20,20 10,20"
+    },
+    "bounds": {
+      "min": {
+        "x": 10,
+        "y": 10
+      },
+      "max": {
+        "x": 20,
+        "y": 20
+      }
+    },
+    "classification": "matching-linear-shape-with-formatting-differences",
+    "expectedBounds": {
+      "min": {
+        "x": 10,
+        "y": 10
+      },
+      "max": {
+        "x": 20,
+        "y": 20
+      }
+    },
+    "boundsDifference": 0,
+    "actual": "m10 10 10 10h-10"
+  },
+  {
+    "file": "convertShapeToPath.03.svg.txt",
+    "element": 5,
+    "tag": "polygon",
+    "attributes": {
+      "points": "10,10 20"
+    },
+    "classification": "malformed-points-attribute-outside-typed-api"
+  },
+  {
+    "file": "convertShapeToPath.03.svg.txt",
+    "element": 6,
+    "tag": "polygon",
+    "attributes": {
+      "points": "10,80 20,50 50,20 80,10"
+    },
+    "bounds": {
+      "min": {
+        "x": 10,
+        "y": 10
+      },
+      "max": {
+        "x": 80,
+        "y": 80
+      }
+    },
+    "classification": "matching-linear-shape-with-formatting-differences",
+    "expectedBounds": {
+      "min": {
+        "x": 10,
+        "y": 10
+      },
+      "max": {
+        "x": 80,
+        "y": 80
+      }
+    },
+    "boundsDifference": 0,
+    "actual": "m10 80 10-30 30-30 30-10z"
+  },
+  {
+    "file": "convertShapeToPath.03.svg.txt",
+    "element": 7,
+    "tag": "polygon",
+    "attributes": {
+      "points": "20 10  50 40 30,20"
+    },
+    "bounds": {
+      "min": {
+        "x": 20,
+        "y": 10
+      },
+      "max": {
+        "x": 50,
+        "y": 40
+      }
+    },
+    "classification": "matching-linear-shape-with-formatting-differences",
+    "expectedBounds": {
+      "min": {
+        "x": 20,
+        "y": 10
+      },
+      "max": {
+        "x": 50,
+        "y": 40
+      }
+    },
+    "boundsDifference": 0,
+    "actual": "m20 10 30 30-20-20z"
+  },
+  {
+    "file": "convertShapeToPath.03.svg.txt",
+    "element": 8,
+    "tag": "polygon",
+    "attributes": {
+      "stroke": "#000",
+      "points": "10,10 20,20 10,20"
+    },
+    "bounds": {
+      "min": {
+        "x": 10,
+        "y": 10
+      },
+      "max": {
+        "x": 20,
+        "y": 20
+      }
+    },
+    "classification": "matching-linear-shape-with-formatting-differences",
+    "expectedBounds": {
+      "min": {
+        "x": 10,
+        "y": 10
+      },
+      "max": {
+        "x": 20,
+        "y": 20
+      }
+    },
+    "boundsDifference": 0,
+    "actual": "m10 10 10 10h-10z"
+  },
+  {
+    "file": "convertShapeToPath.03.svg.txt",
+    "element": 9,
+    "tag": "polygon",
+    "attributes": {
+      "stroke": "none",
+      "points": "10,10 20,20 10,20"
+    },
+    "bounds": {
+      "min": {
+        "x": 10,
+        "y": 10
+      },
+      "max": {
+        "x": 20,
+        "y": 20
+      }
+    },
+    "classification": "matching-linear-shape-with-formatting-differences",
+    "expectedBounds": {
+      "min": {
+        "x": 10,
+        "y": 10
+      },
+      "max": {
+        "x": 20,
+        "y": 20
+      }
+    },
+    "boundsDifference": 0,
+    "actual": "m10 10 10 10h-10z"
+  },
+  {
+    "file": "convertShapeToPath.04.svg.txt",
+    "element": 1,
+    "tag": "circle",
+    "attributes": {
+      "cx": "10",
+      "cy": "10",
+      "r": "5"
+    },
+    "bounds": {
+      "min": {
+        "x": 5,
+        "y": 5
+      },
+      "max": {
+        "x": 15,
+        "y": 15
+      }
+    },
+    "classification": "same-ellipse-different-start-direction-and-segmentation",
+    "expectedBounds": {
+      "min": {
+        "x": 5,
+        "y": 5
+      },
+      "max": {
+        "x": 15,
+        "y": 15
+      }
+    },
+    "boundsDifference": 0,
+    "actual": "m15 10a5 5 0 01-5 5 5 5 0 01-5-5 5 5 0 015-5 5 5 0 015 5z"
+  },
+  {
+    "file": "convertShapeToPath.04.svg.txt",
+    "element": 2,
+    "tag": "ellipse",
+    "attributes": {
+      "cx": "10",
+      "cy": "10",
+      "rx": "5",
+      "ry": "5"
+    },
+    "bounds": {
+      "min": {
+        "x": 5,
+        "y": 5
+      },
+      "max": {
+        "x": 15,
+        "y": 15
+      }
+    },
+    "classification": "same-ellipse-different-start-direction-and-segmentation",
+    "expectedBounds": {
+      "min": {
+        "x": 5,
+        "y": 5
+      },
+      "max": {
+        "x": 15,
+        "y": 15
+      }
+    },
+    "boundsDifference": 0,
+    "actual": "m15 10a5 5 0 01-5 5 5 5 0 01-5-5 5 5 0 015-5 5 5 0 015 5z"
+  },
+  {
+    "file": "convertShapeToPath.05.svg.txt",
+    "element": 1,
+    "tag": "rect",
+    "attributes": {
+      "x": "26.614",
+      "y": "29.232",
+      "width": "34.268",
+      "height": "8.1757"
+    },
+    "bounds": {
+      "min": {
+        "x": 26.614,
+        "y": 29.232
+      },
+      "max": {
+        "x": 60.882000000000005,
+        "y": 37.4077
+      }
+    },
+    "classification": "matching-linear-shape-with-formatting-differences",
+    "expectedBounds": {
+      "min": {
+        "x": 26.614,
+        "y": 29.232
+      },
+      "max": {
+        "x": 60.882,
+        "y": 37.408
+      }
+    },
+    "boundsDifference": 0.00030000000000285354,
+    "actual": "m26.614 29.232 34.268 0v8.176h-34.268z"
+  },
+  {
+    "file": "convertShapeToPath.05.svg.txt",
+    "element": 2,
+    "tag": "line",
+    "attributes": {
+      "x1": "26.6142",
+      "y1": "29.2322",
+      "x2": "34.2682",
+      "y2": "8.1757"
+    },
+    "bounds": {
+      "min": {
+        "x": 26.6142,
+        "y": 8.1757
+      },
+      "max": {
+        "x": 34.2682,
+        "y": 29.2322
+      }
+    },
+    "classification": "matching-linear-shape-with-formatting-differences",
+    "expectedBounds": {
+      "min": {
+        "x": 26.614,
+        "y": 8.176
+      },
+      "max": {
+        "x": 34.268,
+        "y": 29.232
+      }
+    },
+    "boundsDifference": 0.0002999999999993008,
+    "actual": "m26.614 29.232 7.654-21.056"
+  },
+  {
+    "file": "convertShapeToPath.05.svg.txt",
+    "element": 3,
+    "tag": "polyline",
+    "attributes": {
+      "points": "26.6142,29.2322 34.2682,8.1757"
+    },
+    "bounds": {
+      "min": {
+        "x": 26.6142,
+        "y": 8.1757
+      },
+      "max": {
+        "x": 34.2682,
+        "y": 29.2322
+      }
+    },
+    "classification": "matching-linear-shape-with-formatting-differences",
+    "expectedBounds": {
+      "min": {
+        "x": 26.614,
+        "y": 8.176
+      },
+      "max": {
+        "x": 34.268,
+        "y": 29.232
+      }
+    },
+    "boundsDifference": 0.0002999999999993008,
+    "actual": "m26.614 29.232 7.654-21.056"
+  },
+  {
+    "file": "convertShapeToPath.05.svg.txt",
+    "element": 4,
+    "tag": "polygon",
+    "attributes": {
+      "points": "26.6142,29.2322 34.2682,8.1757"
+    },
+    "bounds": {
+      "min": {
+        "x": 26.6142,
+        "y": 8.1757
+      },
+      "max": {
+        "x": 34.2682,
+        "y": 29.2322
+      }
+    },
+    "classification": "matching-linear-shape-with-formatting-differences",
+    "expectedBounds": {
+      "min": {
+        "x": 26.614,
+        "y": 8.176
+      },
+      "max": {
+        "x": 34.268,
+        "y": 29.232
+      }
+    },
+    "boundsDifference": 0.0002999999999993008,
+    "actual": "m26.614 29.232 7.654-21.056z"
+  },
+  {
+    "file": "convertShapeToPath.05.svg.txt",
+    "element": 5,
+    "tag": "circle",
+    "attributes": {
+      "cx": "26.6142",
+      "cy": "29.2322",
+      "r": "34.2682"
+    },
+    "bounds": {
+      "min": {
+        "x": -7.654,
+        "y": -5.036000000000005
+      },
+      "max": {
+        "x": 60.882400000000004,
+        "y": 63.5004
+      }
+    },
+    "classification": "same-ellipse-different-start-direction-and-segmentation",
+    "expectedBounds": {
+      "min": {
+        "x": -7.654,
+        "y": -5.036000000000001
+      },
+      "max": {
+        "x": 60.882000000000005,
+        "y": 63.5
+      }
+    },
+    "boundsDifference": 0.00039999999999906777,
+    "actual": "m60.882 29.232a34.268 34.268 0 01-34.268 34.268 34.268 34.268 0 01-34.268-34.268 34.268 34.268 0 0134.268-34.268 34.268 34.268 0 0134.268 34.268z"
+  },
+  {
+    "file": "convertShapeToPath.05.svg.txt",
+    "element": 6,
+    "tag": "ellipse",
+    "attributes": {
+      "cx": "26.6142",
+      "cy": "29.2322",
+      "rx": "34.2682",
+      "ry": "8.1757"
+    },
+    "bounds": {
+      "min": {
+        "x": -7.654,
+        "y": 21.0565
+      },
+      "max": {
+        "x": 60.882400000000004,
+        "y": 37.40789999999999
+      }
+    },
+    "classification": "ellipse-traversal-and-rounded-semicircle-sensitivity",
+    "expectedBounds": {
+      "min": {
+        "x": -8.03297597325873,
+        "y": 21.0565
+      },
+      "max": {
+        "x": 61.26097597325873,
+        "y": 37.408500000000004
+      }
+    },
+    "boundsDifference": 0.3789759732587292,
+    "actual": "m60.882 29.232a34.268 8.176-.001 01-34.268 8.176 34.268 8.176 .001 01-34.268-8.176 34.268 8.176 .001 0134.268-8.175 34.268 8.176-.001 0134.268 8.175z"
+  }
+]

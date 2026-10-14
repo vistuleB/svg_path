@@ -1,0 +1,442 @@
+[
+  {
+    "file": "removeHiddenElems.01.svg.txt",
+    "classification": "document-rendering-and-reference-policy",
+    "checks": []
+  },
+  {
+    "file": "removeHiddenElems.02.svg.txt",
+    "classification": "document-rendering-and-reference-policy",
+    "checks": []
+  },
+  {
+    "file": "removeHiddenElems.03.svg.txt",
+    "classification": "document-rendering-and-reference-policy",
+    "checks": [
+      {
+        "element": 2,
+        "kind": "disabled-circle",
+        "classification": "static-geometry-not-animation-policy"
+      },
+      {
+        "element": 3,
+        "kind": "disabled-circle",
+        "classification": "static-geometry-not-animation-policy"
+      }
+    ]
+  },
+  {
+    "file": "removeHiddenElems.04.svg.txt",
+    "classification": "document-rendering-and-reference-policy",
+    "checks": [
+      {
+        "element": 2,
+        "kind": "disabled-ellipse"
+      },
+      {
+        "element": 3,
+        "kind": "disabled-ellipse"
+      }
+    ]
+  },
+  {
+    "file": "removeHiddenElems.05.svg.txt",
+    "classification": "document-rendering-and-reference-policy",
+    "checks": [
+      {
+        "element": 2,
+        "kind": "disabled-rectangle"
+      },
+      {
+        "element": 3,
+        "kind": "disabled-rectangle"
+      }
+    ]
+  },
+  {
+    "file": "removeHiddenElems.06.svg.txt",
+    "classification": "document-rendering-and-reference-policy",
+    "checks": []
+  },
+  {
+    "file": "removeHiddenElems.07.svg.txt",
+    "classification": "document-rendering-and-reference-policy",
+    "checks": []
+  },
+  {
+    "file": "removeHiddenElems.08.svg.txt",
+    "classification": "document-rendering-and-reference-policy",
+    "checks": [
+      {
+        "element": 2,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      },
+      {
+        "element": 3,
+        "kind": "parse",
+        "accepted": false,
+        "classification": "strict-error-versus-removal"
+      },
+      {
+        "element": 4,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      },
+      {
+        "element": 5,
+        "kind": "parse",
+        "accepted": false,
+        "classification": "strict-error-versus-removal"
+      },
+      {
+        "element": 6,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      },
+      {
+        "element": 7,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      },
+      {
+        "element": 8,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      },
+      {
+        "element": 9,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      },
+      {
+        "element": 10,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      },
+      {
+        "element": 11,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      },
+      {
+        "element": 12,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      },
+      {
+        "element": 13,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      },
+      {
+        "element": 14,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      },
+      {
+        "element": 15,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      },
+      {
+        "element": 16,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      }
+    ]
+  },
+  {
+    "file": "removeHiddenElems.09.svg.txt",
+    "classification": "document-rendering-and-reference-policy",
+    "checks": []
+  },
+  {
+    "file": "removeHiddenElems.10.svg.txt",
+    "classification": "document-rendering-and-reference-policy",
+    "checks": []
+  },
+  {
+    "file": "removeHiddenElems.11.svg.txt",
+    "classification": "document-rendering-and-reference-policy",
+    "checks": []
+  },
+  {
+    "file": "removeHiddenElems.12.svg.txt",
+    "classification": "document-rendering-and-reference-policy",
+    "checks": []
+  },
+  {
+    "file": "removeHiddenElems.13.svg.txt",
+    "classification": "document-rendering-and-reference-policy",
+    "checks": [
+      {
+        "element": 2,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      }
+    ]
+  },
+  {
+    "file": "removeHiddenElems.14.svg.txt",
+    "classification": "document-rendering-and-reference-policy",
+    "checks": []
+  },
+  {
+    "file": "removeHiddenElems.15.svg.txt",
+    "classification": "document-rendering-and-reference-policy",
+    "checks": []
+  },
+  {
+    "file": "removeHiddenElems.16.svg.txt",
+    "classification": "document-rendering-and-reference-policy",
+    "checks": []
+  },
+  {
+    "file": "removeHiddenElems.17.svg.txt",
+    "classification": "document-rendering-and-reference-policy",
+    "checks": []
+  },
+  {
+    "file": "removeHiddenElems.18.svg.txt",
+    "classification": "document-rendering-and-reference-policy",
+    "checks": [
+      {
+        "element": 3,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      }
+    ]
+  },
+  {
+    "file": "removeHiddenElems.19.svg.txt",
+    "classification": "document-rendering-and-reference-policy",
+    "checks": [
+      {
+        "element": 2,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      },
+      {
+        "element": 5,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      }
+    ]
+  },
+  {
+    "file": "removeUselessStrokeAndFill.01.svg.txt",
+    "classification": "document-rendering-and-reference-policy",
+    "checks": []
+  },
+  {
+    "file": "removeUselessStrokeAndFill.02.svg.txt",
+    "classification": "document-rendering-and-reference-policy",
+    "checks": []
+  },
+  {
+    "file": "removeUselessStrokeAndFill.03.svg.txt",
+    "classification": "document-rendering-and-reference-policy",
+    "checks": []
+  },
+  {
+    "file": "removeUselessStrokeAndFill.04.svg.txt",
+    "classification": "document-rendering-and-reference-policy",
+    "checks": []
+  },
+  {
+    "file": "removeUselessStrokeAndFill.05.svg.txt",
+    "classification": "document-rendering-and-reference-policy",
+    "checks": []
+  },
+  {
+    "file": "reusePaths.01.svg.txt",
+    "classification": "document-rendering-and-reference-policy",
+    "checks": [
+      {
+        "element": 1,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      },
+      {
+        "element": 2,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      },
+      {
+        "element": 3,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      },
+      {
+        "element": 4,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      },
+      {
+        "element": 5,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      },
+      {
+        "element": 6,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      },
+      {
+        "element": 7,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      },
+      {
+        "element": 9,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      },
+      {
+        "element": 10,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      }
+    ]
+  },
+  {
+    "file": "reusePaths.02.svg.txt",
+    "classification": "document-rendering-and-reference-policy",
+    "checks": [
+      {
+        "element": 1,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      },
+      {
+        "element": 2,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      },
+      {
+        "element": 3,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      },
+      {
+        "element": 4,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      },
+      {
+        "element": 5,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      },
+      {
+        "element": 6,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      }
+    ]
+  },
+  {
+    "file": "reusePaths.03.svg.txt",
+    "classification": "document-rendering-and-reference-policy",
+    "checks": []
+  },
+  {
+    "file": "reusePaths.04.svg.txt",
+    "classification": "document-rendering-and-reference-policy",
+    "checks": [
+      {
+        "element": 2,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      },
+      {
+        "element": 3,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      },
+      {
+        "element": 4,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      }
+    ]
+  },
+  {
+    "file": "reusePaths.05.svg.txt",
+    "classification": "document-rendering-and-reference-policy",
+    "checks": [
+      {
+        "element": 2,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      },
+      {
+        "element": 3,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      },
+      {
+        "element": 8,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      }
+    ]
+  },
+  {
+    "file": "reusePaths.06.svg.txt",
+    "classification": "document-rendering-and-reference-policy",
+    "checks": [
+      {
+        "element": 3,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      },
+      {
+        "element": 9,
+        "kind": "parse",
+        "accepted": true,
+        "classification": "path-geometry-independent-of-visibility-or-reference-policy"
+      }
+    ]
+  }
+]

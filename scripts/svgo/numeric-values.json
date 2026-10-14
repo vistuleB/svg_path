@@ -1,0 +1,928 @@
+[
+  {
+    "file": "cleanupListOfValues.01.svg.txt",
+    "element": 0,
+    "attribute": "viewBox",
+    "token": 0,
+    "source": {
+      "value": 0,
+      "unit": ""
+    },
+    "expected": {
+      "value": 0,
+      "unit": ""
+    },
+    "actual": 0,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.01.svg.txt",
+    "element": 0,
+    "attribute": "viewBox",
+    "token": 1,
+    "source": {
+      "value": 0,
+      "unit": ""
+    },
+    "expected": {
+      "value": 0,
+      "unit": ""
+    },
+    "actual": 0,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.01.svg.txt",
+    "element": 0,
+    "attribute": "viewBox",
+    "token": 2,
+    "source": {
+      "value": 500.2132,
+      "unit": ""
+    },
+    "expected": {
+      "value": 500.213,
+      "unit": ""
+    },
+    "actual": 500.213,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.01.svg.txt",
+    "element": 0,
+    "attribute": "viewBox",
+    "token": 3,
+    "source": {
+      "value": 500.213823642,
+      "unit": ""
+    },
+    "expected": {
+      "value": 500.214,
+      "unit": ""
+    },
+    "actual": 500.214,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.01.svg.txt",
+    "element": 0,
+    "attribute": "enable-background",
+    "token": 0,
+    "source": {
+      "value": 0,
+      "unit": ""
+    },
+    "expected": {
+      "value": 0,
+      "unit": ""
+    },
+    "actual": 0,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.01.svg.txt",
+    "element": 0,
+    "attribute": "enable-background",
+    "token": 1,
+    "source": {
+      "value": 0,
+      "unit": ""
+    },
+    "expected": {
+      "value": 0,
+      "unit": ""
+    },
+    "actual": 0,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.01.svg.txt",
+    "element": 0,
+    "attribute": "enable-background",
+    "token": 2,
+    "source": {
+      "value": 500.224551535,
+      "unit": ""
+    },
+    "expected": {
+      "value": 500.225,
+      "unit": ""
+    },
+    "actual": 500.225,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.01.svg.txt",
+    "element": 0,
+    "attribute": "enable-background",
+    "token": 3,
+    "source": {
+      "value": 500.213262,
+      "unit": ""
+    },
+    "expected": {
+      "value": 500.213,
+      "unit": ""
+    },
+    "actual": 500.213,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.02.svg.txt",
+    "element": 1,
+    "attribute": "stroke-dasharray",
+    "token": 0,
+    "source": {
+      "value": 200.22222,
+      "unit": ""
+    },
+    "expected": {
+      "value": 200.222,
+      "unit": ""
+    },
+    "actual": 200.222,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.02.svg.txt",
+    "element": 1,
+    "attribute": "stroke-dasharray",
+    "token": 1,
+    "source": {
+      "value": 200.22522,
+      "unit": ""
+    },
+    "expected": {
+      "value": 200.225,
+      "unit": ""
+    },
+    "actual": 200.225,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.02.svg.txt",
+    "element": 1,
+    "attribute": "points",
+    "token": 0,
+    "source": {
+      "value": 413.74712,
+      "unit": ""
+    },
+    "expected": {
+      "value": 413.747,
+      "unit": ""
+    },
+    "actual": 413.747,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.02.svg.txt",
+    "element": 1,
+    "attribute": "points",
+    "token": 1,
+    "source": {
+      "value": 290.95212,
+      "unit": ""
+    },
+    "expected": {
+      "value": 290.952,
+      "unit": ""
+    },
+    "actual": 290.952,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.02.svg.txt",
+    "element": 1,
+    "attribute": "points",
+    "token": 2,
+    "source": {
+      "value": 290.75632,
+      "unit": ""
+    },
+    "expected": {
+      "value": 290.756,
+      "unit": ""
+    },
+    "actual": 290.756,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.02.svg.txt",
+    "element": 1,
+    "attribute": "points",
+    "token": 3,
+    "source": {
+      "value": 343.89942,
+      "unit": ""
+    },
+    "expected": {
+      "value": 343.899,
+      "unit": ""
+    },
+    "actual": 343.899,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.02.svg.txt",
+    "element": 1,
+    "attribute": "points",
+    "token": 4,
+    "source": {
+      "value": 183.40744,
+      "unit": ""
+    },
+    "expected": {
+      "value": 183.407,
+      "unit": ""
+    },
+    "actual": 183.407,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.02.svg.txt",
+    "element": 1,
+    "attribute": "points",
+    "token": 5,
+    "source": {
+      "value": 263.8582523,
+      "unit": ""
+    },
+    "expected": {
+      "value": 263.858,
+      "unit": ""
+    },
+    "actual": 263.858,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.02.svg.txt",
+    "element": 1,
+    "attribute": "points",
+    "token": 6,
+    "source": {
+      "value": 199.05334,
+      "unit": ""
+    },
+    "expected": {
+      "value": 199.053,
+      "unit": ""
+    },
+    "actual": 199.053,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.02.svg.txt",
+    "element": 1,
+    "attribute": "points",
+    "token": 7,
+    "source": {
+      "value": 130.871345,
+      "unit": ""
+    },
+    "expected": {
+      "value": 130.871,
+      "unit": ""
+    },
+    "actual": 130.871,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.02.svg.txt",
+    "element": 1,
+    "attribute": "points",
+    "token": 8,
+    "source": {
+      "value": 322.04442,
+      "unit": ""
+    },
+    "expected": {
+      "value": 322.044,
+      "unit": ""
+    },
+    "actual": 322.044,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.02.svg.txt",
+    "element": 1,
+    "attribute": "points",
+    "token": 9,
+    "source": {
+      "value": 77.92533,
+      "unit": ""
+    },
+    "expected": {
+      "value": 77.925,
+      "unit": ""
+    },
+    "actual": 77.925,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.02.svg.txt",
+    "element": 1,
+    "attribute": "points",
+    "token": 10,
+    "source": {
+      "value": 429.39122,
+      "unit": ""
+    },
+    "expected": {
+      "value": 429.391,
+      "unit": ""
+    },
+    "actual": 429.391,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.02.svg.txt",
+    "element": 1,
+    "attribute": "points",
+    "token": 11,
+    "source": {
+      "value": 157.96555,
+      "unit": ""
+    },
+    "expected": {
+      "value": 157.966,
+      "unit": ""
+    },
+    "actual": 157.966,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.02.svg.txt",
+    "element": 2,
+    "attribute": "stroke-dasharray",
+    "token": 0,
+    "source": {
+      "value": 8,
+      "unit": ""
+    },
+    "expected": {
+      "value": 8,
+      "unit": ""
+    },
+    "actual": 8,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.02.svg.txt",
+    "element": 2,
+    "attribute": "stroke-dasharray",
+    "token": 1,
+    "source": {
+      "value": 8,
+      "unit": ""
+    },
+    "expected": {
+      "value": 8,
+      "unit": ""
+    },
+    "actual": 8,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.03.svg.txt",
+    "element": 1,
+    "attribute": "x",
+    "token": 0,
+    "source": {
+      "value": 23.235,
+      "unit": ""
+    },
+    "expected": {
+      "value": 23.235,
+      "unit": ""
+    },
+    "actual": 23.235,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.03.svg.txt",
+    "element": 1,
+    "attribute": "x",
+    "token": 1,
+    "source": {
+      "value": 20.2268,
+      "unit": "px"
+    },
+    "expected": {
+      "value": 20.227,
+      "unit": ""
+    },
+    "actual": 20.227,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.03.svg.txt",
+    "element": 1,
+    "attribute": "x",
+    "token": 2,
+    "source": {
+      "value": 0.22356,
+      "unit": "em"
+    },
+    "expected": {
+      "value": 0.224,
+      "unit": "em"
+    },
+    "actual": 0.224,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.03.svg.txt",
+    "element": 1,
+    "attribute": "x",
+    "token": 3,
+    "source": {
+      "value": 80.0005,
+      "unit": "%"
+    },
+    "expected": {
+      "value": 80.001,
+      "unit": "%"
+    },
+    "actual": 80.001,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.03.svg.txt",
+    "element": 1,
+    "attribute": "y",
+    "token": 0,
+    "source": {
+      "value": 23.235,
+      "unit": ""
+    },
+    "expected": {
+      "value": 23.235,
+      "unit": ""
+    },
+    "actual": 23.235,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.03.svg.txt",
+    "element": 1,
+    "attribute": "y",
+    "token": 1,
+    "source": {
+      "value": 20.2268,
+      "unit": "px"
+    },
+    "expected": {
+      "value": 20.227,
+      "unit": ""
+    },
+    "actual": 20.227,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.03.svg.txt",
+    "element": 1,
+    "attribute": "y",
+    "token": 2,
+    "source": {
+      "value": 0.22356,
+      "unit": "em"
+    },
+    "expected": {
+      "value": 0.224,
+      "unit": "em"
+    },
+    "actual": 0.224,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.03.svg.txt",
+    "element": 1,
+    "attribute": "y",
+    "token": 3,
+    "source": {
+      "value": 80.0005,
+      "unit": "%"
+    },
+    "expected": {
+      "value": 80.001,
+      "unit": "%"
+    },
+    "actual": 80.001,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.03.svg.txt",
+    "element": 1,
+    "attribute": "dx",
+    "token": 0,
+    "source": {
+      "value": 23.235,
+      "unit": ""
+    },
+    "expected": {
+      "value": 23.235,
+      "unit": ""
+    },
+    "actual": 23.235,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.03.svg.txt",
+    "element": 1,
+    "attribute": "dx",
+    "token": 1,
+    "source": {
+      "value": 20.2268,
+      "unit": "px"
+    },
+    "expected": {
+      "value": 20.227,
+      "unit": ""
+    },
+    "actual": 20.227,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.03.svg.txt",
+    "element": 1,
+    "attribute": "dx",
+    "token": 2,
+    "source": {
+      "value": 0.22356,
+      "unit": "em"
+    },
+    "expected": {
+      "value": 0.224,
+      "unit": "em"
+    },
+    "actual": 0.224,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.03.svg.txt",
+    "element": 1,
+    "attribute": "dx",
+    "token": 3,
+    "source": {
+      "value": 80.0005,
+      "unit": "%"
+    },
+    "expected": {
+      "value": 80.001,
+      "unit": "%"
+    },
+    "actual": 80.001,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.03.svg.txt",
+    "element": 1,
+    "attribute": "dy",
+    "token": 0,
+    "source": {
+      "value": 23.235,
+      "unit": ""
+    },
+    "expected": {
+      "value": 23.235,
+      "unit": ""
+    },
+    "actual": 23.235,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.03.svg.txt",
+    "element": 1,
+    "attribute": "dy",
+    "token": 1,
+    "source": {
+      "value": 20.2268,
+      "unit": "px"
+    },
+    "expected": {
+      "value": 20.227,
+      "unit": ""
+    },
+    "actual": 20.227,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.03.svg.txt",
+    "element": 1,
+    "attribute": "dy",
+    "token": 2,
+    "source": {
+      "value": 0.22356,
+      "unit": "em"
+    },
+    "expected": {
+      "value": 0.224,
+      "unit": "em"
+    },
+    "actual": 0.224,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupListOfValues.03.svg.txt",
+    "element": 1,
+    "attribute": "dy",
+    "token": 3,
+    "source": {
+      "value": 80.0005,
+      "unit": "%"
+    },
+    "expected": {
+      "value": 80.001,
+      "unit": "%"
+    },
+    "actual": 80.001,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupNumericValues.01.svg.txt",
+    "element": 0,
+    "attribute": "viewBox",
+    "token": 0,
+    "source": {
+      "value": 20.000001,
+      "unit": ""
+    },
+    "expected": {
+      "value": 20,
+      "unit": ""
+    },
+    "actual": 20,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupNumericValues.01.svg.txt",
+    "element": 0,
+    "attribute": "viewBox",
+    "token": 1,
+    "source": {
+      "value": -19.99999,
+      "unit": ""
+    },
+    "expected": {
+      "value": -20,
+      "unit": ""
+    },
+    "actual": -20,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupNumericValues.01.svg.txt",
+    "element": 0,
+    "attribute": "viewBox",
+    "token": 2,
+    "source": {
+      "value": 17.123456,
+      "unit": ""
+    },
+    "expected": {
+      "value": 17.123,
+      "unit": ""
+    },
+    "actual": 17.123,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupNumericValues.01.svg.txt",
+    "element": 0,
+    "attribute": "viewBox",
+    "token": 3,
+    "source": {
+      "value": 70.70809,
+      "unit": ""
+    },
+    "expected": {
+      "value": 70.708,
+      "unit": ""
+    },
+    "actual": 70.708,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupNumericValues.01.svg.txt",
+    "element": 0,
+    "attribute": "width",
+    "token": 0,
+    "source": {
+      "value": 50.12356,
+      "unit": "%"
+    },
+    "expected": {
+      "value": 50.124,
+      "unit": "%"
+    },
+    "actual": 50.124,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupNumericValues.01.svg.txt",
+    "element": 0,
+    "attribute": "height",
+    "token": 0,
+    "source": {
+      "value": 20,
+      "unit": "px"
+    },
+    "expected": {
+      "value": 20,
+      "unit": ""
+    },
+    "actual": 20,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupNumericValues.01.svg.txt",
+    "element": 0,
+    "attribute": "x",
+    "token": 0,
+    "source": {
+      "value": 0.2655,
+      "unit": ""
+    },
+    "expected": {
+      "value": 0.266,
+      "unit": ""
+    },
+    "actual": 0.266,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupNumericValues.01.svg.txt",
+    "element": 0,
+    "attribute": "y",
+    "token": 0,
+    "source": {
+      "value": -0.2346,
+      "unit": ""
+    },
+    "expected": {
+      "value": -0.235,
+      "unit": ""
+    },
+    "actual": -0.235,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupNumericValues.01.svg.txt",
+    "element": 1,
+    "attribute": "width",
+    "token": 0,
+    "source": {
+      "value": 1,
+      "unit": "in"
+    },
+    "expected": {
+      "value": 96,
+      "unit": ""
+    },
+    "classification": "physical-unit-conversion-outside-number-formatting"
+  },
+  {
+    "file": "cleanupNumericValues.01.svg.txt",
+    "element": 1,
+    "attribute": "height",
+    "token": 0,
+    "source": {
+      "value": 12,
+      "unit": "pt"
+    },
+    "expected": {
+      "value": 16,
+      "unit": ""
+    },
+    "classification": "physical-unit-conversion-outside-number-formatting"
+  },
+  {
+    "file": "cleanupNumericValues.02.svg.txt",
+    "element": 0,
+    "attribute": "viewBox",
+    "token": 0,
+    "source": {
+      "value": 0,
+      "unit": ""
+    },
+    "expected": {
+      "value": 0,
+      "unit": ""
+    },
+    "actual": 0,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupNumericValues.02.svg.txt",
+    "element": 0,
+    "attribute": "viewBox",
+    "token": 1,
+    "source": {
+      "value": 0,
+      "unit": ""
+    },
+    "expected": {
+      "value": 0,
+      "unit": ""
+    },
+    "actual": 0,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupNumericValues.02.svg.txt",
+    "element": 0,
+    "attribute": "viewBox",
+    "token": 2,
+    "source": {
+      "value": 20,
+      "unit": ""
+    },
+    "expected": {
+      "value": 20,
+      "unit": ""
+    },
+    "actual": 20,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupNumericValues.02.svg.txt",
+    "element": 0,
+    "attribute": "viewBox",
+    "token": 3,
+    "source": {
+      "value": 20,
+      "unit": ""
+    },
+    "expected": {
+      "value": 20,
+      "unit": ""
+    },
+    "actual": 20,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupNumericValues.03.svg.txt",
+    "element": 0,
+    "attribute": "viewBox",
+    "token": 0,
+    "source": {
+      "value": 0,
+      "unit": ""
+    },
+    "expected": {
+      "value": 0,
+      "unit": ""
+    },
+    "actual": 0,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupNumericValues.03.svg.txt",
+    "element": 0,
+    "attribute": "viewBox",
+    "token": 1,
+    "source": {
+      "value": 0,
+      "unit": ""
+    },
+    "expected": {
+      "value": 0,
+      "unit": ""
+    },
+    "actual": 0,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupNumericValues.03.svg.txt",
+    "element": 0,
+    "attribute": "viewBox",
+    "token": 2,
+    "source": {
+      "value": 150,
+      "unit": ""
+    },
+    "expected": {
+      "value": 150,
+      "unit": ""
+    },
+    "actual": 150,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  },
+  {
+    "file": "cleanupNumericValues.03.svg.txt",
+    "element": 0,
+    "attribute": "viewBox",
+    "token": 3,
+    "source": {
+      "value": 100,
+      "unit": ""
+    },
+    "expected": {
+      "value": 100,
+      "unit": ""
+    },
+    "actual": 100,
+    "classification": "numeric-rounding-agrees-attribute-policy-separate"
+  }
+]

@@ -1,0 +1,441 @@
+{
+  "checked": 180,
+  "before": 6369,
+  "after": 6223,
+  "saved": 146,
+  "improved": 72,
+  "improvements": [
+    {
+      "fixture": "convertPathData.03.svg.txt:15",
+      "saved": 2,
+      "before": "m0 0 0 5v5",
+      "after": "m0 0v5 5"
+    },
+    {
+      "fixture": "convertPathData.03.svg.txt:16",
+      "saved": 2,
+      "before": "m0 0 0 5v5",
+      "after": "m0 0v5 5"
+    },
+    {
+      "fixture": "convertPathData.03.svg.txt:17",
+      "saved": 2,
+      "before": "m0 0 0 0",
+      "after": "m0 0h0"
+    },
+    {
+      "fixture": "convertPathData.03.svg.txt:18",
+      "saved": 2,
+      "before": "m0 0 0 0",
+      "after": "m0 0h0"
+    },
+    {
+      "fixture": "convertPathData.03.svg.txt:19",
+      "saved": 2,
+      "before": "m0 0 0 0",
+      "after": "m0 0h0"
+    },
+    {
+      "fixture": "convertPathData.03.svg.txt:20",
+      "saved": 2,
+      "before": "m0 0 0 0",
+      "after": "m0 0h0"
+    },
+    {
+      "fixture": "convertPathData.04.svg.txt:7",
+      "saved": 2,
+      "before": "m1 1 0 8c0-2 0-4 0-6",
+      "after": "m1 1v8c0-2 0-4 0-6"
+    },
+    {
+      "fixture": "convertPathData.06.svg.txt:1",
+      "saved": 2,
+      "before": "m10 50 0 0",
+      "after": "m10 50h0"
+    },
+    {
+      "fixture": "convertPathData.06.svg.txt:2",
+      "saved": 2,
+      "before": "m10 50 10 0",
+      "after": "m10 50h10"
+    },
+    {
+      "fixture": "convertPathData.06.svg.txt:3",
+      "saved": 2,
+      "before": "m10 50 0 10",
+      "after": "m10 50v10"
+    },
+    {
+      "fixture": "convertPathData.06.svg.txt:8",
+      "saved": 2,
+      "before": "m10 50 10 0h10",
+      "after": "m10 50h10 10"
+    },
+    {
+      "fixture": "convertPathData.06.svg.txt:9",
+      "saved": 2,
+      "before": "m10 50 10 0h10",
+      "after": "m10 50h10 10"
+    },
+    {
+      "fixture": "convertPathData.06.svg.txt:10",
+      "saved": 2,
+      "before": "m10 50 10 0h10 10",
+      "after": "m10 50h10 10 10"
+    },
+    {
+      "fixture": "convertPathData.06.svg.txt:11",
+      "saved": 2,
+      "before": "m10 50 0 10v10",
+      "after": "m10 50v10 10"
+    },
+    {
+      "fixture": "convertPathData.06.svg.txt:12",
+      "saved": 2,
+      "before": "m10 50 0 10v10",
+      "after": "m10 50v10 10"
+    },
+    {
+      "fixture": "convertPathData.06.svg.txt:13",
+      "saved": 2,
+      "before": "m10 50 0 10v10 10",
+      "after": "m10 50v10 10 10"
+    },
+    {
+      "fixture": "convertPathData.07.svg.txt:2",
+      "saved": 2,
+      "before": "m0 0 0 0",
+      "after": "m0 0h0"
+    },
+    {
+      "fixture": "convertPathData.07.svg.txt:3",
+      "saved": 2,
+      "before": "m0 0 0 0",
+      "after": "m0 0h0"
+    },
+    {
+      "fixture": "convertPathData.07.svg.txt:4",
+      "saved": 2,
+      "before": "m0 0 0 0",
+      "after": "m0 0h0"
+    },
+    {
+      "fixture": "convertPathData.10.svg.txt:1",
+      "saved": 2,
+      "before": "m100 200 300 400zm100 200 100 0",
+      "after": "m100 200 300 400zm100 200h100"
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt:1",
+      "saved": 2,
+      "before": "m100 0 0 100 70-50zm70 50 70-50v100z",
+      "after": "m100 0v100l70-50zm70 50 70-50v100z"
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt:2",
+      "saved": 2,
+      "before": "m0 0 0 100 70-50zm70 50 70-50v100z",
+      "after": "m0 0v100l70-50zm70 50 70-50v100z"
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt:11",
+      "saved": 2,
+      "before": "m0 0 0 100 70-50zm70 50 70-50v100z",
+      "after": "m0 0v100l70-50zm70 50 70-50v100z"
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt:12",
+      "saved": 2,
+      "before": "m0 0 0 100 70-50zm70 50 70-50v100z",
+      "after": "m0 0v100l70-50zm70 50 70-50v100z"
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt:13",
+      "saved": 2,
+      "before": "m0 0 0 100 70-50zm70 50 70-50v100z",
+      "after": "m0 0v100l70-50zm70 50 70-50v100z"
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt:14",
+      "saved": 2,
+      "before": "m0 0 0 100 70-50zm70 50 70-50v100z",
+      "after": "m0 0v100l70-50zm70 50 70-50v100z"
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt:21",
+      "saved": 1,
+      "before": "m-12.122 332.074a.8 2.4 15 10154.548 41.411 .8 2.4 15 10-154.548-41.411",
+      "after": "m-12.122 332.074a.8 2.4 15 10154.548 41.411.8 2.4 15 10-154.548-41.411"
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt:22",
+      "saved": 1,
+      "before": "m721.721 450.759a.8 2.4 105 1041.411-154.548 .8 2.4 105 10-41.411 154.548",
+      "after": "m721.721 450.759a.8 2.4 105 1041.411-154.548.8 2.4 105 10-41.411 154.548"
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt:23",
+      "saved": 1,
+      "before": "m8.6 6.4-3.2 3.1 3.2 3.1-.7.8-3.9-3.9 3.9-3.9zm-3.6 3.6 0-1h10v1z",
+      "after": "m8.6 6.4-3.2 3.1 3.2 3.1-.7.8-3.9-3.9 3.9-3.9zm-3.6 3.6v-1h10v1z"
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt:26",
+      "saved": 3,
+      "before": "m0 0c.07 1.33 .14 2.66 .21 3.99s.14 2.66 .21 3.99",
+      "after": "m0 0c.07 1.33.14 2.66.21 3.99s.14 2.66.21 3.99"
+    },
+    {
+      "fixture": "convertPathData.12.svg.txt:1",
+      "saved": 3,
+      "before": "m10 50 30 0h-30",
+      "after": "m10 50h30-30"
+    },
+    {
+      "fixture": "convertPathData.12.svg.txt:2",
+      "saved": 1,
+      "before": "m10 50-30 0h30",
+      "after": "m10 50h-30 30"
+    },
+    {
+      "fixture": "convertPathData.12.svg.txt:3",
+      "saved": 2,
+      "before": "m10 50-30 0h-50",
+      "after": "m10 50h-30-50"
+    },
+    {
+      "fixture": "convertPathData.12.svg.txt:4",
+      "saved": 2,
+      "before": "m10 50 30 0h50",
+      "after": "m10 50h30 50"
+    },
+    {
+      "fixture": "convertPathData.12.svg.txt:5",
+      "saved": 3,
+      "before": "m10 50 0 30v-30",
+      "after": "m10 50v30-30"
+    },
+    {
+      "fixture": "convertPathData.12.svg.txt:6",
+      "saved": 1,
+      "before": "m10 50 0-30v30",
+      "after": "m10 50v-30 30"
+    },
+    {
+      "fixture": "convertPathData.12.svg.txt:7",
+      "saved": 2,
+      "before": "m10 50 0-30v-50",
+      "after": "m10 50v-30-50"
+    },
+    {
+      "fixture": "convertPathData.12.svg.txt:8",
+      "saved": 2,
+      "before": "m10 50 0 30v50",
+      "after": "m10 50v30 50"
+    },
+    {
+      "fixture": "convertPathData.12.svg.txt:9",
+      "saved": 3,
+      "before": "m10 50 0 30v-80",
+      "after": "m10 50v30-80"
+    },
+    {
+      "fixture": "convertPathData.12.svg.txt:10",
+      "saved": 1,
+      "before": "m10 50 0-40v70",
+      "after": "m10 50v-40 70"
+    },
+    {
+      "fixture": "convertPathData.12.svg.txt:12",
+      "saved": 3,
+      "before": "m10 50 70 0h-80",
+      "after": "m10 50h70-80"
+    },
+    {
+      "fixture": "convertPathData.12.svg.txt:13",
+      "saved": 1,
+      "before": "m10 50-10 0h80",
+      "after": "m10 50h-10 80"
+    },
+    {
+      "fixture": "convertPathData.12.svg.txt:14",
+      "saved": 1,
+      "before": "m10 50-10 0m80 0m-50-40-20 70",
+      "after": "m10 50h-10m80 0m-50-40-20 70"
+    },
+    {
+      "fixture": "convertPathData.14.svg.txt:1",
+      "saved": 2,
+      "before": "m0 0 0 0c2.761 0 5 2.239 5 5",
+      "after": "m0 0h0c2.761 0 5 2.239 5 5"
+    },
+    {
+      "fixture": "convertPathData.14.svg.txt:2",
+      "saved": 2,
+      "before": "m0 0 0 0c2.761 0 5 2.239 5 5l5-5",
+      "after": "m0 0h0c2.761 0 5 2.239 5 5l5-5"
+    },
+    {
+      "fixture": "convertPathData.14.svg.txt:5",
+      "saved": 1,
+      "before": "m7.234 19.474c-.672.337-1.431.526-2.234.526-2.761 0-5-2.239-5-5 0-1.767 .917-3.32 2.301-4.209",
+      "after": "m7.234 19.474c-.672.337-1.431.526-2.234.526-2.761 0-5-2.239-5-5 0-1.767.917-3.32 2.301-4.209"
+    },
+    {
+      "fixture": "convertPathData.14.svg.txt:7",
+      "saved": 6,
+      "before": "m15 23.54c-2.017 0-3.87-.7-5.33-1.87-.032-.023-.068-.052-.11-.087 .042.035 .078.064 .11.087 .048.04 .08.063 .08.063",
+      "after": "m15 23.54c-2.017 0-3.87-.7-5.33-1.87-.032-.023-.068-.052-.11-.087.042.035.078.064.11.087.048.04.08.063.08.063"
+    },
+    {
+      "fixture": "convertPathData.17.svg.txt:1",
+      "saved": 9,
+      "before": "m33.027833 1.96545901c.069575.069575 5.0135294 5.01352942 5.0135294 5.01352941 .0000001-.00000008-.0319306-2.94431722-.0319306-2.94431722l-4.0094318-4.00943164v-.02523956h-21v2h20.062374z",
+      "after": "m33.027833 1.96545901c.069575.069575 5.0135294 5.01352942 5.0135294 5.01352941 1e-7-8e-8-.0319306-2.94431722-.0319306-2.94431722l-4.0094318-4.00943164v-.02523956h-21v2h20.062374z"
+    },
+    {
+      "fixture": "convertPathData.19.svg.txt:1",
+      "saved": 2,
+      "before": "m62.5 62.5 375 0v375h-375z",
+      "after": "m62.5 62.5h375v375h-375z"
+    },
+    {
+      "fixture": "convertPathData.21.svg.txt:1",
+      "saved": 1,
+      "before": "m300 200-150 0a150 150 0 10150-150z",
+      "after": "m300 200h-150a150 150 0 10150-150z"
+    },
+    {
+      "fixture": "convertPathData.22.svg.txt:1",
+      "saved": 2,
+      "before": "m36 36 324 0",
+      "after": "m36 36h324"
+    },
+    {
+      "fixture": "convertPathData.22.svg.txt:2",
+      "saved": 2,
+      "before": "m36 72 324 0",
+      "after": "m36 72h324"
+    },
+    {
+      "fixture": "convertPathData.22.svg.txt:3",
+      "saved": 2,
+      "before": "m36 108 324 0",
+      "after": "m36 108h324"
+    },
+    {
+      "fixture": "convertPathData.22.svg.txt:4",
+      "saved": 2,
+      "before": "m36 108 324 0",
+      "after": "m36 108h324"
+    },
+    {
+      "fixture": "convertPathData.22.svg.txt:5",
+      "saved": 2,
+      "before": "m36 144 324 0",
+      "after": "m36 144h324"
+    },
+    {
+      "fixture": "convertPathData.22.svg.txt:6",
+      "saved": 2,
+      "before": "m36 162 324 0",
+      "after": "m36 162h324"
+    },
+    {
+      "fixture": "convertPathData.23.svg.txt:1",
+      "saved": 2,
+      "before": "m20 20 60 0",
+      "after": "m20 20h60"
+    },
+    {
+      "fixture": "convertPathData.23.svg.txt:2",
+      "saved": 2,
+      "before": "m40 40 120 0",
+      "after": "m40 40h120"
+    },
+    {
+      "fixture": "convertPathData.24.svg.txt:1",
+      "saved": 1,
+      "before": "m500 400-200 0a200 200 0 10200-200z",
+      "after": "m500 400h-200a200 200 0 10200-200z"
+    },
+    {
+      "fixture": "convertPathData.24.svg.txt:2",
+      "saved": 1,
+      "before": "m900 400-200 0a200 200 0 10200-200z",
+      "after": "m900 400h-200a200 200 0 10200-200z"
+    },
+    {
+      "fixture": "convertPathData.25.svg.txt:1",
+      "saved": 3,
+      "before": "m128 24 0 93h-103v-93zm-14 75 0-57h-71v58z",
+      "after": "m128 24v93h-103v-93zm-14 75v-57h-71v58z"
+    },
+    {
+      "fixture": "convertPathData.26.svg.txt:1",
+      "saved": 1,
+      "before": "m5.25 2.2 19.88 0-.05-.05v12.03z",
+      "after": "m5.25 2.2h19.88l-.05-.05v12.03z"
+    },
+    {
+      "fixture": "convertPathData.27.svg.txt:1",
+      "saved": 1,
+      "before": "m6 12 0-6h6a3 3 0 01-6 6z",
+      "after": "m6 12v-6h6a3 3 0 01-6 6z"
+    },
+    {
+      "fixture": "convertPathData.27.svg.txt:2",
+      "saved": 1,
+      "before": "m18 12 0-6h6a3 3 0 01-6 6z",
+      "after": "m18 12v-6h6a3 3 0 01-6 6z"
+    },
+    {
+      "fixture": "convertPathData.27.svg.txt:3",
+      "saved": 1,
+      "before": "m30 12 0-6h6a3 3 0 01-6 6z",
+      "after": "m30 12v-6h6a3 3 0 01-6 6z"
+    },
+    {
+      "fixture": "convertPathData.28.svg.txt:1",
+      "saved": 1,
+      "before": "m6 32.845 0-18.079v18.079",
+      "after": "m6 32.845v-18.079 18.079"
+    },
+    {
+      "fixture": "convertPathData.30.svg.txt:1",
+      "saved": 3,
+      "before": "m6 6 .1 0h.2",
+      "after": "m6 6h.1.2"
+    },
+    {
+      "fixture": "convertPathData.31.svg.txt:1",
+      "saved": 2,
+      "before": "m6 6 .001 0",
+      "after": "m6 6h.001"
+    },
+    {
+      "fixture": "convertPathData.32.svg.txt:1",
+      "saved": 4,
+      "before": "m1 1a10000 10000 0 008 0",
+      "after": "m1 1a1e4 1e4 0 008 0"
+    },
+    {
+      "fixture": "convertPathData.36.svg.txt:1",
+      "saved": 1,
+      "before": "m-6.3 9.9q.7-4.5 .2-5t-1.5-.5h0q-.4 0-2 .3",
+      "after": "m-6.3 9.9q.7-4.5.2-5t-1.5-.5h0q-.4 0-2 .3"
+    },
+    {
+      "fixture": "convertPathData.37.svg.txt:1",
+      "saved": 2,
+      "before": "m5 5 0 0",
+      "after": "m5 5h0"
+    },
+    {
+      "fixture": "convertPathData.39.svg.txt:1",
+      "saved": 2,
+      "before": "m10 50 10 0h0",
+      "after": "m10 50h10 0"
+    }
+  ]
+}

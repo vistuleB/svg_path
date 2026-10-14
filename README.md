@@ -211,12 +211,14 @@ recipe tests. CI checks that the README and compiled source stay identical.
 <!-- tested-recipes:start -->
 ```gleam
 import gleam/result
+import gleam/string
 import svg_path
 import svg_path/csg
 import svg_path/distance
 import svg_path/fit
 import svg_path/measure
 import svg_path/offset
+import svg_path/serialize
 import svg_path/stroke
 
 // Fit a curve on 0..1, then retain its middle half by traveled distance.
@@ -265,6 +267,19 @@ pub fn outline_union(
   )
   csg.union_path(outline, filled_region, using: svg_path.Nonzero)
   |> result.map_error(BooleanFailure)
+}
+
+// Choose one coordinate mode for the whole path; keep relative output on ties.
+// This runs the serializer twice and compares size, not geometric accuracy.
+pub fn smaller_path_data(path: svg_path.Path, decimal_places: Int) -> String {
+  let options = serialize.minifying_options(decimal_places)
+  let relative = serialize.path_with(path, options)
+  let absolute =
+    serialize.path_with(path, serialize.Options(..options, relative: False))
+  case string.length(absolute) < string.length(relative) {
+    True -> absolute
+    False -> relative
+  }
 }
 ```
 <!-- tested-recipes:end -->
@@ -1463,6 +1478,24 @@ commands instead of `S`/`T`.
 
 When `options.relative == True`, the serializer compensates for accumulated
 drift caused by decimal rounding.
+
+When either coordinate mode is acceptable, the tested `smaller_path_data`
+recipe above serializes the whole path in each mode and returns the shorter
+string, retaining relative output on ties. It calls the serializer twice and
+optimizes uncompressed text size, not numerical accuracy. It does not mix modes
+within a path or change the serializer's options contract.
+
+Decimal precision is not a geometric error bound. Endpoint-form arcs near
+radius correction can be particularly sensitive to rounding, and more digits
+do not guarantee monotonically smaller geometric error. Choose precision for
+the output coordinate scale and validate the result for the application's needs.
+
+For SVG arc semantics rather than preservation of the original segment forms,
+call `svg_path.path_normalize_svg_arcs(path)` explicitly before serialization
+or transformation. It turns zero-radius arcs into lines and omits
+coincident-endpoint arcs; it does not simplify other geometry or discard empty
+subpaths. The serializer does not apply this policy on the caller's behalf.
+
 
 ```gleam
 import svg_path/parse

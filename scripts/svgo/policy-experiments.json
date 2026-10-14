@@ -1,0 +1,1451 @@
+{
+  "summary": {
+    "checked": 180,
+    "wholePathSaved": 34,
+    "wholePathImproved": 21,
+    "runSaved": 0,
+    "runImproved": 0
+  },
+  "results": [
+    {
+      "fixture": "convertPathData.01.svg.txt",
+      "number": 1,
+      "relativeBytes": 6,
+      "absoluteBytes": 6,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.01.svg.txt",
+      "number": 2,
+      "relativeBytes": 6,
+      "absoluteBytes": 6,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.01.svg.txt",
+      "number": 3,
+      "relativeBytes": 6,
+      "absoluteBytes": 6,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.01.svg.txt",
+      "number": 4,
+      "relativeBytes": 6,
+      "absoluteBytes": 6,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.01.svg.txt",
+      "number": 5,
+      "relativeBytes": 5,
+      "absoluteBytes": 5,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.01.svg.txt",
+      "number": 6,
+      "relativeBytes": 17,
+      "absoluteBytes": 12,
+      "wholePathSaved": 5,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.01.svg.txt",
+      "number": 7,
+      "relativeBytes": 11,
+      "absoluteBytes": 16,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.01.svg.txt",
+      "number": 8,
+      "relativeBytes": 6,
+      "absoluteBytes": 6,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.01.svg.txt",
+      "number": 9,
+      "relativeBytes": 7,
+      "absoluteBytes": 7,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.01.svg.txt",
+      "number": 10,
+      "relativeBytes": 7,
+      "absoluteBytes": 7,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.01.svg.txt",
+      "number": 11,
+      "relativeBytes": 7,
+      "absoluteBytes": 7,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.01.svg.txt",
+      "number": 12,
+      "relativeBytes": 7,
+      "absoluteBytes": 7,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.01.svg.txt",
+      "number": 13,
+      "relativeBytes": 7,
+      "absoluteBytes": 7,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.01.svg.txt",
+      "number": 14,
+      "relativeBytes": 7,
+      "absoluteBytes": 7,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.02.svg.txt",
+      "number": 1,
+      "relativeBytes": 12,
+      "absoluteBytes": 12,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.02.svg.txt",
+      "number": 2,
+      "relativeBytes": 23,
+      "absoluteBytes": 24,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.02.svg.txt",
+      "number": 3,
+      "relativeBytes": 36,
+      "absoluteBytes": 36,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.02.svg.txt",
+      "number": 4,
+      "relativeBytes": 18,
+      "absoluteBytes": 18,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.02.svg.txt",
+      "number": 5,
+      "relativeBytes": 23,
+      "absoluteBytes": 24,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.02.svg.txt",
+      "number": 6,
+      "relativeBytes": 23,
+      "absoluteBytes": 23,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.03.svg.txt",
+      "number": 1,
+      "relativeBytes": 12,
+      "absoluteBytes": 12,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.03.svg.txt",
+      "number": 2,
+      "relativeBytes": 12,
+      "absoluteBytes": 12,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.03.svg.txt",
+      "number": 3,
+      "relativeBytes": 18,
+      "absoluteBytes": 18,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.03.svg.txt",
+      "number": 4,
+      "relativeBytes": 18,
+      "absoluteBytes": 18,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.03.svg.txt",
+      "number": 5,
+      "relativeBytes": 41,
+      "absoluteBytes": 42,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.03.svg.txt",
+      "number": 6,
+      "relativeBytes": 41,
+      "absoluteBytes": 42,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.03.svg.txt",
+      "number": 7,
+      "relativeBytes": 48,
+      "absoluteBytes": 49,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.03.svg.txt",
+      "number": 8,
+      "relativeBytes": 48,
+      "absoluteBytes": 49,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.03.svg.txt",
+      "number": 9,
+      "relativeBytes": 29,
+      "absoluteBytes": 30,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.03.svg.txt",
+      "number": 10,
+      "relativeBytes": 29,
+      "absoluteBytes": 30,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.03.svg.txt",
+      "number": 11,
+      "relativeBytes": 29,
+      "absoluteBytes": 30,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.03.svg.txt",
+      "number": 12,
+      "relativeBytes": 29,
+      "absoluteBytes": 30,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.03.svg.txt",
+      "number": 13,
+      "relativeBytes": 39,
+      "absoluteBytes": 40,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.03.svg.txt",
+      "number": 14,
+      "relativeBytes": 39,
+      "absoluteBytes": 40,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.03.svg.txt",
+      "number": 15,
+      "relativeBytes": 8,
+      "absoluteBytes": 9,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.03.svg.txt",
+      "number": 16,
+      "relativeBytes": 8,
+      "absoluteBytes": 9,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.03.svg.txt",
+      "number": 17,
+      "relativeBytes": 6,
+      "absoluteBytes": 6,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.03.svg.txt",
+      "number": 18,
+      "relativeBytes": 6,
+      "absoluteBytes": 6,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.03.svg.txt",
+      "number": 19,
+      "relativeBytes": 6,
+      "absoluteBytes": 6,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.03.svg.txt",
+      "number": 20,
+      "relativeBytes": 6,
+      "absoluteBytes": 6,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.04.svg.txt",
+      "number": 1,
+      "relativeBytes": 18,
+      "absoluteBytes": 18,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.04.svg.txt",
+      "number": 2,
+      "relativeBytes": 42,
+      "absoluteBytes": 44,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.04.svg.txt",
+      "number": 3,
+      "relativeBytes": 45,
+      "absoluteBytes": 47,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.04.svg.txt",
+      "number": 4,
+      "relativeBytes": 30,
+      "absoluteBytes": 32,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.04.svg.txt",
+      "number": 5,
+      "relativeBytes": 32,
+      "absoluteBytes": 33,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.04.svg.txt",
+      "number": 6,
+      "relativeBytes": 41,
+      "absoluteBytes": 41,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.04.svg.txt",
+      "number": 7,
+      "relativeBytes": 18,
+      "absoluteBytes": 18,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.05.svg.txt",
+      "number": 1,
+      "relativeBytes": 21,
+      "absoluteBytes": 21,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.05.svg.txt",
+      "number": 2,
+      "relativeBytes": 14,
+      "absoluteBytes": 18,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.05.svg.txt",
+      "number": 3,
+      "relativeBytes": 25,
+      "absoluteBytes": 24,
+      "wholePathSaved": 1,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.05.svg.txt",
+      "number": 4,
+      "relativeBytes": 32,
+      "absoluteBytes": 32,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.06.svg.txt",
+      "number": 1,
+      "relativeBytes": 8,
+      "absoluteBytes": 9,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.06.svg.txt",
+      "number": 2,
+      "relativeBytes": 9,
+      "absoluteBytes": 9,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.06.svg.txt",
+      "number": 3,
+      "relativeBytes": 9,
+      "absoluteBytes": 9,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.06.svg.txt",
+      "number": 4,
+      "relativeBytes": 16,
+      "absoluteBytes": 15,
+      "wholePathSaved": 1,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.06.svg.txt",
+      "number": 5,
+      "relativeBytes": 16,
+      "absoluteBytes": 15,
+      "wholePathSaved": 1,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.06.svg.txt",
+      "number": 6,
+      "relativeBytes": 22,
+      "absoluteBytes": 21,
+      "wholePathSaved": 1,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.06.svg.txt",
+      "number": 7,
+      "relativeBytes": 22,
+      "absoluteBytes": 21,
+      "wholePathSaved": 1,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.06.svg.txt",
+      "number": 8,
+      "relativeBytes": 12,
+      "absoluteBytes": 12,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.06.svg.txt",
+      "number": 9,
+      "relativeBytes": 12,
+      "absoluteBytes": 12,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.06.svg.txt",
+      "number": 10,
+      "relativeBytes": 15,
+      "absoluteBytes": 15,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.06.svg.txt",
+      "number": 11,
+      "relativeBytes": 12,
+      "absoluteBytes": 12,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.06.svg.txt",
+      "number": 12,
+      "relativeBytes": 12,
+      "absoluteBytes": 12,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.06.svg.txt",
+      "number": 13,
+      "relativeBytes": 15,
+      "absoluteBytes": 15,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.07.svg.txt",
+      "number": 1,
+      "relativeBytes": 4,
+      "absoluteBytes": 4,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.07.svg.txt",
+      "number": 2,
+      "relativeBytes": 6,
+      "absoluteBytes": 6,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.07.svg.txt",
+      "number": 3,
+      "relativeBytes": 6,
+      "absoluteBytes": 6,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.07.svg.txt",
+      "number": 4,
+      "relativeBytes": 6,
+      "absoluteBytes": 6,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.07.svg.txt",
+      "number": 5,
+      "relativeBytes": 20,
+      "absoluteBytes": 20,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.07.svg.txt",
+      "number": 6,
+      "relativeBytes": 12,
+      "absoluteBytes": 12,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.07.svg.txt",
+      "number": 7,
+      "relativeBytes": 19,
+      "absoluteBytes": 19,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.08.svg.txt",
+      "number": 1,
+      "relativeBytes": 26,
+      "absoluteBytes": 32,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.08.svg.txt",
+      "number": 2,
+      "relativeBytes": 31,
+      "absoluteBytes": 40,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.08.svg.txt",
+      "number": 3,
+      "relativeBytes": 34,
+      "absoluteBytes": 40,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.08.svg.txt",
+      "number": 4,
+      "relativeBytes": 34,
+      "absoluteBytes": 40,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.08.svg.txt",
+      "number": 5,
+      "relativeBytes": 20,
+      "absoluteBytes": 24,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.08.svg.txt",
+      "number": 6,
+      "relativeBytes": 26,
+      "absoluteBytes": 32,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.08.svg.txt",
+      "number": 7,
+      "relativeBytes": 28,
+      "absoluteBytes": 32,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.08.svg.txt",
+      "number": 8,
+      "relativeBytes": 34,
+      "absoluteBytes": 40,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.08.svg.txt",
+      "number": 9,
+      "relativeBytes": 34,
+      "absoluteBytes": 40,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.08.svg.txt",
+      "number": 10,
+      "relativeBytes": 16,
+      "absoluteBytes": 16,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.08.svg.txt",
+      "number": 11,
+      "relativeBytes": 24,
+      "absoluteBytes": 26,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.08.svg.txt",
+      "number": 12,
+      "relativeBytes": 24,
+      "absoluteBytes": 26,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.08.svg.txt",
+      "number": 13,
+      "relativeBytes": 96,
+      "absoluteBytes": 108,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.09.svg.txt",
+      "number": 1,
+      "relativeBytes": 42,
+      "absoluteBytes": 48,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.09.svg.txt",
+      "number": 2,
+      "relativeBytes": 34,
+      "absoluteBytes": 40,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.09.svg.txt",
+      "number": 3,
+      "relativeBytes": 22,
+      "absoluteBytes": 24,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.09.svg.txt",
+      "number": 4,
+      "relativeBytes": 28,
+      "absoluteBytes": 31,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.09.svg.txt",
+      "number": 5,
+      "relativeBytes": 34,
+      "absoluteBytes": 40,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.10.svg.txt",
+      "number": 1,
+      "relativeBytes": 29,
+      "absoluteBytes": 29,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt",
+      "number": 1,
+      "relativeBytes": 34,
+      "absoluteBytes": 36,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt",
+      "number": 2,
+      "relativeBytes": 32,
+      "absoluteBytes": 32,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt",
+      "number": 3,
+      "relativeBytes": 199,
+      "absoluteBytes": 222,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt",
+      "number": 4,
+      "relativeBytes": 83,
+      "absoluteBytes": 88,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt",
+      "number": 5,
+      "relativeBytes": 103,
+      "absoluteBytes": 109,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt",
+      "number": 6,
+      "relativeBytes": 201,
+      "absoluteBytes": 220,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt",
+      "number": 7,
+      "relativeBytes": 202,
+      "absoluteBytes": 225,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt",
+      "number": 8,
+      "relativeBytes": 182,
+      "absoluteBytes": 215,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt",
+      "number": 9,
+      "relativeBytes": 201,
+      "absoluteBytes": 220,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt",
+      "number": 10,
+      "relativeBytes": 201,
+      "absoluteBytes": 220,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt",
+      "number": 11,
+      "relativeBytes": 32,
+      "absoluteBytes": 32,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt",
+      "number": 12,
+      "relativeBytes": 32,
+      "absoluteBytes": 32,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt",
+      "number": 13,
+      "relativeBytes": 32,
+      "absoluteBytes": 32,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt",
+      "number": 14,
+      "relativeBytes": 32,
+      "absoluteBytes": 32,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt",
+      "number": 15,
+      "relativeBytes": 83,
+      "absoluteBytes": 88,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt",
+      "number": 16,
+      "relativeBytes": 83,
+      "absoluteBytes": 88,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt",
+      "number": 17,
+      "relativeBytes": 20,
+      "absoluteBytes": 20,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt",
+      "number": 18,
+      "relativeBytes": 39,
+      "absoluteBytes": 35,
+      "wholePathSaved": 4,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt",
+      "number": 19,
+      "relativeBytes": 36,
+      "absoluteBytes": 36,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt",
+      "number": 20,
+      "relativeBytes": 29,
+      "absoluteBytes": 29,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt",
+      "number": 21,
+      "relativeBytes": 70,
+      "absoluteBytes": 71,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt",
+      "number": 22,
+      "relativeBytes": 72,
+      "absoluteBytes": 73,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt",
+      "number": 23,
+      "relativeBytes": 64,
+      "absoluteBytes": 63,
+      "wholePathSaved": 1,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt",
+      "number": 24,
+      "relativeBytes": 92,
+      "absoluteBytes": 95,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt",
+      "number": 25,
+      "relativeBytes": 38,
+      "absoluteBytes": 38,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.11.svg.txt",
+      "number": 26,
+      "relativeBytes": 46,
+      "absoluteBytes": 53,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.12.svg.txt",
+      "number": 1,
+      "relativeBytes": 12,
+      "absoluteBytes": 12,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.12.svg.txt",
+      "number": 2,
+      "relativeBytes": 13,
+      "absoluteBytes": 13,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.12.svg.txt",
+      "number": 3,
+      "relativeBytes": 13,
+      "absoluteBytes": 13,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.12.svg.txt",
+      "number": 4,
+      "relativeBytes": 12,
+      "absoluteBytes": 12,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.12.svg.txt",
+      "number": 5,
+      "relativeBytes": 12,
+      "absoluteBytes": 12,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.12.svg.txt",
+      "number": 6,
+      "relativeBytes": 13,
+      "absoluteBytes": 12,
+      "wholePathSaved": 1,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.12.svg.txt",
+      "number": 7,
+      "relativeBytes": 13,
+      "absoluteBytes": 12,
+      "wholePathSaved": 1,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.12.svg.txt",
+      "number": 8,
+      "relativeBytes": 12,
+      "absoluteBytes": 13,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.12.svg.txt",
+      "number": 9,
+      "relativeBytes": 12,
+      "absoluteBytes": 11,
+      "wholePathSaved": 1,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.12.svg.txt",
+      "number": 10,
+      "relativeBytes": 13,
+      "absoluteBytes": 12,
+      "wholePathSaved": 1,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.12.svg.txt",
+      "number": 11,
+      "relativeBytes": 24,
+      "absoluteBytes": 24,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.12.svg.txt",
+      "number": 12,
+      "relativeBytes": 12,
+      "absoluteBytes": 11,
+      "wholePathSaved": 1,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.12.svg.txt",
+      "number": 13,
+      "relativeBytes": 13,
+      "absoluteBytes": 11,
+      "wholePathSaved": 2,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.12.svg.txt",
+      "number": 14,
+      "relativeBytes": 28,
+      "absoluteBytes": 26,
+      "wholePathSaved": 2,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.13.svg.txt",
+      "number": 1,
+      "relativeBytes": 78,
+      "absoluteBytes": 94,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.14.svg.txt",
+      "number": 1,
+      "relativeBytes": 26,
+      "absoluteBytes": 26,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.14.svg.txt",
+      "number": 2,
+      "relativeBytes": 30,
+      "absoluteBytes": 31,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.14.svg.txt",
+      "number": 3,
+      "relativeBytes": 56,
+      "absoluteBytes": 64,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.14.svg.txt",
+      "number": 4,
+      "relativeBytes": 45,
+      "absoluteBytes": 48,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.14.svg.txt",
+      "number": 5,
+      "relativeBytes": 92,
+      "absoluteBytes": 95,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.14.svg.txt",
+      "number": 6,
+      "relativeBytes": 63,
+      "absoluteBytes": 73,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.14.svg.txt",
+      "number": 7,
+      "relativeBytes": 109,
+      "absoluteBytes": 156,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.14.svg.txt",
+      "number": 8,
+      "relativeBytes": 128,
+      "absoluteBytes": 150,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.14.svg.txt",
+      "number": 9,
+      "relativeBytes": 75,
+      "absoluteBytes": 85,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.15.svg.txt",
+      "number": 1,
+      "relativeBytes": 110,
+      "absoluteBytes": 116,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.15.svg.txt",
+      "number": 2,
+      "relativeBytes": 54,
+      "absoluteBytes": 55,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.16.svg.txt",
+      "number": 1,
+      "relativeBytes": 52,
+      "absoluteBytes": 58,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.16.svg.txt",
+      "number": 2,
+      "relativeBytes": 26,
+      "absoluteBytes": 27,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.17.svg.txt",
+      "number": 1,
+      "relativeBytes": 178,
+      "absoluteBytes": 181,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.18.svg.txt",
+      "number": 1,
+      "relativeBytes": 68,
+      "absoluteBytes": 66,
+      "wholePathSaved": 2,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.19.svg.txt",
+      "number": 1,
+      "relativeBytes": 24,
+      "absoluteBytes": 28,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.20.svg.txt",
+      "number": 1,
+      "relativeBytes": 66,
+      "absoluteBytes": 66,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.21.svg.txt",
+      "number": 1,
+      "relativeBytes": 34,
+      "absoluteBytes": 32,
+      "wholePathSaved": 2,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.22.svg.txt",
+      "number": 1,
+      "relativeBytes": 10,
+      "absoluteBytes": 10,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.22.svg.txt",
+      "number": 2,
+      "relativeBytes": 10,
+      "absoluteBytes": 10,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.22.svg.txt",
+      "number": 3,
+      "relativeBytes": 11,
+      "absoluteBytes": 11,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.22.svg.txt",
+      "number": 4,
+      "relativeBytes": 11,
+      "absoluteBytes": 11,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.22.svg.txt",
+      "number": 5,
+      "relativeBytes": 11,
+      "absoluteBytes": 11,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.22.svg.txt",
+      "number": 6,
+      "relativeBytes": 11,
+      "absoluteBytes": 11,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.23.svg.txt",
+      "number": 1,
+      "relativeBytes": 9,
+      "absoluteBytes": 9,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.23.svg.txt",
+      "number": 2,
+      "relativeBytes": 10,
+      "absoluteBytes": 10,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.24.svg.txt",
+      "number": 1,
+      "relativeBytes": 34,
+      "absoluteBytes": 33,
+      "wholePathSaved": 1,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.24.svg.txt",
+      "number": 2,
+      "relativeBytes": 34,
+      "absoluteBytes": 33,
+      "wholePathSaved": 1,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.25.svg.txt",
+      "number": 1,
+      "relativeBytes": 39,
+      "absoluteBytes": 36,
+      "wholePathSaved": 3,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.26.svg.txt",
+      "number": 1,
+      "relativeBytes": 31,
+      "absoluteBytes": 33,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.27.svg.txt",
+      "number": 1,
+      "relativeBytes": 24,
+      "absoluteBytes": 24,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.27.svg.txt",
+      "number": 2,
+      "relativeBytes": 25,
+      "absoluteBytes": 26,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.27.svg.txt",
+      "number": 3,
+      "relativeBytes": 25,
+      "absoluteBytes": 26,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.28.svg.txt",
+      "number": 1,
+      "relativeBytes": 24,
+      "absoluteBytes": 23,
+      "wholePathSaved": 1,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.29.svg.txt",
+      "number": 1,
+      "relativeBytes": 8,
+      "absoluteBytes": 8,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.29.svg.txt",
+      "number": 2,
+      "relativeBytes": 31,
+      "absoluteBytes": 38,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.30.svg.txt",
+      "number": 1,
+      "relativeBytes": 9,
+      "absoluteBytes": 12,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.31.svg.txt",
+      "number": 1,
+      "relativeBytes": 9,
+      "absoluteBytes": 10,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.32.svg.txt",
+      "number": 1,
+      "relativeBytes": 20,
+      "absoluteBytes": 20,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.33.svg.txt",
+      "number": 1,
+      "relativeBytes": 26,
+      "absoluteBytes": 26,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.34.svg.txt",
+      "number": 1,
+      "relativeBytes": 24,
+      "absoluteBytes": 30,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.34.svg.txt",
+      "number": 2,
+      "relativeBytes": 20,
+      "absoluteBytes": 23,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.35.svg.txt",
+      "number": 1,
+      "relativeBytes": 18,
+      "absoluteBytes": 19,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.36.svg.txt",
+      "number": 1,
+      "relativeBytes": 41,
+      "absoluteBytes": 55,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.37.svg.txt",
+      "number": 1,
+      "relativeBytes": 6,
+      "absoluteBytes": 6,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.37.svg.txt",
+      "number": 2,
+      "relativeBytes": 4,
+      "absoluteBytes": 4,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.38.svg.txt",
+      "number": 1,
+      "relativeBytes": 7,
+      "absoluteBytes": 7,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.39.svg.txt",
+      "number": 1,
+      "relativeBytes": 11,
+      "absoluteBytes": 12,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    },
+    {
+      "fixture": "convertPathData.40.svg.txt",
+      "number": 1,
+      "relativeBytes": 17,
+      "absoluteBytes": 18,
+      "wholePathSaved": 0,
+      "runSaved": 0
+    }
+  ]
+}

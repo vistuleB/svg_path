@@ -1,10 +1,13 @@
 import gleam/float
+import gleam/list
+import gleam/string
 import readme_recipes
 import svg_path
 import svg_path/area
 import svg_path/fit
 import svg_path/measure
 import svg_path/parse
+import svg_path/serialize
 import svg_path/stroke
 
 pub fn fitted_recipe_trims_by_distance_test() {
@@ -38,4 +41,30 @@ pub fn stroke_union_recipe_preserves_geometry_and_errors_test() {
   assert float.absolute_value(size -. 30.0) <. 0.000001
   assert readme_recipes.outline_union(line, 0.0, region)
     == Error(readme_recipes.StrokeFailure(stroke.InvalidWidth(0.0)))
+}
+
+pub fn smaller_path_data_recipe_selects_both_modes_and_keeps_ties_test() {
+  // Absolute wins, relative wins, and equal-size spellings retain relative.
+  list.each(
+    [
+      #("M10 50L0 50L80 50", "M"),
+      #("M1000 1000L1001 1001", "m"),
+      #("M0 0L1 1", "m"),
+    ],
+    fn(example) {
+      let #(source, prefix) = example
+      let assert Ok(path) = parse.path(source)
+      let encoded = readme_recipes.smaller_path_data(path, 3)
+      assert string.starts_with(encoded, prefix)
+      assert parse.path(encoded) == Ok(path)
+      let options = serialize.minifying_options(3)
+      assert string.length(encoded)
+        <= string.length(serialize.path_with(path, options))
+      assert string.length(encoded)
+        <= string.length(serialize.path_with(
+          path,
+          serialize.Options(..options, relative: False),
+        ))
+    },
+  )
 }

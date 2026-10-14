@@ -1,10 +1,12 @@
 import gleam/result
+import gleam/string
 import svg_path
 import svg_path/csg
 import svg_path/distance
 import svg_path/fit
 import svg_path/measure
 import svg_path/offset
+import svg_path/serialize
 import svg_path/stroke
 
 // Fit a curve on 0..1, then retain its middle half by traveled distance.
@@ -53,4 +55,17 @@ pub fn outline_union(
   )
   csg.union_path(outline, filled_region, using: svg_path.Nonzero)
   |> result.map_error(BooleanFailure)
+}
+
+// Choose one coordinate mode for the whole path; keep relative output on ties.
+// This runs the serializer twice and compares size, not geometric accuracy.
+pub fn smaller_path_data(path: svg_path.Path, decimal_places: Int) -> String {
+  let options = serialize.minifying_options(decimal_places)
+  let relative = serialize.path_with(path, options)
+  let absolute =
+    serialize.path_with(path, serialize.Options(..options, relative: False))
+  case string.length(absolute) < string.length(relative) {
+    True -> absolute
+    False -> relative
+  }
 }

@@ -1,0 +1,151 @@
+[
+  {
+    "file": "mergePaths.01.svg.txt",
+    "inputPaths": 7,
+    "outputPaths": 3,
+    "inputSubpaths": 8,
+    "outputSubpaths": 8,
+    "nonemptyGeometryMatches": true,
+    "combinedRoundtrip": true,
+    "roundtripClosingSegments": [],
+    "classification": "document-merge-policy-not-boolean-union",
+    "actual": "m0 0zm10 10zm10 10 10 10m0-30c10 0 20 10 20 20m-20 10zm0 0zm10 10zm10 10 0 10 20 30h40"
+  },
+  {
+    "file": "mergePaths.02.svg.txt",
+    "inputPaths": 18,
+    "outputPaths": 6,
+    "inputSubpaths": 19,
+    "outputSubpaths": 15,
+    "nonemptyGeometryMatches": true,
+    "combinedRoundtrip": true,
+    "roundtripClosingSegments": [],
+    "classification": "document-merge-policy-not-boolean-union",
+    "actual": "m0 0zm10 10zm10 10m10 10zm0 0zm10 10zm10 10zm-10-10m10 10m-10-10zm10 10zm-10-10m10 10m0 0zm-50-50 0 100h100v-100zm200 0 0 100h100v-100zm-200 0 0 100h100v-100zm200 0 0 100h100v-100zm-200 200 100 0v100h-100z"
+  },
+  {
+    "file": "mergePaths.03.svg.txt",
+    "inputPaths": 13,
+    "outputPaths": 8,
+    "inputSubpaths": 13,
+    "outputSubpaths": 13,
+    "nonemptyGeometryMatches": true,
+    "combinedRoundtrip": true,
+    "roundtripClosingSegments": [],
+    "classification": "document-merge-policy-not-boolean-union",
+    "actual": "m30 0-30 40h60zm-30 10 60 0-30 40zm0-10 0 50 50-50m-50 60 50-50v50m50-60a50 50 0 010 100m-75-75 50 0v50h-50zm110 60 50 0v50h-50zm-125-71-3 0v1h3zm-1 7-1 0v1h1zm21 11.705 0 7.295h10.42zm16.25 2.223 0-4.928h-7.04zm-26.25-14.928 40 0 40 10m-80-10 30 10h50"
+  },
+  {
+    "file": "mergePaths.04.svg.txt",
+    "inputPaths": 4,
+    "outputPaths": 3,
+    "inputSubpaths": 4,
+    "outputSubpaths": 4,
+    "nonemptyGeometryMatches": true,
+    "combinedRoundtrip": true,
+    "roundtripClosingSegments": [
+      {
+        "subpath": 0,
+        "length": 2.1316282072803006e-14
+      }
+    ],
+    "classification": "document-merge-policy-not-boolean-union",
+    "actual": "m320 60c17.466-8.733 33.76-12.78 46.593-12.484 12.856.297 22.254 4.936 26.612 12.484s3.676 18.007-2.494 29.29c-6.16 11.26-17.812 23.348-34.107 34.107-16.26 10.735-37.164 20.14-60.72 26.613-23.528 6.463-49.706 9.99-75.884 9.99-26.18 0-52.357-3.527-75.882-9.99-23.557-6.472-44.462-15.878-60.72-26.613-16.296-10.76-27.95-22.846-34.11-34.108-6.17-11.283-6.85-21.742-2.493-29.29 4.358-7.548 13.756-12.187 26.612-12.484 12.833-.295 29.128 3.751 46.593 12.485 17.426 8.713 36.024 22.114 53.407 39.28 17.36 17.14 33.503 38.05 46.593 60.72s23.124 47.106 29.29 70.71c6.173 23.638 8.48 46.445 7.313 65.893-1.17 19.49-5.812 35.627-12.485 46.592-6.686 10.985-15.402 16.805-24.118 16.805s-17.432-5.82-24.118-16.805c-6.673-10.965-11.315-27.1-12.485-46.592-1.167-19.448 1.14-42.255 7.314-65.892 6.166-23.604 16.2-48.04 29.29-70.71s29.233-43.58 46.593-60.72c17.382-17.168 35.979-30.569 53.406-39.281zm-40 260 100-173.2h200l100 173.2-100 173.2h-200m326.69-193.91c-.764-11.43-6.036-56.734-16.338-71.32 0 0 9.997 14.14 11.095 76.806l5.243-5.486zm-1.53-6.75c-5.615-35.752-25.082-67.015-25.082-67.015 7.35 15.128 20.257 53.835 23.64 77.45l2.33-2.24z"
+  },
+  {
+    "file": "mergePaths.05.svg.txt",
+    "inputPaths": 2,
+    "outputPaths": 2,
+    "inputSubpaths": 3,
+    "outputSubpaths": 3,
+    "nonemptyGeometryMatches": true,
+    "combinedRoundtrip": true,
+    "roundtripClosingSegments": [],
+    "classification": "document-merge-policy-not-boolean-union",
+    "actual": "m373.27 534.98c-8.092-54.74-4.391-98.636 56.127-90.287 77.894 55.595-9.147 98.206-5.311 151.74 21.027 45.08 17.096 66.495-7.512 68.302-17.258 10.998-32.537 13.238-46.236 8.48-.246-1.867-.69-3.845-1.368-5.94l-19.752-40.751c44.709 19.982 82.483-.171 51.564-24.28zm32.16-40.207c-5.449-9.977 3.342-14.397 8.048-3.55 12.4 31.857 6.043 40.206-16.136 72.254l-1.911-2.463c11.558-13.292 20.249-27.75 21.334-39.194 .899-9.481-5.973-16.736-11.335-27.048zm2.29 85.267c40.745 49.516-3.991 92.385-40.977 82.64"
+  },
+  {
+    "file": "mergePaths.06.svg.txt",
+    "inputPaths": 5,
+    "outputPaths": 4,
+    "inputSubpaths": 5,
+    "outputSubpaths": 5,
+    "nonemptyGeometryMatches": true,
+    "combinedRoundtrip": true,
+    "roundtripClosingSegments": [],
+    "classification": "document-merge-policy-not-boolean-union",
+    "actual": "m2236.1 787.25c6.625.191 11.52.01 11.828-2.044-8.189-9.2 8.854-46.86-11.828-48.722-17.83 3.99-6.438 26.66-11.828 48.722-.133 2.352 7.537 2.028 11.828 2.044zm7.8-.12c-7.561-19.76 6.33-43.05-7.817-50.642m2.717 50.822c-4.873-19.48 2.772-37.1-2.667-50.82m-7.833 50.64c4.104-21.9-3.13-44.68 7.817-50.642m-2.717 50.822c-.692-5.383-1.098-39.17 2.667-50.82"
+  },
+  {
+    "file": "mergePaths.07.svg.txt",
+    "inputPaths": 5,
+    "outputPaths": 5,
+    "inputSubpaths": 5,
+    "outputSubpaths": 5,
+    "nonemptyGeometryMatches": true,
+    "combinedRoundtrip": true,
+    "roundtripClosingSegments": [],
+    "classification": "document-merge-policy-not-boolean-union",
+    "actual": "m0 0 6 3-6 3m10 4 50 0m-50 40 50 0m-50 10 60 0m-60 10 60 0"
+  },
+  {
+    "file": "mergePaths.08.svg.txt",
+    "inputPaths": 6,
+    "outputPaths": 6,
+    "inputSubpaths": 6,
+    "outputSubpaths": 6,
+    "nonemptyGeometryMatches": true,
+    "combinedRoundtrip": true,
+    "roundtripClosingSegments": [],
+    "classification": "document-merge-policy-not-boolean-union",
+    "actual": "m0 0 100 0v80h-100zm200 0 100 0v80h-100zm-200 100 100 0v80h-100zm200 0 100 0v80h-100zm-200 100 100 0v80h-100zm200 0 100 0v80h-100z"
+  },
+  {
+    "file": "mergePaths.09.svg.txt",
+    "inputPaths": 6,
+    "outputPaths": 6,
+    "inputSubpaths": 6,
+    "outputSubpaths": 6,
+    "nonemptyGeometryMatches": true,
+    "combinedRoundtrip": true,
+    "roundtripClosingSegments": [],
+    "classification": "document-merge-policy-not-boolean-union",
+    "actual": "m0 0 100 0v80h-100zm200 0 100 0v80h-100zm-200 100 100 0v80h-100zm200 0 100 0v80h-100zm-200 100 100 0v80h-100zm200 0 100 0v80h-100z"
+  },
+  {
+    "file": "mergePaths.10.svg.txt",
+    "inputPaths": 6,
+    "outputPaths": 6,
+    "inputSubpaths": 6,
+    "outputSubpaths": 6,
+    "nonemptyGeometryMatches": true,
+    "combinedRoundtrip": true,
+    "roundtripClosingSegments": [],
+    "classification": "document-merge-policy-not-boolean-union",
+    "actual": "m0 0 100 0v80h-100zm200 0 100 0v80h-100zm-200 100 100 0v80h-100zm200 0 100 0v80h-100zm-200 100 100 0v80h-100zm200 0 100 0v80h-100z"
+  },
+  {
+    "file": "mergePaths.11.svg.txt",
+    "inputPaths": 8,
+    "outputPaths": 8,
+    "inputSubpaths": 8,
+    "outputSubpaths": 8,
+    "nonemptyGeometryMatches": true,
+    "combinedRoundtrip": true,
+    "roundtripClosingSegments": [],
+    "classification": "document-merge-policy-not-boolean-union",
+    "actual": "m0 0 100 0v80h-100zm200 0 100 0v80h-100zm-200 100 100 0v80h-100zm200 0 100 0v80h-100zm-200 100 100 0v80h-100zm200 0 100 0v80h-100zm-200 100 100 0v80h-100zm200 0 100 0v80h-100z"
+  },
+  {
+    "file": "mergePaths.12.svg.txt",
+    "inputPaths": 8,
+    "outputPaths": 8,
+    "inputSubpaths": 8,
+    "outputSubpaths": 8,
+    "nonemptyGeometryMatches": true,
+    "combinedRoundtrip": true,
+    "roundtripClosingSegments": [],
+    "classification": "document-merge-policy-not-boolean-union",
+    "actual": "m0 0 100 0v80h-100zm200 0 100 0v80h-100zm-200 100 100 0v80h-100zm200 0 100 0v80h-100zm-200 100 100 0v80h-100zm200 0 100 0v80h-100zm-200 100 100 0v80h-100zm200 0 100 0v80h-100z"
+  }
+]

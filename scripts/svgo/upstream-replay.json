@@ -1,0 +1,2330 @@
+[
+  {
+    "file": "addAttributesToSVGElement.01.svg.txt",
+    "passes": [
+      true
+    ]
+  },
+  {
+    "file": "addAttributesToSVGElement.02.svg.txt",
+    "passes": [
+      true
+    ]
+  },
+  {
+    "file": "addAttributesToSVGElement.03.svg.txt",
+    "passes": [
+      true
+    ]
+  },
+  {
+    "file": "addAttributesToSVGElement.04.svg.txt",
+    "passes": [
+      true
+    ]
+  },
+  {
+    "file": "addClassesToSVGElement.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "addClassesToSVGElement.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "addClassesToSVGElement.03.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupAttrs.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupAttrs.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupEnableBackground.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupEnableBackground.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupEnableBackground.03.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupEnableBackground.04.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupEnableBackground.05.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupIds.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupIds.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupIds.03.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupIds.04.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupIds.05.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupIds.06.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupIds.07.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupIds.08.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupIds.09.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupIds.10.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupIds.11.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupIds.12.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupIds.13.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupIds.14.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupIds.15.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupIds.16.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupIds.17.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupIds.18.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupIds.19.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupIds.20.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupIds.21.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupIds.22.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupIds.23.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupIds.24.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupIds.25.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupIds.26.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupListOfValues.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupListOfValues.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupListOfValues.03.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupNumericValues.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupNumericValues.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "cleanupNumericValues.03.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "collapseGroups.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "collapseGroups.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "collapseGroups.06.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "collapseGroups.07.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "collapseGroups.08.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "collapseGroups.09.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "collapseGroups.11.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "collapseGroups.12.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "collapseGroups.13.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "collapseGroups.14.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "collapseGroups.15.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "collapseGroups.16.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "collapseGroups.17.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "collapseGroups.18.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "convertColors.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "convertColors.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "convertColors.03.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "convertColors.04.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "convertColors.05.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "convertColors.06.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "convertColors.07.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "convertEllipseToCircle.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "convertOneStopGradients.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "convertOneStopGradients.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "convertOneStopGradients.03.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "convertShapeToPath.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "convertShapeToPath.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "convertShapeToPath.03.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "convertShapeToPath.04.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "convertShapeToPath.05.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "convertStyleToAttrs.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "convertStyleToAttrs.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "convertStyleToAttrs.03.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "convertStyleToAttrs.04.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "convertStyleToAttrs.05.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "convertTransform.01.svg.txt",
+    "passes": [
+      true
+    ]
+  },
+  {
+    "file": "convertTransform.02.svg.txt",
+    "passes": [
+      true
+    ]
+  },
+  {
+    "file": "convertTransform.03.svg.txt",
+    "passes": [
+      true
+    ]
+  },
+  {
+    "file": "convertTransform.04.svg.txt",
+    "passes": [
+      true
+    ]
+  },
+  {
+    "file": "convertTransform.05.svg.txt",
+    "passes": [
+      true
+    ]
+  },
+  {
+    "file": "convertTransform.06.svg.txt",
+    "passes": [
+      true
+    ]
+  },
+  {
+    "file": "convertTransform.07.svg.txt",
+    "passes": [
+      true
+    ]
+  },
+  {
+    "file": "convertTransform.10.svg.txt",
+    "passes": [
+      true
+    ]
+  },
+  {
+    "file": "convertTransform.11.svg.txt",
+    "passes": [
+      true
+    ]
+  },
+  {
+    "file": "convertTransform.12.svg.txt",
+    "passes": [
+      true
+    ]
+  },
+  {
+    "file": "convertTransform.13.svg.txt",
+    "passes": [
+      true
+    ]
+  },
+  {
+    "file": "convertTransform.14.svg.txt",
+    "passes": [
+      true
+    ]
+  },
+  {
+    "file": "convertTransform.15.svg.txt",
+    "passes": [
+      true
+    ]
+  },
+  {
+    "file": "inlineStyles.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "inlineStyles.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "inlineStyles.03.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "inlineStyles.04.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "inlineStyles.05.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "inlineStyles.06.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "inlineStyles.07.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "inlineStyles.08.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "inlineStyles.09.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "inlineStyles.10.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "inlineStyles.11.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "inlineStyles.12.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "inlineStyles.13.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "inlineStyles.14.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "inlineStyles.15.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "inlineStyles.16.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "inlineStyles.17.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "inlineStyles.18.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "inlineStyles.19.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "inlineStyles.20.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "inlineStyles.21.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "inlineStyles.22.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "inlineStyles.23.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "inlineStyles.24.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "inlineStyles.25.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "inlineStyles.26.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "inlineStyles.27.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "inlineStyles.28.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "mergePaths.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "mergePaths.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "mergePaths.03.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "mergePaths.04.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "mergePaths.05.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "mergePaths.06.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "mergePaths.07.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "mergePaths.08.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "mergePaths.09.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "mergePaths.10.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "mergePaths.11.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "mergePaths.12.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "mergeStyles.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "mergeStyles.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "mergeStyles.03.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "mergeStyles.04.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "mergeStyles.05.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "mergeStyles.06.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "mergeStyles.07.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "mergeStyles.08.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "mergeStyles.09.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "mergeStyles.10.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "mergeStyles.11.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "mergeStyles.12.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "minifyStyles.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "minifyStyles.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "minifyStyles.03.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "minifyStyles.04.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "minifyStyles.05.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "minifyStyles.06.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "minifyStyles.07.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "minifyStyles.08.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "minifyStyles.09.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "minifyStyles.10.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "minifyStyles.11.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "moveElemsAttrsToGroup.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "moveElemsAttrsToGroup.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "moveElemsAttrsToGroup.03.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "moveElemsAttrsToGroup.04.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "moveElemsAttrsToGroup.06.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "moveElemsAttrsToGroup.07.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "moveElemsAttrsToGroup.08.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "moveGroupAttrsToElems.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "moveGroupAttrsToElems.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "moveGroupAttrsToElems.03.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "moveGroupAttrsToElems.04.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "moveGroupAttrsToElems.05.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "moveGroupAttrsToElems.06.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "prefixIds.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "prefixIds.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "prefixIds.03.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "prefixIds.04.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "prefixIds.05.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "prefixIds.06.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "prefixIds.07.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "prefixIds.08.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "prefixIds.09.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "prefixIds.10.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "prefixIds.11.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "prefixIds.12.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "prefixIds.13.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeAttributesBySelector.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeAttributesBySelector.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeAttributesBySelector.03.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeAttributesBySelector.04.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeAttributesBySelector.05.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeAttrs.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeAttrs.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeAttrs.03.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeAttrs.04.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeAttrs.05.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeAttrs.06.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeAttrs.07.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeComments.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeComments.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeComments.03.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeDeprecatedAttrs.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeDeprecatedAttrs.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeDeprecatedAttrs.03.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeDeprecatedAttrs.04.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeDeprecatedAttrs.05.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeDeprecatedAttrs.06.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeDeprecatedAttrs.07.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeDeprecatedAttrs.08.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeDesc.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeDimensions.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeDimensions.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeDimensions.03.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeDimensions.04.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeDimensions.05.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeDoctype.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeEditorsNSData.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeEditorsNSData.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeElementsByAttr.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeElementsByAttr.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeElementsByAttr.03.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeElementsByAttr.04.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeElementsByAttr.05.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeElementsByAttr.06.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeElementsByAttr.07.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeEmptyAttrs.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeEmptyAttrs.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeEmptyContainers.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeEmptyContainers.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeEmptyContainers.03.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeEmptyContainers.04.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeEmptyContainers.05.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeEmptyContainers.06.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeEmptyContainers.07.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeEmptyContainers.08.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeEmptyText.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeEmptyText.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeEmptyText.03.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeHiddenElems.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeHiddenElems.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeHiddenElems.03.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeHiddenElems.04.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeHiddenElems.05.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeHiddenElems.06.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeHiddenElems.07.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeHiddenElems.08.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeHiddenElems.09.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeHiddenElems.10.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeHiddenElems.11.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeHiddenElems.12.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeHiddenElems.13.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeHiddenElems.14.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeHiddenElems.15.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeHiddenElems.16.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeHiddenElems.17.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeHiddenElems.18.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeHiddenElems.19.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeMetadata.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeNonInheritableGroupAttrs.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeNonInheritableGroupAttrs.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeOffCanvasPaths.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeOffCanvasPaths.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeOffCanvasPaths.03.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeOffCanvasPaths.04.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeOffCanvasPaths.05.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeOffCanvasPaths.06.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeRasterImages.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeRasterImages.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeScripts.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeScripts.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeScripts.03.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeScripts.04.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeScripts.05.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeScripts.06.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeScripts.07.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeScripts.08.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeScripts.09.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeScripts.10.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeScripts.11.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeStyleElement.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeTitle.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeUnknownsAndDefaults.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeUnknownsAndDefaults.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeUnknownsAndDefaults.03.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeUnknownsAndDefaults.04.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeUnknownsAndDefaults.05.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeUnknownsAndDefaults.06.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeUnknownsAndDefaults.07.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeUnknownsAndDefaults.08.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeUnknownsAndDefaults.09.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeUnknownsAndDefaults.10.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeUnknownsAndDefaults.11.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeUnknownsAndDefaults.12.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeUnknownsAndDefaults.13.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeUnknownsAndDefaults.14.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeUnknownsAndDefaults.15.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeUnknownsAndDefaults.16.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeUnknownsAndDefaults.17.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeUnusedNS.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeUnusedNS.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeUnusedNS.03.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeUnusedNS.04.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeUnusedNS.05.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeUnusedNS.06.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeUnusedNS.07.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeUselessDefs.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeUselessDefs.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeUselessDefs.03.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeUselessDefs.04.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeUselessDefs.05.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeUselessStrokeAndFill.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeUselessStrokeAndFill.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeUselessStrokeAndFill.03.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeUselessStrokeAndFill.04.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeUselessStrokeAndFill.05.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeViewBox.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeViewBox.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeViewBox.03.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeViewBox.04.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeViewBox.05.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeXMLNS.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeXMLProcInst.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeXMLProcInst.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeXlink.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeXlink.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeXlink.03.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "removeXlink.04.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "reusePaths.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "reusePaths.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "reusePaths.03.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "reusePaths.04.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "reusePaths.05.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "reusePaths.06.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "sortAttrs.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "sortAttrs.02.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "sortAttrs.03.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "sortAttrs.04.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  },
+  {
+    "file": "sortDefsChildren.01.svg.txt",
+    "passes": [
+      true,
+      true
+    ]
+  }
+]

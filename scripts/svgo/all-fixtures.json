@@ -1,0 +1,4098 @@
+{
+  "version": "4.1.0",
+  "revision": "5765cbe4e0a930dca648c6b81d335b1522cd7375",
+  "results": [
+    {
+      "file": "convertPathData.01.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "M 10,50",
+          "expected": "M10 50",
+          "actual": "m10 50",
+          "attributes": {
+            "d": "M 10,50"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 7,
+          "svgoBytes": 6,
+          "ourBytes": 6,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-move-case-only"
+        },
+        {
+          "number": 2,
+          "source": "M 10 50",
+          "expected": "M10 50",
+          "actual": "m10 50",
+          "attributes": {
+            "d": "M 10 50"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 7,
+          "svgoBytes": 6,
+          "ourBytes": 6,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-move-case-only"
+        },
+        {
+          "number": 3,
+          "source": "M10 50",
+          "expected": "M10 50",
+          "actual": "m10 50",
+          "attributes": {
+            "d": "M10 50"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 6,
+          "svgoBytes": 6,
+          "ourBytes": 6,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-move-case-only"
+        },
+        {
+          "number": 4,
+          "source": "M10,50",
+          "expected": "M10 50",
+          "actual": "m10 50",
+          "attributes": {
+            "d": "M10,50"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 6,
+          "svgoBytes": 6,
+          "ourBytes": 6,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-move-case-only"
+        },
+        {
+          "number": 5,
+          "source": "M10-3.05176e-005",
+          "expected": "M10 0",
+          "actual": "m10 0",
+          "attributes": {
+            "d": "M10-3.05176e-005"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 16,
+          "svgoBytes": 5,
+          "ourBytes": 5,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0.000030517600000000014,
+          "svgoSampledDifference": 0.000030517600000000014,
+          "classification": "initial-move-case-only"
+        },
+        {
+          "number": 6,
+          "source": "M10-50.2.30-2",
+          "expected": "M10-50.2.3-2",
+          "actual": "m10-50.2-9.7 48.2",
+          "attributes": {
+            "d": "M10-50.2.30-2"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 13,
+          "svgoBytes": 12,
+          "ourBytes": 17,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 7.216449660063518e-16,
+          "svgoSampledDifference": 0,
+          "classification": "mixed-coordinate-selection"
+        },
+        {
+          "number": 7,
+          "source": "M10-50l.2.30",
+          "expected": "m10-50 .2.3",
+          "actual": "m10-50 .2.3",
+          "attributes": {
+            "d": "M10-50l.2.30"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 12,
+          "svgoBytes": 11,
+          "ourBytes": 11,
+          "sameText": true,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "identical"
+        },
+        {
+          "number": 8,
+          "source": "M 10 , 50",
+          "expected": "M10 50",
+          "actual": "m10 50",
+          "attributes": {
+            "d": "M 10 , 50"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 9,
+          "svgoBytes": 6,
+          "ourBytes": 6,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-move-case-only"
+        },
+        {
+          "number": 9,
+          "source": "M -10,-50",
+          "expected": "M-10-50",
+          "actual": "m-10-50",
+          "attributes": {
+            "d": "M -10,-50"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 9,
+          "svgoBytes": 7,
+          "ourBytes": 7,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-move-case-only"
+        },
+        {
+          "number": 10,
+          "source": "M -10 -50",
+          "expected": "M-10-50",
+          "actual": "m-10-50",
+          "attributes": {
+            "d": "M -10 -50"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 9,
+          "svgoBytes": 7,
+          "ourBytes": 7,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-move-case-only"
+        },
+        {
+          "number": 11,
+          "source": "M-10 -50",
+          "expected": "M-10-50",
+          "actual": "m-10-50",
+          "attributes": {
+            "d": "M-10 -50"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 8,
+          "svgoBytes": 7,
+          "ourBytes": 7,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-move-case-only"
+        },
+        {
+          "number": 12,
+          "source": "M-10-50",
+          "expected": "M-10-50",
+          "actual": "m-10-50",
+          "attributes": {
+            "d": "M-10-50"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 7,
+          "svgoBytes": 7,
+          "ourBytes": 7,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-move-case-only"
+        },
+        {
+          "number": 13,
+          "source": "M-10,-50",
+          "expected": "M-10-50",
+          "actual": "m-10-50",
+          "attributes": {
+            "d": "M-10,-50"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 8,
+          "svgoBytes": 7,
+          "ourBytes": 7,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-move-case-only"
+        },
+        {
+          "number": 14,
+          "source": "M -10 , -50",
+          "expected": "M-10-50",
+          "actual": "m-10-50",
+          "attributes": {
+            "d": "M -10 , -50"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 11,
+          "svgoBytes": 7,
+          "ourBytes": 7,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-move-case-only"
+        },
+        {
+          "number": 15,
+          "source": "...",
+          "expected": "...",
+          "attributes": {
+            "d": "..."
+          },
+          "classification": "invalid-input-pass-through",
+          "parseError": "ParseError"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.02.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "M 10,50 L 20,30",
+          "expected": "m10 50 10-20",
+          "actual": "m10 50 10-20",
+          "attributes": {
+            "d": "M 10,50 L 20,30"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 15,
+          "svgoBytes": 12,
+          "ourBytes": 12,
+          "sameText": true,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "identical"
+        },
+        {
+          "number": 2,
+          "source": "M 10,50 C 20,30 40,50 60,70",
+          "expected": "M10 50c10-20 30 0 50 20",
+          "actual": "m10 50c10-20 30 0 50 20",
+          "attributes": {
+            "d": "M 10,50 C 20,30 40,50 60,70"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 27,
+          "svgoBytes": 23,
+          "ourBytes": 23,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-move-case-only"
+        },
+        {
+          "number": 3,
+          "source": "M 10,50 C 20,30 40,50 60,70 S 20,30 30,60",
+          "expected": "M10 50c10-20 30 0 50 20S20 30 30 60",
+          "actual": "m10 50c10-20 30 0 50 20s-40-40-30-10",
+          "attributes": {
+            "d": "M 10,50 C 20,30 40,50 60,70 S 20,30 30,60"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 41,
+          "svgoBytes": 35,
+          "ourBytes": 36,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "mixed-coordinate-selection"
+        },
+        {
+          "number": 4,
+          "source": "M 10,50 Q 30,60 30,70",
+          "expected": "M10 50q20 10 20 20",
+          "actual": "m10 50q20 10 20 20",
+          "attributes": {
+            "d": "M 10,50 Q 30,60 30,70"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 21,
+          "svgoBytes": 18,
+          "ourBytes": 18,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-move-case-only"
+        },
+        {
+          "number": 5,
+          "source": "M 10,50 Q 30,60 30,70 T 40,70",
+          "expected": "M10 50q20 10 20 20t10 0",
+          "actual": "m10 50q20 10 20 20t10 0",
+          "attributes": {
+            "d": "M 10,50 Q 30,60 30,70 T 40,70"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 29,
+          "svgoBytes": 23,
+          "ourBytes": 23,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-move-case-only"
+        },
+        {
+          "number": 6,
+          "source": "M 10,50 A 20,60 45 0,1 40,70",
+          "expected": "M10 50a20 60 45 0 1 30 20",
+          "actual": "m10 50a20 60 45 0130 20",
+          "attributes": {
+            "d": "M 10,50 A 20,60 45 0,1 40,70"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 28,
+          "svgoBytes": 25,
+          "ourBytes": 23,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "packed-arc-flags"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.03.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "M 10,50 M 20,60",
+          "expected": "M20 60",
+          "actual": "m10 50m10 10",
+          "attributes": {
+            "d": "M 10,50 M 20,60"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 15,
+          "svgoBytes": 6,
+          "ourBytes": 12,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "empty-subpath-preservation"
+        },
+        {
+          "number": 2,
+          "source": "M 10,50 20,60",
+          "expected": "m10 50 10 10",
+          "actual": "m10 50 10 10",
+          "attributes": {
+            "d": "M 10,50 20,60"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 13,
+          "svgoBytes": 12,
+          "ourBytes": 12,
+          "sameText": true,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "identical"
+        },
+        {
+          "number": 3,
+          "source": "M 10,50 L 20,30 L 40,60",
+          "expected": "m10 50 10-20 20 30",
+          "actual": "m10 50 10-20 20 30",
+          "attributes": {
+            "d": "M 10,50 L 20,30 L 40,60"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 23,
+          "svgoBytes": 18,
+          "ourBytes": 18,
+          "sameText": true,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "identical"
+        },
+        {
+          "number": 4,
+          "source": "M 10,50 L 20,30 40,60",
+          "expected": "m10 50 10-20 20 30",
+          "actual": "m10 50 10-20 20 30",
+          "attributes": {
+            "d": "M 10,50 L 20,30 40,60"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 21,
+          "svgoBytes": 18,
+          "ourBytes": 18,
+          "sameText": true,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "identical"
+        },
+        {
+          "number": 5,
+          "source": "M 10,50 C 20,30 40,50 60,70 C 40,40 50,60 70,80",
+          "expected": "M10 50c10-20 30 0 50 20-20-30-10-10 10 10",
+          "actual": "m10 50c10-20 30 0 50 20-20-30-10-10 10 10",
+          "attributes": {
+            "d": "M 10,50 C 20,30 40,50 60,70 C 40,40 50,60 70,80"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 47,
+          "svgoBytes": 41,
+          "ourBytes": 41,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-move-case-only"
+        },
+        {
+          "number": 6,
+          "source": "M 10,50 C 20,30 40,50 60,70 40,40 50,60 70,80",
+          "expected": "M10 50c10-20 30 0 50 20-20-30-10-10 10 10",
+          "actual": "m10 50c10-20 30 0 50 20-20-30-10-10 10 10",
+          "attributes": {
+            "d": "M 10,50 C 20,30 40,50 60,70 40,40 50,60 70,80"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 45,
+          "svgoBytes": 41,
+          "ourBytes": 41,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-move-case-only"
+        },
+        {
+          "number": 7,
+          "source": "M 10,50 C 20,30 40,50 60,70 S 30,30 40,50 S 60,70 80,100",
+          "expected": "M10 50c10-20 30 0 50 20S30 30 40 50s20 20 40 50",
+          "actual": "m10 50c10-20 30 0 50 20s-30-40-20-20 20 20 40 50",
+          "attributes": {
+            "d": "M 10,50 C 20,30 40,50 60,70 S 30,30 40,50 S 60,70 80,100"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 56,
+          "svgoBytes": 47,
+          "ourBytes": 48,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "mixed-coordinate-selection"
+        },
+        {
+          "number": 8,
+          "source": "M 10,50 C 20,30 40,50 60,70 S 30,30 40,50 60,70 80,100",
+          "expected": "M10 50c10-20 30 0 50 20S30 30 40 50s20 20 40 50",
+          "actual": "m10 50c10-20 30 0 50 20s-30-40-20-20 20 20 40 50",
+          "attributes": {
+            "d": "M 10,50 C 20,30 40,50 60,70 S 30,30 40,50 60,70 80,100"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 54,
+          "svgoBytes": 47,
+          "ourBytes": 48,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "mixed-coordinate-selection"
+        },
+        {
+          "number": 9,
+          "source": "M 10,50 Q 30,60 30,70 Q 40,70 50,90",
+          "expected": "M10 50q20 10 20 20 10 0 20 20",
+          "actual": "m10 50q20 10 20 20 10 0 20 20",
+          "attributes": {
+            "d": "M 10,50 Q 30,60 30,70 Q 40,70 50,90"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 35,
+          "svgoBytes": 29,
+          "ourBytes": 29,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-move-case-only"
+        },
+        {
+          "number": 10,
+          "source": "M 10,50 Q 30,60 30,70 40,70 50,90",
+          "expected": "M10 50q20 10 20 20 10 0 20 20",
+          "actual": "m10 50q20 10 20 20 10 0 20 20",
+          "attributes": {
+            "d": "M 10,50 Q 30,60 30,70 40,70 50,90"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 33,
+          "svgoBytes": 29,
+          "ourBytes": 29,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-move-case-only"
+        },
+        {
+          "number": 11,
+          "source": "M 10,50 Q 30,60 30,70 T 40,70 T 50,90",
+          "expected": "M10 50q20 10 20 20t10 0 10 20",
+          "actual": "m10 50q20 10 20 20t10 0 10 20",
+          "attributes": {
+            "d": "M 10,50 Q 30,60 30,70 T 40,70 T 50,90"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 37,
+          "svgoBytes": 29,
+          "ourBytes": 29,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-move-case-only"
+        },
+        {
+          "number": 12,
+          "source": "M 10,50 Q 30,60 30,70 T 40,70 50,90",
+          "expected": "M10 50q20 10 20 20t10 0 10 20",
+          "actual": "m10 50q20 10 20 20t10 0 10 20",
+          "attributes": {
+            "d": "M 10,50 Q 30,60 30,70 T 40,70 50,90"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 35,
+          "svgoBytes": 29,
+          "ourBytes": 29,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-move-case-only"
+        },
+        {
+          "number": 13,
+          "source": "M 10,50 A 20,60 45 0,1 40,70 A 30,50 -30 1,1 50,70",
+          "expected": "M10 50a20 60 45 0 1 30 20 30 50-30 1 1 10 0",
+          "actual": "m10 50a20 60 45 0130 20 30 50-30 1110 0",
+          "attributes": {
+            "d": "M 10,50 A 20,60 45 0,1 40,70 A 30,50 -30 1,1 50,70"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 50,
+          "svgoBytes": 43,
+          "ourBytes": 39,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "packed-arc-flags"
+        },
+        {
+          "number": 14,
+          "source": "M 10,50 A 20,60 45 0,1 40,70 30,50 -30 1,1 50,70",
+          "expected": "M10 50a20 60 45 0 1 30 20 30 50-30 1 1 10 0",
+          "actual": "m10 50a20 60 45 0130 20 30 50-30 1110 0",
+          "attributes": {
+            "d": "M 10,50 A 20,60 45 0,1 40,70 30,50 -30 1,1 50,70"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 48,
+          "svgoBytes": 43,
+          "ourBytes": 39,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "packed-arc-flags"
+        },
+        {
+          "number": 15,
+          "source": "M0,0 0,5 0,10",
+          "expected": "M0 0v5 5",
+          "actual": "m0 0 0 5v5",
+          "attributes": {
+            "d": "M0,0 0,5 0,10",
+            "class": "marker-mid"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 13,
+          "svgoBytes": 8,
+          "ourBytes": 10,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-line-choice-marker-preserved"
+        },
+        {
+          "number": 16,
+          "source": "M0,0 0,5 0,10",
+          "expected": "M0 0v5 5",
+          "actual": "m0 0 0 5v5",
+          "attributes": {
+            "d": "M0,0 0,5 0,10",
+            "marker-mid": "url(#)"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 13,
+          "svgoBytes": 8,
+          "ourBytes": 10,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-line-choice-marker-preserved"
+        },
+        {
+          "number": 17,
+          "source": "M0,0 0,0",
+          "expected": "M0 0h0",
+          "actual": "m0 0 0 0",
+          "attributes": {
+            "d": "M0,0 0,0",
+            "stroke": "black",
+            "stroke-linecap": "round"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 8,
+          "svgoBytes": 6,
+          "ourBytes": 8,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-line-choice-round-cap-preserved"
+        },
+        {
+          "number": 18,
+          "source": "M0,0 0,0",
+          "expected": "M0 0h0",
+          "actual": "m0 0 0 0",
+          "attributes": {
+            "d": "M0,0 0,0",
+            "class": "linecap-round"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 8,
+          "svgoBytes": 6,
+          "ourBytes": 8,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-line-choice-round-cap-preserved"
+        },
+        {
+          "number": 19,
+          "source": "M0,0 0,0",
+          "expected": "M0 0",
+          "actual": "m0 0 0 0",
+          "attributes": {
+            "d": "M0,0 0,0",
+            "stroke": "black",
+            "stroke-linecap": "butt"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 8,
+          "svgoBytes": 4,
+          "ourBytes": 8,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "style-dependent-zero-line-removal"
+        },
+        {
+          "number": 20,
+          "source": "M0,0 0,0",
+          "expected": "M0 0",
+          "actual": "m0 0 0 0",
+          "attributes": {
+            "d": "M0,0 0,0",
+            "class": "linecap-butt"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 8,
+          "svgoBytes": 4,
+          "ourBytes": 8,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "style-dependent-zero-line-removal"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.04.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "M 10,50 l 20,30 L 20,30",
+          "expected": "m10 50 20 30-10-50",
+          "actual": "m10 50 20 30-10-50",
+          "attributes": {
+            "d": "M 10,50 l 20,30 L 20,30"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 23,
+          "svgoBytes": 18,
+          "ourBytes": 18,
+          "sameText": true,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "identical"
+        },
+        {
+          "number": 2,
+          "source": "M 10,50 c 20,30 40,50 60,70 C 20,30 40,50 60,70",
+          "expected": "M10 50c20 30 40 50 60 70-50-90-30-70-10-50",
+          "actual": "m10 50c20 30 40 50 60 70-50-90-30-70-10-50",
+          "attributes": {
+            "d": "M 10,50 c 20,30 40,50 60,70 C 20,30 40,50 60,70"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 47,
+          "svgoBytes": 42,
+          "ourBytes": 42,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-move-case-only"
+        },
+        {
+          "number": 3,
+          "source": "M 10,50 c 20,30 40,50 60,70 s 20,40 40,50 L 10,20",
+          "expected": "M10 50c20 30 40 50 60 70s20 40 40 50L10 20",
+          "actual": "m10 50c20 30 40 50 60 70s20 40 40 50l-100-150",
+          "attributes": {
+            "d": "M 10,50 c 20,30 40,50 60,70 s 20,40 40,50 L 10,20"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 49,
+          "svgoBytes": 42,
+          "ourBytes": 45,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "mixed-coordinate-selection"
+        },
+        {
+          "number": 4,
+          "source": "M 10,50 q 20,60 30,70 Q 20,60 30,70",
+          "expected": "M10 50q20 60 30 70-20-60-10-50",
+          "actual": "m10 50q20 60 30 70-20-60-10-50",
+          "attributes": {
+            "d": "M 10,50 q 20,60 30,70 Q 20,60 30,70"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 35,
+          "svgoBytes": 30,
+          "ourBytes": 30,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-move-case-only"
+        },
+        {
+          "number": 5,
+          "source": "M 10,50 q 20,60 30,70 t 40,70 L 10,20",
+          "expected": "M10 50q20 60 30 70t40 70L10 20",
+          "actual": "m10 50q20 60 30 70t40 70l-70-170",
+          "attributes": {
+            "d": "M 10,50 q 20,60 30,70 t 40,70 L 10,20"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 37,
+          "svgoBytes": 30,
+          "ourBytes": 32,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "mixed-coordinate-selection"
+        },
+        {
+          "number": 6,
+          "source": "M 10,50 a 20,60 45 0,1 40,70 A 20,60 45 0,1 40,70",
+          "expected": "M10 50a20 60 45 0 1 40 70 20 60 45 0 1-10-50",
+          "actual": "m10 50a20 60 45 0140 70 20 60 45 01-10-50",
+          "attributes": {
+            "d": "M 10,50 a 20,60 45 0,1 40,70 A 20,60 45 0,1 40,70"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 49,
+          "svgoBytes": 44,
+          "ourBytes": 41,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "packed-arc-flags"
+        },
+        {
+          "number": 7,
+          "source": "M1 1 v8 c0-2 0-4 0-6",
+          "expected": "M1 1v8-6",
+          "actual": "m1 1 0 8c0-2 0-4 0-6",
+          "attributes": {
+            "d": "M1 1 v8 c0-2 0-4 0-6"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 20,
+          "svgoBytes": 8,
+          "ourBytes": 20,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "straight-cubic-reduction-and-initial-line-choice"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.05.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "M 10.3467,50.09 L 10.0000,50.20",
+          "expected": "M10.347 50.09 10 50.2",
+          "actual": "m10.347 50.09-.347.11",
+          "attributes": {
+            "d": "M 10.3467,50.09 L 10.0000,50.20"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 31,
+          "svgoBytes": 21,
+          "ourBytes": 21,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0.0002999999999993008,
+          "svgoSampledDifference": 0.0002999999999993008,
+          "classification": "equal-size-coordinate-choice"
+        },
+        {
+          "number": 2,
+          "source": "m 10 10 l 1 1 M 20 20",
+          "expected": "m10 10 1 1m9 9",
+          "actual": "m10 10 1 1m9 9",
+          "attributes": {
+            "d": "m 10 10 l 1 1 M 20 20"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 21,
+          "svgoBytes": 14,
+          "ourBytes": 14,
+          "sameText": true,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "identical"
+        },
+        {
+          "number": 3,
+          "source": "m 0 0 l .1133 1 l .1133 2 l .1133 3",
+          "expected": "m0 0 .113 1 .114 2L.34 6",
+          "actual": "m0 0 .113 1 .114 2 .113 3",
+          "attributes": {
+            "d": "m 0 0 l .1133 1 l .1133 2 l .1133 3"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 35,
+          "svgoBytes": 24,
+          "ourBytes": 25,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0.00040000000000001146,
+          "svgoSampledDifference": 0.00040000000000001146,
+          "classification": "mixed-coordinate-selection-rounding-compensated"
+        },
+        {
+          "number": 4,
+          "source": "m 0 0 l .0025 3 .0025 2 .0025 3 .0025 2",
+          "expected": "m0 0 .003 3 .002 2 .003 3 .002 2",
+          "actual": "m0 0 .003 3 .002 2 .003 3 .002 2",
+          "attributes": {
+            "d": "m 0 0 l .0025 3 .0025 2 .0025 3 .0025 2"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 39,
+          "svgoBytes": 32,
+          "ourBytes": 32,
+          "sameText": true,
+          "stable": true,
+          "ourSampledDifference": 0.0005000000000000004,
+          "svgoSampledDifference": 0.0005000000000000004,
+          "classification": "identical"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.06.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "M 10,50 L 10,50",
+          "expected": "M10 50",
+          "actual": "m10 50 0 0",
+          "attributes": {
+            "d": "M 10,50 L 10,50"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 15,
+          "svgoBytes": 6,
+          "ourBytes": 10,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "zero-segment-preservation"
+        },
+        {
+          "number": 2,
+          "source": "M 10,50 L 20,50",
+          "expected": "M10 50h10",
+          "actual": "m10 50 10 0",
+          "attributes": {
+            "d": "M 10,50 L 20,50"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 15,
+          "svgoBytes": 9,
+          "ourBytes": 11,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-line-choice"
+        },
+        {
+          "number": 3,
+          "source": "M 10,50 L 10,60",
+          "expected": "M10 50v10",
+          "actual": "m10 50 0 10",
+          "attributes": {
+            "d": "M 10,50 L 10,60"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 15,
+          "svgoBytes": 9,
+          "ourBytes": 11,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-line-choice"
+        },
+        {
+          "number": 4,
+          "source": "M 10,50 L 20,30 10,30",
+          "expected": "m10 50 10-20H10",
+          "actual": "m10 50 10-20h-10",
+          "attributes": {
+            "d": "M 10,50 L 20,30 10,30"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 21,
+          "svgoBytes": 15,
+          "ourBytes": 16,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "mixed-coordinate-selection"
+        },
+        {
+          "number": 5,
+          "source": "M 10,50 L 20,30 20,20",
+          "expected": "m10 50 10-20V20",
+          "actual": "m10 50 10-20v-10",
+          "attributes": {
+            "d": "M 10,50 L 20,30 20,20"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 21,
+          "svgoBytes": 15,
+          "ourBytes": 16,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "mixed-coordinate-selection"
+        },
+        {
+          "number": 6,
+          "source": "M 10,50 L 20,30 10,30 40,50",
+          "expected": "m10 50 10-20H10l30 20",
+          "actual": "m10 50 10-20h-10l30 20",
+          "attributes": {
+            "d": "M 10,50 L 20,30 10,30 40,50"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 27,
+          "svgoBytes": 21,
+          "ourBytes": 22,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "mixed-coordinate-selection"
+        },
+        {
+          "number": 7,
+          "source": "M 10,50 L 20,30 20,20 40,50",
+          "expected": "m10 50 10-20V20l20 30",
+          "actual": "m10 50 10-20v-10l20 30",
+          "attributes": {
+            "d": "M 10,50 L 20,30 20,20 40,50"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 27,
+          "svgoBytes": 21,
+          "ourBytes": 22,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "mixed-coordinate-selection"
+        },
+        {
+          "number": 8,
+          "source": "M 10,50 L 20,50 L 30,50",
+          "expected": "M10 50h20",
+          "actual": "m10 50 10 0h10",
+          "attributes": {
+            "d": "M 10,50 L 20,50 L 30,50"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 23,
+          "svgoBytes": 9,
+          "ourBytes": 14,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "collinear-line-merging"
+        },
+        {
+          "number": 9,
+          "source": "M 10,50 L 20,50 30,50",
+          "expected": "M10 50h20",
+          "actual": "m10 50 10 0h10",
+          "attributes": {
+            "d": "M 10,50 L 20,50 30,50"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 21,
+          "svgoBytes": 9,
+          "ourBytes": 14,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "collinear-line-merging"
+        },
+        {
+          "number": 10,
+          "source": "M 10,50 L 20,50 L 30,50 L 40,50",
+          "expected": "M10 50h30",
+          "actual": "m10 50 10 0h10 10",
+          "attributes": {
+            "d": "M 10,50 L 20,50 L 30,50 L 40,50"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 31,
+          "svgoBytes": 9,
+          "ourBytes": 17,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "collinear-line-merging"
+        },
+        {
+          "number": 11,
+          "source": "M 10,50 L 10,60 L 10,70",
+          "expected": "M10 50v20",
+          "actual": "m10 50 0 10v10",
+          "attributes": {
+            "d": "M 10,50 L 10,60 L 10,70"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 23,
+          "svgoBytes": 9,
+          "ourBytes": 14,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "collinear-line-merging"
+        },
+        {
+          "number": 12,
+          "source": "M 10,50 L 10,60 10,70",
+          "expected": "M10 50v20",
+          "actual": "m10 50 0 10v10",
+          "attributes": {
+            "d": "M 10,50 L 10,60 10,70"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 21,
+          "svgoBytes": 9,
+          "ourBytes": 14,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "collinear-line-merging"
+        },
+        {
+          "number": 13,
+          "source": "M 10,50 L 10,60 L 10,70 L 10,80",
+          "expected": "M10 50v30",
+          "actual": "m10 50 0 10v10 10",
+          "attributes": {
+            "d": "M 10,50 L 10,60 L 10,70 L 10,80"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 31,
+          "svgoBytes": 9,
+          "ourBytes": 17,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "collinear-line-merging"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.07.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "m 0,0",
+          "expected": "M0 0",
+          "actual": "m0 0",
+          "attributes": {
+            "d": "m 0,0"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 5,
+          "svgoBytes": 4,
+          "ourBytes": 4,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-move-case-only"
+        },
+        {
+          "number": 2,
+          "source": "m 0,0l 0,0",
+          "expected": "M0 0",
+          "actual": "m0 0 0 0",
+          "attributes": {
+            "d": "m 0,0l 0,0"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 10,
+          "svgoBytes": 4,
+          "ourBytes": 8,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "zero-segment-preservation"
+        },
+        {
+          "number": 3,
+          "source": "m 0,0h 0",
+          "expected": "M0 0",
+          "actual": "m0 0 0 0",
+          "attributes": {
+            "d": "m 0,0h 0"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 8,
+          "svgoBytes": 4,
+          "ourBytes": 8,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "zero-segment-preservation"
+        },
+        {
+          "number": 4,
+          "source": "m 0,0v 0",
+          "expected": "M0 0",
+          "actual": "m0 0 0 0",
+          "attributes": {
+            "d": "m 0,0v 0"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 8,
+          "svgoBytes": 4,
+          "ourBytes": 8,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "zero-segment-preservation"
+        },
+        {
+          "number": 5,
+          "source": "m 0,0c 0,0 0,0 0,0 s 0,0 0,0",
+          "expected": "M0 0",
+          "actual": "m0 0s0 0 0 0 0 0 0 0",
+          "attributes": {
+            "d": "m 0,0c 0,0 0,0 0,0 s 0,0 0,0"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 28,
+          "svgoBytes": 4,
+          "ourBytes": 20,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "zero-segment-preservation"
+        },
+        {
+          "number": 6,
+          "source": "m 0,0q 0,0 0,0 t 0,0",
+          "expected": "M0 0",
+          "actual": "m0 0t0 0 0 0",
+          "attributes": {
+            "d": "m 0,0q 0,0 0,0 t 0,0"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 20,
+          "svgoBytes": 4,
+          "ourBytes": 12,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "zero-segment-preservation"
+        },
+        {
+          "number": 7,
+          "source": "m 0,0a 25,25 -30 0,1 0,0",
+          "expected": "M0 0",
+          "actual": "m0 0a25 25-30 010 0",
+          "attributes": {
+            "d": "m 0,0a 25,25 -30 0,1 0,0"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 24,
+          "svgoBytes": 4,
+          "ourBytes": 19,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "explicit-svg-arc-normalization"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.08.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "M100,200 C200,200 300,200 400,200",
+          "expected": "M100 200h300",
+          "actual": "m100 200c100 0 200 0 300 0",
+          "attributes": {
+            "d": "M100,200 C200,200 300,200 400,200"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 33,
+          "svgoBytes": 12,
+          "ourBytes": 26,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "straight-curve-reduction"
+        },
+        {
+          "number": 2,
+          "source": "M100,200 C100,200 250,200 250,200 S300,200 400,200",
+          "expected": "M100 200h300",
+          "actual": "m100 200s150 0 150 0 50 0 150 0",
+          "attributes": {
+            "d": "M100,200 C100,200 250,200 250,200 S300,200 400,200"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 50,
+          "svgoBytes": 12,
+          "ourBytes": 31,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "straight-curve-reduction"
+        },
+        {
+          "number": 3,
+          "source": "M100,200 C100,200 250,200 250,200 S300,300 400,210",
+          "expected": "M100 200h150s50 100 150 10",
+          "actual": "m100 200s150 0 150 0 50 100 150 10",
+          "attributes": {
+            "d": "M100,200 C100,200 250,200 250,200 S300,300 400,210"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 50,
+          "svgoBytes": 26,
+          "ourBytes": 34,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 14.2822265625,
+          "classification": "straight-curve-reduction"
+        },
+        {
+          "number": 4,
+          "source": "M100,200 S250,250 250,250 S400,250 500,250",
+          "expected": "m100 200 150 50h250",
+          "actual": "m100 200s150 50 150 50 150 0 250 0",
+          "attributes": {
+            "d": "M100,200 S250,250 250,250 S400,250 500,250"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 42,
+          "svgoBytes": 19,
+          "ourBytes": 34,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 41.015625,
+          "classification": "straight-curve-reduction"
+        },
+        {
+          "number": 5,
+          "source": "M100,200 Q200,200 300,200",
+          "expected": "M100 200h200",
+          "actual": "m100 200q100 0 200 0",
+          "attributes": {
+            "d": "M100,200 Q200,200 300,200"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 25,
+          "svgoBytes": 12,
+          "ourBytes": 20,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "straight-curve-reduction"
+        },
+        {
+          "number": 6,
+          "source": "M100,200 Q400,200 600,200 T800,200",
+          "expected": "M100 200h700",
+          "actual": "m100 200q300 0 500 0t200 0",
+          "attributes": {
+            "d": "M100,200 Q400,200 600,200 T800,200"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 34,
+          "svgoBytes": 12,
+          "ourBytes": 26,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "straight-curve-reduction"
+        },
+        {
+          "number": 7,
+          "source": "M100,200 Q400,200 600,200 T800,300",
+          "expected": "M100 200h500q200 0 200 100",
+          "actual": "m100 200q300 0 500 0t200 100",
+          "attributes": {
+            "d": "M100,200 Q400,200 600,200 T800,300"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 34,
+          "svgoBytes": 26,
+          "ourBytes": 28,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 25,
+          "classification": "straight-curve-reduction"
+        },
+        {
+          "number": 8,
+          "source": "M100,200 Q200,200 200,300 T200,500 T300,500",
+          "expected": "M100 200q100 0 100 100t0 200 100 0",
+          "actual": "m100 200q100 0 100 100t0 200 100 0",
+          "attributes": {
+            "d": "M100,200 Q200,200 200,300 T200,500 T300,500"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 43,
+          "svgoBytes": 34,
+          "ourBytes": 34,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-move-case-only"
+        },
+        {
+          "number": 9,
+          "source": "M100,200 Q400,200 600,200 T800,200 T900,300",
+          "expected": "M100 200h700l100 100",
+          "actual": "m100 200q300 0 500 0t200 0 100 100",
+          "attributes": {
+            "d": "M100,200 Q400,200 600,200 T800,200 T900,300"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 43,
+          "svgoBytes": 20,
+          "ourBytes": 34,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "straight-curve-reduction"
+        },
+        {
+          "number": 10,
+          "source": "M100,200 T800,300",
+          "expected": "m100 200 700 100",
+          "actual": "m100 200t700 100",
+          "attributes": {
+            "d": "M100,200 T800,300"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 17,
+          "svgoBytes": 16,
+          "ourBytes": 16,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 176.7766952966369,
+          "classification": "straight-curve-reduction"
+        },
+        {
+          "number": 11,
+          "source": "M100,200 A0,150 0 0,0 150,150",
+          "expected": "m100 200 50-50",
+          "actual": "m100 200a0 150 0 0050-50",
+          "attributes": {
+            "d": "M100,200 A0,150 0 0,0 150,150"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 29,
+          "svgoBytes": 14,
+          "ourBytes": 24,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "explicit-svg-arc-normalization"
+        },
+        {
+          "number": 12,
+          "source": "M100,200 A150,0 0 0,0 150,150",
+          "expected": "m100 200 50-50",
+          "actual": "m100 200a150 0 0 0050-50",
+          "attributes": {
+            "d": "M100,200 A150,0 0 0,0 150,150"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 29,
+          "svgoBytes": 14,
+          "ourBytes": 24,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "explicit-svg-arc-normalization"
+        },
+        {
+          "number": 13,
+          "source": "M100,200 c-2.5 10.5-4 21-4 32 0 64 63.5 128 127.5 128s32.5 0 96.5 0 128-64 128-128-64-128-128-128",
+          "expected": "M100 200c-2.5 10.5-4 21-4 32 0 64 63.5 128 127.5 128H320c64 0 128-64 128-128s-64-128-128-128",
+          "actual": "m100 200c-2.5 10.5-4 21-4 32 0 64 63.5 128 127.5 128s32.5 0 96.5 0 128-64 128-128-64-128-128-128",
+          "attributes": {
+            "d": "M100,200 c-2.5 10.5-4 21-4 32 0 64 63.5 128 127.5 128s32.5 0 96.5 0 128-64 128-128-64-128-128-128"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 97,
+          "svgoBytes": 92,
+          "ourBytes": 96,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 9.093017578125,
+          "classification": "straight-curve-reduction"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.09.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "M100,200 C100,100 450,100 250,200 C50,300 400,300 400,200",
+          "expected": "M100 200c0-100 350-100 150 0s150 100 150 0",
+          "actual": "m100 200c0-100 350-100 150 0s150 100 150 0",
+          "attributes": {
+            "d": "M100,200 C100,100 450,100 250,200 C50,300 400,300 400,200"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 57,
+          "svgoBytes": 42,
+          "ourBytes": 42,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-move-case-only"
+        },
+        {
+          "number": 2,
+          "source": "M100,200 S250,100 250,200 C250,300 300,250 400,200",
+          "expected": "M100 200s150-100 150 0 50 50 150 0",
+          "actual": "m100 200s150-100 150 0 50 50 150 0",
+          "attributes": {
+            "d": "M100,200 S250,100 250,200 C250,300 300,250 400,200"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 50,
+          "svgoBytes": 34,
+          "ourBytes": 34,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-move-case-only"
+        },
+        {
+          "number": 3,
+          "source": "M100,200 C100,200 250,100 250,200",
+          "expected": "M100 200s150-100 150 0",
+          "actual": "m100 200s150-100 150 0",
+          "attributes": {
+            "d": "M100,200 C100,200 250,100 250,200"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 33,
+          "svgoBytes": 22,
+          "ourBytes": 22,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-move-case-only"
+        },
+        {
+          "number": 4,
+          "source": "M200,300 Q400,50 600,300 Q 800,550 1000,300",
+          "expected": "M200 300q200-250 400 0t400 0",
+          "actual": "m200 300q200-250 400 0t400 0",
+          "attributes": {
+            "d": "M200,300 Q400,50 600,300 Q 800,550 1000,300"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 43,
+          "svgoBytes": 28,
+          "ourBytes": 28,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-move-case-only"
+        },
+        {
+          "number": 5,
+          "source": "M200,300 Q400,50 600,300 T1000,300 Q1200,50 1400,300",
+          "expected": "M200 300q200-250 400 0t400 0 400 0",
+          "actual": "m200 300q200-250 400 0t400 0 400 0",
+          "attributes": {
+            "d": "M200,300 Q400,50 600,300 T1000,300 Q1200,50 1400,300"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 52,
+          "svgoBytes": 34,
+          "ourBytes": 34,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-move-case-only"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.10.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "m100,200 300,400 z m100,200 L 300,400",
+          "expected": "m100 200 300 400zm100 200h100",
+          "actual": "m100 200 300 400zm100 200 100 0",
+          "attributes": {
+            "d": "m100,200 300,400 z m100,200 L 300,400"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 37,
+          "svgoBytes": 29,
+          "ourBytes": 31,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-line-choice"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.11.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "M0,0 V100 L 70,50 z M70,50 L140,0 V100 z",
+          "expected": "M100 0v100l70-50zm70 50 70-50v100z",
+          "actual": "m100 0 0 100 70-50zm70 50 70-50v100z",
+          "attributes": {
+            "transform": "translate(100,0)",
+            "d": "M0,0 V100 L 70,50 z M70,50 L140,0 V100 z"
+          },
+          "flattenedTransform": "translate(100,0)",
+          "transformSampledDifference": 0,
+          "independentParserMatches": true,
+          "inputBytes": 40,
+          "svgoBytes": 34,
+          "ourBytes": 36,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "transform-context-and-initial-line-choice"
+        },
+        {
+          "number": 2,
+          "source": "M0,0 V100 L 70,50 z M70,50 L140,0 V100 z",
+          "expected": "M0 0v100l70-50zm70 50 70-50v100z",
+          "actual": "m0 0 0 100 70-50zm70 50 70-50v100z",
+          "attributes": {
+            "transform": "",
+            "d": "M0,0 V100 L 70,50 z M70,50 L140,0 V100 z"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 40,
+          "svgoBytes": 32,
+          "ourBytes": 34,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "transform-context-and-initial-line-choice"
+        },
+        {
+          "number": 3,
+          "source": "M100,200 300,400 H100 V300 C100,100 250,100 250,200 S400,300 400,200 Q400,50 600,300 T1000,300 z",
+          "expected": "m118.742 187.108 79.162 124.74-96.593-25.883 8.716-49.428c17.43-98.857 89.875-79.446 81.16-30.017s63.728 68.84 72.444 19.411q13.073-74.143 87.877 75.31t193.185 51.764z",
+          "actual": "m118.742 187.108 79.162 124.739-96.593-25.882 8.716-49.428c17.431-98.857 89.876-79.445 81.16-30.017-8.715 49.428 63.729 68.839 72.444 19.411q13.074-74.143 87.877 75.311 74.804 149.453 193.185 51.763z",
+          "attributes": {
+            "fill": "red",
+            "transform": "rotate(15) scale(.5) skewX(5) translate(200,100)",
+            "d": "M100,200 300,400 H100 V300 C100,100 250,100 250,200 S400,300 400,200 Q400,50 600,300 T1000,300 z"
+          },
+          "flattenedTransform": "rotate(15) scale(.5) skewX(5) translate(200,100)",
+          "transformSampledDifference": 1.2710574864626038e-13,
+          "independentParserMatches": true,
+          "inputBytes": 96,
+          "svgoBytes": 167,
+          "ourBytes": 199,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0.0007428452906978057,
+          "svgoSampledDifference": 0.0009449712053740323,
+          "classification": "transformed-rounding-and-shorthand-selection"
+        },
+        {
+          "number": 4,
+          "source": "M100,200 300,400 H100 V300 C100,100 250,100 250,200 S400,300 400,200 Q400,50 600,300 T1000,300 z",
+          "expected": "m100 200 200 200H100V300c0-200 150-200 150-100s150 100 150 0q0-150 200 100t400 0z",
+          "actual": "m100 200 200 200h-200v-100c0-200 150-200 150-100s150 100 150 0q0-150 200 100t400 0z",
+          "attributes": {
+            "fill": "red",
+            "stroke": "red",
+            "transform": "rotate(15) scale(.5) skewX(5) translate(200,100)",
+            "d": "M100,200 300,400 H100 V300 C100,100 250,100 250,200 S400,300 400,200 Q400,50 600,300 T1000,300 z"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 96,
+          "svgoBytes": 81,
+          "ourBytes": 83,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "retained-transform-and-command-selection"
+        },
+        {
+          "number": 5,
+          "source": "M100,200 300,400 H100 V300 C100,100 250,100 250,200 S400,300 400,200 Q400,50 600,300 T1000,300 a150,150 0 1,0 150,-150 z",
+          "expected": "m100 200 200 200H100V300c0-200 150-200 150-100s150 100 150 0q0-150 200 100t400 0a150 150 0 1 0 150-150z",
+          "actual": "m100 200 200 200h-200v-100c0-200 150-200 150-100s150 100 150 0q0-150 200 100t400 0a150 150 0 10150-150z",
+          "attributes": {
+            "fill": "red",
+            "stroke": "red",
+            "transform": "rotate(15) scale(.5) skewX(5) translate(200,100)",
+            "d": "M100,200 300,400 H100 V300 C100,100 250,100 250,200 S400,300 400,200 Q400,50 600,300 T1000,300 a150,150 0 1,0 150,-150 z"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 120,
+          "svgoBytes": 103,
+          "ourBytes": 103,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "retained-transform-and-command-selection"
+        },
+        {
+          "number": 6,
+          "source": "M100,200 300,400 H100 V300 C100,100 250,100 250,200 S400,300 400,200 Q400,50 600,300 T1000,300 z",
+          "expected": "m106.066 183.712 70.71 122.474-96.592-25.882 12.941-48.296c25.882-96.593 98.326-77.181 85.385-28.885s59.504 67.708 72.445 19.412q19.411-72.445 83.652 74.178t193.185 51.764z",
+          "actual": "m106.066 183.712 70.711 122.474-96.593-25.882 12.941-48.296c25.882-96.592 98.326-77.181 85.385-28.885-12.941 48.297 59.504 67.709 72.445 19.412q19.411-72.445 83.652 74.178 64.24 146.623 193.185 51.764z",
+          "attributes": {
+            "fill": "red",
+            "stroke": "red",
+            "transform": "rotate(15) scale(.5) translate(200,100)",
+            "d": "M100,200 300,400 H100 V300 C100,100 250,100 250,200 S400,300 400,200 Q400,50 600,300 T1000,300 z"
+          },
+          "flattenedTransform": "rotate(15) scale(.5) translate(200,100)",
+          "transformSampledDifference": 8.038873388460929e-14,
+          "independentParserMatches": true,
+          "inputBytes": 96,
+          "svgoBytes": 172,
+          "ourBytes": 201,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0.0007385854140178066,
+          "svgoSampledDifference": 0.0009486668316363855,
+          "classification": "transformed-rounding-and-shorthand-selection"
+        },
+        {
+          "number": 7,
+          "source": "M100,200 300,400 H100 V300 C100,100 250,100 250,200 S400,300 400,200 Q400,50 600,300 T1000,300 z",
+          "expected": "M318.198 551.135 530.33 918.56l-289.778-77.646 38.823-144.889c77.646-289.778 294.98-231.543 256.156-86.655s178.51 203.124 217.334 58.235q58.234-217.334 250.955 222.534t579.555 155.292z",
+          "actual": "m318.198 551.135 212.132 367.424-289.778-77.646 38.823-144.889c77.645-289.778 294.979-231.544 256.156-86.655s178.511 203.124 217.334 58.235q58.234-217.333 250.955 222.534 192.72 439.868 579.555 155.292z",
+          "attributes": {
+            "fill": "red",
+            "stroke": "red",
+            "transform": "rotate(15) scale(1.5) translate(200,100)",
+            "d": "M100,200 300,400 H100 V300 C100,100 250,100 250,200 S400,300 400,200 Q400,50 600,300 T1000,300 z"
+          },
+          "flattenedTransform": "rotate(15) scale(1.5) translate(200,100)",
+          "transformSampledDifference": 3.2155493553843715e-13,
+          "independentParserMatches": true,
+          "inputBytes": 96,
+          "svgoBytes": 184,
+          "ourBytes": 202,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0.0006430372563033965,
+          "svgoSampledDifference": 0.0013491929687308307,
+          "classification": "transformed-rounding-and-shorthand-selection"
+        },
+        {
+          "number": 8,
+          "source": "M100,200 300,400 H100 V300 C100,100 250,100 250,200 S400,300 400,200 Q400,50 600,300 T1000,300 z",
+          "expected": "m70.004 121.25 46.669 80.833L52.922 185l8.54-31.876c17.083-63.75 64.896-50.94 56.355-19.064s39.272 44.687 47.813 12.812q12.812-47.814 55.21 48.957t127.503 34.165z",
+          "actual": "m70.004 121.25 46.669 80.833-63.751-17.082 8.541-31.876c17.082-63.751 64.895-50.939 56.354-19.064s39.272 44.687 47.813 12.812q12.811-47.813 55.21 48.957 42.398 96.772 127.503 34.165z",
+          "attributes": {
+            "fill": "red",
+            "stroke": "red",
+            "transform": "rotate(15) scale(0.33) translate(200,100)",
+            "d": "M100,200 300,400 H100 V300 C100,100 250,100 250,200 S400,300 400,200 Q400,50 600,300 T1000,300 z"
+          },
+          "flattenedTransform": "rotate(15) scale(0.33) translate(200,100)",
+          "transformSampledDifference": 1.1368683772161603e-13,
+          "independentParserMatches": true,
+          "inputBytes": 96,
+          "svgoBytes": 162,
+          "ourBytes": 182,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0.000662255233808313,
+          "svgoSampledDifference": 0.001471826505045802,
+          "classification": "transformed-rounding-and-shorthand-selection"
+        },
+        {
+          "number": 9,
+          "source": "M100,200 300,400 H100 V300 C100,100 250,100 250,200 S400,300 400,200 Q400,50 600,300 T1000,300 z",
+          "expected": "m106.066 183.712 70.71 122.474-96.592-25.882 12.941-48.296c25.882-96.593 98.326-77.181 85.385-28.885s59.504 67.708 72.445 19.412q19.411-72.445 83.652 74.178t193.185 51.764z",
+          "actual": "m106.066 183.712 70.711 122.474-96.593-25.882 12.941-48.296c25.882-96.592 98.326-77.181 85.385-28.885-12.941 48.297 59.504 67.709 72.445 19.412q19.411-72.445 83.652 74.178 64.24 146.623 193.185 51.764z",
+          "attributes": {
+            "fill": "red",
+            "transform": "rotate(15) scale(.5) translate(200,100)",
+            "d": "M100,200 300,400 H100 V300 C100,100 250,100 250,200 S400,300 400,200 Q400,50 600,300 T1000,300 z"
+          },
+          "flattenedTransform": "rotate(15) scale(.5) translate(200,100)",
+          "transformSampledDifference": 8.038873388460929e-14,
+          "independentParserMatches": true,
+          "inputBytes": 96,
+          "svgoBytes": 172,
+          "ourBytes": 201,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0.0007385854140178066,
+          "svgoSampledDifference": 0.0009486668316363855,
+          "classification": "transformed-rounding-and-shorthand-selection"
+        },
+        {
+          "number": 10,
+          "source": "M100,200 300,400 H100 V300 C100,100 250,100 250,200 S400,300 400,200 Q400,50 600,300 T1000,300 z",
+          "expected": "m106.066 183.712 70.71 122.474-96.592-25.882 12.941-48.296c25.882-96.593 98.326-77.181 85.385-28.885s59.504 67.708 72.445 19.412q19.411-72.445 83.652 74.178t193.185 51.764z",
+          "actual": "m106.066 183.712 70.711 122.474-96.593-25.882 12.941-48.296c25.882-96.592 98.326-77.181 85.385-28.885-12.941 48.297 59.504 67.709 72.445 19.412q19.411-72.445 83.652 74.178 64.24 146.623 193.185 51.764z",
+          "attributes": {
+            "fill": "red",
+            "transform": "rotate(15) scale(.5) translate(200,100)",
+            "d": "M100,200 300,400 H100 V300 C100,100 250,100 250,200 S400,300 400,200 Q400,50 600,300 T1000,300 z"
+          },
+          "flattenedTransform": "rotate(15) scale(.5) translate(200,100)",
+          "transformSampledDifference": 8.038873388460929e-14,
+          "independentParserMatches": true,
+          "inputBytes": 96,
+          "svgoBytes": 172,
+          "ourBytes": 201,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0.0007385854140178066,
+          "svgoSampledDifference": 0.0009486668316363855,
+          "classification": "transformed-rounding-and-shorthand-selection"
+        },
+        {
+          "number": 11,
+          "source": "M0,0 V100 L 70,50 z M70,50 L140,0 V100 z",
+          "expected": "M0 0v100l70-50zm70 50 70-50v100z",
+          "actual": "m0 0 0 100 70-50zm70 50 70-50v100z",
+          "attributes": {
+            "transform": "scale(10)",
+            "id": "a",
+            "d": "M0,0 V100 L 70,50 z M70,50 L140,0 V100 z"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 40,
+          "svgoBytes": 32,
+          "ourBytes": 34,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "transform-context-and-initial-line-choice"
+        },
+        {
+          "number": 12,
+          "source": "M0,0 V100 L 70,50 z M70,50 L140,0 V100 z",
+          "expected": "M0 0v100l70-50zm70 50 70-50v100z",
+          "actual": "m0 0 0 100 70-50zm70 50 70-50v100z",
+          "attributes": {
+            "transform": "scale(10)",
+            "id": "a",
+            "d": "M0,0 V100 L 70,50 z M70,50 L140,0 V100 z",
+            "stroke": "#000"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 40,
+          "svgoBytes": 32,
+          "ourBytes": 34,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "transform-context-and-initial-line-choice"
+        },
+        {
+          "number": 13,
+          "source": "M0,0 V100 L 70,50 z M70,50 L140,0 V100 z",
+          "expected": "M0 0v100l70-50zm70 50 70-50v100z",
+          "actual": "m0 0 0 100 70-50zm70 50 70-50v100z",
+          "attributes": {
+            "transform": "scale(10)",
+            "id": "a",
+            "d": "M0,0 V100 L 70,50 z M70,50 L140,0 V100 z",
+            "stroke": "#000",
+            "stroke-width": ".5"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 40,
+          "svgoBytes": 32,
+          "ourBytes": 34,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "transform-context-and-initial-line-choice"
+        },
+        {
+          "number": 14,
+          "source": "M0,0 V100 L 70,50 z M70,50 L140,0 V100 z",
+          "expected": "M0 0v100l70-50zm70 50 70-50v100z",
+          "actual": "m0 0 0 100 70-50zm70 50 70-50v100z",
+          "attributes": {
+            "transform": "scale(10)",
+            "id": "a",
+            "d": "M0,0 V100 L 70,50 z M70,50 L140,0 V100 z"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 40,
+          "svgoBytes": 32,
+          "ourBytes": 34,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "transform-context-and-initial-line-choice"
+        },
+        {
+          "number": 15,
+          "source": "M100,200 300,400 H100 V300 C100,100 250,100 250,200 S400,300 400,200 Q400,50 600,300 T1000,300 z",
+          "expected": "m100 200 200 200H100V300c0-200 150-200 150-100s150 100 150 0q0-150 200 100t400 0z",
+          "actual": "m100 200 200 200h-200v-100c0-200 150-200 150-100s150 100 150 0q0-150 200 100t400 0z",
+          "attributes": {
+            "fill": "url(#gradient)",
+            "transform": "rotate(15) scale(0.33) translate(200,100)",
+            "d": "M100,200 300,400 H100 V300 C100,100 250,100 250,200 S400,300 400,200 Q400,50 600,300 T1000,300 z"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 96,
+          "svgoBytes": 81,
+          "ourBytes": 83,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "retained-transform-and-command-selection"
+        },
+        {
+          "number": 16,
+          "source": "M100,200 300,400 H100 V300 C100,100 250,100 250,200 S400,300 400,200 Q400,50 600,300 T1000,300 z",
+          "expected": "m100 200 200 200H100V300c0-200 150-200 150-100s150 100 150 0q0-150 200 100t400 0z",
+          "actual": "m100 200 200 200h-200v-100c0-200 150-200 150-100s150 100 150 0q0-150 200 100t400 0z",
+          "attributes": {
+            "clip-path": "url(#a)",
+            "transform": "rotate(15) scale(0.33) translate(200,100)",
+            "d": "M100,200 300,400 H100 V300 C100,100 250,100 250,200 S400,300 400,200 Q400,50 600,300 T1000,300 z"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 96,
+          "svgoBytes": 81,
+          "ourBytes": 83,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "retained-transform-and-command-selection"
+        },
+        {
+          "number": 17,
+          "source": "M5 0a10 10 0 1 0 20 0",
+          "expected": "M10 0a10 10 0 1 0 20 0",
+          "actual": "m10 0a10 10 0 1020 0",
+          "attributes": {
+            "d": "M5 0a10 10 0 1 0 20 0",
+            "transform": "matrix(1 0 0 1 5 0)"
+          },
+          "flattenedTransform": "matrix(1 0 0 1 5 0)",
+          "transformSampledDifference": 3.552713678800501e-15,
+          "independentParserMatches": true,
+          "inputBytes": 21,
+          "svgoBytes": 22,
+          "ourBytes": 20,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "transformed-arc-packed-flags"
+        },
+        {
+          "number": 18,
+          "source": "M5 0a10 10 0 1 0 20 0",
+          "expected": "M3.864 1.035a8 12 15 1 0 15.455 4.141",
+          "actual": "m3.864 1.035a8 12 14.999 1015.455 4.141",
+          "attributes": {
+            "d": "M5 0a10 10 0 1 0 20 0",
+            "transform": "rotate(15) scale(.8,1.2) "
+          },
+          "flattenedTransform": "rotate(15) scale(.8,1.2) ",
+          "transformSampledDifference": 1.1916163935586911e-14,
+          "independentParserMatches": true,
+          "inputBytes": 21,
+          "svgoBytes": 37,
+          "ourBytes": 39,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0.0006161400408941185,
+          "svgoSampledDifference": 0.0006154946726736793,
+          "classification": "transformed-arc-representation-and-rounding"
+        },
+        {
+          "number": 19,
+          "source": "M5 0a10 10 0 1 0 20 0",
+          "expected": "M3.536 3.536a10 10 0 1 0 14.142 14.142",
+          "actual": "m3.536 3.536a10 10 0 1014.142 14.142",
+          "attributes": {
+            "d": "M5 0a10 10 0 1 0 20 0",
+            "transform": "rotate(45)"
+          },
+          "flattenedTransform": "rotate(45)",
+          "transformSampledDifference": 1.6518123734781856e-7,
+          "independentParserMatches": true,
+          "inputBytes": 21,
+          "svgoBytes": 38,
+          "ourBytes": 36,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0.04379843363890866,
+          "svgoSampledDifference": 0.04379843363890866,
+          "classification": "transformed-arc-representation-and-rounding"
+        },
+        {
+          "number": 20,
+          "source": "M5 0a10 10 0 1 0 20 0",
+          "expected": "M5 0a16.18 6.18 31.717 1 0 20 0",
+          "actual": "m5 0a16.18 6.18 31.717 1020 0",
+          "attributes": {
+            "d": "M5 0a10 10 0 1 0 20 0",
+            "transform": "skewX(45)"
+          },
+          "flattenedTransform": "skewX(45)",
+          "transformSampledDifference": 3.972054645195637e-15,
+          "independentParserMatches": true,
+          "inputBytes": 21,
+          "svgoBytes": 31,
+          "ourBytes": 29,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0.0003734719502943104,
+          "svgoSampledDifference": 0.0003734719502943104,
+          "classification": "transformed-arc-packed-flags"
+        },
+        {
+          "number": 21,
+          "source": "M0 300a1 2 0 1 0 200 0a1 2 0 1 0 -200 0",
+          "expected": "M-12.122 332.074a80 240 15 1 0 154.548 41.41 80 240 15 1 0-154.548-41.41",
+          "actual": "m-12.122 332.074a.8 2.4 15 10154.548 41.411 .8 2.4 15 10-154.548-41.411",
+          "attributes": {
+            "d": "M0 300a1 2 0 1 0 200 0a1 2 0 1 0 -200 0",
+            "transform": "rotate(15 100 300) scale(.8 1.2)"
+          },
+          "flattenedTransform": "rotate(15 100 300) scale(.8 1.2)",
+          "transformSampledDifference": 0.0000030517578265422047,
+          "independentParserMatches": true,
+          "inputBytes": 39,
+          "svgoBytes": 72,
+          "ourBytes": 71,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0.0006682020105494002,
+          "svgoSampledDifference": 0.5358824635801986,
+          "classification": "transformed-arc-representation-and-rounding"
+        },
+        {
+          "number": 22,
+          "source": "M700 300a1 2 0 1 0 200 0a1 2 0 1 0 -200 0",
+          "expected": "M721.72 450.759a240 80 15 1 0 41.412-154.548 240 80 15 1 0-41.411 154.548",
+          "actual": "m721.721 450.759a.8 2.4 105 1041.411-154.548 .8 2.4 105 10-41.411 154.548",
+          "attributes": {
+            "d": "M700 300a1 2 0 1 0 200 0a1 2 0 1 0 -200 0",
+            "transform": "rotate(-75 700 300) scale(.8 1.2)"
+          },
+          "flattenedTransform": "rotate(-75 700 300) scale(.8 1.2)",
+          "transformSampledDifference": 2.5421149729252077e-13,
+          "independentParserMatches": true,
+          "inputBytes": 41,
+          "svgoBytes": 73,
+          "ourBytes": 73,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0.00046925921217990936,
+          "svgoSampledDifference": 0.3172320807226229,
+          "classification": "transformed-arc-representation-and-rounding"
+        },
+        {
+          "number": 23,
+          "source": "M12.6 8.6l-3.1-3.2-3.1 3.2-.8-.7 3.9-3.9 3.9 3.9zM9 5h1v10h-1z",
+          "expected": "M8.6 6.4 5.4 9.5l3.2 3.1-.7.8L4 9.5l3.9-3.9zM5 10V9h10v1z",
+          "actual": "m8.6 6.4-3.2 3.1 3.2 3.1-.7.8-3.9-3.9 3.9-3.9zm-3.6 3.6 0-1h10v1z",
+          "attributes": {
+            "d": "M12.6 8.6l-3.1-3.2-3.1 3.2-.8-.7 3.9-3.9 3.9 3.9zM9 5h1v10h-1z",
+            "transform": "rotate(-90 9.5 9.5)"
+          },
+          "flattenedTransform": "rotate(-90 9.5 9.5)",
+          "transformSampledDifference": 1.7763568394002505e-15,
+          "independentParserMatches": true,
+          "inputBytes": 62,
+          "svgoBytes": 57,
+          "ourBytes": 65,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 1.7763568394002505e-15,
+          "svgoSampledDifference": 3.552713678800501e-15,
+          "classification": "transformed-mixed-coordinate-and-initial-line-choice"
+        },
+        {
+          "number": 24,
+          "source": "M637.43 482.753a43.516 94.083 0 1 1-87.033 0 43.516 94.083 0 1 1 87.032 0z",
+          "expected": "M561.214 392.766a48.107 95.08 10.132 1 1-94.083-20.365 48.107 95.079 10.132 1 1 94.082 20.365z",
+          "actual": "m561.214 392.766a48.107 95.079 10.131 11-94.083-20.365 48.107 95.079 10.131 1194.082 20.365z",
+          "attributes": {
+            "d": "M637.43 482.753a43.516 94.083 0 1 1-87.033 0 43.516 94.083 0 1 1 87.032 0z",
+            "transform": "matrix(1.081 .234 -.187 .993 -37.573 -235.766)"
+          },
+          "flattenedTransform": "matrix(1.081 .234 -.187 .993 -37.573 -235.766)",
+          "transformSampledDifference": 0.0000012685873665344676,
+          "independentParserMatches": true,
+          "inputBytes": 74,
+          "svgoBytes": 94,
+          "ourBytes": 92,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0.28671041676603254,
+          "svgoSampledDifference": 0.2714188077418612,
+          "classification": "transformed-arc-representation-and-rounding"
+        },
+        {
+          "number": 25,
+          "source": "m-1.26-1.4a6.53 1.8-15.2 1 1 12.55-3.44",
+          "expected": "M-1.26-1.4a6.53 1.8-15.2 1 1 12.55-3.44",
+          "actual": "m-1.26-1.4a6.53 1.8 164.8 1112.55-3.44",
+          "attributes": {
+            "d": "m-1.26-1.4a6.53 1.8-15.2 1 1 12.55-3.44",
+            "transform": "translate(0, 0)"
+          },
+          "flattenedTransform": "translate(0, 0)",
+          "transformSampledDifference": 5.402578411571407e-15,
+          "independentParserMatches": true,
+          "inputBytes": 39,
+          "svgoBytes": 39,
+          "ourBytes": 38,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 9.930136612989092e-16,
+          "svgoSampledDifference": 5.402578411571407e-15,
+          "classification": "equivalent-ellipse-angle-and-packed-flags"
+        },
+        {
+          "number": 26,
+          "source": "M0 0c.07 1.33.14 2.66.21 3.99.07 1.33.14 2.66.21 3.99",
+          "expected": "m0 0 .21 3.99.21 3.99",
+          "actual": "m0 0c.07 1.33 .14 2.66 .21 3.99s.14 2.66 .21 3.99",
+          "attributes": {
+            "d": "M0 0c.07 1.33.14 2.66.21 3.99.07 1.33.14 2.66.21 3.99"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 53,
+          "svgoBytes": 21,
+          "ourBytes": 49,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 5.551115123125783e-17,
+          "svgoSampledDifference": 1.7763568394002505e-15,
+          "classification": "straight-curve-reduction"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.12.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "M10 50h30h-30",
+          "expected": "M10 50h30z",
+          "actual": "m10 50 30 0h-30",
+          "attributes": {
+            "d": "M10 50h30h-30"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 13,
+          "svgoBytes": 10,
+          "ourBytes": 15,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "style-dependent-closepath-substitution"
+        },
+        {
+          "number": 2,
+          "source": "M10 50h-30h30",
+          "expected": "M10 50h-30z",
+          "actual": "m10 50-30 0h30",
+          "attributes": {
+            "d": "M10 50h-30h30"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 13,
+          "svgoBytes": 11,
+          "ourBytes": 14,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "style-dependent-closepath-substitution"
+        },
+        {
+          "number": 3,
+          "source": "M10 50h-30h-50",
+          "expected": "M10 50h-80",
+          "actual": "m10 50-30 0h-50",
+          "attributes": {
+            "d": "M10 50h-30h-50"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 14,
+          "svgoBytes": 10,
+          "ourBytes": 15,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "collinear-line-merging"
+        },
+        {
+          "number": 4,
+          "source": "M10 50h30h50",
+          "expected": "M10 50h80",
+          "actual": "m10 50 30 0h50",
+          "attributes": {
+            "d": "M10 50h30h50"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 12,
+          "svgoBytes": 9,
+          "ourBytes": 14,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "collinear-line-merging"
+        },
+        {
+          "number": 5,
+          "source": "M10 50v30v-30",
+          "expected": "M10 50v30z",
+          "actual": "m10 50 0 30v-30",
+          "attributes": {
+            "d": "M10 50v30v-30"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 13,
+          "svgoBytes": 10,
+          "ourBytes": 15,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "style-dependent-closepath-substitution"
+        },
+        {
+          "number": 6,
+          "source": "M10 50v-30v30",
+          "expected": "M10 50V20z",
+          "actual": "m10 50 0-30v30",
+          "attributes": {
+            "d": "M10 50v-30v30"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 13,
+          "svgoBytes": 10,
+          "ourBytes": 14,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "style-dependent-closepath-substitution"
+        },
+        {
+          "number": 7,
+          "source": "M10 50v-30v-50",
+          "expected": "M10 50v-80",
+          "actual": "m10 50 0-30v-50",
+          "attributes": {
+            "d": "M10 50v-30v-50"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 14,
+          "svgoBytes": 10,
+          "ourBytes": 15,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "collinear-line-merging"
+        },
+        {
+          "number": 8,
+          "source": "M10 50v30v50",
+          "expected": "M10 50v80",
+          "actual": "m10 50 0 30v50",
+          "attributes": {
+            "d": "M10 50v30v50"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 12,
+          "svgoBytes": 9,
+          "ourBytes": 14,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "collinear-line-merging"
+        },
+        {
+          "number": 9,
+          "source": "M10 50L10 80L10 0",
+          "expected": "M10 50v30V0",
+          "actual": "m10 50 0 30v-80",
+          "attributes": {
+            "d": "M10 50L10 80L10 0"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 17,
+          "svgoBytes": 11,
+          "ourBytes": 15,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-line-and-mixed-coordinate-choice"
+        },
+        {
+          "number": 10,
+          "source": "M10 50L10 10L10 80",
+          "expected": "M10 50V10v70",
+          "actual": "m10 50 0-40v70",
+          "attributes": {
+            "d": "M10 50L10 10L10 80"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 18,
+          "svgoBytes": 12,
+          "ourBytes": 14,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-line-and-mixed-coordinate-choice"
+        },
+        {
+          "number": 11,
+          "source": "M10 50l10 10l20 20l10 10",
+          "expected": "m10 50 10 10 20 20 10 10",
+          "actual": "m10 50 10 10 20 20 10 10",
+          "attributes": {
+            "d": "M10 50l10 10l20 20l10 10"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 24,
+          "svgoBytes": 24,
+          "ourBytes": 24,
+          "sameText": true,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "identical"
+        },
+        {
+          "number": 12,
+          "source": "M10 50L80 50L0 50",
+          "expected": "M10 50h70H0",
+          "actual": "m10 50 70 0h-80",
+          "attributes": {
+            "d": "M10 50L80 50L0 50"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 17,
+          "svgoBytes": 11,
+          "ourBytes": 15,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-line-and-mixed-coordinate-choice"
+        },
+        {
+          "number": 13,
+          "source": "M10 50L0 50L80 50",
+          "expected": "M10 50H0h80",
+          "actual": "m10 50-10 0h80",
+          "attributes": {
+            "d": "M10 50L0 50L80 50"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 17,
+          "svgoBytes": 11,
+          "ourBytes": 14,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-line-and-mixed-coordinate-choice"
+        },
+        {
+          "number": 14,
+          "source": "M10 50L0 50M80 50M30 10L10 80",
+          "expected": "M10 50H0m30-40L10 80",
+          "actual": "m10 50-10 0m80 0m-50-40-20 70",
+          "attributes": {
+            "d": "M10 50L0 50M80 50M30 10L10 80"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 29,
+          "svgoBytes": 20,
+          "ourBytes": 29,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "empty-subpath-and-command-selection"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.13.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "M213 543q0 -41 20 -66.5q20 -25.5 50 -45.5l49 228q-54 -4 -86.5 -34q-32.5 -30 -32.5 -82zt0 0zM371 48z",
+          "expected": "M213 543q0-41 20-66.5t50-45.5l49 228q-54-4-86.5-34T213 543M371 48",
+          "actual": "m213 543q0-41 20-66.5t50-45.5l49 228q-54-4-86.5-34t-32.5-82zm0 0t0 0zm158-495z",
+          "attributes": {
+            "d": "M213 543q0 -41 20 -66.5q20 -25.5 50 -45.5l49 228q-54 -4 -86.5 -34q-32.5 -30 -32.5 -82zt0 0zM371 48z"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 99,
+          "svgoBytes": 65,
+          "ourBytes": 78,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "empty-segment-and-closepath-preservation"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.14.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "M0 0L0 0c2.761 0 5 2.239 5 5",
+          "expected": "M0 0a5 5 0 0 1 5 5",
+          "actual": "m0 0 0 0c2.761 0 5 2.239 5 5",
+          "attributes": {
+            "d": "M0 0L0 0c2.761 0 5 2.239 5 5"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 28,
+          "svgoBytes": 18,
+          "ourBytes": 28,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "approximate-cubic-to-arc-replacement"
+        },
+        {
+          "number": 2,
+          "source": "M0 0L0 0c2.761 0 5 2.239 5 5l5-5",
+          "expected": "M0 0a5 5 0 0 1 5 5l5-5",
+          "actual": "m0 0 0 0c2.761 0 5 2.239 5 5l5-5",
+          "attributes": {
+            "d": "M0 0L0 0c2.761 0 5 2.239 5 5l5-5"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 32,
+          "svgoBytes": 22,
+          "ourBytes": 32,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "approximate-cubic-to-arc-replacement"
+        },
+        {
+          "number": 3,
+          "source": "M15 10c-2.761 0-5-2.239-5-5s2.239-5 5-5s5 2.239 5 5l-5 5",
+          "expected": "M15 10a5 5 0 1 1 5-5z",
+          "actual": "m15 10c-2.761 0-5-2.239-5-5s2.239-5 5-5 5 2.239 5 5l-5 5",
+          "attributes": {
+            "d": "M15 10c-2.761 0-5-2.239-5-5s2.239-5 5-5s5 2.239 5 5l-5 5"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 56,
+          "svgoBytes": 21,
+          "ourBytes": 56,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "approximate-cubic-to-arc-replacement"
+        },
+        {
+          "number": 4,
+          "source": "M41.008 0.102c1.891 0.387 3.393 1.841 3.849 3.705",
+          "expected": "M41.008.102a5.01 5.01 0 0 1 3.849 3.705",
+          "actual": "m41.008.102c1.891.387 3.393 1.841 3.849 3.705",
+          "attributes": {
+            "d": "M41.008 0.102c1.891 0.387 3.393 1.841 3.849 3.705"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 49,
+          "svgoBytes": 39,
+          "ourBytes": 45,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0.014694183968388284,
+          "classification": "approximate-cubic-to-arc-replacement"
+        },
+        {
+          "number": 5,
+          "source": "M7.234 19.474C6.562 19.811 5.803 20 5 20c-2.761 0-5-2.239-5-5 0-1.767 0.917-3.32 2.301-4.209",
+          "expected": "M7.234 19.474a5 5 0 0 1-4.933-8.683",
+          "actual": "m7.234 19.474c-.672.337-1.431.526-2.234.526-2.761 0-5-2.239-5-5 0-1.767 .917-3.32 2.301-4.209",
+          "attributes": {
+            "d": "M7.234 19.474C6.562 19.811 5.803 20 5 20c-2.761 0-5-2.239-5-5 0-1.767 0.917-3.32 2.301-4.209"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 92,
+          "svgoBytes": 35,
+          "ourBytes": 93,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "approximate-cubic-to-arc-replacement"
+        },
+        {
+          "number": 6,
+          "source": "M60 0c-2.761 0-5 2.239-5 5s2.239 5 5 5s5-2.239 5-5S62.761 0 60 0z",
+          "expected": "M60 0a5 5 0 1 0 .001 10.001A5 5 0 0 0 60 0",
+          "actual": "m60 0c-2.761 0-5 2.239-5 5s2.239 5 5 5 5-2.239 5-5-2.239-5-5-5z",
+          "attributes": {
+            "d": "M60 0c-2.761 0-5 2.239-5 5s2.239 5 5 5s5-2.239 5-5S62.761 0 60 0z"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 65,
+          "svgoBytes": 42,
+          "ourBytes": 63,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "approximate-cubic-to-arc-replacement"
+        },
+        {
+          "number": 7,
+          "source": "M15 23.54 c-2.017,0 -3.87,-.7 -5.33,-1.87 -.032,-.023 -.068,-.052 -.11,-.087 .042,.035 .078,.064 .11,.087 .048,.04 .08,.063 .08,.063 ",
+          "expected": "M15 23.54a8.5 8.5 0 0 1-5.25-1.807",
+          "actual": "m15 23.54c-2.017 0-3.87-.7-5.33-1.87-.032-.023-.068-.052-.11-.087 .042.035 .078.064 .11.087 .048.04 .08.063 .08.063",
+          "attributes": {
+            "d": "M15 23.54 c-2.017,0 -3.87,-.7 -5.33,-1.87 -.032,-.023 -.068,-.052 -.11,-.087 .042,.035 .078,.064 .11,.087 .048,.04 .08,.063 .08,.063 "
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 133,
+          "svgoBytes": 34,
+          "ourBytes": 115,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "approximate-cubic-to-arc-replacement"
+        },
+        {
+          "number": 8,
+          "source": "M-9.5,82.311c-2.657,0-4.81-2.152-4.81-4.811c0-2.656,2.153-4.811,4.81-4.811S-4.69,74.844-4.69,77.5 C-4.69,80.158-6.843,82.311-9.5,82.311z",
+          "expected": "M-9.5 82.311a4.81 4.81 0 1 1 .002-9.622A4.81 4.81 0 0 1-9.5 82.31",
+          "actual": "m-9.5 82.311c-2.657 0-4.81-2.152-4.81-4.811 0-2.656 2.153-4.811 4.81-4.811s4.81 2.155 4.81 4.811c0 2.658-2.153 4.811-4.81 4.811z",
+          "attributes": {
+            "d": "M-9.5,82.311c-2.657,0-4.81-2.152-4.81-4.811c0-2.656,2.153-4.811,4.81-4.811S-4.69,74.844-4.69,77.5 C-4.69,80.158-6.843,82.311-9.5,82.311z"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 136,
+          "svgoBytes": 65,
+          "ourBytes": 128,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "approximate-cubic-to-arc-replacement"
+        },
+        {
+          "number": 9,
+          "source": "M1.5,13.4561 C1.5,15.3411 3.033,16.8751 4.918,16.8751 C6.478,16.8751 7.84,15.8201 8.229,14.3101 Z",
+          "expected": "M1.5 13.456a3.418 3.418 0 0 0 6.729.854Z",
+          "actual": "m1.5 13.456c0 1.885 1.533 3.419 3.418 3.419 1.56 0 2.922-1.055 3.311-2.565z",
+          "attributes": {
+            "d": "M1.5,13.4561 C1.5,15.3411 3.033,16.8751 4.918,16.8751 C6.478,16.8751 7.84,15.8201 8.229,14.3101 Z"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 97,
+          "svgoBytes": 40,
+          "ourBytes": 75,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0.00010000000000331966,
+          "svgoSampledDifference": null,
+          "classification": "approximate-cubic-to-arc-replacement"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.15.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "M.49 8.8c-.3-.75-.44-1.55-.44-2.35 0-3.54 2.88-6.43 6.43-6.43 3.53 0 6.42 2.88 6.42 6.43 0 .8-.15 1.6-.43 2.35",
+          "expected": "M.49 8.8A6.44 6.44 0 0 1 6.48.02a6.44 6.44 0 0 1 5.99 8.78",
+          "actual": "m.49 8.8c-.3-.75-.44-1.55-.44-2.35 0-3.54 2.88-6.43 6.43-6.43 3.53 0 6.42 2.88 6.42 6.43 0 .8-.15 1.6-.43 2.35",
+          "attributes": {
+            "d": "M.49 8.8c-.3-.75-.44-1.55-.44-2.35 0-3.54 2.88-6.43 6.43-6.43 3.53 0 6.42 2.88 6.42 6.43 0 .8-.15 1.6-.43 2.35"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 110,
+          "svgoBytes": 58,
+          "ourBytes": 110,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "approximate-cubic-to-arc-replacement"
+        },
+        {
+          "number": 2,
+          "source": "M13.4 6.62c0-2.5-1.98-4.57-4.4-4.57S4.6 4.1 4.6 6.62",
+          "expected": "M13.4 6.62c0-2.5-1.98-4.57-4.4-4.57S4.6 4.1 4.6 6.62",
+          "actual": "m13.4 6.62c0-2.5-1.98-4.57-4.4-4.57s-4.4 2.05-4.4 4.57",
+          "attributes": {
+            "d": "M13.4 6.62c0-2.5-1.98-4.57-4.4-4.57S4.6 4.1 4.6 6.62"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 52,
+          "svgoBytes": 52,
+          "ourBytes": 54,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "mixed-coordinate-selection"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.16.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "M.49 8.8c-.3-.75-.44-1.55-.44-2.35 0-3.54 2.88-6.43 6.43-6.43 3.53 0 6.42 2.88 6.42 6.43 0 .8-.15 1.6-.43 2.35",
+          "expected": "M0 9V6a6 6 0 1 1 12 3",
+          "actual": "m0 9c0-1 0-2 0-3 0-3 3-6 6-6 4 0 7 2 7 6 0 1 0 2-1 3",
+          "attributes": {
+            "d": "M.49 8.8c-.3-.75-.44-1.55-.44-2.35 0-3.54 2.88-6.43 6.43-6.43 3.53 0 6.42 2.88 6.42 6.43 0 .8-.15 1.6-.43 2.35"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 110,
+          "svgoBytes": 21,
+          "ourBytes": 52,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0.583899691307303,
+          "svgoSampledDifference": null,
+          "classification": "coarse-rounding-and-approximate-arc-replacement"
+        },
+        {
+          "number": 2,
+          "source": "M13.4 6.62c0-2.5-1.98-4.57-4.4-4.57S4.6 4.1 4.6 6.62",
+          "expected": "M13 7q0-5-4-5-5 0-4 5",
+          "actual": "m13 7c0-3-2-5-4-5s-4 2-4 5",
+          "attributes": {
+            "d": "M13.4 6.62c0-2.5-1.98-4.57-4.4-4.57S4.6 4.1 4.6 6.62"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 52,
+          "svgoBytes": 21,
+          "ourBytes": 26,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0.551724568965349,
+          "svgoSampledDifference": 0.551724568965349,
+          "classification": "coarse-rounding-and-degree-reduction"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.17.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "M33.027833,1.96545901 C33.097408,2.03503401 38.0413624,6.97898843 38.0413624,6.97898842 C38.0413625,6.97898834 38.0094318,4.0346712 38.0094318,4.0346712 L34,0.0252395624 L34,0 L13,0 L13,2 L33.062374,2 Z",
+          "expected": "m33.027833 1.96545901 5.0135294 5.01352941c1e-7-8e-8-.0319306-2.94431722-.0319306-2.94431722L34 .02523956V0H13v2h20.062374Z",
+          "actual": "m33.027833 1.96545901c.069575.069575 5.0135294 5.01352942 5.0135294 5.01352941 .0000001-.00000008-.0319306-2.94431722-.0319306-2.94431722l-4.0094318-4.00943164v-.02523956h-21v2h20.062374z",
+          "attributes": {
+            "d": "M33.027833,1.96545901 C33.097408,2.03503401 38.0413624,6.97898843 38.0413624,6.97898842 C38.0413625,6.97898834 38.0094318,4.0346712 38.0094318,4.0346712 L34,0.0252395624 L34,0 L13,0 L13,2 L33.062374,2 Z"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 202,
+          "svgoBytes": 123,
+          "ourBytes": 187,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 2.3999998377544074e-9,
+          "svgoSampledDifference": 0.6835241142183294,
+          "classification": "near-straight-reduction-exponents-and-command-selection"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.18.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "M32 4a4 4 0 0 0-4-4H8a4 4 0 0 1-4 4v28a4 4 0 0 1 4 4h20a4 4 0 0 0 4-4V4z",
+          "expected": "M32 32a4 4 0 0 1-4 4H8a4 4 0 0 0-4-4V4a4 4 0 0 0 4-4h20a4 4 0 0 1 4 4z",
+          "actual": "m32 32a4 4 0 01-4 4h-20a4 4 0 00-4-4v-28a4 4 0 004-4h20a4 4 0 014 4z",
+          "attributes": {
+            "d": "M32 4a4 4 0 0 0-4-4H8a4 4 0 0 1-4 4v28a4 4 0 0 1 4 4h20a4 4 0 0 0 4-4V4z",
+            "fill": "#888",
+            "transform": "matrix(1 0 0 -1 0 36)"
+          },
+          "flattenedTransform": "matrix(1 0 0 -1 0 36)",
+          "transformSampledDifference": 3.552713678800501e-15,
+          "independentParserMatches": true,
+          "inputBytes": 72,
+          "svgoBytes": 70,
+          "ourBytes": 68,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "reflected-arcs-and-command-selection"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.19.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "M125 125h250v250h-250v-250z",
+          "expected": "M62.5 62.5h375v375h-375z",
+          "actual": "m62.5 62.5 375 0v375h-375z",
+          "attributes": {
+            "transform": "translate(250, 250) scale(1.5, 1.5) translate(-250, -250)",
+            "fill": "#7ED321",
+            "stroke": "#000",
+            "stroke-width": "15",
+            "vector-effect": "non-scaling-stroke",
+            "d": "M125 125h250v250h-250v-250z"
+          },
+          "flattenedTransform": "translate(250, 250) scale(1.5, 1.5) translate(-250, -250)",
+          "transformSampledDifference": 0,
+          "independentParserMatches": true,
+          "inputBytes": 27,
+          "svgoBytes": 24,
+          "ourBytes": 26,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "non-scaling-stroke-context-and-initial-line-choice"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.20.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "M32 4a4 4 0 00-4-4H8a4 4 0 01-4 4v28a4 4 0 014 4h20a4 4 0 004-4V4z",
+          "expected": "M32 4a4 4 0 0 0-4-4H8a4 4 0 0 1-4 4v28a4 4 0 0 1 4 4h20a4 4 0 0 0 4-4z",
+          "actual": "m32 4a4 4 0 00-4-4h-20a4 4 0 01-4 4v28a4 4 0 014 4h20a4 4 0 004-4z",
+          "attributes": {
+            "d": "M32 4a4 4 0 00-4-4H8a4 4 0 01-4 4v28a4 4 0 014 4h20a4 4 0 004-4V4z"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 66,
+          "svgoBytes": 70,
+          "ourBytes": 66,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "packed-arc-flags-and-mixed-coordinate-choice"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.21.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "M300 200 h-150 a150 150 0 1 0 150 -150 z",
+          "expected": "M300 200H150A150 150 0 1 0 300 50z",
+          "actual": "m300 200-150 0a150 150 0 10150-150z",
+          "attributes": {
+            "d": "M300 200 h-150 a150 150 0 1 0 150 -150 z",
+            "fill": "red",
+            "stroke": "blue",
+            "stroke-width": "5"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 40,
+          "svgoBytes": 34,
+          "ourBytes": 35,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-line-and-mixed-coordinate-choice"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.22.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "   M  20 20   L  200 20",
+          "expected": "M36 36h324",
+          "actual": "m36 36 324 0",
+          "attributes": {
+            "transform": "scale(1.8)",
+            "stroke": "black",
+            "stroke-width": "10",
+            "fill": "none",
+            "stroke-dasharray": "none",
+            "d": "   M  20 20   L  200 20"
+          },
+          "flattenedTransform": "scale(1.8)",
+          "transformSampledDifference": 0,
+          "independentParserMatches": true,
+          "inputBytes": 23,
+          "svgoBytes": 10,
+          "ourBytes": 12,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "stroke-dash-context-and-initial-line-choice"
+        },
+        {
+          "number": 2,
+          "source": "   M  20 40   L  200 40",
+          "expected": "M36 72h324",
+          "actual": "m36 72 324 0",
+          "attributes": {
+            "transform": "scale(1.8)",
+            "stroke": "black",
+            "stroke-width": "10",
+            "fill": "none",
+            "stroke-dasharray": "0",
+            "d": "   M  20 40   L  200 40"
+          },
+          "flattenedTransform": "scale(1.8)",
+          "transformSampledDifference": 0,
+          "independentParserMatches": true,
+          "inputBytes": 23,
+          "svgoBytes": 10,
+          "ourBytes": 12,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "stroke-dash-context-and-initial-line-choice"
+        },
+        {
+          "number": 3,
+          "source": "   M  20 60   L  200 60",
+          "expected": "M36 108h324",
+          "actual": "m36 108 324 0",
+          "attributes": {
+            "transform": "scale(1.8)",
+            "stroke": "black",
+            "stroke-width": "20",
+            "fill": "none",
+            "stroke-dasharray": "5,2,5,5,2,5",
+            "d": "   M  20 60   L  200 60"
+          },
+          "flattenedTransform": "scale(1.8)",
+          "transformSampledDifference": 0,
+          "independentParserMatches": true,
+          "inputBytes": 23,
+          "svgoBytes": 11,
+          "ourBytes": 13,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "stroke-dash-context-and-initial-line-choice"
+        },
+        {
+          "number": 4,
+          "source": "   M  20 60   L  200 60",
+          "expected": "M36 108h324",
+          "actual": "m36 108 324 0",
+          "attributes": {
+            "transform": "scale(1.8)",
+            "stroke": "blue",
+            "stroke-width": "10",
+            "fill": "none",
+            "stroke-dasharray": "5,2,5",
+            "d": "   M  20 60   L  200 60"
+          },
+          "flattenedTransform": "scale(1.8)",
+          "transformSampledDifference": 0,
+          "independentParserMatches": true,
+          "inputBytes": 23,
+          "svgoBytes": 11,
+          "ourBytes": 13,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "stroke-dash-context-and-initial-line-choice"
+        },
+        {
+          "number": 5,
+          "source": "   M  20 80   L  200 80",
+          "expected": "M36 144h324",
+          "actual": "m36 144 324 0",
+          "attributes": {
+            "transform": "scale(1.8)",
+            "stroke": "black",
+            "stroke-width": "10",
+            "fill": "none",
+            "stroke-dasharray": "2",
+            "d": "   M  20 80   L  200 80"
+          },
+          "flattenedTransform": "scale(1.8)",
+          "transformSampledDifference": 0,
+          "independentParserMatches": true,
+          "inputBytes": 23,
+          "svgoBytes": 11,
+          "ourBytes": 13,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "stroke-dash-context-and-initial-line-choice"
+        },
+        {
+          "number": 6,
+          "source": "         M  20 90   L  200 90",
+          "expected": "M36 162h324",
+          "actual": "m36 162 324 0",
+          "attributes": {
+            "transform": "scale(1.8)",
+            "stroke": "blue",
+            "stroke-width": "10",
+            "fill": "none",
+            "stroke-dasharray": "2",
+            "stroke-dashoffset": "2",
+            "d": "         M  20 90   L  200 90"
+          },
+          "flattenedTransform": "scale(1.8)",
+          "transformSampledDifference": 0,
+          "independentParserMatches": true,
+          "inputBytes": 29,
+          "svgoBytes": 11,
+          "ourBytes": 13,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "stroke-dash-context-and-initial-line-choice"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.23.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "M 20 20 H 80",
+          "expected": "M20 20h60",
+          "actual": "m20 20 60 0",
+          "attributes": {
+            "transform": "scale(2)",
+            "style": "stroke:black;stroke-width:10;",
+            "d": "M 20 20 H 80"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 12,
+          "svgoBytes": 9,
+          "ourBytes": 11,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "style-context-and-initial-line-choice"
+        },
+        {
+          "number": 2,
+          "source": "M 20 20 H 80",
+          "expected": "M40 40h120",
+          "actual": "m40 40 120 0",
+          "attributes": {
+            "transform": "scale(2)",
+            "stroke": "black",
+            "stroke-width": "10",
+            "d": "M 20 20 H 80"
+          },
+          "flattenedTransform": "scale(2)",
+          "transformSampledDifference": 0,
+          "independentParserMatches": true,
+          "inputBytes": 12,
+          "svgoBytes": 10,
+          "ourBytes": 12,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "style-context-and-initial-line-choice"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.24.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "m200 200 h-100 a100 100 0 1 0 100 -100 z",
+          "expected": "M500 400H300a200 200 0 1 0 200-200z",
+          "actual": "m500 400-200 0a200 200 0 10200-200z",
+          "attributes": {
+            "transform": "translate(100) scale(2)",
+            "d": "m200 200 h-100 a100 100 0 1 0 100 -100 z"
+          },
+          "flattenedTransform": "translate(100) scale(2)",
+          "transformSampledDifference": 0,
+          "independentParserMatches": true,
+          "inputBytes": 40,
+          "svgoBytes": 35,
+          "ourBytes": 35,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "transformed-arc-and-initial-line-choice"
+        },
+        {
+          "number": 2,
+          "source": "M400 200 H300 A100 100 0 1 0 400 100 z",
+          "expected": "M900 400H700a200 200 0 1 0 200-200z",
+          "actual": "m900 400-200 0a200 200 0 10200-200z",
+          "attributes": {
+            "transform": "translate(100) scale(2)",
+            "d": "M400 200 H300 A100 100 0 1 0 400 100 z"
+          },
+          "flattenedTransform": "translate(100) scale(2)",
+          "transformSampledDifference": 2.2737367544323206e-13,
+          "independentParserMatches": true,
+          "inputBytes": 38,
+          "svgoBytes": 35,
+          "ourBytes": 35,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "transformed-arc-and-initial-line-choice"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.25.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "       M 152 65       V 158       H 49       V 65       z       m -14 75       V 83       H 67       V 141       z     ",
+          "expected": "M128 24v93H25V24zm-14 75V42H43v58z",
+          "actual": "m128 24 0 93h-103v-93zm-14 75 0-57h-71v58z",
+          "attributes": {
+            "d": "       M 152 65       V 158       H 49       V 65       z       m -14 75       V 83       H 67       V 141       z     ",
+            "transform": "translate(-24, -41)"
+          },
+          "flattenedTransform": "translate(-24, -41)",
+          "transformSampledDifference": 0,
+          "independentParserMatches": true,
+          "inputBytes": 119,
+          "svgoBytes": 34,
+          "ourBytes": 42,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "transformed-mixed-coordinate-and-initial-line-choice"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.26.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "m5.25,2.2H25.13a0,0,0,0,1-.05-.05V14.18Z",
+          "expected": "M5.25 2.2h19.88l-.05-.05v12.03Z",
+          "actual": "m5.25 2.2 19.88 0-.05-.05v12.03z",
+          "attributes": {
+            "d": "m5.25,2.2H25.13a0,0,0,0,1-.05-.05V14.18Z",
+            "transform": "translate(0 0)"
+          },
+          "flattenedTransform": "translate(0 0)",
+          "transformSampledDifference": 0,
+          "independentParserMatches": true,
+          "inputBytes": 40,
+          "svgoBytes": 31,
+          "ourBytes": 32,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "explicit-svg-arc-normalization-and-initial-line-choice"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.27.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "M 6 12 v -6 h 6 a 3 3 0 0 1 -6 6 z",
+          "expected": "M6 12V6h6a3 3 0 0 1-6 6",
+          "actual": "m6 12 0-6h6a3 3 0 01-6 6z",
+          "attributes": {
+            "d": "M 6 12 v -6 h 6 a 3 3 0 0 1 -6 6 z"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 34,
+          "svgoBytes": 23,
+          "ourBytes": 25,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "style-dependent-closepath-removal"
+        },
+        {
+          "number": 2,
+          "source": "M 18 12 v -6 h 6 a 3 3 0 0 1 -6 6 z",
+          "expected": "M18 12V6h6a3 3 0 0 1-6 6z",
+          "actual": "m18 12 0-6h6a3 3 0 01-6 6z",
+          "attributes": {
+            "d": "M 18 12 v -6 h 6 a 3 3 0 0 1 -6 6 z",
+            "stroke": "#f00",
+            "stroke-width": "4"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 35,
+          "svgoBytes": 25,
+          "ourBytes": 26,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-line-and-packed-arc-flags"
+        },
+        {
+          "number": 3,
+          "source": "M 30 12 v -6 h 6 a 3 3 0 0 1 -6 6 z",
+          "expected": "M30 12V6h6a3 3 0 0 1-6 6",
+          "actual": "m30 12 0-6h6a3 3 0 01-6 6z",
+          "attributes": {
+            "d": "M 30 12 v -6 h 6 a 3 3 0 0 1 -6 6 z",
+            "stroke": "#f00",
+            "stroke-width": "4",
+            "stroke-linejoin": "round",
+            "stroke-linecap": "round"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 35,
+          "svgoBytes": 24,
+          "ourBytes": 26,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "style-dependent-closepath-removal"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.28.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "M6 32.845 6 14.766 6 32.845",
+          "expected": "M6 32.845V14.766z",
+          "actual": "m6 32.845 0-18.079v18.079",
+          "attributes": {
+            "d": "M6 32.845 6 14.766 6 32.845"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 27,
+          "svgoBytes": 17,
+          "ourBytes": 25,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 3.552713678800501e-15,
+          "svgoSampledDifference": null,
+          "classification": "style-dependent-closepath-substitution"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.29.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "M1 1m1 1",
+          "expected": "M2 2",
+          "actual": "m1 1m1 1",
+          "attributes": {
+            "d": "M1 1m1 1"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 8,
+          "svgoBytes": 4,
+          "ourBytes": 8,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "empty-subpath-preservation"
+        },
+        {
+          "number": 2,
+          "source": "M8.5 12Zm0 8q3.35 0 5.675-2.325",
+          "expected": "M8.5 20q3.35 0 5.675-2.325",
+          "actual": "m8.5 12zm0 8q3.35 0 5.675-2.325",
+          "attributes": {
+            "fill": "black",
+            "d": "M8.5 12Zm0 8q3.35 0 5.675-2.325"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 31,
+          "svgoBytes": 26,
+          "ourBytes": 31,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "empty-subpath-preservation"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.30.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "M 6 6 h 0.1 h 0.2",
+          "expected": "M6 6h.3",
+          "actual": "m6 6 .1 0h.2",
+          "attributes": {
+            "d": "M 6 6 h 0.1 h 0.2"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 17,
+          "svgoBytes": 7,
+          "ourBytes": 12,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "collinear-line-merging"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.31.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "M 6 6 h 0.0005",
+          "expected": "M6 6",
+          "actual": "m6 6 .001 0",
+          "attributes": {
+            "d": "M 6 6 h 0.0005"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 14,
+          "svgoBytes": 4,
+          "ourBytes": 11,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0.0005000000000006111,
+          "svgoSampledDifference": null,
+          "classification": "rounding-policy-and-zero-segment-removal"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.32.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "m 1 1 a 10000 10000 0 0 0 8 0",
+          "expected": "M1 1h8",
+          "actual": "m1 1a10000 10000 0 008 0",
+          "attributes": {
+            "d": "m 1 1 a 10000 10000 0 0 0 8 0",
+            "stroke": "black"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 29,
+          "svgoBytes": 6,
+          "ourBytes": 24,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0.0008000000325409928,
+          "classification": "approximate-flat-arc-to-line"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.33.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "m 1 1 a 10.567 10.567 0 0 0 1 0",
+          "expected": "M1 1a11 11 0 0 0 1 0",
+          "actual": "m1 1a10.567 10.567 0 001 0",
+          "attributes": {
+            "d": "m 1 1 a 10.567 10.567 0 0 0 1 0",
+            "stroke": "black"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 31,
+          "svgoBytes": 20,
+          "ourBytes": 26,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0.0004663963464750509,
+          "classification": "geometry-aware-arc-radius-rounding"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.34.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "M0 0q2 0 5 5t5 5q5 0 5 5",
+          "expected": "M0 0q2 0 5 5t5 5q5 0 5 5",
+          "actual": "m0 0q2 0 5 5t5 5q5 0 5 5",
+          "attributes": {
+            "d": "M0 0q2 0 5 5t5 5q5 0 5 5"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 24,
+          "svgoBytes": 24,
+          "ourBytes": 24,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-move-case-only"
+        },
+        {
+          "number": 2,
+          "source": "M0 0q2 0 5 5t5 5q2 0 5-2",
+          "expected": "M0 0q2 0 5 5t5 5 5-2",
+          "actual": "m0 0q2 0 5 5t5 5 5-2",
+          "attributes": {
+            "d": "M0 0q2 0 5 5t5 5q2 0 5-2"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 24,
+          "svgoBytes": 20,
+          "ourBytes": 20,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-move-case-only"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.35.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "m 0 12 C 4 4 8 4 12 12",
+          "expected": "M0 12q6-12 12 0",
+          "actual": "m0 12c4-8 8-8 12 0",
+          "attributes": {
+            "d": "m 0 12 C 4 4 8 4 12 12"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 22,
+          "svgoBytes": 15,
+          "ourBytes": 18,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "exact-cubic-to-quadratic-reduction"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.36.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "M-6.3 9.9q.7-4.5.2-5-.5-.5-1.5-.5l0 0q-.4 0-2 .3",
+          "expected": "M-6.3 9.9q.7-4.5.2-5t-1.5-.5q-.4 0-2 .3",
+          "actual": "m-6.3 9.9q.7-4.5 .2-5t-1.5-.5h0q-.4 0-2 .3",
+          "attributes": {
+            "d": "M-6.3 9.9q.7-4.5.2-5-.5-.5-1.5-.5l0 0q-.4 0-2 .3"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 48,
+          "svgoBytes": 39,
+          "ourBytes": 42,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "zero-segment-and-separator-preservation"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.37.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "M5 5h0",
+          "expected": "M5 5z",
+          "actual": "m5 5 0 0",
+          "attributes": {
+            "marker-start": "url(#a)",
+            "d": "M5 5h0"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 6,
+          "svgoBytes": 5,
+          "ourBytes": 8,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "marker-context-and-closepath-substitution"
+        },
+        {
+          "number": 2,
+          "source": "M5 5",
+          "expected": "M5 5",
+          "actual": "m5 5",
+          "attributes": {
+            "marker-start": "url(#b)",
+            "d": "M5 5"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 4,
+          "svgoBytes": 4,
+          "ourBytes": 4,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-move-case-only"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.38.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "M10 10z",
+          "expected": "M10 10z",
+          "actual": "m10 10z",
+          "attributes": {
+            "d": "M10 10z",
+            "stroke": "#00f",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 7,
+          "svgoBytes": 7,
+          "ourBytes": 7,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 0,
+          "classification": "initial-move-case-only"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.39.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "M 10 50 h 10 v 0",
+          "expected": "M10 50h10",
+          "actual": "m10 50 10 0h0",
+          "attributes": {
+            "d": "M 10 50 h 10 v 0",
+            "stroke": "#00f",
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 16,
+          "svgoBytes": 9,
+          "ourBytes": 13,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": null,
+          "classification": "zero-segment-preservation"
+        }
+      ]
+    },
+    {
+      "file": "convertPathData.40.svg.txt",
+      "upstreamPasses": [
+        true,
+        true
+      ],
+      "cases": [
+        {
+          "number": 1,
+          "source": "M10 10t20 0t20 20",
+          "expected": "M10 10h20q20 0 20 20",
+          "actual": "m10 10t20 0 20 20",
+          "attributes": {
+            "d": "M10 10t20 0t20 20"
+          },
+          "flattenedTransform": null,
+          "transformSampledDifference": null,
+          "independentParserMatches": true,
+          "inputBytes": 17,
+          "svgoBytes": 20,
+          "ourBytes": 17,
+          "sameText": false,
+          "stable": true,
+          "ourSampledDifference": 0,
+          "svgoSampledDifference": 5,
+          "classification": "straight-quadratic-reduction"
+        }
+      ]
+    }
+  ]
+}

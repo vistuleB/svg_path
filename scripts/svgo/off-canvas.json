@@ -1,0 +1,460 @@
+[
+  {
+    "file": "removeOffCanvasPaths.01.svg.txt",
+    "element": 1,
+    "bounds": {
+      "min": {
+        "x": 10,
+        "y": 10
+      },
+      "max": {
+        "x": 90,
+        "y": 90
+      }
+    },
+    "viewport": [
+      0,
+      0,
+      100,
+      100
+    ],
+    "boundsOverlap": true,
+    "retained": true,
+    "classification": "bounds-consistent-with-fixture-culling"
+  },
+  {
+    "file": "removeOffCanvasPaths.01.svg.txt",
+    "element": 2,
+    "bounds": {
+      "min": {
+        "x": 10,
+        "y": -90
+      },
+      "max": {
+        "x": 90,
+        "y": -10
+      }
+    },
+    "viewport": [
+      0,
+      0,
+      100,
+      100
+    ],
+    "boundsOverlap": false,
+    "retained": false,
+    "classification": "bounds-consistent-with-fixture-culling"
+  },
+  {
+    "file": "removeOffCanvasPaths.01.svg.txt",
+    "element": 3,
+    "bounds": {
+      "min": {
+        "x": 110,
+        "y": 10
+      },
+      "max": {
+        "x": 190,
+        "y": 90
+      }
+    },
+    "viewport": [
+      0,
+      0,
+      100,
+      100
+    ],
+    "boundsOverlap": false,
+    "retained": false,
+    "classification": "bounds-consistent-with-fixture-culling"
+  },
+  {
+    "file": "removeOffCanvasPaths.01.svg.txt",
+    "element": 4,
+    "bounds": {
+      "min": {
+        "x": 10,
+        "y": 110
+      },
+      "max": {
+        "x": 90,
+        "y": 190
+      }
+    },
+    "viewport": [
+      0,
+      0,
+      100,
+      100
+    ],
+    "boundsOverlap": false,
+    "retained": false,
+    "classification": "bounds-consistent-with-fixture-culling"
+  },
+  {
+    "file": "removeOffCanvasPaths.01.svg.txt",
+    "element": 5,
+    "bounds": {
+      "min": {
+        "x": -90,
+        "y": 10
+      },
+      "max": {
+        "x": -10,
+        "y": 90
+      }
+    },
+    "viewport": [
+      0,
+      0,
+      100,
+      100
+    ],
+    "boundsOverlap": false,
+    "retained": false,
+    "classification": "bounds-consistent-with-fixture-culling"
+  },
+  {
+    "file": "removeOffCanvasPaths.02.svg.txt",
+    "element": 1,
+    "bounds": {
+      "min": {
+        "x": 10,
+        "y": 10
+      },
+      "max": {
+        "x": 90,
+        "y": 90
+      }
+    },
+    "viewport": [
+      0,
+      0,
+      1000,
+      1000
+    ],
+    "boundsOverlap": true,
+    "retained": true,
+    "classification": "bounds-consistent-with-fixture-culling"
+  },
+  {
+    "file": "removeOffCanvasPaths.02.svg.txt",
+    "element": 2,
+    "bounds": {
+      "min": {
+        "x": 10,
+        "y": -90
+      },
+      "max": {
+        "x": 90,
+        "y": -10
+      }
+    },
+    "viewport": [
+      0,
+      0,
+      1000,
+      1000
+    ],
+    "boundsOverlap": false,
+    "retained": false,
+    "classification": "bounds-consistent-with-fixture-culling"
+  },
+  {
+    "file": "removeOffCanvasPaths.02.svg.txt",
+    "element": 3,
+    "bounds": {
+      "min": {
+        "x": 110,
+        "y": 10
+      },
+      "max": {
+        "x": 190,
+        "y": 90
+      }
+    },
+    "viewport": [
+      0,
+      0,
+      1000,
+      1000
+    ],
+    "boundsOverlap": true,
+    "retained": true,
+    "classification": "bounds-consistent-with-fixture-culling"
+  },
+  {
+    "file": "removeOffCanvasPaths.02.svg.txt",
+    "element": 4,
+    "bounds": {
+      "min": {
+        "x": 10,
+        "y": 110
+      },
+      "max": {
+        "x": 90,
+        "y": 190
+      }
+    },
+    "viewport": [
+      0,
+      0,
+      1000,
+      1000
+    ],
+    "boundsOverlap": true,
+    "retained": true,
+    "classification": "bounds-consistent-with-fixture-culling"
+  },
+  {
+    "file": "removeOffCanvasPaths.02.svg.txt",
+    "element": 5,
+    "bounds": {
+      "min": {
+        "x": -90,
+        "y": 10
+      },
+      "max": {
+        "x": -10,
+        "y": 90
+      }
+    },
+    "viewport": [
+      0,
+      0,
+      1000,
+      1000
+    ],
+    "boundsOverlap": false,
+    "retained": false,
+    "classification": "bounds-consistent-with-fixture-culling"
+  },
+  {
+    "file": "removeOffCanvasPaths.03.svg.txt",
+    "element": 1,
+    "bounds": {
+      "min": {
+        "x": 0,
+        "y": 0
+      },
+      "max": {
+        "x": 128,
+        "y": 128
+      }
+    },
+    "viewport": [
+      0,
+      0,
+      128,
+      128
+    ],
+    "boundsOverlap": true,
+    "retained": true,
+    "classification": "bounds-consistent-with-fixture-culling"
+  },
+  {
+    "file": "removeOffCanvasPaths.03.svg.txt",
+    "element": 2,
+    "bounds": {
+      "min": {
+        "x": 10.14,
+        "y": 51.5
+      },
+      "max": {
+        "x": 17.514714800544123,
+        "y": 62.66
+      }
+    },
+    "viewport": [
+      0,
+      0,
+      128,
+      128
+    ],
+    "boundsOverlap": true,
+    "retained": true,
+    "classification": "bounds-consistent-with-fixture-culling"
+  },
+  {
+    "file": "removeOffCanvasPaths.03.svg.txt",
+    "element": 3,
+    "bounds": {
+      "min": {
+        "x": 100,
+        "y": 200
+      },
+      "max": {
+        "x": 107.37471480054413,
+        "y": 211.16
+      }
+    },
+    "viewport": [
+      0,
+      0,
+      128,
+      128
+    ],
+    "boundsOverlap": false,
+    "retained": false,
+    "classification": "bounds-consistent-with-fixture-culling"
+  },
+  {
+    "file": "removeOffCanvasPaths.04.svg.txt",
+    "element": 1,
+    "bounds": {
+      "min": {
+        "x": 13,
+        "y": 84.5
+      },
+      "max": {
+        "x": 115,
+        "y": 107.3
+      }
+    },
+    "viewport": [
+      0,
+      0,
+      128,
+      128
+    ],
+    "boundsOverlap": true,
+    "retained": true,
+    "classification": "bounds-consistent-with-fixture-culling"
+  },
+  {
+    "file": "removeOffCanvasPaths.05.svg.txt",
+    "element": 1,
+    "bounds": {
+      "min": {
+        "x": 0,
+        "y": 0
+      },
+      "max": {
+        "x": 50,
+        "y": 50
+      }
+    },
+    "viewport": [
+      0,
+      0,
+      100,
+      100
+    ],
+    "boundsOverlap": true,
+    "retained": true,
+    "classification": "bounds-consistent-with-fixture-culling"
+  },
+  {
+    "file": "removeOffCanvasPaths.05.svg.txt",
+    "element": 3,
+    "bounds": {
+      "min": {
+        "x": 50,
+        "y": 50
+      },
+      "max": {
+        "x": 100,
+        "y": 100
+      }
+    },
+    "viewport": [
+      0,
+      0,
+      100,
+      100
+    ],
+    "boundsOverlap": true,
+    "retained": true,
+    "classification": "bounds-consistent-with-fixture-culling"
+  },
+  {
+    "file": "removeOffCanvasPaths.06.svg.txt",
+    "element": 1,
+    "bounds": {
+      "min": {
+        "x": 10,
+        "y": 10
+      },
+      "max": {
+        "x": 90,
+        "y": 90
+      }
+    },
+    "viewport": null,
+    "boundsOverlap": null,
+    "retained": true,
+    "classification": "no-viewport-no-culling-contract"
+  },
+  {
+    "file": "removeOffCanvasPaths.06.svg.txt",
+    "element": 2,
+    "bounds": {
+      "min": {
+        "x": 10,
+        "y": -90
+      },
+      "max": {
+        "x": 90,
+        "y": -10
+      }
+    },
+    "viewport": null,
+    "boundsOverlap": null,
+    "retained": true,
+    "classification": "no-viewport-no-culling-contract"
+  },
+  {
+    "file": "removeOffCanvasPaths.06.svg.txt",
+    "element": 3,
+    "bounds": {
+      "min": {
+        "x": 110,
+        "y": 10
+      },
+      "max": {
+        "x": 190,
+        "y": 90
+      }
+    },
+    "viewport": null,
+    "boundsOverlap": null,
+    "retained": true,
+    "classification": "no-viewport-no-culling-contract"
+  },
+  {
+    "file": "removeOffCanvasPaths.06.svg.txt",
+    "element": 4,
+    "bounds": {
+      "min": {
+        "x": 10,
+        "y": 110
+      },
+      "max": {
+        "x": 90,
+        "y": 190
+      }
+    },
+    "viewport": null,
+    "boundsOverlap": null,
+    "retained": true,
+    "classification": "no-viewport-no-culling-contract"
+  },
+  {
+    "file": "removeOffCanvasPaths.06.svg.txt",
+    "element": 5,
+    "bounds": {
+      "min": {
+        "x": -90,
+        "y": 10
+      },
+      "max": {
+        "x": -10,
+        "y": 90
+      }
+    },
+    "viewport": null,
+    "boundsOverlap": null,
+    "retained": true,
+    "classification": "no-viewport-no-culling-contract"
+  }
+]

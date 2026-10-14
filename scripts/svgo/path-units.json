@@ -1,0 +1,713 @@
+[
+  {
+    "test": "should allow spaces between commands",
+    "kind": "parse",
+    "input": "M0 10 L \n\r\t20 30",
+    "expected": [
+      {
+        "command": "M",
+        "args": [
+          0,
+          10
+        ]
+      },
+      {
+        "command": "L",
+        "args": [
+          20,
+          30
+        ]
+      }
+    ],
+    "accepted": true,
+    "classification": "matching-geometry"
+  },
+  {
+    "test": "should allow spaces and commas between arguments",
+    "kind": "parse",
+    "input": "M0 , 10 L 20 \n\r\t30,40,50",
+    "expected": [
+      {
+        "command": "M",
+        "args": [
+          0,
+          10
+        ]
+      },
+      {
+        "command": "L",
+        "args": [
+          20,
+          30
+        ]
+      },
+      {
+        "command": "L",
+        "args": [
+          40,
+          50
+        ]
+      }
+    ],
+    "accepted": true,
+    "classification": "matching-geometry"
+  },
+  {
+    "test": "should forbid commas before commands",
+    "kind": "parse",
+    "input": ", M0 10",
+    "expected": [],
+    "accepted": false,
+    "classification": "strict-error-versus-prefix-recovery"
+  },
+  {
+    "test": "should forbid commas between commands",
+    "kind": "parse",
+    "input": "M0,10 , L 20,30",
+    "expected": [
+      {
+        "command": "M",
+        "args": [
+          0,
+          10
+        ]
+      }
+    ],
+    "accepted": false,
+    "classification": "strict-error-versus-prefix-recovery"
+  },
+  {
+    "test": "should forbid commas between command name and argument",
+    "kind": "parse",
+    "input": "M0,10 L,20,30",
+    "expected": [
+      {
+        "command": "M",
+        "args": [
+          0,
+          10
+        ]
+      }
+    ],
+    "accepted": false,
+    "classification": "strict-error-versus-prefix-recovery"
+  },
+  {
+    "test": "should forbid multiple commas in a row",
+    "kind": "parse",
+    "input": "M0 , , 10",
+    "expected": [],
+    "accepted": false,
+    "classification": "strict-error-versus-prefix-recovery"
+  },
+  {
+    "test": "should stop when unknown char appears",
+    "kind": "parse",
+    "input": "M0 10 , L 20 #40",
+    "expected": [
+      {
+        "command": "M",
+        "args": [
+          0,
+          10
+        ]
+      }
+    ],
+    "accepted": false,
+    "classification": "strict-error-versus-prefix-recovery"
+  },
+  {
+    "test": "should stop when not enough arguments",
+    "kind": "parse",
+    "input": "M0 10 L 20 L 30 40",
+    "expected": [
+      {
+        "command": "M",
+        "args": [
+          0,
+          10
+        ]
+      }
+    ],
+    "accepted": false,
+    "classification": "strict-error-versus-prefix-recovery"
+  },
+  {
+    "test": "should stop if moveto not the first command",
+    "kind": "parse",
+    "input": "L 10 20",
+    "expected": [],
+    "accepted": false,
+    "classification": "strict-error-versus-prefix-recovery"
+  },
+  {
+    "test": "should stop if moveto not the first command",
+    "kind": "parse",
+    "input": "10 20",
+    "expected": [],
+    "accepted": false,
+    "classification": "strict-error-versus-prefix-recovery"
+  },
+  {
+    "test": "should stop on invalid scientific notation",
+    "kind": "parse",
+    "input": "M 0 5e++1 L 0 0",
+    "expected": [
+      {
+        "command": "M",
+        "args": [
+          0,
+          5
+        ]
+      }
+    ],
+    "accepted": false,
+    "classification": "strict-error-versus-prefix-recovery"
+  },
+  {
+    "test": "should stop on invalid numbers",
+    "kind": "parse",
+    "input": "M ...",
+    "expected": [],
+    "accepted": false,
+    "classification": "strict-error-versus-prefix-recovery"
+  },
+  {
+    "test": "should handle arcs",
+    "kind": "parse",
+    "input": "\n          M600,350\n          l 50,-25\n          a25,25 -30 0,1 50,-25\n          25,50 -30 0,1 50,-25\n          25,75 -30 01.2,-25\n          a25,100 -30 0150,-25\n          l 50,-25\n        ",
+    "expected": [
+      {
+        "command": "M",
+        "args": [
+          600,
+          350
+        ]
+      },
+      {
+        "command": "l",
+        "args": [
+          50,
+          -25
+        ]
+      },
+      {
+        "command": "a",
+        "args": [
+          25,
+          25,
+          -30,
+          0,
+          1,
+          50,
+          -25
+        ]
+      },
+      {
+        "command": "a",
+        "args": [
+          25,
+          50,
+          -30,
+          0,
+          1,
+          50,
+          -25
+        ]
+      },
+      {
+        "command": "a",
+        "args": [
+          25,
+          75,
+          -30,
+          0,
+          1,
+          0.2,
+          -25
+        ]
+      },
+      {
+        "command": "a",
+        "args": [
+          25,
+          100,
+          -30,
+          0,
+          1,
+          50,
+          -25
+        ]
+      },
+      {
+        "command": "l",
+        "args": [
+          50,
+          -25
+        ]
+      }
+    ],
+    "accepted": true,
+    "classification": "matching-geometry"
+  },
+  {
+    "test": "should normalize signed arc radii",
+    "kind": "parse",
+    "input": "M0 0A-10 +20 0 0 1 30 40a+50 -60 0 1 0 70 80",
+    "expected": [
+      {
+        "command": "M",
+        "args": [
+          0,
+          0
+        ]
+      },
+      {
+        "command": "A",
+        "args": [
+          10,
+          20,
+          0,
+          0,
+          1,
+          30,
+          40
+        ]
+      },
+      {
+        "command": "a",
+        "args": [
+          50,
+          60,
+          0,
+          1,
+          0,
+          70,
+          80
+        ]
+      }
+    ],
+    "accepted": true,
+    "classification": "explicit-radius-normalization"
+  },
+  {
+    "test": "should combine sequence of the same commands",
+    "kind": "serialize",
+    "options": {
+      "pathData": [
+        {
+          "command": "M",
+          "args": [
+            0,
+            0
+          ]
+        },
+        {
+          "command": "h",
+          "args": [
+            10
+          ]
+        },
+        {
+          "command": "h",
+          "args": [
+            20
+          ]
+        },
+        {
+          "command": "h",
+          "args": [
+            30
+          ]
+        },
+        {
+          "command": "H",
+          "args": [
+            40
+          ]
+        },
+        {
+          "command": "H",
+          "args": [
+            50
+          ]
+        }
+      ]
+    },
+    "expected": "M0 0h10 20 30H40 50",
+    "actual": "m0 0 10 0h20 30-20 10",
+    "classification": "geometry-model-versus-command-list-serialization"
+  },
+  {
+    "test": "should not combine sequence of moveto",
+    "kind": "serialize",
+    "options": {
+      "pathData": [
+        {
+          "command": "M",
+          "args": [
+            0,
+            0
+          ]
+        },
+        {
+          "command": "M",
+          "args": [
+            10,
+            10
+          ]
+        },
+        {
+          "command": "m",
+          "args": [
+            20,
+            30
+          ]
+        },
+        {
+          "command": "m",
+          "args": [
+            40,
+            50
+          ]
+        }
+      ]
+    },
+    "expected": "M0 0M10 10m20 30m40 50",
+    "actual": "m0 0m10 10m20 30m40 50",
+    "classification": "geometry-model-versus-command-list-serialization"
+  },
+  {
+    "test": "should combine moveto and sequence of lineto",
+    "kind": "serialize",
+    "options": {
+      "pathData": [
+        {
+          "command": "M",
+          "args": [
+            0,
+            0
+          ]
+        },
+        {
+          "command": "l",
+          "args": [
+            10,
+            10
+          ]
+        },
+        {
+          "command": "M",
+          "args": [
+            0,
+            0
+          ]
+        },
+        {
+          "command": "l",
+          "args": [
+            10,
+            10
+          ]
+        },
+        {
+          "command": "M",
+          "args": [
+            0,
+            0
+          ]
+        },
+        {
+          "command": "L",
+          "args": [
+            10,
+            10
+          ]
+        }
+      ]
+    },
+    "expected": "m0 0 10 10M0 0l10 10M0 0 10 10",
+    "actual": "m0 0 10 10m-10-10 10 10m-10-10 10 10",
+    "classification": "geometry-model-versus-command-list-serialization"
+  },
+  {
+    "test": "should combine moveto and sequence of lineto",
+    "kind": "serialize",
+    "options": {
+      "pathData": [
+        {
+          "command": "m",
+          "args": [
+            0,
+            0
+          ]
+        },
+        {
+          "command": "L",
+          "args": [
+            10,
+            10
+          ]
+        }
+      ]
+    },
+    "expected": "M0 0 10 10",
+    "actual": "m0 0 10 10",
+    "classification": "geometry-model-versus-command-list-serialization"
+  },
+  {
+    "test": "should avoid space before first, negative and decimals",
+    "kind": "serialize",
+    "options": {
+      "pathData": [
+        {
+          "command": "M",
+          "args": [
+            0,
+            -1.2
+          ]
+        },
+        {
+          "command": "L",
+          "args": [
+            0.3,
+            4
+          ]
+        },
+        {
+          "command": "L",
+          "args": [
+            5,
+            -0.6
+          ]
+        },
+        {
+          "command": "L",
+          "args": [
+            7,
+            0.8
+          ]
+        }
+      ]
+    },
+    "expected": "M0-1.2.3 4 5-.6 7 .8",
+    "actual": "m0-1.2 .3 5.2 4.7-4.6 2 1.4",
+    "classification": "geometry-model-versus-command-list-serialization"
+  },
+  {
+    "test": "should have a space before scientific notation",
+    "kind": "serialize",
+    "options": {
+      "pathData": [
+        {
+          "command": "M",
+          "args": [
+            0.1,
+            1e-7
+          ]
+        },
+        {
+          "command": "L",
+          "args": [
+            2,
+            2
+          ]
+        }
+      ],
+      "precision": 7
+    },
+    "expected": "M.1 1e-7 2 2",
+    "actual": "m.1.0000001 1.9 1.9999999",
+    "classification": "geometry-model-versus-command-list-serialization"
+  },
+  {
+    "test": "should configure precision",
+    "kind": "serialize",
+    "options": {
+      "pathData": [
+        {
+          "command": "M",
+          "args": [
+            0,
+            -1.9876
+          ]
+        },
+        {
+          "command": "L",
+          "args": [
+            0.3,
+            3.14159265
+          ]
+        },
+        {
+          "command": "L",
+          "args": [
+            -0.3,
+            -3.14159265
+          ]
+        },
+        {
+          "command": "L",
+          "args": [
+            100,
+            200
+          ]
+        }
+      ],
+      "precision": 3
+    },
+    "expected": "M0-1.988.3 3.142-.3-3.142 100 200",
+    "actual": "m0-1.988 .3 5.13-.6-6.284 100.3 203.142",
+    "classification": "geometry-model-versus-command-list-serialization"
+  },
+  {
+    "test": "should configure precision",
+    "kind": "serialize",
+    "options": {
+      "pathData": [
+        {
+          "command": "M",
+          "args": [
+            0,
+            -1.9876
+          ]
+        },
+        {
+          "command": "L",
+          "args": [
+            0.3,
+            3.14159265
+          ]
+        },
+        {
+          "command": "L",
+          "args": [
+            -0.3,
+            -3.14159265
+          ]
+        },
+        {
+          "command": "L",
+          "args": [
+            100,
+            200
+          ]
+        }
+      ],
+      "precision": 0
+    },
+    "expected": "M0-2 0 3 0-3 100 200",
+    "actual": "m0-2 0 5v-6l100 203",
+    "classification": "geometry-model-versus-command-list-serialization"
+  },
+  {
+    "test": "allows to avoid spaces after arc flags",
+    "kind": "serialize",
+    "options": {
+      "pathData": [
+        {
+          "command": "M",
+          "args": [
+            0,
+            0
+          ]
+        },
+        {
+          "command": "A",
+          "args": [
+            50,
+            50,
+            10,
+            1,
+            0,
+            0.2,
+            20
+          ]
+        },
+        {
+          "command": "a",
+          "args": [
+            50,
+            50,
+            10,
+            1,
+            0,
+            0.2,
+            20
+          ]
+        },
+        {
+          "command": "a",
+          "args": [
+            50,
+            50,
+            10,
+            1,
+            0,
+            0.2,
+            20
+          ]
+        }
+      ],
+      "disableSpaceAfterFlags": false
+    },
+    "expected": "M0 0A50 50 10 1 0 .2 20a50 50 10 1 0 .2 20 50 50 10 1 0 .2 20",
+    "actual": "m0 0a50 50 10 10.2 20 50 50 10 10.2 20 50 50 10 10.2 20",
+    "classification": "geometry-model-versus-command-list-serialization"
+  },
+  {
+    "test": "allows to avoid spaces after arc flags",
+    "kind": "serialize",
+    "options": {
+      "pathData": [
+        {
+          "command": "M",
+          "args": [
+            0,
+            0
+          ]
+        },
+        {
+          "command": "A",
+          "args": [
+            50,
+            50,
+            10,
+            1,
+            0,
+            0.2,
+            20
+          ]
+        },
+        {
+          "command": "a",
+          "args": [
+            50,
+            50,
+            10,
+            1,
+            0,
+            0.2,
+            20
+          ]
+        },
+        {
+          "command": "a",
+          "args": [
+            50,
+            50,
+            10,
+            1,
+            0,
+            0.2,
+            20
+          ]
+        }
+      ],
+      "disableSpaceAfterFlags": true
+    },
+    "expected": "M0 0A50 50 10 10.2 20a50 50 10 10.2 20 50 50 10 10.2 20",
+    "actual": "m0 0a50 50 10 10.2 20 50 50 10 10.2 20 50 50 10 10.2 20",
+    "classification": "geometry-model-versus-command-list-serialization"
+  }
+]
