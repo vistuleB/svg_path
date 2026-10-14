@@ -9,6 +9,20 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## 3.1.1 - 2026-10-14
+
+- Remove optional numeric separators in compact path output while preserving
+  required integer boundaries and arc flags.
+- Prefer shorter initial H/V commands when enabled, and shorter scientific
+  notation for already-rounded, unpadded AtMost numbers in compact output.
+  **Compact output strings can change.** Fixed and padded numeric layouts
+  retain their contracts; public signatures and options are unchanged.
+- Add regressions and a tested caller recipe choosing the shorter whole-path
+  absolute or relative output. Document explicit SVG arc normalization and
+  the distinction between decimal precision and geometric error.
+- Record the SVGO fixture audit and serializer policy experiments in the Gleam
+  repository; this is not a claim of whole-document SVGO parity.
+
 ## 3.1.0 - 2026-10-14
 
 - Add `affine.decompose`, `decompose_with_order`, and `recompose`, with typed
