@@ -9,6 +9,45 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## 3.1.0 - 2026-10-14
+
+- Add `affine.decompose`, `decompose_with_order`, and `recompose`, with typed
+  decomposition results and all 24 orders of translation, rotation, x-shear,
+  and scale. The default algebraic order is Translation × Rotation × ShearX ×
+  Scale; the rightmost factor acts first.
+- Check successful factorizations against the input and distinguish impossible
+  orders from numerical failures. Document singular cases, canonical signs,
+  quadratic boundary tolerance, factor sensitivity, and extreme-range limits.
+  Normalization underflow is reported as a numerical failure rather than an
+  impossible order.
+- Use affine factorization for general readable transform serialization while
+  retaining simple forms such as `skewY`. Add `transform/serialize.to_string_in_order`
+  for strict ordered output. Check rounded SVG factors and use matrix fallback
+  in ordinary formatting, or return an explicit error for ordered formatting.
+- Existing public signatures remain compatible. **Pretty-printed strings can
+  change**, including general `skewX` factorizations and signed scales for
+  reflections. Output does not preserve construction history; decimal settings
+  still govern rounding. Use `force_matrix` when matrix notation is required.
+- Add numerical regressions across both targets and adapt all 52 saved Paper.js
+  matrix decomposition assertions: 47 direct matches and five equivalent
+  `-180°` / `+180°` endpoint conventions. Supplement the 26 input cases with
+  recomposition and transform serialization round trips. This is not a claim of
+  complete Paper.js compatibility.
+
+- Reconstruct binary CSG boundaries using the arrangement's cyclic edge order
+  and per-operand face windings. Preserve narrow filled regions, tangent joins,
+  source multiplicity, and implicit closing edges; discard exact closed retraces.
+- Recover rejected polynomial line crossings in Bernstein form, checking the
+  geometric residual and iteration limit. Canonicalize signed-zero root candidates.
+- Preserve certified full polynomial overlaps when endpoint projections produce
+  competing nearby addresses; require a control-point bound and shared monotonicity.
+- Ignore exact zero-length lines beside curves during offset/stroke normalization,
+  preserving all-point and invalid-arc error behavior.
+- Make long-path construction and SVG parsing stack-safe, including long numeric
+  inputs, repeated commands, and implicit command groups.
+- Organize Paper.js-derived checks separately from native regressions and document
+  known API differences. This audit does not claim complete Paper.js equivalence.
+
 ## 3.0.1 - 2026-10-12
 
 - Recover near-endpoint ray crossings when coefficient-relative polynomial roots

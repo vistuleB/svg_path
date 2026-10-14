@@ -205,7 +205,7 @@ and traveled distances remain distinct, and the nearest-point derivative is
 not assumed to be a unit tangent.
 
 The following block is compiled as
-[`test/readme_recipes.gleam`](https://github.com/vistuleB/svg_path/blob/v3.0.1/test/readme_recipes.gleam) and exercised by the
+[`test/readme_recipes.gleam`](https://github.com/vistuleB/svg_path/blob/v3.1.0/test/readme_recipes.gleam) and exercised by the
 recipe tests. CI checks that the README and compiled source stay identical.
 
 <!-- tested-recipes:start -->
@@ -1499,7 +1499,7 @@ There is a similar difference between `M 0,0` and `M 0,0 Z`, with the `Z`
 command "supplying" a zero-length line segment to the subpath:
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v3.0.1/figures/zero_length_closepath_probe.svg" alt="Zero-length closepath probe">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v3.1.0/figures/zero_length_closepath_probe.svg" alt="Zero-length closepath probe">
 </center>
 
 ```xml
@@ -1571,6 +1571,35 @@ which corresponds to:
 x' = a*x + c*y + e
 y' = b*x + d*y + f
 ```
+
+`affine.decompose(matrix)` returns numerical factors in algebraic order
+`Translation × Rotation × ShearX × Scale`. For another order, use
+`affine.decompose_with_order(matrix, order: affine.ScaleTranslationRotationShearX)`.
+`DecompositionOrder` has all 24 permutations. The result retains its order;
+`affine.recompose(factors)` uses that order automatically. The rightmost factor
+acts first on a point.
+
+Factors contain translation x/y, rotation in degrees, a dimensionless x-shear
+coefficient (not a skew angle), and x/y scales. The default order chooses positive
+x-scale and puts reflections in y-scale; other orders have documented canonical
+sign and quadratic-branch choices. These choices are deterministic, but need
+not vary continuously along an animation.
+
+Successful results reconstruct each linear column and the translation vector
+within relative max-norm error `1e-12`. Leading translation is retained exactly.
+Singular maps are supported when the requested order permits them; translation
+after a collapsed scale must lie in the surviving image. Some orders cannot
+represent even every invertible matrix. The solver reports
+`NoFactorizationInOrder(order:)` separately from `DecompositionNonFinite` and
+`DecompositionUnstable`, and never silently substitutes another order.
+Near a quadratic double root, success certifies the nearby reconstruction, not
+exact algebraic solvability: an input just outside the exact boundary may be
+accepted within the reconstruction tolerance. Large scale differences can also
+cause a numerical failure for a mathematically possible order. Factor accuracy
+and continuity are not guaranteed by accurate reconstruction.
+See the [factorization derivations and limitations](https://github.com/vistuleB/svg_path/blob/v3.1.0/docs/affine-factorization-plan.md).
+The transform serializer uses the same solver for general readable SVG
+transform strings, while preserving direct forms such as `skewY(...)`.
 
 The ordinary `segment`, `subpath`, and `path` transform functions preserve
 segment types and return `DegenerateArcTransform` when an affine transform
@@ -1654,21 +1683,53 @@ translate(10) scale(2) skewX(3)
 Its errors use the same `ParseError(reason:, remaining:)` convention as the
 path-data parser.
 
-Transform serialization prefers readable SVG forms when the matrix can be
-recognized clearly:
+Transform serialization keeps simple forms such as `skewX` and `skewY`, and
+uses the standard `Translation × Rotation × ShearX × Scale` factorization for
+general matrices:
 
 ```text
 translate(10 20)
 translate(10 20) scale(2)
 rotate(30)
 translate(10 20) rotate(30) scale(2 3)
+translate(10 20) rotate(30) skewX(15) scale(2 3)
 ```
 
-If no clearer representation is available, it falls back to:
+If factorization fails or the rounded SVG factors fail the reconstruction
+check, it falls back to:
 
 ```text
 matrix(a b c d e f)
 ```
+
+The formatter parses its generated factors and checks each linear column and
+translation vector. Its max-norm error budget is
+`max(1, input vector norm) × max(1e-12, 10^-decimal_places)`; with
+`decimal_places: None`, the second factor is `1e-12`. Negative decimal places
+mean zero. This catches, for example, a large shear whose SVG angle rounds too
+close to 90°. Matrix fallback still rounds its coefficients: neither output
+form guarantees exact equivalence. Readable output is deterministic, but is not
+necessarily shortest and does not preserve construction history or animation
+continuity. Exact output strings may change as recognition improves.
+
+For a strict order, use the same `affine.DecompositionOrder` type:
+
+```gleam
+serialize.to_string_in_order(
+  matrix,
+  order: affine.ScaleTranslationRotationShearX,
+  options: serialize.decimal_options(10),
+)
+```
+
+This returns `Result(String, serialize.Error)`. It honors the requested
+algebraic order (rightmost acts first), omitting identity factors and negligible
+arithmetic noise. It never silently substitutes another order or matrix form.
+`FactorizationFailed(reason:)` wraps the affine solver's error;
+`InsufficientPrecision` means the rounded SVG factors failed the check;
+`ConflictingMatrixOption` rejects `force_matrix: True` in this strict API.
+Ordinary pretty printing retains a pure `skewY`; explicitly choosing an order
+with `ShearX` instead requests an equivalent factorization where one exists.
 
 Use `force_matrix` when you want the raw matrix form even if a shorter
 transform expression could be detected.
@@ -1870,7 +1931,7 @@ The following open source has no offside stage, so the panels isolate the three
 final-trimming choices:
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v3.0.1/figures/single_offset_final_trimming.svg" alt="Single offset with no final trimming, cusp trimming, and in-band trimming">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v3.1.0/figures/single_offset_final_trimming.svg" alt="Single offset with no final trimming, cusp trimming, and in-band trimming">
 </center>
 
 For closed contours, `offside` is an additional and independent operation. In
@@ -1878,7 +1939,7 @@ this example the source contains oppositely oriented concentric rectangles;
 the final trimming mode is `NoTrimming` in both panels:
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v3.0.1/figures/single_offset_offside_trimming.svg" alt="Single offset of concentric rectangles with offside trimming disabled and enabled">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v3.1.0/figures/single_offset_offside_trimming.svg" alt="Single offset of concentric rectangles with offside trimming disabled and enabled">
 </center>
 
 The defaults are `offside: True` and
@@ -1958,14 +2019,14 @@ The cusp switches act before joint band trimming. The four-concave-corner
 example below holds `in_band: True` while changing the two side-local switches:
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v3.0.1/figures/band_cusp_trimming.svg" alt="Band trimming with both, one, and neither side-local cusp pass enabled">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v3.1.0/figures/band_cusp_trimming.svg" alt="Band trimming with both, one, and neither side-local cusp pass enabled">
 </center>
 
 The figure-eight below holds both cusp switches at `True` and changes only the
 final joint pass:
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v3.0.1/figures/band_in_band_trimming.svg" alt="Figure-eight band with in-band trimming disabled and enabled">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v3.1.0/figures/band_in_band_trimming.svg" alt="Figure-eight band with in-band trimming disabled and enabled">
 </center>
 
 All three band switches default to `True`. Turning a stage off is useful for
@@ -1990,14 +2051,14 @@ or the clipping line would cut behind either join endpoint, it falls back to
 `Bevel`; neighboring segments are not shortened to satisfy a low limit.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v3.0.1/figures/miter_clip_comparison.svg" alt="Computed stroke outlines comparing Miter(4), Miter(1.5), MiterClip(1.5), and Round joins">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v3.1.0/figures/miter_clip_comparison.svg" alt="Computed stroke outlines comparing Miter(4), Miter(1.5), MiterClip(1.5), and Round joins">
 </p>
 
 The same source and stroke width are used in each panel. An over-limit `Miter`
 bevels the corner; `MiterClip` preserves the tip up to the clipping line.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v3.0.1/figures/miter_clip_limits.svg" alt="Computed MiterClip stroke outlines with limits 0.5, 1, 1.5, and 2">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v3.1.0/figures/miter_clip_limits.svg" alt="Computed MiterClip stroke outlines with limits 0.5, 1, 1.5, and 2">
 </p>
 
 Varying the limit changes how much of the tip is retained. Limits that would
@@ -2024,7 +2085,7 @@ falls back to `Bevel`. Limits must be finite and positive; an unsuccessful
 circle construction reports `ConstructionFailed`.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v3.0.1/figures/arcs_join_self_intersection.svg" alt="Self-intersecting curved stroke comparing MiterClip, Round, Arcs, and clipped Arcs joins">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v3.1.0/figures/arcs_join_self_intersection.svg" alt="Self-intersecting curved stroke comparing MiterClip, Round, Arcs, and clipped Arcs joins">
 </p>
 
 Here the two source arcs have unequal curvatures. The stroke intersects itself
@@ -2032,7 +2093,7 @@ near its butt end, leaving an enclosed region; each panel is computed from the
 same source through the public stroke API.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v3.0.1/figures/arcs_join_comparison_2.svg" alt="Curved stroke comparing joins when the Arcs continuation circles initially do not intersect">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v3.1.0/figures/arcs_join_comparison_2.svg" alt="Curved stroke comparing joins when the Arcs continuation circles initially do not intersect">
 </p>
 
 In this example the initial continuation circles do not intersect. `Arcs`
@@ -2088,7 +2149,7 @@ the right panel shows the resulting vertices, directed edges, winding levels,
 and directional multiplicities.
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v3.0.1/figures/arrangement_graph_overlapping_squares.svg" alt="Two overlapping square subpaths and their arrangement graph">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v3.1.0/figures/arrangement_graph_overlapping_squares.svg" alt="Two overlapping square subpaths and their arrangement graph">
 </center>
 
 ```gleam
@@ -2151,7 +2212,7 @@ circle at all four source endpoints and represents each geometric edge once,
 with one occurrence in each direction.
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v3.0.1/figures/arrangement_graph_semantic_circle_overlap.svg" alt="Oppositely directed equal circles with phase-shifted arc subdivisions and their arrangement graph">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v3.1.0/figures/arrangement_graph_semantic_circle_overlap.svg" alt="Oppositely directed equal circles with phase-shifted arc subdivisions and their arrangement graph">
 </center>
 
 `build` is the supported constructor. Direct construction remains possible for
@@ -2177,8 +2238,8 @@ trusts that the supplied source corresponds to the graph.
 ## Path CSG
 
 `svg_path/csg` performs operations on the filled point-sets represented by SVG
-paths. It builds an arrangement graph, measures the winding field on either
-side of its edges, applies the requested fill rule, and reconstructs the
+paths. It builds an arrangement graph, propagates each operand’s winding across its
+faces, applies the requested fill rule, and reconstructs the
 necessary boundary cycles.
 
 ```gleam
@@ -2229,7 +2290,7 @@ black numbers are the winding levels immediately to the left and right of each
 directed edge; its red numbers are forward and reverse source multiplicities.
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v3.0.1/figures/arrangement_csg_nonzero.svg" alt="Eight-panel ArrangementGraph CSG example using the Nonzero fill rule">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v3.1.0/figures/arrangement_csg_nonzero.svg" alt="Eight-panel ArrangementGraph CSG example using the Nonzero fill rule">
 </center>
 
 The same inputs and arrangement produce different Boolean boundaries under
@@ -2238,7 +2299,7 @@ final `nested_contours` panel is unchanged because that unary operation
 preserves the complete signed winding field and does not take a fill rule.
 
 <center>
-  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v3.0.1/figures/arrangement_csg_evenodd.svg" alt="Eight-panel ArrangementGraph CSG example using the EvenOdd fill rule">
+  <img src="https://raw.githubusercontent.com/vistuleB/svg_path/assets-v3.1.0/figures/arrangement_csg_evenodd.svg" alt="Eight-panel ArrangementGraph CSG example using the EvenOdd fill rule">
 </center>
 
 For points away from a boundary:
