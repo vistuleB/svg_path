@@ -120,7 +120,14 @@ fn parse_tokens(
 ) -> Result(svg_path.Path, LocatedError) {
   case tokens {
     [] -> finish(state)
-    [Command(command, at), ..rest] -> parse_command(command, at, rest, state)
+    [Command(command, at), ..rest] -> {
+      // Handlers return the remaining tokens instead of dispatching again.
+      // Keep this recursion direct so JavaScript compiles it to a loop.
+      case parse_command(command, at, rest, state) {
+        Error(error) -> Error(error)
+        Ok(#(rest, state)) -> parse_tokens(rest, state)
+      }
+    }
     [Number(_, at), ..] -> Error(LocatedError(ExpectedCommand, at))
   }
 }
@@ -130,7 +137,7 @@ fn parse_command(
   at: Int,
   tokens: List(Token),
   state: State,
-) -> Result(svg_path.Path, LocatedError) {
+) -> Result(#(List(Token), State), LocatedError) {
   let state = State(..state, at:)
   case command {
     "M" -> parse_move(tokens, state, relative: False)
@@ -160,7 +167,7 @@ fn parse_move(
   tokens: List(Token),
   state: State,
   relative relative: Bool,
-) -> Result(svg_path.Path, LocatedError) {
+) -> Result(#(List(Token), State), LocatedError) {
   case take_pair(tokens, state.end_at) {
     Error(error) -> Error(error)
     Ok(#(x, y, rest)) -> {
@@ -194,7 +201,7 @@ fn parse_implicit_lines(
   tokens: List(Token),
   state: State,
   relative: Bool,
-) -> Result(svg_path.Path, LocatedError) {
+) -> Result(#(List(Token), State), LocatedError) {
   case tokens {
     [Number(_, _), ..] -> {
       case take_pair(tokens, state.end_at) {
@@ -207,7 +214,7 @@ fn parse_implicit_lines(
         }
       }
     }
-    _ -> parse_tokens(tokens, state)
+    _ -> Ok(#(tokens, state))
   }
 }
 
@@ -215,7 +222,7 @@ fn parse_line(
   tokens: List(Token),
   state: State,
   relative relative: Bool,
-) -> Result(svg_path.Path, LocatedError) {
+) -> Result(#(List(Token), State), LocatedError) {
   case ensure_current(state) {
     Error(error) -> Error(error)
     Ok(Nil) -> parse_line_loop(tokens, state, relative, parsed_any: False)
@@ -227,7 +234,7 @@ fn parse_line_loop(
   state: State,
   relative: Bool,
   parsed_any parsed_any: Bool,
-) -> Result(svg_path.Path, LocatedError) {
+) -> Result(#(List(Token), State), LocatedError) {
   case tokens {
     [Number(_, _), ..] -> {
       case take_pair(tokens, state.end_at) {
@@ -243,7 +250,7 @@ fn parse_line_loop(
     }
     _ -> {
       case parsed_any {
-        True -> parse_tokens(tokens, state)
+        True -> Ok(#(tokens, state))
         False -> Error(expected_number(tokens, state.end_at))
       }
     }
@@ -254,7 +261,7 @@ fn parse_horizontal(
   tokens: List(Token),
   state: State,
   relative relative: Bool,
-) -> Result(svg_path.Path, LocatedError) {
+) -> Result(#(List(Token), State), LocatedError) {
   case ensure_current(state) {
     Error(error) -> Error(error)
     Ok(Nil) -> parse_horizontal_loop(tokens, state, relative, parsed_any: False)
@@ -266,7 +273,7 @@ fn parse_horizontal_loop(
   state: State,
   relative: Bool,
   parsed_any parsed_any: Bool,
-) -> Result(svg_path.Path, LocatedError) {
+) -> Result(#(List(Token), State), LocatedError) {
   case tokens {
     [Number(x, _), ..rest] -> {
       let target = case relative {
@@ -282,7 +289,7 @@ fn parse_horizontal_loop(
     }
     _ -> {
       case parsed_any {
-        True -> parse_tokens(tokens, state)
+        True -> Ok(#(tokens, state))
         False -> Error(expected_number(tokens, state.end_at))
       }
     }
@@ -293,7 +300,7 @@ fn parse_vertical(
   tokens: List(Token),
   state: State,
   relative relative: Bool,
-) -> Result(svg_path.Path, LocatedError) {
+) -> Result(#(List(Token), State), LocatedError) {
   case ensure_current(state) {
     Error(error) -> Error(error)
     Ok(Nil) -> parse_vertical_loop(tokens, state, relative, parsed_any: False)
@@ -305,7 +312,7 @@ fn parse_vertical_loop(
   state: State,
   relative: Bool,
   parsed_any parsed_any: Bool,
-) -> Result(svg_path.Path, LocatedError) {
+) -> Result(#(List(Token), State), LocatedError) {
   case tokens {
     [Number(y, _), ..rest] -> {
       let target = case relative {
@@ -321,7 +328,7 @@ fn parse_vertical_loop(
     }
     _ -> {
       case parsed_any {
-        True -> parse_tokens(tokens, state)
+        True -> Ok(#(tokens, state))
         False -> Error(expected_number(tokens, state.end_at))
       }
     }
@@ -332,7 +339,7 @@ fn parse_quadratic_bezier(
   tokens: List(Token),
   state: State,
   relative relative: Bool,
-) -> Result(svg_path.Path, LocatedError) {
+) -> Result(#(List(Token), State), LocatedError) {
   case ensure_current(state) {
     Error(error) -> Error(error)
     Ok(Nil) ->
@@ -345,7 +352,7 @@ fn parse_quadratic_bezier_loop(
   state: State,
   relative: Bool,
   parsed_any parsed_any: Bool,
-) -> Result(svg_path.Path, LocatedError) {
+) -> Result(#(List(Token), State), LocatedError) {
   case tokens {
     [Number(_, _), ..] -> {
       case take_quadratic_bezier(tokens, state.end_at) {
@@ -373,7 +380,7 @@ fn parse_quadratic_bezier_loop(
     }
     _ -> {
       case parsed_any {
-        True -> parse_tokens(tokens, state)
+        True -> Ok(#(tokens, state))
         False -> Error(expected_number(tokens, state.end_at))
       }
     }
@@ -384,7 +391,7 @@ fn parse_smooth_quadratic_bezier(
   tokens: List(Token),
   state: State,
   relative relative: Bool,
-) -> Result(svg_path.Path, LocatedError) {
+) -> Result(#(List(Token), State), LocatedError) {
   case ensure_current(state) {
     Error(error) -> Error(error)
     Ok(Nil) ->
@@ -402,7 +409,7 @@ fn parse_smooth_quadratic_bezier_loop(
   state: State,
   relative: Bool,
   parsed_any parsed_any: Bool,
-) -> Result(svg_path.Path, LocatedError) {
+) -> Result(#(List(Token), State), LocatedError) {
   case tokens {
     [Number(_, _), ..] -> {
       case take_pair(tokens, state.end_at) {
@@ -430,7 +437,7 @@ fn parse_smooth_quadratic_bezier_loop(
     }
     _ -> {
       case parsed_any {
-        True -> parse_tokens(tokens, state)
+        True -> Ok(#(tokens, state))
         False -> Error(expected_number(tokens, state.end_at))
       }
     }
@@ -441,7 +448,7 @@ fn parse_cubic_bezier(
   tokens: List(Token),
   state: State,
   relative relative: Bool,
-) -> Result(svg_path.Path, LocatedError) {
+) -> Result(#(List(Token), State), LocatedError) {
   case ensure_current(state) {
     Error(error) -> Error(error)
     Ok(Nil) ->
@@ -454,7 +461,7 @@ fn parse_cubic_bezier_loop(
   state: State,
   relative: Bool,
   parsed_any parsed_any: Bool,
-) -> Result(svg_path.Path, LocatedError) {
+) -> Result(#(List(Token), State), LocatedError) {
   case tokens {
     [Number(_, _), ..] -> {
       case take_cubic_bezier(tokens, state.end_at) {
@@ -483,7 +490,7 @@ fn parse_cubic_bezier_loop(
     }
     _ -> {
       case parsed_any {
-        True -> parse_tokens(tokens, state)
+        True -> Ok(#(tokens, state))
         False -> Error(expected_number(tokens, state.end_at))
       }
     }
@@ -494,7 +501,7 @@ fn parse_smooth_cubic_bezier(
   tokens: List(Token),
   state: State,
   relative relative: Bool,
-) -> Result(svg_path.Path, LocatedError) {
+) -> Result(#(List(Token), State), LocatedError) {
   case ensure_current(state) {
     Error(error) -> Error(error)
     Ok(Nil) ->
@@ -507,7 +514,7 @@ fn parse_smooth_cubic_bezier_loop(
   state: State,
   relative: Bool,
   parsed_any parsed_any: Bool,
-) -> Result(svg_path.Path, LocatedError) {
+) -> Result(#(List(Token), State), LocatedError) {
   case tokens {
     [Number(_, _), ..] -> {
       case take_smooth_cubic_bezier(tokens, state.end_at) {
@@ -541,7 +548,7 @@ fn parse_smooth_cubic_bezier_loop(
     }
     _ -> {
       case parsed_any {
-        True -> parse_tokens(tokens, state)
+        True -> Ok(#(tokens, state))
         False -> Error(expected_number(tokens, state.end_at))
       }
     }
@@ -552,7 +559,7 @@ fn parse_arc(
   tokens: List(Token),
   state: State,
   relative relative: Bool,
-) -> Result(svg_path.Path, LocatedError) {
+) -> Result(#(List(Token), State), LocatedError) {
   case ensure_current(state) {
     Error(error) -> Error(error)
     Ok(Nil) -> parse_arc_loop(tokens, state, relative, parsed_any: False)
@@ -564,7 +571,7 @@ fn parse_arc_loop(
   state: State,
   relative: Bool,
   parsed_any parsed_any: Bool,
-) -> Result(svg_path.Path, LocatedError) {
+) -> Result(#(List(Token), State), LocatedError) {
   case tokens {
     [Number(_, _), ..] -> {
       case take_arc(tokens, state.end_at) {
@@ -599,7 +606,7 @@ fn parse_arc_loop(
     }
     _ -> {
       case parsed_any {
-        True -> parse_tokens(tokens, state)
+        True -> Ok(#(tokens, state))
         False -> Error(expected_number(tokens, state.end_at))
       }
     }
@@ -632,16 +639,16 @@ fn append_svg_arc(
 fn parse_close(
   tokens: List(Token),
   state: State,
-) -> Result(svg_path.Path, LocatedError) {
+) -> Result(#(List(Token), State), LocatedError) {
   case ensure_current(state) {
     Error(error) -> Error(error)
-    Ok(Nil) if !state.active -> parse_tokens(tokens, state)
+    Ok(Nil) if !state.active -> Ok(#(tokens, state))
     Ok(Nil) -> {
       let start = svg_path.subpath_start(state.subpath)
       case svg_path.subpath_close_with(state.subpath, policy: svg_path.Bridge) {
         Error(error) -> Error(LocatedError(PathError(error), state.at))
         Ok(subpath) -> {
-          parse_tokens(
+          Ok(#(
             tokens,
             State(
               subpaths: [subpath, ..state.subpaths],
@@ -654,7 +661,7 @@ fn parse_close(
               at: state.at,
               end_at: state.end_at,
             ),
-          )
+          ))
         }
       }
     }
