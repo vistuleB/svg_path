@@ -28,7 +28,8 @@ pub fn segment_chord_length_squared(segment: svg_path.Segment) -> Float {
 /// Return the approximate length of a segment.
 ///
 /// Lines are measured exactly. Quadratic Beziers, cubic Beziers, and arcs are
-/// approximated by adaptive Simpson integration of segment speed.
+/// approximated by adaptive Simpson integration of segment speed. Bezier
+/// integration is partitioned at coordinate extrema to handle zero-speed turns.
 pub fn segment_length(
   segment: svg_path.Segment,
 ) -> Result(Float, svg_path.Error) {

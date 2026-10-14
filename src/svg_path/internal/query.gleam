@@ -2111,15 +2111,70 @@ fn adaptive_segment_length_between(
   to to: Float,
   options options: LengthOptions,
 ) -> Result(Float, Error) {
-  use whole <- result.try(length_simpson(segment, from:, to:))
-  adaptive_segment_length_loop(
+  let boundaries = case segment {
+    QuadraticBezier(..) | CubicBezier(..) -> {
+      let curve = svg_path.segment_to_bezier_data(segment)
+      let extrema =
+        list.append(
+          bezier.projection_extrema(
+            curve,
+            direction: bezier.BezierPoint(1.0, 0.0),
+          ),
+          bezier.projection_extrema(
+            curve,
+            direction: bezier.BezierPoint(0.0, 1.0),
+          ),
+        )
+      let interior =
+        extrema
+        |> list.filter(fn(t) { t >. from && t <. to })
+        |> list.unique
+        |> list.sort(by: float.compare)
+      [from, ..list.append(interior, [to])]
+    }
+    _ -> [from, to]
+  }
+  // Coordinate extrema include every zero-speed turn. Integrate across smooth
+  // pieces without changing the curve or repeatedly bisecting a speed kink.
+  // Allocate one total absolute-error budget across all initial intervals.
+  let tolerance = options.tolerance /. int.to_float(list.length(boundaries) - 1)
+  length_between_boundaries(
     segment,
-    from:,
-    to:,
-    whole:,
-    tolerance: options.tolerance,
-    depth: options.max_depth,
+    boundaries,
+    tolerance,
+    options.max_depth,
+    0.0,
   )
+}
+
+fn length_between_boundaries(
+  segment: Segment,
+  boundaries: List(Float),
+  tolerance: Float,
+  depth: Int,
+  accumulated: Float,
+) -> Result(Float, Error) {
+  case boundaries {
+    [from, to, ..rest] -> {
+      use whole <- result.try(length_simpson(segment, from:, to:))
+      use length <- result.try(adaptive_segment_length_loop(
+        segment,
+        from:,
+        to:,
+        whole:,
+        tolerance:,
+        depth:,
+      ))
+      length_between_boundaries(
+        segment,
+        [to, ..rest],
+        tolerance,
+        depth,
+        accumulated +. length,
+      )
+    }
+    _ -> Ok(accumulated)
+  }
 }
 
 fn adaptive_segment_length_loop(

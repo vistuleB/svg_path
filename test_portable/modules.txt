@@ -48,3 +48,4 @@ svg_path_parse_dispatch_stack_test.gleam
 svg_path_paper_boolean_tangent_test.gleam
 
 svg_path_flobezier_overlap_test.gleam
+svg_path_flobezier_length_test.gleam

@@ -1,0 +1,56 @@
+  Compiling flobezier_audit_probe
+warning: Redundant record update
+   ┌─ /Users/jpsteinb/github.com/vistuleB/svg_path/scripts/flobezier/probe/src/length_probe.gleam:88:18
+   │
+88 │           options: svg_path.LengthOptions(
+   │ ╭──────────────────^
+89 │ │           ..options,
+90 │ │           tolerance: options.tolerance /. { count |> int.to_float },
+91 │ │           max_depth: depth,
+92 │ │         ),
+   │ ╰─────────^ This record update specifies all fields
+
+Hint: It is better style to use the record creation syntax.
+
+   Compiled in 0.03s
+    Running length_probe.main
+quadratic #(0, 1)
+default Error(LengthMaxDepthReached(estimate: 1.2782554566439226e-11, error: 1.278255456696378e-12))
+depth 20 Error(LengthMaxDepthReached(estimate: 1.2782554566439226e-11, error: 1.278255456696378e-12))
+depth 24 Error(LengthMaxDepthReached(estimate: 4.9931853772755435e-14, error: 4.993185380553986e-15))
+depth 32 Ok(2.7406406388125952)
+depth 48 Ok(2.7406406388125952)
+turns [0.6]
+split Ok(2.7406406388125957)
+split depth 1 Ok(2.7406406388125957)
+reverse Error(LengthMaxDepthReached(estimate: 1.2782554566439224e-11, error: 1.2782554566963813e-12))
+quadratic #(0.25, 0.75)
+default Error(LengthMaxDepthReached(estimate: 2.55651091329789e-12, error: 3.195638641824649e-13))
+depth 20 Error(LengthMaxDepthReached(estimate: 2.55651091329789e-12, error: 3.195638641824649e-13))
+depth 24 Ok(0.7642171012073586)
+depth 32 Ok(0.7642171012073586)
+depth 48 Ok(0.7642171012073586)
+turns [0.7]
+split Ok(0.7642171012073585)
+split depth 1 Ok(0.7642171012073585)
+reverse Error(LengthMaxDepthReached(estimate: 2.5565109133048654e-12, error: 3.195638641643287e-13))
+cubic #(0, 1)
+default Error(LengthMaxDepthReached(estimate: 2.315766328697677e-11, error: 1.1435921654090464e-12))
+depth 20 Error(LengthMaxDepthReached(estimate: 2.315766328697677e-11, error: 1.1435921654090464e-12))
+depth 24 Error(LengthMaxDepthReached(estimate: 9.418403624822554e-14, error: 3.7222219122050315e-15))
+depth 32 Ok(2.7559289460184546)
+depth 48 Ok(2.7559289460184546)
+turns [0.31101776349538635, 0.6889822365046137]
+split Ok(2.7559289460184546)
+split depth 1 Ok(2.7559289460184546)
+reverse Error(LengthMaxDepthReached(estimate: 2.315766328697677e-11, error: 1.1435921654090464e-12))
+cubic #(0.25, 0.75)
+default Error(LengthMaxDepthReached(estimate: 4.359913471918553e-12, error: 5.717960827045232e-13))
+depth 20 Error(LengthMaxDepthReached(estimate: 4.359913471918553e-12, error: 5.717960827045232e-13))
+depth 24 Error(LengthMaxDepthReached(estimate: 1.889323463641541e-14, error: 1.8611109561025158e-15))
+depth 32 Ok(0.44342894601845473)
+depth 48 Ok(0.44342894601845473)
+turns [0.12203552699077276, 0.8779644730092273]
+split Ok(0.4434289460184544)
+split depth 1 Ok(0.4434289460184544)
+reverse Error(LengthMaxDepthReached(estimate: 4.359913471918553e-12, error: 5.717960827045232e-13))
