@@ -3,20 +3,26 @@
     {
       "block": 0,
       "title": "Decomposition: rotate()",
-      "status": "no-public-decomposition-counterpart"
+      "status": "adapted-decomposition-match"
     },
     {
       "block": 1,
       "title": "Decomposition: scale()",
-      "status": "no-public-decomposition-counterpart"
+      "status": "adapted-decomposition-match"
     },
     {
       "block": 2,
       "title": "Decomposition: scale() & rotate()",
-      "status": "no-public-decomposition-counterpart"
+      "status": "adapted-decomposition-match"
     }
   ],
   "preservedAssertions": 52,
-  "comparedAssertions": 0,
-  "reason": "No public matrix-decomposition operation. Composing or applying a matrix would not exercise these rotation/scaling decomposition assertions."
+  "comparedAssertions": 52,
+  "targets": [
+    "erlang",
+    "javascript"
+  ],
+  "comparisonReport": "matrix-native-screening.json",
+  "convention": "Gleam uses (-180,180]; Paper.js expects -180 in five assertions. Equivalent endpoints are classified explicitly, not counted as literal matches.",
+  "limitations": "Upstream fixtures cover rotations, signed scales, and four rotation/scale combinations. They do not cover general shear, translation placement, singular matrices, or all 24 factor orders."
 }

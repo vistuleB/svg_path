@@ -3,17 +3,17 @@
     {
       "block": 0,
       "title": "Decomposition: rotate()",
-      "status": "no-public-decomposition-counterpart"
+      "status": "extracted-for-native-comparison"
     },
     {
       "block": 1,
       "title": "Decomposition: scale()",
-      "status": "no-public-decomposition-counterpart"
+      "status": "extracted-for-native-comparison"
     },
     {
       "block": 2,
       "title": "Decomposition: scale() & rotate()",
-      "status": "no-public-decomposition-counterpart"
+      "status": "extracted-for-native-comparison"
     }
   ],
   "fixtures": [

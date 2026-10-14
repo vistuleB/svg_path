@@ -1,0 +1,1358 @@
+{
+  "erlang": [
+    {
+      "id": 0,
+      "method": "getRotation",
+      "message": "new Matrix().rotate(0).getRotation()",
+      "expected": 0,
+      "actual": 0.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 1,
+      "method": "getScaling",
+      "message": "new Matrix().rotate(0).getScaling()",
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1.0,
+        1.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 2,
+      "method": "getRotation",
+      "message": "new Matrix().rotate(1).getRotation()",
+      "expected": 1,
+      "actual": 1.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 3,
+      "method": "getScaling",
+      "message": "new Matrix().rotate(1).getScaling()",
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1.0,
+        0.9999999999999999
+      ],
+      "status": "match",
+      "absoluteError": 1.1102230246251565e-16,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 4,
+      "method": "getRotation",
+      "message": "new Matrix().rotate(45).getRotation()",
+      "expected": 45,
+      "actual": 45.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 5,
+      "method": "getScaling",
+      "message": "new Matrix().rotate(45).getScaling()",
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1.0,
+        1.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 6,
+      "method": "getRotation",
+      "message": "new Matrix().rotate(90).getRotation()",
+      "expected": 90,
+      "actual": 90.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 7,
+      "method": "getScaling",
+      "message": "new Matrix().rotate(90).getScaling()",
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1.0,
+        1.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 8,
+      "method": "getRotation",
+      "message": "new Matrix().rotate(135).getRotation()",
+      "expected": 135,
+      "actual": 135.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 9,
+      "method": "getScaling",
+      "message": "new Matrix().rotate(135).getScaling()",
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1.0,
+        1.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 10,
+      "method": "getRotation",
+      "message": "new Matrix().rotate(180).getRotation()",
+      "expected": 180,
+      "actual": 180.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 11,
+      "method": "getScaling",
+      "message": "new Matrix().rotate(180).getScaling()",
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1.0,
+        1.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 12,
+      "method": "getRotation",
+      "message": "new Matrix().rotate(270).getRotation()",
+      "expected": -90,
+      "actual": -90.00000000000001,
+      "status": "match",
+      "absoluteError": 1.4210854715202004e-14,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 13,
+      "method": "getScaling",
+      "message": "new Matrix().rotate(270).getScaling()",
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1.0,
+        1.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 14,
+      "method": "getRotation",
+      "message": "new Matrix().rotate(-1).getRotation()",
+      "expected": -1,
+      "actual": -1.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 15,
+      "method": "getScaling",
+      "message": "new Matrix().rotate(-1).getScaling()",
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1.0,
+        0.9999999999999999
+      ],
+      "status": "match",
+      "absoluteError": 1.1102230246251565e-16,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 16,
+      "method": "getRotation",
+      "message": "new Matrix().rotate(-45).getRotation()",
+      "expected": -45,
+      "actual": -45.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 17,
+      "method": "getScaling",
+      "message": "new Matrix().rotate(-45).getScaling()",
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1.0,
+        1.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 18,
+      "method": "getRotation",
+      "message": "new Matrix().rotate(-90).getRotation()",
+      "expected": -90,
+      "actual": -90.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 19,
+      "method": "getScaling",
+      "message": "new Matrix().rotate(-90).getScaling()",
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1.0,
+        1.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 20,
+      "method": "getRotation",
+      "message": "new Matrix().rotate(-135).getRotation()",
+      "expected": -135,
+      "actual": -135.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 21,
+      "method": "getScaling",
+      "message": "new Matrix().rotate(-135).getScaling()",
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1.0,
+        1.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 22,
+      "method": "getRotation",
+      "message": "new Matrix().rotate(-180).getRotation()",
+      "expected": -180,
+      "actual": 180.0,
+      "status": "equivalent-angle-endpoint",
+      "absoluteError": 360.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 23,
+      "method": "getScaling",
+      "message": "new Matrix().rotate(-180).getScaling()",
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1.0,
+        1.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 24,
+      "method": "getRotation",
+      "message": "new Matrix().rotate(-270).getRotation()",
+      "expected": 90,
+      "actual": 90.00000000000001,
+      "status": "match",
+      "absoluteError": 1.4210854715202004e-14,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 25,
+      "method": "getScaling",
+      "message": "new Matrix().rotate(-270).getScaling()",
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1.0,
+        1.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 26,
+      "method": "getRotation",
+      "message": "new Matrix().scale(1, 1).getRotation()",
+      "expected": 0,
+      "actual": 0.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 27,
+      "method": "getScaling",
+      "message": "new Matrix().scale(1, 1).getScaling()",
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1.0,
+        1.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 28,
+      "method": "getRotation",
+      "message": "new Matrix().scale(1, -1).getRotation()",
+      "expected": 0,
+      "actual": 0.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 29,
+      "method": "getScaling",
+      "message": "new Matrix().scale(1, -1).getScaling()",
+      "expected": [
+        1,
+        -1
+      ],
+      "actual": [
+        1.0,
+        -1.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 30,
+      "method": "getRotation",
+      "message": "new Matrix().scale(-1, 1).getRotation()",
+      "expected": -180,
+      "actual": 180.0,
+      "status": "equivalent-angle-endpoint",
+      "absoluteError": 360.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 31,
+      "method": "getScaling",
+      "message": "new Matrix().scale(-1, 1).getScaling()",
+      "expected": [
+        1,
+        -1
+      ],
+      "actual": [
+        1.0,
+        -1.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 32,
+      "method": "getRotation",
+      "message": "new Matrix().scale(-1, -1).getRotation()",
+      "expected": -180,
+      "actual": 180.0,
+      "status": "equivalent-angle-endpoint",
+      "absoluteError": 360.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 33,
+      "method": "getScaling",
+      "message": "new Matrix().scale(-1, -1).getScaling()",
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1.0,
+        1.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 34,
+      "method": "getRotation",
+      "message": "new Matrix().scale(2, 4).getRotation()",
+      "expected": 0,
+      "actual": 0.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 35,
+      "method": "getScaling",
+      "message": "new Matrix().scale(2, 4).getScaling()",
+      "expected": [
+        2,
+        4
+      ],
+      "actual": [
+        2.0,
+        4.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 36,
+      "method": "getRotation",
+      "message": "new Matrix().scale(2, -4).getRotation()",
+      "expected": 0,
+      "actual": 0.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 37,
+      "method": "getScaling",
+      "message": "new Matrix().scale(2, -4).getScaling()",
+      "expected": [
+        2,
+        -4
+      ],
+      "actual": [
+        2.0,
+        -4.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 38,
+      "method": "getRotation",
+      "message": "new Matrix().scale(4, 2).getRotation()",
+      "expected": 0,
+      "actual": 0.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 39,
+      "method": "getScaling",
+      "message": "new Matrix().scale(4, 2).getScaling()",
+      "expected": [
+        4,
+        2
+      ],
+      "actual": [
+        4.0,
+        2.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 40,
+      "method": "getRotation",
+      "message": "new Matrix().scale(-4, 2).getRotation()",
+      "expected": -180,
+      "actual": 180.0,
+      "status": "equivalent-angle-endpoint",
+      "absoluteError": 360.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 41,
+      "method": "getScaling",
+      "message": "new Matrix().scale(-4, 2).getScaling()",
+      "expected": [
+        4,
+        -2
+      ],
+      "actual": [
+        4.0,
+        -2.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 42,
+      "method": "getRotation",
+      "message": "new Matrix().scale(-4, -4).getRotation()",
+      "expected": -180,
+      "actual": 180.0,
+      "status": "equivalent-angle-endpoint",
+      "absoluteError": 360.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 43,
+      "method": "getScaling",
+      "message": "new Matrix().scale(-4, -4).getScaling()",
+      "expected": [
+        4,
+        4
+      ],
+      "actual": [
+        4.0,
+        4.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 44,
+      "method": "getRotation",
+      "message": "new Matrix().scale(2, 4).rotate(45).getRotation()",
+      "expected": 45,
+      "actual": 45.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 45,
+      "method": "getScaling",
+      "message": "new Matrix().scale(2, 4).rotate(45).getScaling()",
+      "expected": [
+        2,
+        4
+      ],
+      "actual": [
+        2.0,
+        4.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 46,
+      "method": "getRotation",
+      "message": "new Matrix().scale(2, -4).rotate(45).getRotation()",
+      "expected": 45,
+      "actual": 45.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 47,
+      "method": "getScaling",
+      "message": "new Matrix().scale(2, -4).rotate(45).getScaling()",
+      "expected": [
+        2,
+        -4
+      ],
+      "actual": [
+        2.0,
+        -4.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 48,
+      "method": "getRotation",
+      "message": "new Matrix().scale(-2, 4).rotate(45).getRotation()",
+      "expected": -135,
+      "actual": -135.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 49,
+      "method": "getScaling",
+      "message": "new Matrix().scale(-2, 4).rotate(45).getScaling()",
+      "expected": [
+        2,
+        -4
+      ],
+      "actual": [
+        2.0,
+        -4.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 50,
+      "method": "getRotation",
+      "message": "new Matrix().scale(-2, -4).rotate(45).getRotation()",
+      "expected": -135,
+      "actual": -135.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 51,
+      "method": "getScaling",
+      "message": "new Matrix().scale(-2, -4).rotate(45).getScaling()",
+      "expected": [
+        2,
+        4
+      ],
+      "actual": [
+        2.0,
+        4.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    }
+  ],
+  "javascript": [
+    {
+      "id": 0,
+      "method": "getRotation",
+      "message": "new Matrix().rotate(0).getRotation()",
+      "expected": 0,
+      "actual": 0.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 1,
+      "method": "getScaling",
+      "message": "new Matrix().rotate(0).getScaling()",
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1.0,
+        1.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 2,
+      "method": "getRotation",
+      "message": "new Matrix().rotate(1).getRotation()",
+      "expected": 1,
+      "actual": 1.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 3,
+      "method": "getScaling",
+      "message": "new Matrix().rotate(1).getScaling()",
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1.0,
+        0.9999999999999999
+      ],
+      "status": "match",
+      "absoluteError": 1.1102230246251565e-16,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 4,
+      "method": "getRotation",
+      "message": "new Matrix().rotate(45).getRotation()",
+      "expected": 45,
+      "actual": 45.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 5,
+      "method": "getScaling",
+      "message": "new Matrix().rotate(45).getScaling()",
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1.0,
+        1.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 6,
+      "method": "getRotation",
+      "message": "new Matrix().rotate(90).getRotation()",
+      "expected": 90,
+      "actual": 90.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 7,
+      "method": "getScaling",
+      "message": "new Matrix().rotate(90).getScaling()",
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1.0,
+        1.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 8,
+      "method": "getRotation",
+      "message": "new Matrix().rotate(135).getRotation()",
+      "expected": 135,
+      "actual": 135.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 9,
+      "method": "getScaling",
+      "message": "new Matrix().rotate(135).getScaling()",
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1.0,
+        1.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 10,
+      "method": "getRotation",
+      "message": "new Matrix().rotate(180).getRotation()",
+      "expected": 180,
+      "actual": 180.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 11,
+      "method": "getScaling",
+      "message": "new Matrix().rotate(180).getScaling()",
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1.0,
+        1.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 12,
+      "method": "getRotation",
+      "message": "new Matrix().rotate(270).getRotation()",
+      "expected": -90,
+      "actual": -90.00000000000003,
+      "status": "match",
+      "absoluteError": 2.842170943040401e-14,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 13,
+      "method": "getScaling",
+      "message": "new Matrix().rotate(270).getScaling()",
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1.0,
+        1.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 14,
+      "method": "getRotation",
+      "message": "new Matrix().rotate(-1).getRotation()",
+      "expected": -1,
+      "actual": -1.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 15,
+      "method": "getScaling",
+      "message": "new Matrix().rotate(-1).getScaling()",
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1.0,
+        0.9999999999999999
+      ],
+      "status": "match",
+      "absoluteError": 1.1102230246251565e-16,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 16,
+      "method": "getRotation",
+      "message": "new Matrix().rotate(-45).getRotation()",
+      "expected": -45,
+      "actual": -45.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 17,
+      "method": "getScaling",
+      "message": "new Matrix().rotate(-45).getScaling()",
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1.0,
+        1.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 18,
+      "method": "getRotation",
+      "message": "new Matrix().rotate(-90).getRotation()",
+      "expected": -90,
+      "actual": -90.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 19,
+      "method": "getScaling",
+      "message": "new Matrix().rotate(-90).getScaling()",
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1.0,
+        1.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 20,
+      "method": "getRotation",
+      "message": "new Matrix().rotate(-135).getRotation()",
+      "expected": -135,
+      "actual": -135.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 21,
+      "method": "getScaling",
+      "message": "new Matrix().rotate(-135).getScaling()",
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1.0,
+        1.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 22,
+      "method": "getRotation",
+      "message": "new Matrix().rotate(-180).getRotation()",
+      "expected": -180,
+      "actual": 180.0,
+      "status": "equivalent-angle-endpoint",
+      "absoluteError": 360.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 23,
+      "method": "getScaling",
+      "message": "new Matrix().rotate(-180).getScaling()",
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1.0,
+        1.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 24,
+      "method": "getRotation",
+      "message": "new Matrix().rotate(-270).getRotation()",
+      "expected": 90,
+      "actual": 90.00000000000003,
+      "status": "match",
+      "absoluteError": 2.842170943040401e-14,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 25,
+      "method": "getScaling",
+      "message": "new Matrix().rotate(-270).getScaling()",
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1.0,
+        1.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 26,
+      "method": "getRotation",
+      "message": "new Matrix().scale(1, 1).getRotation()",
+      "expected": 0,
+      "actual": 0.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 27,
+      "method": "getScaling",
+      "message": "new Matrix().scale(1, 1).getScaling()",
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1.0,
+        1.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 28,
+      "method": "getRotation",
+      "message": "new Matrix().scale(1, -1).getRotation()",
+      "expected": 0,
+      "actual": 0.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 29,
+      "method": "getScaling",
+      "message": "new Matrix().scale(1, -1).getScaling()",
+      "expected": [
+        1,
+        -1
+      ],
+      "actual": [
+        1.0,
+        -1.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 30,
+      "method": "getRotation",
+      "message": "new Matrix().scale(-1, 1).getRotation()",
+      "expected": -180,
+      "actual": 180.0,
+      "status": "equivalent-angle-endpoint",
+      "absoluteError": 360.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 31,
+      "method": "getScaling",
+      "message": "new Matrix().scale(-1, 1).getScaling()",
+      "expected": [
+        1,
+        -1
+      ],
+      "actual": [
+        1.0,
+        -1.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 32,
+      "method": "getRotation",
+      "message": "new Matrix().scale(-1, -1).getRotation()",
+      "expected": -180,
+      "actual": 180.0,
+      "status": "equivalent-angle-endpoint",
+      "absoluteError": 360.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 33,
+      "method": "getScaling",
+      "message": "new Matrix().scale(-1, -1).getScaling()",
+      "expected": [
+        1,
+        1
+      ],
+      "actual": [
+        1.0,
+        1.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 34,
+      "method": "getRotation",
+      "message": "new Matrix().scale(2, 4).getRotation()",
+      "expected": 0,
+      "actual": 0.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 35,
+      "method": "getScaling",
+      "message": "new Matrix().scale(2, 4).getScaling()",
+      "expected": [
+        2,
+        4
+      ],
+      "actual": [
+        2.0,
+        4.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 36,
+      "method": "getRotation",
+      "message": "new Matrix().scale(2, -4).getRotation()",
+      "expected": 0,
+      "actual": 0.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 37,
+      "method": "getScaling",
+      "message": "new Matrix().scale(2, -4).getScaling()",
+      "expected": [
+        2,
+        -4
+      ],
+      "actual": [
+        2.0,
+        -4.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 38,
+      "method": "getRotation",
+      "message": "new Matrix().scale(4, 2).getRotation()",
+      "expected": 0,
+      "actual": 0.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 39,
+      "method": "getScaling",
+      "message": "new Matrix().scale(4, 2).getScaling()",
+      "expected": [
+        4,
+        2
+      ],
+      "actual": [
+        4.0,
+        2.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 40,
+      "method": "getRotation",
+      "message": "new Matrix().scale(-4, 2).getRotation()",
+      "expected": -180,
+      "actual": 180.0,
+      "status": "equivalent-angle-endpoint",
+      "absoluteError": 360.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 41,
+      "method": "getScaling",
+      "message": "new Matrix().scale(-4, 2).getScaling()",
+      "expected": [
+        4,
+        -2
+      ],
+      "actual": [
+        4.0,
+        -2.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 42,
+      "method": "getRotation",
+      "message": "new Matrix().scale(-4, -4).getRotation()",
+      "expected": -180,
+      "actual": 180.0,
+      "status": "equivalent-angle-endpoint",
+      "absoluteError": 360.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 43,
+      "method": "getScaling",
+      "message": "new Matrix().scale(-4, -4).getScaling()",
+      "expected": [
+        4,
+        4
+      ],
+      "actual": [
+        4.0,
+        4.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 44,
+      "method": "getRotation",
+      "message": "new Matrix().scale(2, 4).rotate(45).getRotation()",
+      "expected": 45,
+      "actual": 45.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 45,
+      "method": "getScaling",
+      "message": "new Matrix().scale(2, 4).rotate(45).getScaling()",
+      "expected": [
+        2,
+        4
+      ],
+      "actual": [
+        2.0,
+        4.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 46,
+      "method": "getRotation",
+      "message": "new Matrix().scale(2, -4).rotate(45).getRotation()",
+      "expected": 45,
+      "actual": 45.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 47,
+      "method": "getScaling",
+      "message": "new Matrix().scale(2, -4).rotate(45).getScaling()",
+      "expected": [
+        2,
+        -4
+      ],
+      "actual": [
+        2.0,
+        -4.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 48,
+      "method": "getRotation",
+      "message": "new Matrix().scale(-2, 4).rotate(45).getRotation()",
+      "expected": -135,
+      "actual": -135.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 49,
+      "method": "getScaling",
+      "message": "new Matrix().scale(-2, 4).rotate(45).getScaling()",
+      "expected": [
+        2,
+        -4
+      ],
+      "actual": [
+        2.0,
+        -4.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 50,
+      "method": "getRotation",
+      "message": "new Matrix().scale(-2, -4).rotate(45).getRotation()",
+      "expected": -135,
+      "actual": -135.0,
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    },
+    {
+      "id": 51,
+      "method": "getScaling",
+      "message": "new Matrix().scale(-2, -4).rotate(45).getScaling()",
+      "expected": [
+        2,
+        4
+      ],
+      "actual": [
+        2.0,
+        4.0
+      ],
+      "status": "match",
+      "absoluteError": 0.0,
+      "tolerance": 1e-10
+    }
+  ]
+}

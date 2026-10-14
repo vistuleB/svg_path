@@ -3,6 +3,7 @@ import gleam/list
 import gleam/option.{None}
 import gleam/string
 import gleeunit
+import svg_path/affine
 import svg_path/transform
 import svg_path/transform/parse as transform_parse
 import svg_path/transform/serialize
@@ -64,7 +65,7 @@ pub fn transform_serialization_preserves_small_shear_test() {
       let #(scale, shear) = pair
       let matrix = transform.from_tuple(#(scale, 0.0, shear, scale, 0.0, 0.0))
       let text = serialize.to_string_with(matrix, options:)
-      assert string.starts_with(text, "matrix(")
+      assert string.contains(text, "skewX(")
       let assert Ok(decoded) = transform_parse.attribute(text)
       let #(a, b, c, d, e, f) = transform.to_tuple(decoded)
       assert a == scale && b == 0.0 && d == scale && e == 0.0 && f == 0.0
@@ -148,9 +149,9 @@ pub fn transform_translate_skew_serializes_nicely_test() {
 
 pub fn transform_matrix_fallback_serializes_test() {
   let matrix =
-    transform.matrix(a: 2.0, b: 3.0, c: 5.0, d: 7.0, e: 11.0, f: 13.0)
+    transform.matrix(a: 2.0, b: 3.0, c: 4.0, d: 6.0, e: 11.0, f: 13.0)
 
-  assert serialize.to_string(matrix) == "matrix(2 3 5 7 11 13)"
+  assert serialize.to_string(matrix) == "matrix(2 3 4 6 11 13)"
 }
 
 pub fn transform_serialization_uses_decimal_options_test() {
@@ -239,15 +240,269 @@ pub fn parsed_rotate_transform_uses_requested_decimal_options_test() {
     == "rotate(30.000001)"
 }
 
-pub fn reflected_rotation_matrix_uses_matrix_fallback_test() {
+pub fn reflected_rotation_matrix_uses_signed_scale_test() {
   let assert Ok(matrix) = transform_parse.attribute("matrix(0 2 3 0 10 20)")
 
-  assert serialize.to_string(matrix) == "matrix(0 2 3 0 10 20)"
+  assert serialize.to_string(matrix)
+    == "translate(10 20) rotate(90) scale(2 -3)"
 }
 
-pub fn parsed_unmatched_transform_serializes_to_matrix_test() {
+pub fn parsed_shear_scale_uses_decomposition_test() {
   let assert Ok(matrix) = transform_parse.attribute("skewX(30) scale(2)")
 
   assert serialize.to_string_with(matrix, options: serialize.decimal_options(3))
-    == "matrix(2 0 1.155 2 0 0)"
+    == "skewX(30) scale(2)"
+}
+
+pub fn general_transform_uses_all_four_factors_test() {
+  let assert Ok(m) =
+    transform_parse.attribute(
+      "translate(11 13) rotate(90) skewX(45) scale(3 5)",
+    )
+  assert serialize.to_string(m)
+    == "translate(11 13) rotate(90) skewX(45) scale(3 5)"
+}
+
+pub fn extreme_skews_fall_back_after_angle_rounding_test() {
+  list.each(
+    [#(1.0, 0.0, 1.0e12, 1.0, 0.0, 0.0), #(1.0, 1.0e12, 0.0, 1.0, 0.0, 0.0)],
+    fn(values) {
+      let m = transform.from_tuple(values)
+      assert string.starts_with(serialize.to_string(m), "matrix(")
+    },
+  )
+  let m = transform.from_tuple(#(1.0, 0.0, 1.0e12, 1.0, 0.0, 0.0))
+  assert serialize.to_string_in_order(
+      m,
+      order: affine.TranslationRotationShearXScale,
+      options: serialize.default_options(),
+    )
+    == Error(serialize.InsufficientPrecision)
+}
+
+pub fn ordered_precision_can_be_increased_test() {
+  let m = transform.from_tuple(#(1.0, 0.0, 1000.0, 1.0, 0.0, 0.0))
+  assert serialize.to_string_in_order(
+      m,
+      order: affine.TranslationRotationShearXScale,
+      options: serialize.decimal_options(3),
+    )
+    == Error(serialize.InsufficientPrecision)
+  let assert Ok(text) =
+    serialize.to_string_in_order(
+      m,
+      order: affine.TranslationRotationShearXScale,
+      options: serialize.Options(None, False, False),
+    )
+  assert string.starts_with(text, "skewX(")
+}
+
+pub fn ordered_formatting_reports_impossible_order_test() {
+  let m = transform.from_tuple(#(1.0, 1.0, 0.0, 1.0, 0.0, 0.0))
+  let order = affine.TranslationScaleRotationShearX
+  assert serialize.to_string_in_order(
+      m,
+      order:,
+      options: serialize.default_options(),
+    )
+    == Error(
+      serialize.FactorizationFailed(affine.NoFactorizationInOrder(order:)),
+    )
+  // Ordinary output retains the simple skewY, without any factorization.
+  assert serialize.to_string(m) == "skewY(45)"
+}
+
+pub fn explicit_order_rejects_force_matrix_test() {
+  assert serialize.to_string_in_order(
+      transform.identity(),
+      order: affine.TranslationRotationShearXScale,
+      options: serialize.default_options() |> serialize.force_matrix,
+    )
+    == Error(serialize.ConflictingMatrixOption)
+}
+
+pub fn skew_y_can_be_explicitly_factored_with_skew_x_test() {
+  let m = transform.skew_y(degrees: 45.0)
+  let assert Ok(text) =
+    serialize.to_string_in_order(
+      m,
+      order: affine.TranslationRotationShearXScale,
+      options: serialize.decimal_options(10),
+    )
+  assert string.contains(text, "skewX(")
+  assert !string.contains(text, "skewY(")
+  assert string.starts_with(text, "rotate(45)")
+}
+
+pub fn translated_skew_y_retains_simple_form_test() {
+  let assert Ok(m) = transform_parse.attribute("translate(7 -11) skewY(30)")
+  assert serialize.to_string(m) == "translate(7 -11) skewY(30)"
+}
+
+pub fn all_orders_serialize_in_requested_sequence_and_round_trip_test() {
+  let orders = [
+    #(
+      affine.TranslationRotationShearXScale,
+      "translate(7 -11) rotate(20) skewX(10) scale(2 3)",
+      ["translate", "rotate", "skewX", "scale"],
+    ),
+    #(
+      affine.TranslationRotationScaleShearX,
+      "translate(7 -11) rotate(20) scale(2 3) skewX(10)",
+      ["translate", "rotate", "scale", "skewX"],
+    ),
+    #(
+      affine.TranslationShearXRotationScale,
+      "translate(7 -11) skewX(10) rotate(20) scale(2 3)",
+      ["translate", "skewX", "rotate", "scale"],
+    ),
+    #(
+      affine.TranslationShearXScaleRotation,
+      "translate(7 -11) skewX(10) scale(2 3) rotate(20)",
+      ["translate", "skewX", "scale", "rotate"],
+    ),
+    #(
+      affine.TranslationScaleRotationShearX,
+      "translate(7 -11) scale(2 3) rotate(20) skewX(10)",
+      ["translate", "scale", "rotate", "skewX"],
+    ),
+    #(
+      affine.TranslationScaleShearXRotation,
+      "translate(7 -11) scale(2 3) skewX(10) rotate(20)",
+      ["translate", "scale", "skewX", "rotate"],
+    ),
+    #(
+      affine.RotationTranslationShearXScale,
+      "rotate(20) translate(7 -11) skewX(10) scale(2 3)",
+      ["rotate", "translate", "skewX", "scale"],
+    ),
+    #(
+      affine.RotationTranslationScaleShearX,
+      "rotate(20) translate(7 -11) scale(2 3) skewX(10)",
+      ["rotate", "translate", "scale", "skewX"],
+    ),
+    #(
+      affine.RotationShearXTranslationScale,
+      "rotate(20) skewX(10) translate(7 -11) scale(2 3)",
+      ["rotate", "skewX", "translate", "scale"],
+    ),
+    #(
+      affine.RotationShearXScaleTranslation,
+      "rotate(20) skewX(10) scale(2 3) translate(7 -11)",
+      ["rotate", "skewX", "scale", "translate"],
+    ),
+    #(
+      affine.RotationScaleTranslationShearX,
+      "rotate(20) scale(2 3) translate(7 -11) skewX(10)",
+      ["rotate", "scale", "translate", "skewX"],
+    ),
+    #(
+      affine.RotationScaleShearXTranslation,
+      "rotate(20) scale(2 3) skewX(10) translate(7 -11)",
+      ["rotate", "scale", "skewX", "translate"],
+    ),
+    #(
+      affine.ShearXTranslationRotationScale,
+      "skewX(10) translate(7 -11) rotate(20) scale(2 3)",
+      ["skewX", "translate", "rotate", "scale"],
+    ),
+    #(
+      affine.ShearXTranslationScaleRotation,
+      "skewX(10) translate(7 -11) scale(2 3) rotate(20)",
+      ["skewX", "translate", "scale", "rotate"],
+    ),
+    #(
+      affine.ShearXRotationTranslationScale,
+      "skewX(10) rotate(20) translate(7 -11) scale(2 3)",
+      ["skewX", "rotate", "translate", "scale"],
+    ),
+    #(
+      affine.ShearXRotationScaleTranslation,
+      "skewX(10) rotate(20) scale(2 3) translate(7 -11)",
+      ["skewX", "rotate", "scale", "translate"],
+    ),
+    #(
+      affine.ShearXScaleTranslationRotation,
+      "skewX(10) scale(2 3) translate(7 -11) rotate(20)",
+      ["skewX", "scale", "translate", "rotate"],
+    ),
+    #(
+      affine.ShearXScaleRotationTranslation,
+      "skewX(10) scale(2 3) rotate(20) translate(7 -11)",
+      ["skewX", "scale", "rotate", "translate"],
+    ),
+    #(
+      affine.ScaleTranslationRotationShearX,
+      "scale(2 3) translate(7 -11) rotate(20) skewX(10)",
+      ["scale", "translate", "rotate", "skewX"],
+    ),
+    #(
+      affine.ScaleTranslationShearXRotation,
+      "scale(2 3) translate(7 -11) skewX(10) rotate(20)",
+      ["scale", "translate", "skewX", "rotate"],
+    ),
+    #(
+      affine.ScaleRotationTranslationShearX,
+      "scale(2 3) rotate(20) translate(7 -11) skewX(10)",
+      ["scale", "rotate", "translate", "skewX"],
+    ),
+    #(
+      affine.ScaleRotationShearXTranslation,
+      "scale(2 3) rotate(20) skewX(10) translate(7 -11)",
+      ["scale", "rotate", "skewX", "translate"],
+    ),
+    #(
+      affine.ScaleShearXTranslationRotation,
+      "scale(2 3) skewX(10) translate(7 -11) rotate(20)",
+      ["scale", "skewX", "translate", "rotate"],
+    ),
+    #(
+      affine.ScaleShearXRotationTranslation,
+      "scale(2 3) skewX(10) rotate(20) translate(7 -11)",
+      ["scale", "skewX", "rotate", "translate"],
+    ),
+  ]
+  list.each(orders, fn(entry) {
+    let #(order, source, sequence) = entry
+    let assert Ok(m) = transform_parse.attribute(source)
+    let assert Ok(text) =
+      serialize.to_string_in_order(
+        m,
+        order:,
+        options: serialize.decimal_options(10),
+      )
+    // Every factor is nonidentity; check names and order independently of values.
+    let names =
+      text
+      |> string.split(")")
+      |> list.filter(fn(s) { s != "" })
+      |> list.map(fn(s) {
+        let assert Ok(#(name, _)) = string.split_once(string.trim(s), "(")
+        name
+      })
+    assert names == sequence
+    let assert Ok(rebuilt) = transform_parse.attribute(text)
+    let #(a, b, c, d, e, f) = transform.to_tuple(m)
+    let #(aa, bb, cc, dd, ee, ff) = transform.to_tuple(rebuilt)
+    list.each(
+      [#(a, aa), #(b, bb), #(c, cc), #(d, dd), #(e, ee), #(f, ff)],
+      fn(pair) {
+        assert float.absolute_value(pair.0 -. pair.1) <. 1.0e-8
+      },
+    )
+  })
+}
+
+pub fn small_shear_is_retained_when_anisotropic_scale_amplifies_it_test() {
+  let m = transform.from_tuple(#(1.0e12, 0.0, 0.01, 1.0, 0.0, 0.0))
+  let assert Ok(text) =
+    serialize.to_string_in_order(
+      m,
+      order: affine.TranslationRotationScaleShearX,
+      options: serialize.Options(None, False, False),
+    )
+  assert string.contains(text, "skewX(")
+  let assert Ok(rebuilt) = transform_parse.attribute(text)
+  let #(_, _, c, _, _, _) = transform.to_tuple(rebuilt)
+  assert float.absolute_value(c -. 0.01) <. 1.0e-14
 }
