@@ -28,6 +28,46 @@ pub fn minified_number_groups_preserve_integer_decimal_boundaries_test() {
   })
 }
 
+pub fn compact_decimal_boundaries_between_curve_groups_test() {
+  let assert Ok(source) = parse.path("M0 0Q1.5 .5 .5 .5")
+  let options = serialize.decimal_options(1) |> serialize.minimize_whitespace
+  let encoded = serialize.path_with(source, options)
+  assert encoded == "M0 0Q1.5.5.5.5"
+  assert parse.path(encoded) == Ok(source)
+}
+
+pub fn compact_decimal_boundaries_between_repeated_commands_test() {
+  let assert Ok(source) = parse.path("M0 0L1.5 .5L.5 2L.5 .5")
+  list.each([serialize.OneLine, serialize.AtSubpaths], fn(newlines) {
+    let options =
+      serialize.decimal_options(1)
+      |> serialize.minimize_whitespace
+      |> serialize.repeat_commands(False)
+      |> serialize.use_h_v(False)
+      |> serialize.with_newlines(newlines)
+    let encoded = serialize.path_with(source, options)
+    assert encoded == "M0 0L1.5.5.5 2 .5.5"
+    assert parse.path(encoded) == Ok(source)
+  })
+}
+
+pub fn compact_group_boundaries_use_only_the_final_numeric_token_test() {
+  list.each(["1.5 2", "1.5-2", "1.5 .5", "1.5-.5"], fn(control) {
+    let assert Ok(source) = parse.path("M0 0Q" <> control <> " .5 .5")
+    let options = serialize.decimal_options(1) |> serialize.minimize_whitespace
+    assert parse.path(serialize.path_with(source, options)) == Ok(source)
+  })
+  let assert Ok(source) = parse.path("M0 0Q1 1e-20 .5 .5")
+  let options =
+    serialize.default_options()
+    |> serialize.with_right_decimals(serialize.System)
+    |> serialize.minimize_whitespace
+  let encoded = serialize.path_with(source, options)
+  assert string.contains(encoded, " .5") == False
+  let spaced = string.replace(encoded, ".5", " .5")
+  assert parse.path(encoded) == parse.path(spaced)
+}
+
 pub fn minified_subpath_lines_separate_repeated_command_arguments_test() {
   list.each(
     [

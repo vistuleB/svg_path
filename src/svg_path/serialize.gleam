@@ -1511,9 +1511,6 @@ fn number_group_separator(
 ) -> String {
   case options.minimize_whitespace {
     False -> " "
-    // `left` may contain several numbers. A decimal point in an earlier
-    // coordinate says nothing about its final token: "1.5 2" + ".5 .5"
-    // still needs a separator. Only a leading sign is unambiguous here.
     True -> command_chunk_separator(left, right, options)
   }
 }
@@ -1533,11 +1530,30 @@ fn minimized_number_separator(left: String, right: String) -> String {
   case string.starts_with(right, "-") || string.starts_with(right, "+") {
     True -> ""
     False -> {
-      case string.starts_with(right, ".") && string.contains(left, ".") {
+      case
+        string.starts_with(right, ".")
+        && final_number_accepts_decimal_boundary(left)
+      {
         True -> ""
         False -> " "
       }
     }
+  }
+}
+
+// A leading decimal point starts a new number only if the preceding token
+// already has a decimal point or exponent. Inspect the final token, not an
+// earlier coordinate in the group ("1.5 2" still needs a space before ".5").
+fn final_number_accepts_decimal_boundary(left: String) -> Bool {
+  let suffix =
+    left
+    |> string.to_graphemes
+    |> list.reverse
+    |> list.drop_while(fn(char) { string.contains("0123456789", char) })
+  case suffix {
+    [".", ..] | ["e", ..] | ["E", ..] -> True
+    ["-", "e", ..] | ["+", "e", ..] | ["-", "E", ..] | ["+", "E", ..] -> True
+    _ -> False
   }
 }
 
@@ -1613,14 +1629,18 @@ fn join_one_line(commands: List(String), format: Format) -> String {
 fn join_command_chunks(commands: List(String), options: Options) -> String {
   case commands {
     [] -> ""
-    [first, ..rest] ->
-      list.fold(rest, first, fn(joined, next) {
-        let separator = case is_command_name(command_name(next)) {
-          True -> command_separator(options)
-          False -> command_chunk_separator(joined, next, options)
-        }
-        joined <> separator <> next
-      })
+    [first, ..rest] -> {
+      let #(joined, _) =
+        list.fold(rest, #(first, first), fn(state, next) {
+          let #(joined, previous) = state
+          let separator = case is_command_name(command_name(next)) {
+            True -> command_separator(options)
+            False -> command_chunk_separator(previous, next, options)
+          }
+          #(joined <> separator <> next, next)
+        })
+      joined
+    }
   }
 }
 
@@ -1629,12 +1649,8 @@ fn command_chunk_separator(
   right: String,
   options: Options,
 ) -> String {
-  let _ = left
-  case
-    options.minimize_whitespace
-    && { string.starts_with(right, "-") || string.starts_with(right, "+") }
-  {
-    True -> ""
+  case options.minimize_whitespace {
+    True -> minimized_number_separator(left, right)
     False -> " "
   }
 }
