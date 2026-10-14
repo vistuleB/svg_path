@@ -1472,3 +1472,42 @@ fn result_try_set_closed_true(
     Error(error) -> Error(error)
   }
 }
+
+pub fn compact_initial_axis_line_prefers_shorter_command_test() {
+  let assert Ok(source) = parse.path("M100 100L100 200")
+  let compact = serialize.minifying_options(3)
+  assert serialize.path_with(source, compact) == "m100 100v100"
+  let absolute =
+    serialize.decimal_options(3)
+    |> serialize.minimize_whitespace
+    |> serialize.explicit_initial_lineto(False)
+  assert serialize.path_with(source, absolute) == "M100 100V200"
+  let disabled = compact |> serialize.use_h_v(False)
+  assert serialize.path_with(source, disabled) == "m100 100 0 100"
+  let assert Ok(tie) = parse.path("M0 0L1 1")
+  assert serialize.path_with(tie, compact) == "m0 0 1 1"
+}
+
+pub fn compact_scientific_notation_preserves_decimal_rounding_test() {
+  let options = serialize.decimal_options(6) |> serialize.minimize_whitespace
+  let assert Ok(source) = parse.path("M100000 -0.00001L123000 0.0000014")
+  let encoded = serialize.path_with(source, options)
+  assert encoded == "M1e5-1e-5L123e3 1e-6"
+  let assert Ok(expected) = parse.path("M100000 -0.00001L123000 0.000001")
+  let assert Ok(actual) = parse.path(encoded)
+  let assert [a] = svg_path.path_subpaths(actual)
+  let assert [b] = svg_path.path_subpaths(expected)
+  assert float.absolute_value(
+      svg_path.subpath_start(a).y -. svg_path.subpath_start(b).y,
+    )
+    <. 1.0e-18
+}
+
+pub fn compact_scientific_notation_respects_fixed_formatting_test() {
+  let assert Ok(source) = parse.path("M100000 0.00001")
+  let fixed =
+    serialize.fixed_decimal_options(6) |> serialize.minimize_whitespace
+  assert serialize.path_with(source, fixed) == "M100000.000000.000010"
+  let readable = serialize.decimal_options(6)
+  assert serialize.path_with(source, readable) == "M 100000 0.00001"
+}

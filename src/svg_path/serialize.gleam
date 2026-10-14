@@ -6,6 +6,7 @@
 //// letters.
 
 import gleam/float
+import gleam/int
 import gleam/list
 import gleam/string
 import svg_path
@@ -23,6 +24,8 @@ pub type Options {
     /// Whether to emit relative commands instead of absolute commands.
     relative: Bool,
     /// Whether to remove optional spaces between command letters and arguments.
+    /// With unpadded `AtMost` formatting, also use a shorter scientific spelling
+    /// of the already-rounded decimal value when available.
     minimize_whitespace: Bool,
     /// Whether to use commas inside coordinate pairs.
     commas: Bool,
@@ -30,6 +33,7 @@ pub type Options {
     /// omitted.
     repeat_commands: Bool,
     /// Whether the first line after a moveto has an explicit `L`/`l` command.
+    /// When false, compact output may prefer a shorter enabled `H`/`V`.
     explicit_initial_lineto: Bool,
     /// Whether horizontal and vertical line segments should use `H`/`V` or
     /// `h`/`v` commands.
@@ -188,6 +192,10 @@ pub fn relative_decimal_options(decimal_places: Int) -> Options {
 ///
 /// This is a deterministic small-output preset, not a full shortest-path-data
 /// optimizer. It does not compare absolute and relative commands per segment.
+/// Compact, unpadded `AtMost` numbers use scientific notation only when it is
+/// shorter than the already-rounded decimal text. Fixed and padded formatting
+/// retain their numeric layout. Initial lines may use a shorter `h`/`v` instead
+/// of an implicit coordinate pair; ties retain the implicit pair.
 /// Negative decimal places are clamped to zero.
 pub fn minifying_options(decimal_places: Int) -> Options {
   relative_decimal_options(decimal_places)
@@ -250,7 +258,9 @@ pub fn repeat_commands(options: Options, repeat_commands: Bool) -> Options {
 /// Control whether the first line after each moveto includes `L`/`l`.
 ///
 /// When this is `False`, the line endpoint is emitted as a second coordinate
-/// pair of the moveto command, as permitted by SVG path syntax.
+/// pair of the moveto command, as permitted by SVG path syntax. In compact
+/// output with `use_h_v` enabled, a shorter `H`/`V` is preferred; ties keep
+/// the implicit coordinate pair.
 pub fn explicit_initial_lineto(
   options: Options,
   explicit_initial_lineto: Bool,
@@ -497,17 +507,23 @@ fn serialize_absolute_subpath(
         format.options.explicit_initial_lineto,
         segments
       {
-        False, [svg_path.Line(end:, ..), ..rest] -> #(
-          command(
-            "M",
-            join_number_groups(
-              [point(start, format), point(end, format)],
+        False, [svg_path.Line(start: line_start, end:), ..rest] -> {
+          let implicit =
+            command(
+              "M",
+              join_number_groups(
+                [point(start, format), point(end, format)],
+                format,
+              ),
               format,
-            ),
-            format,
-          ),
-          rest,
-        )
+            )
+          let move = command("M", point(start, format), format)
+          let line = absolute_line(line_start, end, format)
+          case prefer_initial_shorthand(move, line, implicit, format) {
+            True -> #(move, segments)
+            False -> #(implicit, rest)
+          }
+        }
         _, _ -> #(command("M", point(start, format), format), segments)
       }
       let commands = [move, ..absolute_segments(segments, format)]
@@ -519,6 +535,18 @@ fn serialize_absolute_subpath(
       join_commands(commands, format)
     }
   }
+}
+
+fn prefer_initial_shorthand(
+  move: String,
+  line: String,
+  implicit: String,
+  format: Format,
+) -> Bool {
+  format.options.minimize_whitespace
+  && list.contains(["H", "V", "h", "v"], command_name(line))
+  && string.length(join_commands([move, line], format))
+  < string.length(implicit)
 }
 
 fn relative_path(subpaths: List(svg_path.Subpath), format: Format) -> String {
@@ -613,8 +641,11 @@ fn parser_tracked_subpath_from_state(
       let Format(options:, number_format:) = format
       let line_format =
         Format(options: Options(..options, use_h_v: False), number_format:)
+      let assert #([shorthand], shorthand_state) =
+        parser_tracked_line(start, end, state, format)
       let assert #([line], state) =
         parser_tracked_line(start, end, state, line_format)
+      let original_move = move
       let move =
         move
         <> command_chunk_separator(
@@ -623,8 +654,18 @@ fn parser_tracked_subpath_from_state(
           options,
         )
         <> command_arguments(line, options)
-      let #(commands, state) = parser_tracked_segments(rest, state, [], format)
-      #(move, commands, state)
+      case prefer_initial_shorthand(original_move, shorthand, move, format) {
+        True -> {
+          let #(commands, state) =
+            parser_tracked_segments(rest, shorthand_state, [], format)
+          #(original_move, [shorthand, ..commands], state)
+        }
+        False -> {
+          let #(commands, state) =
+            parser_tracked_segments(rest, state, [], format)
+          #(move, commands, state)
+        }
+      }
     }
     _, segments -> {
       let #(commands, state) =
@@ -2035,7 +2076,50 @@ fn number(number: Float, format: Format) -> String {
   let formatted = number_format.number(number, with: format.number_format)
   case format.options.minimize_whitespace {
     False -> formatted
-    True -> minimize_leading_zero(formatted)
+    True -> {
+      let compact = minimize_leading_zero(formatted)
+      case format.options.left_decimals, format.options.right_decimals {
+        Succinct, AtMost(_) -> shorter_scientific(compact)
+        _, _ -> compact
+      }
+    }
+  }
+}
+
+// Rewrite the decimal text, never the original float: rounding has already
+// happened. An integer significand avoids introducing additional precision.
+fn shorter_scientific(decimal: String) -> String {
+  case string.contains(decimal, "e") || string.contains(decimal, "E") {
+    True -> decimal
+    False -> {
+      let #(sign, unsigned) = case string.starts_with(decimal, "-") {
+        True -> #("-", string.drop_start(decimal, 1))
+        False -> #("", decimal)
+      }
+      let #(digits, places) = case string.split(unsigned, ".") {
+        [whole, fraction] -> #(whole <> fraction, string.length(fraction))
+        _ -> #(unsigned, 0)
+      }
+      let significant =
+        digits |> string.to_graphemes |> list.drop_while(fn(c) { c == "0" })
+      let reversed = list.reverse(significant)
+      let trimmed = list.drop_while(reversed, fn(c) { c == "0" })
+      case trimmed {
+        [] -> decimal
+        _ -> {
+          let exponent = list.length(reversed) - list.length(trimmed) - places
+          let candidate =
+            sign
+            <> string.join(list.reverse(trimmed), "")
+            <> "e"
+            <> int.to_string(exponent)
+          case string.length(candidate) < string.length(decimal) {
+            True -> candidate
+            False -> decimal
+          }
+        }
+      }
+    }
   }
 }
 

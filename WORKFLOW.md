@@ -50,7 +50,7 @@ The release runner and CI explicitly include both portable profiles.
 The standalone package compiles the library as a dependency, avoiding the
 root test directory's Erlang-only figure I/O. Its manifest locks dependencies.
 
-The fast selection runs 732 tests; the combined selection runs 737 tests and covers curve intersections (including scale/translation
+The fast selection runs 735 tests; the combined selection runs 740 tests and covers curve intersections (including scale/translation
 regressions), overlaps, SVG arc normalization, parsing, serialization, CSG,
 clipping, area, stroke, transforms, all 24 affine factorization orders, and
 signed-zero Bézier/ellipse splitting. Add suitable modules to the selection as coverage
