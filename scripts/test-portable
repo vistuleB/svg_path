@@ -4,31 +4,55 @@ set -euo pipefail
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 suite="$root/test_portable"
 target="${1:-all}"
+profile="${2:-fast}"
+selection="${3:-all}"
 case "$target" in
   all|erlang|javascript) ;;
-  *) echo "Usage: scripts/test-portable [all|erlang|javascript]" >&2; exit 2 ;;
+  *) echo "Usage: scripts/test-portable [all|erlang|javascript] [fast|slow|all] [all|paperjs]" >&2; exit 2 ;;
 esac
 
-# This directory contains only generated copies. Original tests stay in test/.
+case "$profile" in
+  fast|slow|all) ;;
+  *) echo "Unknown portable profile: $profile" >&2; exit 2 ;;
+esac
+
+case "$selection" in
+  all|paperjs) ;;
+  *) echo "Unknown portable selection: $selection" >&2; exit 2 ;;
+esac
+
+# This directory contains only generated copies. Original tests stay in test/ or test_slow/.
 mkdir -p "$suite/test"
 for generated in "$suite/test/"*.gleam; do
   [ ! -f "$generated" ] || rm "$generated"
 done
-while IFS= read -r module; do
-  case "$module" in
-    ""|\#*) continue ;;
-    */*|*[!a-zA-Z0-9_.]*) echo "Invalid portable test module: $module" >&2; exit 2 ;;
-  esac
-  cp "$root/test/$module" "$suite/test/$module"
-done < "$suite/modules.txt"
+copy_modules() {
+  local registry="$1" source="$2" module
+  while IFS= read -r module; do
+    case "$module" in
+      ""|\#*) continue ;;
+      */*|*[!a-zA-Z0-9_.]*) echo "Invalid portable test module: $module" >&2; exit 2 ;;
+    esac
+    if [ "$selection" = paperjs ]; then
+      case "$module" in svg_path_paper_*) ;; *) continue ;; esac
+    fi
+    cp "$source/$module" "$suite/test/$module"
+  done < "$registry"
+}
+if [ "$profile" = fast ] || [ "$profile" = all ]; then
+  copy_modules "$suite/modules.txt" "$root/test"
+fi
+if [ "$profile" = slow ] || [ "$profile" = all ]; then
+  copy_modules "$suite/slow-modules.txt" "$root/test_slow"
+fi
 cp "$suite/runner.gleam" "$suite/test/svg_path_portable_tests_test.gleam"
 
 cd "$suite"
 if [ "$target" = all ] || [ "$target" = erlang ]; then
-  echo "Portable numerical tests: Erlang"
+  echo "Portable numerical tests ($profile, $selection): Erlang"
   gleam test --target erlang
 fi
 if [ "$target" = all ] || [ "$target" = javascript ]; then
-  echo "Portable numerical tests: JavaScript"
+  echo "Portable numerical tests ($profile, $selection): JavaScript"
   gleam test --target javascript
 fi

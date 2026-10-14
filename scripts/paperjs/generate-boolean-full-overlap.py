@@ -1,4 +1,5 @@
 """Regressions for Boolean fixtures recovered by certified full-overlap preference."""
+from test_profiles import write_profiles
 import json
 from decimal import Decimal
 from pathlib import Path
@@ -73,4 +74,4 @@ for id in [107,122,123]:
  let assert Ok(expected) = parse.path({json.dumps(f['expectedPathData'])})
  check(actual,expected,{grids[0]},{grids[1]})
 }}''')
-(root/'test/svg_path_paper_boolean_full_overlap_test.gleam').write_text('\n'.join(s))
+write_profiles(root, 'svg_path_paper_boolean_full_overlap_test.gleam', '\n'.join(s), ['paper_boolean_full_overlap_107_test'])

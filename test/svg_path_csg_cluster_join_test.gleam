@@ -1,3 +1,5 @@
+// Native reduced endpoint-cluster regressions (audit fixtures 104, 136–137).
+// Provenance: scripts/paperjs/files/Path_Boolean.js.md.
 import gleam/float
 import gleam/list
 import gleeunit/should

@@ -25,12 +25,14 @@ Different compiler versions can produce different formatting.
 
 - `gleam test`: default suite.
 - `scripts/test-fast`: ordinary suite, including convex-hull smoke tests.
-- `scripts/test-slow`: additional convex-hull stress tests only.
+- `scripts/test-slow`: convex-hull stress tests and expensive geometry regressions.
 - `scripts/test-all`: both profiles.
-- `scripts/test-portable [all|erlang|javascript]`: shared numerical regressions
-  on both targets by default, or on the named target.
+- `scripts/test-portable [all|erlang|javascript] [fast|slow|all]`: shared numerical
+  regressions on both targets by default, or on the named target. The default
+  profile is `fast`; use `slow` for the expensive portable regressions or `all`
+  for both.
 - `scripts/test-release`: canonical pre-release verification, including both
-  root profiles and the portable suite on Erlang and JavaScript; fast tests
+  root profiles and both portable profiles on Erlang and JavaScript; fast tests
   alone do not verify a release.
 
 In review notes and reports, record the exact completed command and test count.
@@ -43,20 +45,24 @@ or `scripts/test-release` run in the current worktree.
 support modules. `scripts/test-portable` copies them into the ignored
 `test_portable/test/` directory and installs its Gleeunit runner. Edit the
 original tests in `test/`; generated copies must not be edited or committed.
+`test_portable/slow-modules.txt` selects the portable subset of `test_slow/`.
+The release runner and CI explicitly include both portable profiles.
 The standalone package compiles the library as a dependency, avoiding the
 root test directory's Erlang-only figure I/O. Its manifest locks dependencies.
 
-The selection runs 539 tests and covers curve intersections (including scale/translation
+The fast selection runs 729 tests; the combined selection runs 734 tests and covers curve intersections (including scale/translation
 regressions), overlaps, SVG arc normalization, parsing, serialization, CSG,
-clipping, area, stroke, transforms, and signed-zero Bézier/ellipse splitting. Add suitable modules to the selection as coverage
+clipping, area, stroke, transforms, all 24 affine factorization orders, and
+signed-zero Bézier/ellipse splitting. Add suitable modules to the selection as coverage
 expands; portable modules and their support code must implement both targets.
-The Paper.js subsets add 21 intersection-location checks and 16 non-crossing
-Boolean checks and seven recovered Boolean checks, 45 curve checks, and 13 containment tests holding 331
+The Paper.js subsets add 52 matrix decomposition checks (with reconstruction and
+serialization round trips for the 26 matrix inputs), 21 intersection-location checks and 16 non-crossing
+Boolean checks, seven recovered Boolean checks and two tangent-boundary regressions, 45 curve checks, and 13 containment tests holding 331
 point assertions, plus 16 adapted Path.js geometry checks and 13 further Curve.js
 checks; the unresolved upstream
 compatibility audit is separate. See `scripts/paperjs/README.md` and run
 `scripts/test-paperjs` for its current failures and coverage limitations.
-CI runs the same selection in separate Erlang and JavaScript jobs. Failures
+CI runs the combined selection in separate Erlang and JavaScript jobs. Failures
 must be fixed or explained, not bypassed by target-specific exclusions.
 
 Do not run this script concurrently with `scripts/test-slow`, which temporarily
@@ -259,3 +265,16 @@ Release workflow:
 - If a Hex release is replaced, move both relevant tags deliberately:
   `vX.Y.Z` on `main`, and `assets-vX.Y.Z` on `markdown-assets` if README
   figures changed.
+
+## Paper.js Audit Organization
+
+Use `scripts/paperjs/INDEX.md` to navigate by original upstream filename.
+`catalog.json` separates passing Paper.js adaptations, diagnostic probes, and
+related native regressions. Validate metadata with
+`python3 scripts/paperjs/catalog.py --check`.
+
+`scripts/test-paperjs-adapted [all|erlang|javascript] [fast|slow|all]` runs only
+passing Paper.js adaptation modules, defaulting to both targets and profiles.
+It shares the portable runner's generated directory; do not run them concurrently.
+The raw `scripts/test-paperjs` command remains diagnostic and can fail on known
+API differences. Neither command establishes complete upstream parity.

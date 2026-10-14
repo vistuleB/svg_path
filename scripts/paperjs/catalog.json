@@ -1,0 +1,921 @@
+{
+  "repository": "https://github.com/paperjs/paper.js",
+  "revision": "92775f5279c05fb7f0a743e9e7fa02cd40ec1e70",
+  "extraction_runtime": "paper@0.12.18",
+  "source_version_note": "The source is pinned by commit; paper@0.12.18 is the extraction runtime, not a claim that the source snapshot is that release.",
+  "original_test_directory": "test/tests",
+  "consolidated_on": "2026-10-14",
+  "first_core_review_date": "2026-10-12",
+  "download_date": null,
+  "license": "upstream/LICENSE.txt",
+  "files": [
+    {
+      "file": "Color.js",
+      "original_path": "test/tests/Color.js",
+      "sha256": "16393f30d513c79fad6c5d3b0d5842370a7f3cbdab8a51312e93dc6096de0a13",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "title/contract screening with selected geometric source bodies; not exhaustive assertion execution",
+      "disposition": "Color parsing, spaces, gradients and mutable styling; no color API.",
+      "fast": [],
+      "slow": [],
+      "support": [],
+      "native_regressions": [],
+      "diagnostic_probes": [],
+      "evidence": [],
+      "fixtures": [],
+      "inventory_key": null,
+      "category": "reference-only",
+      "diagnostic_assets": []
+    },
+    {
+      "file": "CompoundPath.js",
+      "original_path": "test/tests/CompoundPath.js",
+      "sha256": "7c4c9f45f4fe431866af1e92ed8f27d1e2961d52f8fd3e0ba52c25360b00002f",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "prior detailed audit plus final dispositions",
+      "disposition": "Detailed core inventory; see inventory.json and linked reports.",
+      "fast": [],
+      "slow": [],
+      "support": [],
+      "native_regressions": [],
+      "diagnostic_probes": [
+        "test_paperjs/src/paper_final_batches_probe.gleam"
+      ],
+      "evidence": [
+        "compound-paths-status.json"
+      ],
+      "fixtures": [
+        "compound-paths.json"
+      ],
+      "inventory_key": "CompoundPath.js",
+      "category": "diagnostic-adapters",
+      "diagnostic_assets": []
+    },
+    {
+      "file": "Curve.js",
+      "original_path": "test/tests/Curve.js",
+      "sha256": "65e23806d1864f7f6a3aa67adefa66148353c5359949c2bbaef61f0a242676a4",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "prior detailed audit plus final dispositions",
+      "disposition": "Detailed core inventory; see inventory.json and linked reports.",
+      "fast": [
+        "test/svg_path_paper_curves_test.gleam",
+        "test/svg_path_paper_curve_remaining_test.gleam"
+      ],
+      "slow": [],
+      "support": [],
+      "native_regressions": [],
+      "diagnostic_probes": [],
+      "evidence": [
+        "curve-status.json",
+        "curve-remaining-status.json"
+      ],
+      "fixtures": [
+        "curves.json",
+        "curve-remaining.json"
+      ],
+      "inventory_key": "Curve.js",
+      "category": "release-adaptations",
+      "diagnostic_assets": []
+    },
+    {
+      "file": "CurveLocation.js",
+      "original_path": "test/tests/CurveLocation.js",
+      "sha256": "8587f36420765fb8849993f691a6fb62d00f22fd4a60db0f7d64940028a14385",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "prior detailed audit plus final dispositions",
+      "disposition": "Detailed core inventory; see inventory.json and linked reports.",
+      "fast": [],
+      "slow": [],
+      "support": [],
+      "native_regressions": [],
+      "diagnostic_probes": [
+        "test_paperjs/src/paper_curve_locations_probe.gleam"
+      ],
+      "evidence": [
+        "curve-locations-status.json"
+      ],
+      "fixtures": [
+        "curve-locations.json"
+      ],
+      "inventory_key": "CurveLocation.js",
+      "category": "diagnostic-adapters",
+      "diagnostic_assets": []
+    },
+    {
+      "file": "Emitter.js",
+      "original_path": "test/tests/Emitter.js",
+      "sha256": "425600e69b3666972676e15ca1f72d2bcdb685c235ce3ffb9e4acea6fd7c48a4",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "title/contract screening with selected geometric source bodies; not exhaustive assertion execution",
+      "disposition": "Event listeners and dispatch; no event API.",
+      "fast": [],
+      "slow": [],
+      "support": [],
+      "native_regressions": [],
+      "diagnostic_probes": [],
+      "evidence": [],
+      "fixtures": [],
+      "inventory_key": null,
+      "category": "reference-only",
+      "diagnostic_assets": []
+    },
+    {
+      "file": "Group.js",
+      "original_path": "test/tests/Group.js",
+      "sha256": "aa123da0c1a542a0ffd0a5ea3fd3d6a9cc32017f6f6e363bfe30a6a85d39947f",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "title/contract screening with selected geometric source bodies; not exhaustive assertion execution",
+      "disposition": "Scene hierarchy, child insertion and inherited matrices/bounds; no scene graph.",
+      "fast": [],
+      "slow": [],
+      "support": [],
+      "native_regressions": [],
+      "diagnostic_probes": [],
+      "evidence": [],
+      "fixtures": [],
+      "inventory_key": null,
+      "category": "reference-only",
+      "diagnostic_assets": []
+    },
+    {
+      "file": "HitResult.js",
+      "original_path": "test/tests/HitResult.js",
+      "sha256": "fa3fba7c8e89d639f817a5196739d2548d060e90af1cb215d3482f99c8f2e2c1",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "title/contract screening with selected geometric source bodies; not exhaustive assertion execution",
+      "disposition": "Selected geometric distance/stroke probes executed; stroke defect recorded. Scene selection, hit types, visibility, view zoom and hit options have no direct counterpart.",
+      "fast": [],
+      "slow": [],
+      "support": [],
+      "native_regressions": [
+        "test/svg_path_stroke_zero_arc_test.gleam"
+      ],
+      "diagnostic_probes": [
+        "test_paperjs/src/paper_final_checks.gleam",
+        "test_paperjs/src/paper_stroke_zero_probe.gleam"
+      ],
+      "evidence": [
+        "FINAL_AUDIT.md",
+        "STROKE_ZERO_ARC_FIX.md",
+        "extra-paper-fixture-validation.json"
+      ],
+      "fixtures": [],
+      "inventory_key": null,
+      "category": "diagnostic-adapters",
+      "diagnostic_assets": []
+    },
+    {
+      "file": "Interactions.js",
+      "original_path": "test/tests/Interactions.js",
+      "sha256": "cd2b5a943118ea9541cf5b9388ccccf2e9eee0f9c75364fe9c098216b7fb626b",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "title/contract screening with selected geometric source bodies; not exhaustive assertion execution",
+      "disposition": "DOM/mouse events and scene hit dispatch; no interaction API.",
+      "fast": [],
+      "slow": [],
+      "support": [],
+      "native_regressions": [],
+      "diagnostic_probes": [],
+      "evidence": [],
+      "fixtures": [],
+      "inventory_key": null,
+      "category": "reference-only",
+      "diagnostic_assets": []
+    },
+    {
+      "file": "Item.js",
+      "original_path": "test/tests/Item.js",
+      "sha256": "c9c9390ae0f6100f4f198391a2837703f626935a3baa3fc189c8130868a8d0f0",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "title/contract screening with selected geometric source bodies; not exhaustive assertion execution",
+      "disposition": "Mutable scene item metadata, ownership, caches, pivots, rendering and matrix application flags; no corresponding item object.",
+      "fast": [],
+      "slow": [],
+      "support": [],
+      "native_regressions": [],
+      "diagnostic_probes": [],
+      "evidence": [],
+      "fixtures": [],
+      "inventory_key": null,
+      "category": "reference-only",
+      "diagnostic_assets": []
+    },
+    {
+      "file": "Item_Bounds.js",
+      "original_path": "test/tests/Item_Bounds.js",
+      "sha256": "32ff615bef8e8a25afd8d5483de77b5b3ee578249bddf20ecae338a74e5b5ad3",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "prior detailed audit plus final dispositions",
+      "disposition": "Detailed core inventory; see inventory.json and linked reports.",
+      "fast": [],
+      "slow": [],
+      "support": [],
+      "native_regressions": [],
+      "diagnostic_probes": [
+        "test_paperjs/src/paper_bounds_probe.gleam"
+      ],
+      "evidence": [
+        "bounds-status.json",
+        "first-stroke-bounds-findings.json",
+        "remaining-stroke-bounds-findings.json"
+      ],
+      "fixtures": [
+        "bounds.json"
+      ],
+      "inventory_key": "Item_Bounds.js",
+      "category": "diagnostic-adapters",
+      "diagnostic_assets": []
+    },
+    {
+      "file": "Item_Cloning.js",
+      "original_path": "test/tests/Item_Cloning.js",
+      "sha256": "e8ce801d37870e17fd39bad5c34b97523a63eb6485bb2b43c3f9472ea8e7b065",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "title/contract screening with selected geometric source bodies; not exhaustive assertion execution",
+      "disposition": "Mutable scene/style/child cloning and ownership; immutable geometry has no clone-identity contract.",
+      "fast": [],
+      "slow": [],
+      "support": [],
+      "native_regressions": [],
+      "diagnostic_probes": [],
+      "evidence": [],
+      "fixtures": [],
+      "inventory_key": null,
+      "category": "reference-only",
+      "diagnostic_assets": []
+    },
+    {
+      "file": "Item_Getting.js",
+      "original_path": "test/tests/Item_Getting.js",
+      "sha256": "93ae035db90b56a8906d4c36a7825ce47a46392b49b11f207762a817185b2477",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "title/contract screening with selected geometric source bodies; not exhaustive assertion execution",
+      "disposition": "Project/scene item searching, filters and selection; no scene query API.",
+      "fast": [],
+      "slow": [],
+      "support": [],
+      "native_regressions": [],
+      "diagnostic_probes": [],
+      "evidence": [],
+      "fixtures": [],
+      "inventory_key": null,
+      "category": "reference-only",
+      "diagnostic_assets": []
+    },
+    {
+      "file": "Item_Order.js",
+      "original_path": "test/tests/Item_Order.js",
+      "sha256": "3f1bcdd7b5f47bc8ab069a8b423f68a222bb70c3c1f3c9ebe254b0fb2ab650fc",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "title/contract screening with selected geometric source bodies; not exhaustive assertion execution",
+      "disposition": "Scene child order and insertion; no scene graph.",
+      "fast": [],
+      "slow": [],
+      "support": [],
+      "native_regressions": [],
+      "diagnostic_probes": [],
+      "evidence": [],
+      "fixtures": [],
+      "inventory_key": null,
+      "category": "reference-only",
+      "diagnostic_assets": []
+    },
+    {
+      "file": "JSON.js",
+      "original_path": "test/tests/JSON.js",
+      "sha256": "01788ad91121f1d648ce9fa337725a2d517fa7f6d9c6b851c108a4b2f3a2e3c7",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "title/contract screening with selected geometric source bodies; not exhaustive assertion execution",
+      "disposition": "Paper object JSON schema, class reconstruction, styles and scene serialization; no equivalent JSON importer/exporter.",
+      "fast": [],
+      "slow": [],
+      "support": [],
+      "native_regressions": [],
+      "diagnostic_probes": [],
+      "evidence": [],
+      "fixtures": [],
+      "inventory_key": null,
+      "category": "reference-only",
+      "diagnostic_assets": []
+    },
+    {
+      "file": "Layer.js",
+      "original_path": "test/tests/Layer.js",
+      "sha256": "823735818429ef6cf85159faafa80858fba26767cbca380df85ddc5e8063f672",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "title/contract screening with selected geometric source bodies; not exhaustive assertion execution",
+      "disposition": "Layer ownership/order and nested scene bounds; no layers.",
+      "fast": [],
+      "slow": [],
+      "support": [],
+      "native_regressions": [],
+      "diagnostic_probes": [],
+      "evidence": [],
+      "fixtures": [],
+      "inventory_key": null,
+      "category": "reference-only",
+      "diagnostic_assets": []
+    },
+    {
+      "file": "Matrix.js",
+      "original_path": "test/tests/Matrix.js",
+      "sha256": "82843680f397de2c1ef609322833d255b5c9aff454af1e1bb39cf5ff7ae9757a",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "prior detailed audit plus final dispositions",
+      "disposition": "Detailed core inventory; see inventory.json and linked reports.",
+      "fast": [
+        "test/svg_path_paper_matrix_test.gleam"
+      ],
+      "slow": [],
+      "support": [],
+      "native_regressions": [],
+      "diagnostic_probes": [
+        "test_paperjs/src/paper_matrix_probe.gleam"
+      ],
+      "evidence": [
+        "matrix-status.json",
+        "matrix-native-screening.json"
+      ],
+      "fixtures": [
+        "matrix.json"
+      ],
+      "inventory_key": "Matrix.js",
+      "category": "release-adaptations",
+      "diagnostic_assets": []
+    },
+    {
+      "file": "Numerical.js",
+      "original_path": "test/tests/Numerical.js",
+      "sha256": "1998e03089f561f721695d56349a606aa5c4a1a0d3d84a13ccee00908214100a",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "prior detailed audit plus final dispositions",
+      "disposition": "Detailed core inventory; see inventory.json and linked reports.",
+      "fast": [],
+      "slow": [],
+      "support": [],
+      "native_regressions": [],
+      "diagnostic_probes": [
+        "test_paperjs/src/paper_final_batches_probe.gleam"
+      ],
+      "evidence": [
+        "numerical-status.json"
+      ],
+      "fixtures": [
+        "numerical.json"
+      ],
+      "inventory_key": "Numerical.js",
+      "category": "diagnostic-adapters",
+      "diagnostic_assets": []
+    },
+    {
+      "file": "PaperScript.js",
+      "original_path": "test/tests/PaperScript.js",
+      "sha256": "6821dacc73edf3a72416164a3ef44965df0f158b84da24c101644fefd3df5b05",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "title/contract screening with selected geometric source bodies; not exhaustive assertion execution",
+      "disposition": "PaperScript parser/operator rewriting; no language runtime.",
+      "fast": [],
+      "slow": [],
+      "support": [],
+      "native_regressions": [],
+      "diagnostic_probes": [],
+      "evidence": [],
+      "fixtures": [],
+      "inventory_key": null,
+      "category": "reference-only",
+      "diagnostic_assets": []
+    },
+    {
+      "file": "Path.js",
+      "original_path": "test/tests/Path.js",
+      "sha256": "1bf6d952d9bf4ca619bc04018b69367a2985e97cd5607fb9575e677e6705a4f6",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "prior detailed audit plus final dispositions",
+      "disposition": "Detailed core inventory; see inventory.json and linked reports.",
+      "fast": [
+        "test/svg_path_paper_paths_test.gleam",
+        "test/svg_path_paper_path_arcs_test.gleam",
+        "test/svg_path_paper_path_tangents_test.gleam",
+        "test/svg_path_paper_path_coincident_test.gleam"
+      ],
+      "slow": [],
+      "support": [],
+      "native_regressions": [
+        "test/svg_path_large_construction_test.gleam",
+        "test/svg_path_parse_tokenizer_stack_test.gleam",
+        "test/svg_path_parse_dispatch_stack_test.gleam"
+      ],
+      "diagnostic_probes": [
+        "test_paperjs/src/paper_bulk_checks.gleam"
+      ],
+      "evidence": [
+        "path-status.json",
+        "PATH_ARCS.md",
+        "PATH_TANGENTS.md",
+        "PATH_COINCIDENT.md",
+        "LARGE_CONSTRUCTION_FIX.md",
+        "STACK_OVERFLOW_INVESTIGATION.md"
+      ],
+      "fixtures": [
+        "paths.json",
+        "path-arcs.json",
+        "path-tangents.json",
+        "path-coincident.json"
+      ],
+      "inventory_key": "Path.js",
+      "category": "release-adaptations",
+      "diagnostic_assets": []
+    },
+    {
+      "file": "PathItem.js",
+      "original_path": "test/tests/PathItem.js",
+      "sha256": "6872d19c3bd050a6941f3e78b53b6e0805fb5ffe8983c948eef41efd53326b5a",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "prior detailed audit plus final dispositions",
+      "disposition": "Detailed core inventory; see inventory.json and linked reports.",
+      "fast": [],
+      "slow": [],
+      "support": [],
+      "native_regressions": [],
+      "diagnostic_probes": [
+        "test_paperjs/src/paper_pathitem_probe.gleam"
+      ],
+      "evidence": [
+        "pathitem-status.json"
+      ],
+      "fixtures": [
+        "pathitem.json"
+      ],
+      "inventory_key": "PathItem.js",
+      "category": "diagnostic-adapters",
+      "diagnostic_assets": []
+    },
+    {
+      "file": "PathItem_Contains.js",
+      "original_path": "test/tests/PathItem_Contains.js",
+      "sha256": "3345f42240b4d75855b527b366f4d109c9dbe9fc636f5f5b4eb0444e74262996",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "prior detailed audit plus final dispositions",
+      "disposition": "Detailed core inventory; see inventory.json and linked reports.",
+      "fast": [
+        "test/svg_path_paper_containment_test.gleam"
+      ],
+      "slow": [],
+      "support": [],
+      "native_regressions": [],
+      "diagnostic_probes": [],
+      "evidence": [
+        "containment-screening.json"
+      ],
+      "fixtures": [
+        "containment.json"
+      ],
+      "inventory_key": "PathItem_Contains.js",
+      "category": "release-adaptations",
+      "diagnostic_assets": []
+    },
+    {
+      "file": "Path_Boolean.js",
+      "original_path": "test/tests/Path_Boolean.js",
+      "sha256": "6462afa87758c863c92e3d184452f949524d09bce7083cae355b94ef3a32523a",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "prior detailed audit plus final dispositions",
+      "disposition": "Detailed core inventory; see inventory.json and linked reports.",
+      "fast": [
+        "test/svg_path_paper_boolean_basics_test.gleam",
+        "test/svg_path_paper_boolean_recovered_test.gleam",
+        "test/svg_path_paper_boolean_full_overlap_test.gleam",
+        "test/svg_path_paper_boolean_adapters_test.gleam",
+        "test/svg_path_paper_boolean_orientation_test.gleam",
+        "test/svg_path_paper_boolean_tangent_test.gleam"
+      ],
+      "slow": [
+        "test_slow/svg_path_paper_boolean_full_overlap_slow_test.gleam"
+      ],
+      "support": [],
+      "native_regressions": [
+        "test/svg_path_csg_cluster_join_test.gleam",
+        "test/svg_path_csg_face_winding_test.gleam",
+        "test/svg_path_csg_tangent_order_test.gleam",
+        "test/svg_path_crossing_endpoint_test.gleam",
+        "test/svg_path_root_classification_regression_test.gleam"
+      ],
+      "diagnostic_probes": [
+        "test_paperjs/src/paper_boolean_probe.gleam",
+        "test_paperjs/src/paper_final_boolean_probe.gleam",
+        "test_paperjs/src/paper_crossing_roots_probe.gleam",
+        "test_paperjs/src/paper_crossing_probe.gleam",
+        "test_paperjs/src/paper_boolean_failures.gleam",
+        "test_paperjs/src/paper_boolean_remaining_probe.gleam",
+        "test_paperjs/src/paper_boundary_classification_regressions.gleam",
+        "test_paperjs/src/paper_new_overlap_probe.gleam"
+      ],
+      "evidence": [
+        "BOOLEAN_AUDIT.md",
+        "BOOLEAN_ADAPTERS.md",
+        "BOOLEAN_ORIENTATION.md",
+        "FULL_OVERLAP_FIX.md",
+        "FACE_WINDING_FIX.md",
+        "BOOLEAN_TANGENT_FIX.md",
+        "CROSSING_BERNSTEIN_FIX.md"
+      ],
+      "fixtures": [
+        "booleans.json",
+        "boolean-adapter-fixtures.json",
+        "boolean-orientation.json"
+      ],
+      "inventory_key": "Path_Boolean.js",
+      "category": "release-adaptations",
+      "diagnostic_assets": []
+    },
+    {
+      "file": "Path_Constructors.js",
+      "original_path": "test/tests/Path_Constructors.js",
+      "sha256": "da3782f4cafb8813d17612eb2211a78ecd11d252e07c4ce2b23972944114e186",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "prior detailed audit plus final dispositions",
+      "disposition": "Detailed core inventory; see inventory.json and linked reports.",
+      "fast": [],
+      "slow": [],
+      "support": [],
+      "native_regressions": [],
+      "diagnostic_probes": [
+        "test_paperjs/src/paper_constructors_probe.gleam"
+      ],
+      "evidence": [
+        "constructors-status.json"
+      ],
+      "fixtures": [
+        "constructors.json"
+      ],
+      "inventory_key": "Path_Constructors.js",
+      "category": "diagnostic-adapters",
+      "diagnostic_assets": []
+    },
+    {
+      "file": "Path_Intersections.js",
+      "original_path": "test/tests/Path_Intersections.js",
+      "sha256": "4c5ca23d22e5f44970da9cecde43a36deaeb026875477c60fbe28d46d71fc675",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "prior detailed audit plus final dispositions",
+      "disposition": "Detailed core inventory; see inventory.json and linked reports.",
+      "fast": [
+        "test/svg_path_paper_intersections_test.gleam",
+        "test/svg_path_paper_intersection_addresses_test.gleam",
+        "test/svg_path_paper_crossings_1409_test.gleam"
+      ],
+      "slow": [
+        "test_slow/svg_path_paper_intersection_addresses_slow_test.gleam",
+        "test_slow/svg_path_paper_crossings_1409_slow_test.gleam"
+      ],
+      "support": [
+        "test/svg_path_paper_intersection_support.gleam"
+      ],
+      "native_regressions": [],
+      "diagnostic_probes": [],
+      "evidence": [
+        "intersection-status.json",
+        "INTERSECTION_ADDRESSES.md",
+        "CROSSINGS_1409.md"
+      ],
+      "fixtures": [
+        "intersections.json"
+      ],
+      "inventory_key": "Path_Intersections.js",
+      "category": "release-adaptations",
+      "diagnostic_assets": [
+        "scripts/paperjs/audit_tests.gleam",
+        "scripts/paperjs/probe-intersections.mjs",
+        "scripts/paperjs/probe-intersection-addresses.mjs"
+      ]
+    },
+    {
+      "file": "Point.js",
+      "original_path": "test/tests/Point.js",
+      "sha256": "0b58110516d5deab8a18a114d0452eeb4ba204ad49b9dcd0ce572ff65e0e5549",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "title/contract screening with selected geometric source bodies; not exhaustive assertion execution",
+      "disposition": "Selected normalization and quarter-rotation checks executed. Dynamic constructors, mutation/cached headings and predicate conventions are not equivalent typed API contracts.",
+      "fast": [],
+      "slow": [],
+      "support": [],
+      "native_regressions": [],
+      "diagnostic_probes": [
+        "test_paperjs/src/paper_final_checks.gleam"
+      ],
+      "evidence": [
+        "FINAL_AUDIT.md"
+      ],
+      "fixtures": [],
+      "inventory_key": null,
+      "category": "diagnostic-adapters",
+      "diagnostic_assets": []
+    },
+    {
+      "file": "Project.js",
+      "original_path": "test/tests/Project.js",
+      "sha256": "070b0c75553eb7b4a13c3ac826be65edbdd044ca4ba2dd50076820c1379dc660",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "title/contract screening with selected geometric source bodies; not exhaustive assertion execution",
+      "disposition": "Active project and scene clearing; no projects.",
+      "fast": [],
+      "slow": [],
+      "support": [],
+      "native_regressions": [],
+      "diagnostic_probes": [],
+      "evidence": [],
+      "fixtures": [],
+      "inventory_key": null,
+      "category": "reference-only",
+      "diagnostic_assets": []
+    },
+    {
+      "file": "Raster.js",
+      "original_path": "test/tests/Raster.js",
+      "sha256": "b28cfe2a4c548b99cc88b73ab758a9195a88477025d01528a0697ed37c8040a4",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "title/contract screening with selected geometric source bodies; not exhaustive assertion execution",
+      "disposition": "Raster loading, pixel access and rendering; no raster API.",
+      "fast": [],
+      "slow": [],
+      "support": [],
+      "native_regressions": [],
+      "diagnostic_probes": [],
+      "evidence": [],
+      "fixtures": [],
+      "inventory_key": null,
+      "category": "reference-only",
+      "diagnostic_assets": []
+    },
+    {
+      "file": "Rectangle.js",
+      "original_path": "test/tests/Rectangle.js",
+      "sha256": "1fbb74c8b1009f095ad7b890bf4f890553ab69b54e69c4848ef4c28f3698d2b1",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "title/contract screening with selected geometric source bodies; not exhaustive assertion execution",
+      "disposition": "Mutable Rectangle object/linked corners, dynamic constructors and rectangle-specific methods; no equivalent rectangle object API. Path geometry already covered by constructors/containment/bounds.",
+      "fast": [],
+      "slow": [],
+      "support": [],
+      "native_regressions": [],
+      "diagnostic_probes": [],
+      "evidence": [],
+      "fixtures": [],
+      "inventory_key": null,
+      "category": "reference-only",
+      "diagnostic_assets": []
+    },
+    {
+      "file": "Segment.js",
+      "original_path": "test/tests/Segment.js",
+      "sha256": "2df05c4b258365d2c4a2875dc2b07ec4608196f0344a5309e8951a7ed59ab487",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "prior detailed audit plus final dispositions",
+      "disposition": "Detailed core inventory; see inventory.json and linked reports.",
+      "fast": [],
+      "slow": [],
+      "support": [],
+      "native_regressions": [],
+      "diagnostic_probes": [
+        "test_paperjs/src/paper_segments_probe.gleam"
+      ],
+      "evidence": [
+        "segments-status.json"
+      ],
+      "fixtures": [
+        "segments.json"
+      ],
+      "inventory_key": "Segment.js",
+      "category": "diagnostic-adapters",
+      "diagnostic_assets": []
+    },
+    {
+      "file": "Shape.js",
+      "original_path": "test/tests/Shape.js",
+      "sha256": "1c95091d4dc0752f26cccb78dd947d889b9f83385c56c89bbc083ee59be2bb70",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "title/contract screening with selected geometric source bodies; not exhaustive assertion execution",
+      "disposition": "Shape recognition roundtrip, mutable dimensions and negative size semantics; no shape-recognition API. Our SVG shape constructors explicitly reject negative dimensions.",
+      "fast": [],
+      "slow": [],
+      "support": [],
+      "native_regressions": [],
+      "diagnostic_probes": [
+        "test_paperjs/src/paper_final_checks.gleam"
+      ],
+      "evidence": [
+        "FINAL_AUDIT.md",
+        "final-shape-inputs.json"
+      ],
+      "fixtures": [],
+      "inventory_key": null,
+      "category": "diagnostic-adapters",
+      "diagnostic_assets": []
+    },
+    {
+      "file": "Size.js",
+      "original_path": "test/tests/Size.js",
+      "sha256": "5a398c190d080215d3748a285d2c0e5f0458cb0e99fe2b428bacf2bfb158d52c",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "title/contract screening with selected geometric source bodies; not exhaustive assertion execution",
+      "disposition": "Dynamic Size constructors; no Size class.",
+      "fast": [],
+      "slow": [],
+      "support": [],
+      "native_regressions": [],
+      "diagnostic_probes": [],
+      "evidence": [],
+      "fixtures": [],
+      "inventory_key": null,
+      "category": "reference-only",
+      "diagnostic_assets": []
+    },
+    {
+      "file": "Style.js",
+      "original_path": "test/tests/Style.js",
+      "sha256": "8236e3a636da585b5e8fdb96130b123456b31f77050bf6880638b5b896559745",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "title/contract screening with selected geometric source bodies; not exhaustive assertion execution",
+      "disposition": "Mutable/inherited style and color properties; no style object API.",
+      "fast": [],
+      "slow": [],
+      "support": [],
+      "native_regressions": [],
+      "diagnostic_probes": [],
+      "evidence": [],
+      "fixtures": [],
+      "inventory_key": null,
+      "category": "reference-only",
+      "diagnostic_assets": []
+    },
+    {
+      "file": "SvgExport.js",
+      "original_path": "test/tests/SvgExport.js",
+      "sha256": "1632d8f14436ca9ed32946910b98cac67a073e0c7d31647bc4dd85c09dc709d2",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "title/contract screening with selected geometric source bodies; not exhaustive assertion execution",
+      "disposition": "Selected path precision geometry checks executed. DOM export, shape recognition, style and viewBox export differ from path-data serialization.",
+      "fast": [],
+      "slow": [],
+      "support": [],
+      "native_regressions": [],
+      "diagnostic_probes": [
+        "test_paperjs/src/paper_final_checks.gleam"
+      ],
+      "evidence": [
+        "FINAL_AUDIT.md"
+      ],
+      "fixtures": [],
+      "inventory_key": null,
+      "category": "diagnostic-adapters",
+      "diagnostic_assets": []
+    },
+    {
+      "file": "SvgImport.js",
+      "original_path": "test/tests/SvgImport.js",
+      "sha256": "07eff2d88b76baff5e536d28818298624dd458483bc0b0ae2708a57cf9ba214b",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "title/contract screening with selected geometric source bodies; not exhaustive assertion execution",
+      "disposition": "Document/DOM import, node expansion, image/switch/style insertion and cloning; parser accepts path data, not SVG documents. Primitive geometry covered by basic-shape checks.",
+      "fast": [],
+      "slow": [],
+      "support": [],
+      "native_regressions": [],
+      "diagnostic_probes": [],
+      "evidence": [],
+      "fixtures": [],
+      "inventory_key": null,
+      "category": "reference-only",
+      "diagnostic_assets": []
+    },
+    {
+      "file": "SymbolItem.js",
+      "original_path": "test/tests/SymbolItem.js",
+      "sha256": "e4841c44bb0e00a427c7d77c9079bd1f483af309ebd480a38f2725cf4fe597a8",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "title/contract screening with selected geometric source bodies; not exhaustive assertion execution",
+      "disposition": "Scene symbol definitions, instances, caches and hit selection; no symbols.",
+      "fast": [],
+      "slow": [],
+      "support": [],
+      "native_regressions": [],
+      "diagnostic_probes": [],
+      "evidence": [],
+      "fixtures": [],
+      "inventory_key": null,
+      "category": "reference-only",
+      "diagnostic_assets": []
+    },
+    {
+      "file": "TextItem.js",
+      "original_path": "test/tests/TextItem.js",
+      "sha256": "8f845618546a83719c9e8c8050052dae134fb2a21ef5fbf310432d8eda8ffffb",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "title/contract screening with selected geometric source bodies; not exhaustive assertion execution",
+      "disposition": "Text items and scene rendering; no text layout API.",
+      "fast": [],
+      "slow": [],
+      "support": [],
+      "native_regressions": [],
+      "diagnostic_probes": [],
+      "evidence": [],
+      "fixtures": [],
+      "inventory_key": null,
+      "category": "reference-only",
+      "diagnostic_assets": []
+    },
+    {
+      "file": "load.js",
+      "original_path": "test/tests/load.js",
+      "sha256": "03539f0e80756d7789ee9fa58f4ed935868d43f3e611382dda1f1392f9a7d0b0",
+      "download_date": null,
+      "download_date_note": "Exact download timestamp was not recorded; do not infer it from the review date.",
+      "archived_on": "2026-10-14",
+      "review_scope": "title/contract screening with selected geometric source bodies; not exhaustive assertion execution",
+      "disposition": "Upstream test loader, not a geometry test block.",
+      "fast": [],
+      "slow": [],
+      "support": [],
+      "native_regressions": [],
+      "diagnostic_probes": [],
+      "evidence": [],
+      "fixtures": [],
+      "inventory_key": null,
+      "category": "reference-only",
+      "diagnostic_assets": []
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+# Expensive portable regressions; original files live in test_slow/.
+svg_path_paper_crossings_1409_slow_test.gleam
+svg_path_paper_boolean_full_overlap_slow_test.gleam
+svg_path_paper_intersection_addresses_slow_test.gleam

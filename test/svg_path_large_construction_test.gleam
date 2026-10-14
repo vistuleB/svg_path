@@ -1,3 +1,5 @@
+// Native construction regressions following upstream #1493.
+// Provenance: scripts/paperjs/files/Path.js.md.
 import gleam/int
 import gleam/list
 import svg_path

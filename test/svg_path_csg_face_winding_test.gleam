@@ -1,3 +1,5 @@
+// Native winding regressions originating in audit fixtures 79 and 113.
+// Provenance: scripts/paperjs/files/Path_Boolean.js.md.
 import gleam/float
 import gleam/list
 import gleeunit/should

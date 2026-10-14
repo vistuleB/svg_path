@@ -1,3 +1,5 @@
+// Native stroke regressions originating in upstream #1207.
+// Provenance: scripts/paperjs/files/HitResult.js.md.
 import gleam/list
 import gleam/option.{Some}
 import svg_path

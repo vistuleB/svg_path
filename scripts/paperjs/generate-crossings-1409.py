@@ -1,4 +1,5 @@
 """Adapt the three pinned #1409 assertions without changing cubic geometry."""
+from test_profiles import write_profiles
 import json
 from pathlib import Path
 root = Path(__file__).resolve().parents[2]
@@ -65,4 +66,4 @@ pub fn crossing_adapter_retains_transverse_crossings_test() {
   })
 }
 '''
-(root / 'test/svg_path_paper_crossings_1409_test.gleam').write_text(s)
+write_profiles(root, 'svg_path_paper_crossings_1409_test.gleam', s, ['paper_1409_assertion_2_test', 'paper_1409_assertion_3_test'])

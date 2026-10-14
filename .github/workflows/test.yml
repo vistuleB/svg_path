@@ -19,9 +19,10 @@ jobs:
           rebar3-version: "3"
           # elixir-version: "1"
       - run: gleam deps download
+      - run: python3 scripts/paperjs/catalog.py --check
       - run: bash scripts/check-readme-recipes
       - run: gleam test
-      - run: gleam format --check src test test_portable/runner.gleam
+      - run: gleam format --check src test test_slow test_portable/runner.gleam
       - run: gleam deps download
         working-directory: examples/public_api_smoke
       - run: gleam run --target javascript
@@ -43,4 +44,4 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
-      - run: scripts/test-portable ${{ matrix.target }}
+      - run: scripts/test-portable ${{ matrix.target }} all

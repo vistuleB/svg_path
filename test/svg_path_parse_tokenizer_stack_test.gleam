@@ -1,3 +1,5 @@
+// Native parser stress tests from the follow-up to the #1493 construction audit.
+// Provenance: scripts/paperjs/files/Path.js.md.
 import gleam/int
 import gleam/list
 import gleam/string

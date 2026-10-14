@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Passing contract-aware adaptations; raw diagnostic comparisons remain separate.
+set -euo pipefail
+root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+python3 "$root/scripts/paperjs/catalog.py" --check
+exec "$root/scripts/test-portable" "${1:-all}" "${2:-all}" paperjs

@@ -1,4 +1,5 @@
 """Portable address and classification checks for all non-#1409 fixtures."""
+from test_profiles import write_profiles
 import json
 from decimal import Decimal
 from pathlib import Path
@@ -112,4 +113,4 @@ for i,f in enumerate(fixtures):
    s+='// Shared-arc boundary: our local Touching classification differs from Paper.\n'
   ex.append('Expected('+point(e['point'])+','+','.join(opt(e,k) for k in ['index','time','crossing'])+')')
  s+='check(left,right,hits,['+','.join(ex)+'])\n}\n'
-(root/'test/svg_path_paper_intersection_addresses_test.gleam').write_text(s)
+write_profiles(root, 'svg_path_paper_intersection_addresses_test.gleam', s, ['paper_address_12_test', 'paper_address_19_test'], fast_omit_imports=['svg_path/encounters'])

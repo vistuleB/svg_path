@@ -1,3 +1,5 @@
+// Native polynomial regressions from the Boolean crossing-root investigation.
+// Provenance: scripts/paperjs/files/Path_Boolean.js.md.
 import gleam/list
 import svg_path/internal/root
 
