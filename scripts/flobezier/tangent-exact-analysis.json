@@ -1,0 +1,506 @@
+[
+  {
+    "call": 1265,
+    "reference_count": 2,
+    "current_count": 3,
+    "hits": [
+      {
+        "t": 0.0,
+        "u": 1.0,
+        "residual90": "0",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 0
+      },
+      {
+        "t": 1.5680636547196404e-07,
+        "u": 0.9999999215968157,
+        "residual90": "3.88826333921589316524102596890882069961172405293358606272082121096293244024179831880464616E-13",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 1.5680636547196404e-07
+      },
+      {
+        "t": 0.6853977875523283,
+        "u": 0.41320896664371676,
+        "residual90": "1.57650026997065532115667376178260770823370503397122601816424903723068939015917403759269326E-14",
+        "nearest_reference_is_endpoint": false,
+        "endpoint_parameter_distance": 0.6853977875523283
+      }
+    ]
+  },
+  {
+    "call": 1268,
+    "reference_count": 1,
+    "current_count": 3,
+    "hits": [
+      {
+        "t": 0.9999993727743517,
+        "u": 0.9999996863872628,
+        "residual90": "5.75884754934900834919579825749818624164862762164531617917790874975236324673346283305144955E-13",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 6.27225648308638e-07
+      },
+      {
+        "t": 0.9999996854193223,
+        "u": 0.999999842709683,
+        "residual90": "1.44883466266808186816309986806704070755725651310631604964815458599149872172051751693033772E-13",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 3.1458067772938136e-07
+      },
+      {
+        "t": 1.0,
+        "u": 1.0,
+        "residual90": "0",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 0
+      }
+    ]
+  },
+  {
+    "call": 1269,
+    "reference_count": 1,
+    "current_count": 2,
+    "hits": [
+      {
+        "t": 0.0,
+        "u": 0.0,
+        "residual90": "0",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 0
+      },
+      {
+        "t": 1.4809490367454458e-07,
+        "u": 7.404745064392881e-08,
+        "residual90": "4.11631899641191269538658263774542182297018362962038036175996610028430281170727687746855270E-13",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 1.4809490367454458e-07
+      }
+    ]
+  },
+  {
+    "call": 1271,
+    "reference_count": 1,
+    "current_count": 2,
+    "hits": [
+      {
+        "t": 0.9999998944944805,
+        "u": 0.9999999472472437,
+        "residual90": "5.52476117402580723801322677646517506187922542620064534685957141717366196466140773919602541E-13",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 1.0550551954313647e-07
+      },
+      {
+        "t": 1.0,
+        "u": 1.0,
+        "residual90": "0",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 0
+      }
+    ]
+  },
+  {
+    "call": 1276,
+    "reference_count": 1,
+    "current_count": 2,
+    "hits": [
+      {
+        "t": 0.9999998770715506,
+        "u": 0.9999999385357778,
+        "residual90": "6.28639726178084793820164356086394760132445515128906951837055707663961049346694595019638841E-13",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 1.229284494197458e-07
+      },
+      {
+        "t": 1.0,
+        "u": 1.0,
+        "residual90": "0",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 0
+      }
+    ]
+  },
+  {
+    "call": 1283,
+    "reference_count": 1,
+    "current_count": 3,
+    "hits": [
+      {
+        "t": 0.0,
+        "u": 1.0,
+        "residual90": "0",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 0
+      },
+      {
+        "t": 1.0550551961127687e-07,
+        "u": 0.9999999648314951,
+        "residual90": "4.39280029117938914139320113431186125409306195104845642238091502174829766447221597036614239E-14",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 1.0550551961127687e-07
+      },
+      {
+        "t": 3.1361278072575555e-07,
+        "u": 0.999999895462421,
+        "residual90": "3.87130091247303440839508148213185075162174793964213993005223971777881581456455010515779987E-13",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 3.1361278072575555e-07
+      }
+    ]
+  },
+  {
+    "call": 1288,
+    "reference_count": 1,
+    "current_count": 2,
+    "hits": [
+      {
+        "t": 0.9999997531751441,
+        "u": 0.9999999177250536,
+        "residual90": "7.70550008960650165269777857134830207678153360749099548298208910513462231663506610509147445E-13",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 2.468248558873398e-07
+      },
+      {
+        "t": 1.0,
+        "u": 1.0,
+        "residual90": "0",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 0
+      }
+    ]
+  },
+  {
+    "call": 1294,
+    "reference_count": 1,
+    "current_count": 2,
+    "hits": [
+      {
+        "t": 0.9999998412577502,
+        "u": 0.9999999470859188,
+        "residual90": "5.45380254474171289628674055129271280448233193867420612965341595751192038957171839731090640E-13",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 1.587422497895119e-07
+      },
+      {
+        "t": 1.0,
+        "u": 1.0,
+        "residual90": "0",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 0
+      }
+    ]
+  },
+  {
+    "call": 1297,
+    "reference_count": 1,
+    "current_count": 2,
+    "hits": [
+      {
+        "t": 0.9999998431936313,
+        "u": 1.045375739117997e-07,
+        "residual90": "1.01758370460373566830075613098839452836004987248026450465459992275767848515549034758852885E-13",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 1.5680636866743924e-07
+      },
+      {
+        "t": 1.0,
+        "u": 0.0,
+        "residual90": "0",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 0
+      }
+    ]
+  },
+  {
+    "call": 1326,
+    "reference_count": 1,
+    "current_count": 2,
+    "hits": [
+      {
+        "t": 0.9999998431936313,
+        "u": 2.3520951851873817e-07,
+        "residual90": "9.73893067372150437424354796707023941203509223323324751496900481946632474511989657139451488E-14",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 2.3520951851873817e-07
+      },
+      {
+        "t": 1.0,
+        "u": 0.0,
+        "residual90": "0",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 0
+      }
+    ]
+  },
+  {
+    "call": 1331,
+    "reference_count": 4,
+    "current_count": 5,
+    "hits": [
+      {
+        "t": 0.0,
+        "u": 0.0,
+        "residual90": "0",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 0
+      },
+      {
+        "t": 1.0453757189176861e-07,
+        "u": 1.5680636859657663e-07,
+        "residual90": "2.81621040307691322028383441757077519410255672679902122745771280599168056194992961692544999E-13",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 1.5680636859657663e-07
+      },
+      {
+        "t": 0.0994880708038463,
+        "u": 0.17150444543923504,
+        "residual90": "2.48356096002220276248985182809852799547585153376926549692149582704227069012730805012515557E-15",
+        "nearest_reference_is_endpoint": false,
+        "endpoint_parameter_distance": 0.17150444543923504
+      },
+      {
+        "t": 0.7429634598737435,
+        "u": 0.35641874112319755,
+        "residual90": "3.72813239358869004772626728897187267535573129390244842280075191339176392966518448742860624E-15",
+        "nearest_reference_is_endpoint": false,
+        "endpoint_parameter_distance": 0.7429634598737435
+      },
+      {
+        "t": 0.7813184009677194,
+        "u": 0.20181911780841674,
+        "residual90": "2.71452281110860165860858836773931959714080152676858221068455071335198081662747382315483325E-15",
+        "nearest_reference_is_endpoint": false,
+        "endpoint_parameter_distance": 0.7813184009677194
+      }
+    ]
+  },
+  {
+    "call": 1335,
+    "reference_count": 2,
+    "current_count": 3,
+    "hits": [
+      {
+        "t": 0.0,
+        "u": 0.0,
+        "residual90": "0",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 0
+      },
+      {
+        "t": 1.0356963851749196e-07,
+        "u": 7.767721349762326e-08,
+        "residual90": "2.72485760858458362473804679341242659033716736960933041246328456679713404227567793141402352E-13",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 1.0356963851749196e-07
+      },
+      {
+        "t": 0.08803842843647389,
+        "u": 0.05390155154198577,
+        "residual90": "4.97036619571198513875847679736345608896884595798377135013023936208813942158413337981586158E-15",
+        "nearest_reference_is_endpoint": false,
+        "endpoint_parameter_distance": 0.08803842843647389
+      }
+    ]
+  },
+  {
+    "call": 1357,
+    "reference_count": 1,
+    "current_count": 2,
+    "hits": [
+      {
+        "t": 0.999999895462421,
+        "u": 5.2268783267092024e-08,
+        "residual90": "3.55634026538810919971439346725420543458329388412085310840723043882819393542772427116885722E-13",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 1.045375790376113e-07
+      },
+      {
+        "t": 1.0,
+        "u": 0.0,
+        "residual90": "0",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 0
+      }
+    ]
+  },
+  {
+    "call": 1622,
+    "reference_count": 2,
+    "current_count": 3,
+    "hits": [
+      {
+        "t": 0.0,
+        "u": 1.0,
+        "residual90": "0",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 0
+      },
+      {
+        "t": 4.734853037195773e-14,
+        "u": 0.999999711553717,
+        "residual90": "2.86281667056912258393749174870742777786388070566512970716643372669140929363203284304001773E-13",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 2.8844628296997854e-07
+      },
+      {
+        "t": 0.2329883285619904,
+        "u": 0.4092419534517746,
+        "residual90": "2.30400674242325962716705422576513219774978197583988327398790630094620062257983523128027017E-15",
+        "nearest_reference_is_endpoint": false,
+        "endpoint_parameter_distance": 0.5907580465482254
+      }
+    ]
+  },
+  {
+    "call": 1629,
+    "reference_count": 2,
+    "current_count": 3,
+    "hits": [
+      {
+        "t": 0.0,
+        "u": 1.0,
+        "residual90": "0",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 0
+      },
+      {
+        "t": 2.485539460734994e-13,
+        "u": 0.9999994511777099,
+        "residual90": "2.42482336817129711015335059599481783375023881563484691756631742525978381858926897167173335E-13",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 5.488222900584816e-07
+      },
+      {
+        "t": 0.02021978021977533,
+        "u": 0.8449753146714408,
+        "residual90": "4.77262101835261297093696149664260320581667344837292988886080277122776514125327026055891024E-15",
+        "nearest_reference_is_endpoint": false,
+        "endpoint_parameter_distance": 0.15502468532855918
+      }
+    ]
+  },
+  {
+    "call": 1632,
+    "reference_count": 2,
+    "current_count": 3,
+    "hits": [
+      {
+        "t": 0.6877533039647578,
+        "u": 0.869226364210689,
+        "residual90": "1.83720031094795286253049069087152393326778158096492540869862341915423457427051209535814162E-15",
+        "nearest_reference_is_endpoint": false,
+        "endpoint_parameter_distance": 0.869226364210689
+      },
+      {
+        "t": 0.9999999999999927,
+        "u": 1.5777430914346907e-07,
+        "residual90": "2.56233499186390484198387232367072195898650397597128097371319833132978088122517338144964655E-13",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 1.5777430914346907e-07
+      },
+      {
+        "t": 1.0,
+        "u": 0.0,
+        "residual90": "0",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 0
+      }
+    ]
+  },
+  {
+    "call": 1683,
+    "reference_count": 1,
+    "current_count": 2,
+    "hits": [
+      {
+        "t": 0.0,
+        "u": 0.9999998402898097,
+        "residual90": "2.88582664601516908141774296077578050276249469397420938640377224511651498340518564488849117E-13",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 1.5971019029503708e-07
+      },
+      {
+        "t": 0.0,
+        "u": 1.0,
+        "residual90": "0",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 0
+      }
+    ]
+  },
+  {
+    "call": 1690,
+    "reference_count": 1,
+    "current_count": 2,
+    "hits": [
+      {
+        "t": 0.9999999999999896,
+        "u": 1.5680636859657663e-07,
+        "residual90": "2.02415876431334368906537053413389911851722401679293125315130163122907820513571004759771521E-13",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 1.5680636859657663e-07
+      },
+      {
+        "t": 1.0,
+        "u": 0.0,
+        "residual90": "0",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 0
+      }
+    ]
+  },
+  {
+    "call": 1705,
+    "reference_count": 2,
+    "current_count": 3,
+    "hits": [
+      {
+        "t": 0.0,
+        "u": 0.0,
+        "residual90": "0",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 0
+      },
+      {
+        "t": 2.8921341042558285e-14,
+        "u": 2.874783424270572e-07,
+        "residual90": "3.43770432918211348946111097868773409220055257383307741894067946406397198305420005087646984E-13",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 2.874783424270572e-07
+      },
+      {
+        "t": 0.7902613913797555,
+        "u": 0.8374085576022189,
+        "residual90": "1.03219695822173915921933794900194034358063611818596390139132085557981027996639013273861138E-14",
+        "nearest_reference_is_endpoint": false,
+        "endpoint_parameter_distance": 0.8374085576022189
+      }
+    ]
+  },
+  {
+    "call": 1714,
+    "reference_count": 1,
+    "current_count": 3,
+    "hits": [
+      {
+        "t": 0.9999999999999668,
+        "u": 0.999999607016138,
+        "residual90": "3.29343872272331891546982957571814221164085740927541625469383059092611871089423356359520749E-13",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 3.9298386200758983e-07
+      },
+      {
+        "t": 0.9999999999999867,
+        "u": 0.9999997512392794,
+        "residual90": "1.32290519504322348816302455831881205194426918831624261296122611157250102040401139568139900E-13",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 2.487607205781117e-07
+      },
+      {
+        "t": 1.0,
+        "u": 1.0,
+        "residual90": "0",
+        "nearest_reference_is_endpoint": true,
+        "endpoint_parameter_distance": 0
+      }
+    ]
+  }
+]

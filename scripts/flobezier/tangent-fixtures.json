@@ -1,0 +1,1661 @@
+[
+  {
+    "call": 1265,
+    "file": "__tests__/intersection/bezier-bezier-intersection-shared-endpoint/shared-endpoint-intersection.spec.ts",
+    "test": "bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact)",
+    "left": [
+      [
+        98,
+        62
+      ],
+      [
+        -8,
+        -25
+      ],
+      [
+        -25,
+        -70
+      ]
+    ],
+    "right": [
+      [
+        96,
+        18
+      ],
+      [
+        -114,
+        -112
+      ],
+      [
+        98,
+        62
+      ]
+    ],
+    "reference": [
+      {
+        "p": [
+          98,
+          62
+        ],
+        "kind": 4,
+        "box": [
+          [
+            98,
+            62
+          ],
+          [
+            98,
+            62
+          ]
+        ],
+        "t1": 0,
+        "ri1": {
+          "t": 0,
+          "tS": 0,
+          "tE": 0,
+          "multiplicity": 2
+        },
+        "t2": 1,
+        "ri2": {
+          "t": 1,
+          "tS": 1,
+          "tE": 1,
+          "multiplicity": 2
+        }
+      },
+      {
+        "p": [
+          -5.494789641928836,
+          -37.5288696924768
+        ],
+        "kind": 1,
+        "box": [
+          [
+            -5.494789641929018,
+            -37.52886969247691
+          ],
+          [
+            -5.494789641928654,
+            -37.528869692476704
+          ]
+        ],
+        "t1": 0.6853977875523284,
+        "ri1": {
+          "t": 0.6853977875523284,
+          "tS": 0.6853977875523282,
+          "tE": 0.6853977875523284,
+          "multiplicity": 1
+        },
+        "t2": 0.41320896664371676,
+        "ri2": {
+          "t": 0.41320896664371676,
+          "tS": 0.41320896664371654,
+          "tE": 0.41320896664371676,
+          "multiplicity": 1
+        }
+      }
+    ]
+  },
+  {
+    "call": 1268,
+    "file": "__tests__/intersection/bezier-bezier-intersection-shared-endpoint/shared-endpoint-intersection.spec.ts",
+    "test": "bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact)",
+    "left": [
+      [
+        11,
+        40
+      ],
+      [
+        89,
+        67
+      ],
+      [
+        -7,
+        44
+      ]
+    ],
+    "right": [
+      [
+        19,
+        23
+      ],
+      [
+        185,
+        90
+      ],
+      [
+        -7,
+        44
+      ]
+    ],
+    "reference": [
+      {
+        "p": [
+          -7,
+          44
+        ],
+        "kind": 4,
+        "box": [
+          [
+            -7,
+            44
+          ],
+          [
+            -7,
+            44
+          ]
+        ],
+        "t1": 1,
+        "ri1": {
+          "t": 1,
+          "tS": 1,
+          "tE": 1,
+          "multiplicity": 2
+        },
+        "t2": 1,
+        "ri2": {
+          "t": 1,
+          "tS": 1,
+          "tE": 1,
+          "multiplicity": 2
+        }
+      }
+    ]
+  },
+  {
+    "call": 1269,
+    "file": "__tests__/intersection/bezier-bezier-intersection-shared-endpoint/shared-endpoint-intersection.spec.ts",
+    "test": "bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact)",
+    "left": [
+      [
+        81,
+        -18
+      ],
+      [
+        -96,
+        -76
+      ],
+      [
+        -97,
+        -98
+      ]
+    ],
+    "right": [
+      [
+        81,
+        -18
+      ],
+      [
+        -273,
+        -134
+      ],
+      [
+        -100,
+        -85
+      ]
+    ],
+    "reference": [
+      {
+        "p": [
+          81,
+          -18
+        ],
+        "kind": 4,
+        "box": [
+          [
+            81,
+            -18
+          ],
+          [
+            81,
+            -18
+          ]
+        ],
+        "t1": 0,
+        "ri1": {
+          "t": 0,
+          "tS": 0,
+          "tE": 0,
+          "multiplicity": 2
+        },
+        "t2": 0,
+        "ri2": {
+          "t": 0,
+          "tS": 0,
+          "tE": 0,
+          "multiplicity": 2
+        }
+      }
+    ]
+  },
+  {
+    "call": 1271,
+    "file": "__tests__/intersection/bezier-bezier-intersection-shared-endpoint/shared-endpoint-intersection.spec.ts",
+    "test": "bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact)",
+    "left": [
+      [
+        39,
+        -34
+      ],
+      [
+        -94,
+        41
+      ],
+      [
+        -2,
+        -40
+      ]
+    ],
+    "right": [
+      [
+        -70,
+        -76
+      ],
+      [
+        -186,
+        122
+      ],
+      [
+        -2,
+        -40
+      ]
+    ],
+    "reference": [
+      {
+        "p": [
+          -2,
+          -40
+        ],
+        "kind": 4,
+        "box": [
+          [
+            -2,
+            -40
+          ],
+          [
+            -2,
+            -40
+          ]
+        ],
+        "t1": 1,
+        "ri1": {
+          "t": 1,
+          "tS": 1,
+          "tE": 1,
+          "multiplicity": 2
+        },
+        "t2": 1,
+        "ri2": {
+          "t": 1,
+          "tS": 1,
+          "tE": 1,
+          "multiplicity": 2
+        }
+      }
+    ]
+  },
+  {
+    "call": 1276,
+    "file": "__tests__/intersection/bezier-bezier-intersection-shared-endpoint/shared-endpoint-intersection.spec.ts",
+    "test": "bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact)",
+    "left": [
+      [
+        35,
+        -6
+      ],
+      [
+        71,
+        94
+      ],
+      [
+        -30,
+        -79
+      ]
+    ],
+    "right": [
+      [
+        -45,
+        72
+      ],
+      [
+        172,
+        267
+      ],
+      [
+        -30,
+        -79
+      ]
+    ],
+    "reference": [
+      {
+        "p": [
+          -30,
+          -79
+        ],
+        "kind": 4,
+        "box": [
+          [
+            -30,
+            -79
+          ],
+          [
+            -30,
+            -79
+          ]
+        ],
+        "t1": 1,
+        "ri1": {
+          "t": 1,
+          "tS": 1,
+          "tE": 1,
+          "multiplicity": 2
+        },
+        "t2": 1,
+        "ri2": {
+          "t": 1,
+          "tS": 1,
+          "tE": 1,
+          "multiplicity": 2
+        }
+      }
+    ]
+  },
+  {
+    "call": 1283,
+    "file": "__tests__/intersection/bezier-bezier-intersection-shared-endpoint/shared-endpoint-intersection.spec.ts",
+    "test": "bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact)",
+    "left": [
+      [
+        50,
+        36
+      ],
+      [
+        23,
+        -44
+      ],
+      [
+        70,
+        10
+      ]
+    ],
+    "right": [
+      [
+        52,
+        -95
+      ],
+      [
+        81,
+        -91
+      ],
+      [
+        -4,
+        -124
+      ],
+      [
+        50,
+        36
+      ]
+    ],
+    "reference": [
+      {
+        "p": [
+          50,
+          36
+        ],
+        "kind": 4,
+        "box": [
+          [
+            50,
+            36
+          ],
+          [
+            50,
+            36
+          ]
+        ],
+        "t1": 0,
+        "ri1": {
+          "t": 0,
+          "tS": 0,
+          "tE": 0,
+          "multiplicity": 2
+        },
+        "t2": 1,
+        "ri2": {
+          "t": 1,
+          "tS": 1,
+          "tE": 1,
+          "multiplicity": 2
+        }
+      }
+    ]
+  },
+  {
+    "call": 1288,
+    "file": "__tests__/intersection/bezier-bezier-intersection-shared-endpoint/shared-endpoint-intersection.spec.ts",
+    "test": "bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact)",
+    "left": [
+      [
+        -39,
+        -30
+      ],
+      [
+        80,
+        96
+      ],
+      [
+        -73,
+        -72
+      ]
+    ],
+    "right": [
+      [
+        90,
+        66
+      ],
+      [
+        2,
+        -32
+      ],
+      [
+        233,
+        264
+      ],
+      [
+        -73,
+        -72
+      ]
+    ],
+    "reference": [
+      {
+        "p": [
+          -73,
+          -72
+        ],
+        "kind": 4,
+        "box": [
+          [
+            -73,
+            -72
+          ],
+          [
+            -73,
+            -72
+          ]
+        ],
+        "t1": 1,
+        "ri1": {
+          "t": 1,
+          "tS": 1,
+          "tE": 1,
+          "multiplicity": 2
+        },
+        "t2": 1,
+        "ri2": {
+          "t": 1,
+          "tS": 1,
+          "tE": 1,
+          "multiplicity": 2
+        }
+      }
+    ]
+  },
+  {
+    "call": 1294,
+    "file": "__tests__/intersection/bezier-bezier-intersection-shared-endpoint/shared-endpoint-intersection.spec.ts",
+    "test": "bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact)",
+    "left": [
+      [
+        -10,
+        52
+      ],
+      [
+        89,
+        -78
+      ],
+      [
+        -67,
+        85
+      ]
+    ],
+    "right": [
+      [
+        -54,
+        41
+      ],
+      [
+        -27,
+        29
+      ],
+      [
+        245,
+        -241
+      ],
+      [
+        -67,
+        85
+      ]
+    ],
+    "reference": [
+      {
+        "p": [
+          -67,
+          85
+        ],
+        "kind": 4,
+        "box": [
+          [
+            -67,
+            85
+          ],
+          [
+            -67,
+            85
+          ]
+        ],
+        "t1": 1,
+        "ri1": {
+          "t": 1,
+          "tS": 1,
+          "tE": 1,
+          "multiplicity": 2
+        },
+        "t2": 1,
+        "ri2": {
+          "t": 1,
+          "tS": 1,
+          "tE": 1,
+          "multiplicity": 2
+        }
+      }
+    ]
+  },
+  {
+    "call": 1297,
+    "file": "__tests__/intersection/bezier-bezier-intersection-shared-endpoint/shared-endpoint-intersection.spec.ts",
+    "test": "bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact)",
+    "left": [
+      [
+        4,
+        -5
+      ],
+      [
+        45,
+        -9
+      ],
+      [
+        -12,
+        -16
+      ]
+    ],
+    "right": [
+      [
+        -12,
+        -16
+      ],
+      [
+        45,
+        -9
+      ],
+      [
+        56,
+        -4
+      ],
+      [
+        -77,
+        39
+      ]
+    ],
+    "reference": [
+      {
+        "p": [
+          -12,
+          -16
+        ],
+        "kind": 4,
+        "box": [
+          [
+            -12,
+            -16
+          ],
+          [
+            -12,
+            -16
+          ]
+        ],
+        "t1": 1,
+        "ri1": {
+          "t": 1,
+          "tS": 1,
+          "tE": 1,
+          "multiplicity": 2
+        },
+        "t2": 0,
+        "ri2": {
+          "t": 0,
+          "tS": 0,
+          "tE": 0,
+          "multiplicity": 2
+        }
+      }
+    ]
+  },
+  {
+    "call": 1326,
+    "file": "__tests__/intersection/bezier-bezier-intersection-shared-endpoint/shared-endpoint-intersection.spec.ts",
+    "test": "bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact)",
+    "left": [
+      [
+        -33,
+        23
+      ],
+      [
+        -24,
+        -50
+      ],
+      [
+        0,
+        -37
+      ],
+      [
+        74,
+        -14
+      ]
+    ],
+    "right": [
+      [
+        74,
+        -14
+      ],
+      [
+        0,
+        -37
+      ],
+      [
+        -99,
+        -77
+      ]
+    ],
+    "reference": [
+      {
+        "p": [
+          74,
+          -14
+        ],
+        "kind": 4,
+        "box": [
+          [
+            74,
+            -14
+          ],
+          [
+            74,
+            -14
+          ]
+        ],
+        "t1": 1,
+        "ri1": {
+          "t": 1,
+          "tS": 1,
+          "tE": 1,
+          "multiplicity": 2
+        },
+        "t2": 0,
+        "ri2": {
+          "t": 0,
+          "tS": 0,
+          "tE": 0,
+          "multiplicity": 2
+        }
+      }
+    ]
+  },
+  {
+    "call": 1331,
+    "file": "__tests__/intersection/bezier-bezier-intersection-shared-endpoint/shared-endpoint-intersection.spec.ts",
+    "test": "bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact)",
+    "left": [
+      [
+        -62,
+        -29
+      ],
+      [
+        -100,
+        13
+      ],
+      [
+        -53,
+        -1
+      ],
+      [
+        -81,
+        -37
+      ]
+    ],
+    "right": [
+      [
+        -62,
+        -29
+      ],
+      [
+        -100,
+        13
+      ],
+      [
+        0,
+        -64
+      ]
+    ],
+    "reference": [
+      {
+        "p": [
+          -62,
+          -29
+        ],
+        "kind": 4,
+        "box": [
+          [
+            -62,
+            -29
+          ],
+          [
+            -62,
+            -29
+          ]
+        ],
+        "t1": 0,
+        "ri1": {
+          "t": 0,
+          "tS": 0,
+          "tE": 0,
+          "multiplicity": 2
+        },
+        "t2": 0,
+        "ri2": {
+          "t": 0,
+          "tS": 0,
+          "tE": 0,
+          "multiplicity": 2
+        }
+      },
+      {
+        "p": [
+          -70.97523693023399,
+          -18.09386578494916
+        ],
+        "kind": 1,
+        "box": [
+          [
+            -70.97523693023406,
+            -18.09386578494919
+          ],
+          [
+            -70.9752369302339,
+            -18.093865784949127
+          ]
+        ],
+        "t1": 0.09948807080384663,
+        "ri1": {
+          "t": 0.09948807080384663,
+          "tS": 0.0994880708038464,
+          "tE": 0.09948807080384663,
+          "multiplicity": 1
+        },
+        "t2": 0.1715044454392357,
+        "ri2": {
+          "t": 0.1715044454392357,
+          "tS": 0.1715044454392355,
+          "tE": 0.1715044454392357,
+          "multiplicity": 1
+        }
+      },
+      {
+        "p": [
+          -71.55708830007242,
+          -14.17790970948895
+        ],
+        "kind": 1,
+        "box": [
+          [
+            -71.55708830007254,
+            -14.177909709488993
+          ],
+          [
+            -71.5570883000723,
+            -14.177909709488908
+          ]
+        ],
+        "t1": 0.7429634598737433,
+        "ri1": {
+          "t": 0.7429634598737433,
+          "tS": 0.7429634598737433,
+          "tE": 0.7429634598737436,
+          "multiplicity": 1
+        },
+        "t2": 0.35641874112319755,
+        "ri2": {
+          "t": 0.35641874112319755,
+          "tS": 0.35641874112319755,
+          "tE": 0.35641874112319777,
+          "multiplicity": 1
+        }
+      },
+      {
+        "p": [
+          -71.71738098225015,
+          -16.89417790533614
+        ],
+        "kind": 1,
+        "box": [
+          [
+            -71.71738098225022,
+            -16.89417790533617
+          ],
+          [
+            -71.71738098225008,
+            -16.894177905336107
+          ]
+        ],
+        "t1": 0.7813184009677194,
+        "ri1": {
+          "t": 0.7813184009677194,
+          "tS": 0.7813184009677192,
+          "tE": 0.7813184009677194,
+          "multiplicity": 1
+        },
+        "t2": 0.20181911780841685,
+        "ri2": {
+          "t": 0.20181911780841685,
+          "tS": 0.20181911780841663,
+          "tE": 0.20181911780841685,
+          "multiplicity": 1
+        }
+      }
+    ]
+  },
+  {
+    "call": 1335,
+    "file": "__tests__/intersection/bezier-bezier-intersection-shared-endpoint/shared-endpoint-intersection.spec.ts",
+    "test": "bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact)",
+    "left": [
+      [
+        -42,
+        26
+      ],
+      [
+        -64,
+        -31
+      ],
+      [
+        -12,
+        70
+      ],
+      [
+        59,
+        36
+      ]
+    ],
+    "right": [
+      [
+        -42,
+        26
+      ],
+      [
+        -86,
+        -88
+      ],
+      [
+        82,
+        42
+      ]
+    ],
+    "reference": [
+      {
+        "p": [
+          -42,
+          26
+        ],
+        "kind": 4,
+        "box": [
+          [
+            -42,
+            26
+          ],
+          [
+            -42,
+            26
+          ]
+        ],
+        "t1": 0,
+        "ri1": {
+          "t": 0,
+          "tS": 0,
+          "tE": 0,
+          "multiplicity": 2
+        },
+        "t2": 0,
+        "ri2": {
+          "t": 0,
+          "tS": 0,
+          "tE": 0,
+          "multiplicity": 2
+        }
+      },
+      {
+        "p": [
+          -46.127396556864554,
+          14.419358299533547
+        ],
+        "kind": 1,
+        "box": [
+          [
+            -46.12739655686459,
+            14.419358299533505
+          ],
+          [
+            -46.12739655686452,
+            14.41935829953359
+          ]
+        ],
+        "t1": 0.08803842843647616,
+        "ri1": {
+          "t": 0.08803842843647616,
+          "tS": 0.08803842843647616,
+          "tE": 0.08803842843647638,
+          "multiplicity": 1
+        },
+        "t2": 0.05390155154198682,
+        "ri2": {
+          "t": 0.05390155154198682,
+          "tS": 0.05390155154198682,
+          "tE": 0.053901551541987044,
+          "multiplicity": 1
+        }
+      }
+    ]
+  },
+  {
+    "call": 1357,
+    "file": "__tests__/intersection/bezier-bezier-intersection-shared-endpoint/shared-endpoint-intersection.spec.ts",
+    "test": "bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact)",
+    "left": [
+      [
+        67,
+        22
+      ],
+      [
+        35,
+        60
+      ],
+      [
+        21,
+        -65
+      ],
+      [
+        10,
+        65
+      ]
+    ],
+    "right": [
+      [
+        10,
+        65
+      ],
+      [
+        32,
+        -195
+      ],
+      [
+        73,
+        -32
+      ],
+      [
+        -38,
+        -99
+      ]
+    ],
+    "reference": [
+      {
+        "p": [
+          10,
+          65
+        ],
+        "kind": 4,
+        "box": [
+          [
+            10,
+            65
+          ],
+          [
+            10,
+            65
+          ]
+        ],
+        "t1": 1,
+        "ri1": {
+          "t": 1,
+          "tS": 1,
+          "tE": 1,
+          "multiplicity": 2
+        },
+        "t2": 0,
+        "ri2": {
+          "t": 0,
+          "tS": 0,
+          "tE": 0,
+          "multiplicity": 2
+        }
+      }
+    ]
+  },
+  {
+    "call": 1622,
+    "file": "__tests__/intersection/bezier-bezier-intersection-shared-endpoint/shared-endpoint-intersection.spec.ts",
+    "test": "bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact)",
+    "left": [
+      [
+        89,
+        47
+      ],
+      [
+        -53,
+        -12
+      ],
+      [
+        -24,
+        24
+      ]
+    ],
+    "right": [
+      [
+        -74,
+        -17
+      ],
+      [
+        89,
+        47
+      ],
+      [
+        89,
+        47
+      ]
+    ],
+    "reference": [
+      {
+        "p": [
+          89,
+          47
+        ],
+        "kind": 4,
+        "box": [
+          [
+            89,
+            47
+          ],
+          [
+            89,
+            47
+          ]
+        ],
+        "t1": 0,
+        "ri1": {
+          "t": 0,
+          "tS": 0,
+          "tE": 0,
+          "multiplicity": 1
+        },
+        "t2": 1,
+        "ri2": {
+          "t": 1,
+          "tS": 1,
+          "tE": 1,
+          "multiplicity": 2
+        }
+      },
+      {
+        "p": [
+          32.11380366147948,
+          24.66431554806556
+        ],
+        "kind": 1,
+        "box": [
+          [
+            32.113803661479345,
+            24.664315548065503
+          ],
+          [
+            32.11380366147961,
+            24.664315548065613
+          ]
+        ],
+        "t1": 0.2329883285619905,
+        "ri1": {
+          "t": 0.2329883285619905,
+          "tS": 0.2329883285619901,
+          "tE": 0.23298832856199092,
+          "multiplicity": 2
+        },
+        "t2": 0.4092419534517743,
+        "ri2": {
+          "t": 0.4092419534517743,
+          "tS": 0.40924195345177405,
+          "tE": 0.4092419534517743,
+          "multiplicity": 1
+        }
+      }
+    ]
+  },
+  {
+    "call": 1629,
+    "file": "__tests__/intersection/bezier-bezier-intersection-shared-endpoint/shared-endpoint-intersection.spec.ts",
+    "test": "bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact)",
+    "left": [
+      [
+        57,
+        69
+      ],
+      [
+        -5,
+        -27
+      ],
+      [
+        11,
+        85
+      ]
+    ],
+    "right": [
+      [
+        -46,
+        -89
+      ],
+      [
+        57,
+        69
+      ],
+      [
+        57,
+        69
+      ]
+    ],
+    "reference": [
+      {
+        "p": [
+          57,
+          69
+        ],
+        "kind": 4,
+        "box": [
+          [
+            57,
+            69
+          ],
+          [
+            57,
+            69
+          ]
+        ],
+        "t1": 0,
+        "ri1": {
+          "t": 0,
+          "tS": 0,
+          "tE": 0,
+          "multiplicity": 1
+        },
+        "t2": 1,
+        "ri2": {
+          "t": 1,
+          "tS": 1,
+          "tE": 1,
+          "multiplicity": 2
+        }
+      },
+      {
+        "p": [
+          54.524636734693914,
+          65.20284081632659
+        ],
+        "kind": 1,
+        "box": [
+          [
+            54.52463673469384,
+            65.20284081632649
+          ],
+          [
+            54.524636734693985,
+            65.20284081632668
+          ]
+        ],
+        "t1": 0.020219780219779923,
+        "ri1": {
+          "t": 0.020219780219779923,
+          "tS": 0.020219780219779618,
+          "tE": 0.020219780219780232,
+          "multiplicity": 2
+        },
+        "t2": 0.8449753146714225,
+        "ri2": {
+          "t": 0.8449753146714225,
+          "tS": 0.8449753146714222,
+          "tE": 0.8449753146714226,
+          "multiplicity": 1
+        }
+      }
+    ]
+  },
+  {
+    "call": 1632,
+    "file": "__tests__/intersection/bezier-bezier-intersection-shared-endpoint/shared-endpoint-intersection.spec.ts",
+    "test": "bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact)",
+    "left": [
+      [
+        56,
+        12
+      ],
+      [
+        -91,
+        85
+      ],
+      [
+        81,
+        93
+      ]
+    ],
+    "right": [
+      [
+        81,
+        93
+      ],
+      [
+        81,
+        93
+      ],
+      [
+        -20,
+        78
+      ]
+    ],
+    "reference": [
+      {
+        "p": [
+          4.6889983038677485,
+          81.66668291641602
+        ],
+        "kind": 1,
+        "box": [
+          [
+            4.688998303867464,
+            81.66668291641584
+          ],
+          [
+            4.688998303868033,
+            81.66668291641619
+          ]
+        ],
+        "t1": 0.6877533039647579,
+        "ri1": {
+          "t": 0.6877533039647579,
+          "tS": 0.6877533039647575,
+          "tE": 0.6877533039647583,
+          "multiplicity": 2
+        },
+        "t2": 0.869226364210689,
+        "ri2": {
+          "t": 0.869226364210689,
+          "tS": 0.869226364210689,
+          "tE": 0.8692263642106892,
+          "multiplicity": 1
+        }
+      },
+      {
+        "p": [
+          81,
+          93
+        ],
+        "kind": 4,
+        "box": [
+          [
+            81,
+            93
+          ],
+          [
+            81,
+            93
+          ]
+        ],
+        "t1": 1,
+        "ri1": {
+          "t": 1,
+          "tS": 1,
+          "tE": 1,
+          "multiplicity": 1
+        },
+        "t2": 0,
+        "ri2": {
+          "t": 0,
+          "tS": 0,
+          "tE": 0,
+          "multiplicity": 2
+        }
+      }
+    ]
+  },
+  {
+    "call": 1683,
+    "file": "__tests__/intersection/bezier-bezier-intersection-shared-endpoint/shared-endpoint-intersection.spec.ts",
+    "test": "bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact)",
+    "left": [
+      [
+        -74,
+        66
+      ],
+      [
+        95,
+        61
+      ],
+      [
+        85,
+        -63
+      ],
+      [
+        98,
+        65
+      ]
+    ],
+    "right": [
+      [
+        -66,
+        74
+      ],
+      [
+        -74,
+        66
+      ],
+      [
+        -74,
+        66
+      ]
+    ],
+    "reference": [
+      {
+        "p": [
+          -74,
+          66
+        ],
+        "kind": 4,
+        "box": [
+          [
+            -74,
+            66
+          ],
+          [
+            -74,
+            66
+          ]
+        ],
+        "t1": 0,
+        "ri1": {
+          "t": 0,
+          "tS": 0,
+          "tE": 0,
+          "multiplicity": 1
+        },
+        "t2": 1,
+        "ri2": {
+          "t": 1,
+          "tS": 1,
+          "tE": 1,
+          "multiplicity": 2
+        }
+      }
+    ]
+  },
+  {
+    "call": 1690,
+    "file": "__tests__/intersection/bezier-bezier-intersection-shared-endpoint/shared-endpoint-intersection.spec.ts",
+    "test": "bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact)",
+    "left": [
+      [
+        -71,
+        50
+      ],
+      [
+        -68,
+        -61
+      ],
+      [
+        28,
+        -33
+      ],
+      [
+        -60,
+        24
+      ]
+    ],
+    "right": [
+      [
+        -60,
+        24
+      ],
+      [
+        -60,
+        24
+      ],
+      [
+        57,
+        -42
+      ]
+    ],
+    "reference": [
+      {
+        "p": [
+          -60,
+          24
+        ],
+        "kind": 4,
+        "box": [
+          [
+            -60,
+            24
+          ],
+          [
+            -60,
+            24
+          ]
+        ],
+        "t1": 1,
+        "ri1": {
+          "t": 1,
+          "tS": 1,
+          "tE": 1,
+          "multiplicity": 1
+        },
+        "t2": 0,
+        "ri2": {
+          "t": 0,
+          "tS": 0,
+          "tE": 0,
+          "multiplicity": 2
+        }
+      }
+    ]
+  },
+  {
+    "call": 1705,
+    "file": "__tests__/intersection/bezier-bezier-intersection-shared-endpoint/shared-endpoint-intersection.spec.ts",
+    "test": "bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact)",
+    "left": [
+      [
+        67,
+        -53
+      ],
+      [
+        -69,
+        12
+      ],
+      [
+        -44,
+        -2
+      ],
+      [
+        98,
+        14
+      ]
+    ],
+    "right": [
+      [
+        67,
+        -53
+      ],
+      [
+        67,
+        -53
+      ],
+      [
+        20,
+        -29
+      ],
+      [
+        22,
+        35
+      ]
+    ],
+    "reference": [
+      {
+        "p": [
+          67,
+          -53
+        ],
+        "kind": 4,
+        "box": [
+          [
+            67,
+            -53
+          ],
+          [
+            67,
+            -53
+          ]
+        ],
+        "t1": 0,
+        "ri1": {
+          "t": 0,
+          "tS": 0,
+          "tE": 0,
+          "multiplicity": 1
+        },
+        "t2": 0,
+        "ri2": {
+          "t": 0,
+          "tS": 0,
+          "tE": 0,
+          "multiplicity": 2
+        }
+      },
+      {
+        "p": [
+          24.49790667450233,
+          6.8859880980721755
+        ],
+        "kind": 1,
+        "box": [
+          [
+            24.49790667450126,
+            6.885988098071753
+          ],
+          [
+            24.497906674503408,
+            6.885988098072598
+          ]
+        ],
+        "t1": 0.7902613913797555,
+        "ri1": {
+          "t": 0.7902613913797555,
+          "tS": 0.7902613913797553,
+          "tE": 0.7902613913797555,
+          "multiplicity": 1
+        },
+        "t2": 0.837408557602219,
+        "ri2": {
+          "t": 0.837408557602219,
+          "tS": 0.8374085576022188,
+          "tE": 0.837408557602219,
+          "multiplicity": 1
+        }
+      }
+    ]
+  },
+  {
+    "call": 1714,
+    "file": "__tests__/intersection/bezier-bezier-intersection-shared-endpoint/shared-endpoint-intersection.spec.ts",
+    "test": "bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact)",
+    "left": [
+      [
+        -76,
+        68
+      ],
+      [
+        -57,
+        0
+      ],
+      [
+        41,
+        -55
+      ],
+      [
+        47,
+        94
+      ]
+    ],
+    "right": [
+      [
+        -84,
+        72
+      ],
+      [
+        45,
+        62
+      ],
+      [
+        47,
+        94
+      ],
+      [
+        47,
+        94
+      ]
+    ],
+    "reference": [
+      {
+        "p": [
+          47,
+          94
+        ],
+        "kind": 4,
+        "box": [
+          [
+            47,
+            94
+          ],
+          [
+            47,
+            94
+          ]
+        ],
+        "t1": 1,
+        "ri1": {
+          "t": 1,
+          "tS": 1,
+          "tE": 1,
+          "multiplicity": 1
+        },
+        "t2": 1,
+        "ri2": {
+          "t": 1,
+          "tS": 1,
+          "tE": 1,
+          "multiplicity": 2
+        }
+      }
+    ]
+  }
+]
