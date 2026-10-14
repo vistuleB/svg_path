@@ -1,0 +1,316 @@
+{
+  "runtime": "0.12.18",
+  "cases": [
+    {
+      "title": "Path#arcTo(from, through, to);",
+      "assertions": [
+        {
+          "actual": "{ point: { x: 0, y: 20 }, handleOut: { x: -2.62559, y: 23.01251 } },{ point: { x: 30.89325, y: 74.75812 }, handleIn: { x: -21.05455, y: -9.65273 }, handleOut: { x: 21.05455, y: 9.65273 } },{ point: { x: 92.54397, y: 62.42797 }, handleIn: { x: -15.72238, y: 17.00811 }, handleOut: { x: 15.72238, y: -17.00811 } },{ point: { x: 100, y: 0 }, handleIn: { x: 11.27458, y: 20.23247 } }",
+          "expected": "{ point: { x: 0, y: 20 }, handleOut: { x: -2.62559, y: 23.01251 } },{ point: { x: 30.89325, y: 74.75812 }, handleIn: { x: -21.05455, y: -9.65273 }, handleOut: { x: 21.05455, y: 9.65273 } },{ point: { x: 92.54397, y: 62.42797 }, handleIn: { x: -15.72238, y: 17.00811 }, handleOut: { x: 15.72238, y: -17.00811 } },{ point: { x: 100, y: 0 }, handleIn: { x: 11.27458, y: 20.23247 } }"
+        }
+      ],
+      "arguments": [
+        [
+          75,
+          75
+        ],
+        [
+          100,
+          0
+        ]
+      ],
+      "start": [
+        "Point",
+        0,
+        20
+      ],
+      "result": {
+        "closed": false,
+        "nodes": [
+          [
+            "Point",
+            0,
+            20
+          ],
+          [
+            "Point",
+            30.89325,
+            74.75812
+          ],
+          [
+            "Point",
+            92.54397,
+            62.42797
+          ],
+          [
+            "Point",
+            100,
+            0
+          ]
+        ],
+        "curves": [
+          [
+            0,
+            20,
+            -2.6255880395782425,
+            43.01250693512695,
+            9.838698606467329,
+            65.10538917017507,
+            30.89324730525633,
+            74.7581176488574
+          ],
+          [
+            30.89324730525633,
+            74.7581176488574,
+            51.94779600404533,
+            84.41084612753971,
+            76.82159066070416,
+            79.43608719620795,
+            92.54397081393927,
+            62.42797294712081
+          ],
+          [
+            92.54397081393927,
+            62.42797294712081,
+            108.26635096717438,
+            45.419858698033664,
+            111.2745839346595,
+            20.232472540279403,
+            100,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "title": "Path#arcTo(from, through, to); where from, through and to all share the same y position and through lies in between from and to",
+      "assertions": [
+        {
+          "actual": "{ x: 100, y: 75 }",
+          "expected": "{ x: 100, y: 75 }",
+          "message": "We expect the last segment point to be at the position where we wanted to draw the arc to."
+        }
+      ],
+      "arguments": [
+        [
+          50,
+          75
+        ],
+        [
+          100,
+          75
+        ]
+      ],
+      "start": [
+        "Point",
+        40,
+        75
+      ],
+      "result": {
+        "closed": false,
+        "nodes": [
+          [
+            "Point",
+            40,
+            75
+          ],
+          [
+            "Point",
+            100,
+            75
+          ]
+        ],
+        "curves": [
+          [
+            40,
+            75,
+            40,
+            75,
+            100,
+            75,
+            100,
+            75
+          ]
+        ]
+      }
+    },
+    {
+      "title": "Path#arcTo(from, through, to); where from, through and to all share the same y position and through lies to the right of to",
+      "assertions": [
+        {
+          "actual": true,
+          "expected": true,
+          "message": "We expect this arcTo() command to throw an error"
+        }
+      ],
+      "arguments": [
+        [
+          150,
+          75
+        ],
+        [
+          100,
+          75
+        ]
+      ],
+      "start": [
+        "Point",
+        40,
+        75
+      ],
+      "error": "Cannot create an arc with the given arguments",
+      "result": {
+        "closed": false,
+        "nodes": [
+          [
+            "Point",
+            40,
+            75
+          ]
+        ],
+        "curves": []
+      }
+    },
+    {
+      "title": "Path#arcTo(from, through, to); where from, through and to all share the same y position and through lies to the left of to",
+      "assertions": [
+        {
+          "actual": true,
+          "expected": true,
+          "message": "We expect this arcTo() command to throw an error"
+        }
+      ],
+      "arguments": [
+        [
+          10,
+          75
+        ],
+        [
+          100,
+          75
+        ]
+      ],
+      "start": [
+        "Point",
+        40,
+        75
+      ],
+      "error": "Cannot create an arc with the given arguments",
+      "result": {
+        "closed": false,
+        "nodes": [
+          [
+            "Point",
+            40,
+            75
+          ]
+        ],
+        "curves": []
+      }
+    },
+    {
+      "title": "Path#arcTo(through, to) is on through point side (#1477)",
+      "assertions": [
+        {
+          "actual": true,
+          "expected": true
+        }
+      ],
+      "arguments": [
+        [
+          "Point",
+          22.5,
+          15
+        ],
+        [
+          "Point",
+          16,
+          8.5
+        ]
+      ],
+      "start": [
+        "Point",
+        16,
+        21.5
+      ],
+      "result": {
+        "closed": false,
+        "nodes": [
+          [
+            "Point",
+            16,
+            21.5
+          ],
+          [
+            "Point",
+            22.5,
+            15
+          ],
+          [
+            "Point",
+            16,
+            8.5
+          ]
+        ],
+        "curves": [
+          [
+            16,
+            21.5,
+            19.589850873900154,
+            21.5,
+            22.499999999999996,
+            18.589850873900158,
+            22.5,
+            15.000000000000002
+          ],
+          [
+            22.5,
+            15.000000000000002,
+            22.5,
+            11.410149126099846,
+            19.589850873900158,
+            8.500000000000005,
+            16.000000000000004,
+            8.5
+          ]
+        ]
+      }
+    },
+    {
+      "title": "Path#arcTo(to, radius, rotation, clockwise, large) when from and to are equal (#1613)",
+      "assertions": [],
+      "arguments": [
+        [
+          "Point",
+          10,
+          10
+        ],
+        [
+          "Size",
+          10,
+          10
+        ],
+        0,
+        true,
+        true
+      ],
+      "start": [
+        "Point",
+        10,
+        10
+      ],
+      "result": {
+        "closed": false,
+        "nodes": [
+          [
+            "Point",
+            10,
+            10
+          ]
+        ],
+        "curves": []
+      },
+      "expectedAssertionCount": 0
+    }
+  ]
+}

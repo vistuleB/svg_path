@@ -122,14 +122,14 @@
   {
     "block": 20,
     "title": "Simplifying a path with three segments of the same position should not throw an error",
-    "status": "adapter-required",
-    "evidence": "Paper simplify point-fitting/count policy requires a separate adapter."
+    "status": "adapted-geometry-checks",
+    "evidence": "Final disposition: PATH_COINCIDENT.md"
   },
   {
     "block": 21,
     "title": "Path#interpolate(from, to, factor)",
-    "status": "adapter-required",
-    "evidence": "Path control-point interpolation has no directly exercised counterpart in this batch."
+    "status": "no-direct-public-counterpart",
+    "evidence": "Final disposition: FINAL_AUDIT.md"
   },
   {
     "block": 22,
@@ -188,50 +188,50 @@
   {
     "block": 31,
     "title": "Path#arcTo(from, through, to);",
-    "status": "adapter-required",
-    "evidence": "Three-point arc construction and its degeneracy policy need a separate adapter."
+    "status": "no-direct-public-counterpart",
+    "evidence": "Final disposition: PATH_ARCS.md"
   },
   {
     "block": 32,
     "title": "Path#arcTo(from, through, to); where from, through and to all share the same y position and through lies in between from and to",
-    "status": "adapter-required",
-    "evidence": "Three-point arc construction and its degeneracy policy need a separate adapter."
+    "status": "no-direct-public-counterpart",
+    "evidence": "Final disposition: PATH_ARCS.md"
   },
   {
     "block": 33,
     "title": "Path#arcTo(from, through, to); where from, through and to all share the same y position and through lies to the right of to",
-    "status": "adapter-required",
-    "evidence": "Three-point arc construction and its degeneracy policy need a separate adapter."
+    "status": "no-direct-public-counterpart",
+    "evidence": "Final disposition: PATH_ARCS.md"
   },
   {
     "block": 34,
     "title": "Path#arcTo(from, through, to); where from, through and to all share the same y position and through lies to the left of to",
-    "status": "adapter-required",
-    "evidence": "Three-point arc construction and its degeneracy policy need a separate adapter."
+    "status": "no-direct-public-counterpart",
+    "evidence": "Final disposition: PATH_ARCS.md"
   },
   {
     "block": 35,
     "title": "Path#getOffsetsWithTangent()",
-    "status": "adapter-required",
-    "evidence": "Tangent-direction-to-offset query needs a separate adapter."
+    "status": "adapted-geometry-checks",
+    "evidence": "Final disposition: PATH_TANGENTS.md"
   },
   {
     "block": 36,
     "title": "Path#add() with a lot of segments (#1493)",
-    "status": "adapter-required",
-    "evidence": "100,000-node clone stress test not run; immutable data/scene clone contracts differ."
+    "status": "confirmed-javascript-stack-overflow",
+    "evidence": "Final disposition: FINAL_AUDIT.md"
   },
   {
     "block": 37,
     "title": "Path#arcTo(through, to) is on through point side (#1477)",
-    "status": "adapter-required",
-    "evidence": "Three-point arc construction and its degeneracy policy need a separate adapter."
+    "status": "no-direct-public-counterpart",
+    "evidence": "Final disposition: PATH_ARCS.md"
   },
   {
     "block": 38,
     "title": "Path#arcTo(to, radius, rotation, clockwise, large) when from and to are equal (#1613)",
-    "status": "adapter-required",
-    "evidence": "Coincident-endpoint arc drawing smoke case remains to adapt to SVG arc normalization."
+    "status": "adapted-svg-normalization-match",
+    "evidence": "Final disposition: PATH_ARCS.md"
   },
   {
     "block": 39,

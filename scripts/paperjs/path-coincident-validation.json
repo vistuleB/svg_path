@@ -1,0 +1,15 @@
+{
+  "command": "scripts/test-portable",
+  "erlang": {
+    "passed": 716,
+    "failed": 0
+  },
+  "javascript": {
+    "passed": 716,
+    "failed": 0
+  },
+  "originalPaperAssertionsExecuted": 1,
+  "adaptedGeometryTests": 1,
+  "productionCodeChanged": false,
+  "fullReleaseSuiteRun": false
+}

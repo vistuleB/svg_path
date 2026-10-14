@@ -1,0 +1,123 @@
+{
+  "runtime": "0.12.18",
+  "input": {
+    "closed": true,
+    "curves": [
+      [
+        -50,
+        0,
+        -50,
+        -27.61423749153968,
+        -27.61423749153968,
+        -50,
+        0,
+        -50
+      ],
+      [
+        0,
+        -50,
+        27.61423749153968,
+        -50,
+        50,
+        -27.61423749153968,
+        50,
+        0
+      ],
+      [
+        50,
+        0,
+        50,
+        27.61423749153968,
+        27.61423749153968,
+        50,
+        0,
+        50
+      ],
+      [
+        0,
+        50,
+        -27.61423749153968,
+        50,
+        -50,
+        27.61423749153968,
+        -50,
+        0
+      ]
+    ],
+    "length": 314.20333961477115
+  },
+  "assertions": [
+    {
+      "actual": [],
+      "expected": [],
+      "message": "should return empty array when called without argument"
+    },
+    {
+      "actual": [
+        78.55083490369279,
+        235.65250471107836
+      ],
+      "expected": [
+        78.55083490369279,
+        235.65250471107836
+      ],
+      "message": "should not return duplicates when tangent is at segment point"
+    },
+    {
+      "actual": 2,
+      "expected": 2,
+      "message": "should return 2 values when called on a circle with a diagonal vector"
+    }
+  ],
+  "queries": [
+    {
+      "direction": null,
+      "offsets": [],
+      "curveTimes": null
+    },
+    {
+      "direction": [
+        1,
+        0
+      ],
+      "offsets": [
+        78.55083490369279,
+        235.65250471107836
+      ],
+      "curveTimes": [
+        [
+          1
+        ],
+        [
+          0
+        ],
+        [
+          1
+        ],
+        [
+          0
+        ]
+      ]
+    },
+    {
+      "direction": [
+        1,
+        1
+      ],
+      "offsets": [
+        117.82625235553917,
+        274.92792216292474
+      ],
+      "curveTimes": [
+        [],
+        [
+          0.4999999999999999
+        ],
+        [],
+        [
+          0.4999999999999999
+        ]
+      ]
+    }
+  ]
+}

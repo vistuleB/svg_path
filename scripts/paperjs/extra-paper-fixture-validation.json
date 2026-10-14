@@ -1,0 +1,21 @@
+{
+  "runtime": "0.12.18",
+  "results": [
+    {
+      "title": "hit-testing a point that is extremely close to a curve",
+      "assertions": 1
+    },
+    {
+      "title": "hit-testing the corner of a rectangle with miter stroke.",
+      "assertions": 1
+    },
+    {
+      "title": "hit-testing fills with tolerance",
+      "assertions": 3
+    },
+    {
+      "title": "hit-testing shapes with strokes and rounded corners (#1207)",
+      "assertions": 330
+    }
+  ]
+}

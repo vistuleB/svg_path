@@ -198,13 +198,13 @@
         },
         {
           "title_expression": "'Simplifying a path with three segments of the same position should not throw an error'",
-          "status": "adapter-required",
-          "comparison_report": "path-status.json"
+          "status": "adapted-geometry-checks",
+          "comparison_report": "PATH_COINCIDENT.md"
         },
         {
           "title_expression": "'Path#interpolate(from, to, factor)'",
-          "status": "adapter-required",
-          "comparison_report": "path-status.json"
+          "status": "no-direct-public-counterpart",
+          "comparison_report": "FINAL_AUDIT.md"
         },
         {
           "title_expression": "'Path#curves synchronisation'",
@@ -253,43 +253,43 @@
         },
         {
           "title_expression": "'Path#arcTo(from, through, to);'",
-          "status": "adapter-required",
-          "comparison_report": "path-status.json"
+          "status": "no-direct-public-counterpart",
+          "comparison_report": "PATH_ARCS.md"
         },
         {
           "title_expression": "'Path#arcTo(from, through, to); where from, through and to all share the same y position and through lies in between from and to'",
-          "status": "adapter-required",
-          "comparison_report": "path-status.json"
+          "status": "no-direct-public-counterpart",
+          "comparison_report": "PATH_ARCS.md"
         },
         {
           "title_expression": "'Path#arcTo(from, through, to); where from, through and to all share the same y position and through lies to the right of to'",
-          "status": "adapter-required",
-          "comparison_report": "path-status.json"
+          "status": "no-direct-public-counterpart",
+          "comparison_report": "PATH_ARCS.md"
         },
         {
           "title_expression": "'Path#arcTo(from, through, to); where from, through and to all share the same y position and through lies to the left of to'",
-          "status": "adapter-required",
-          "comparison_report": "path-status.json"
+          "status": "no-direct-public-counterpart",
+          "comparison_report": "PATH_ARCS.md"
         },
         {
           "title_expression": "'Path#getOffsetsWithTangent()'",
-          "status": "adapter-required",
-          "comparison_report": "path-status.json"
+          "status": "adapted-geometry-checks",
+          "comparison_report": "PATH_TANGENTS.md"
         },
         {
           "title_expression": "'Path#add() with a lot of segments (#1493)'",
-          "status": "adapter-required",
-          "comparison_report": "path-status.json"
+          "status": "confirmed-javascript-stack-overflow",
+          "comparison_report": "FINAL_AUDIT.md"
         },
         {
           "title_expression": "'Path#arcTo(through, to) is on through point side (#1477)'",
-          "status": "adapter-required",
-          "comparison_report": "path-status.json"
+          "status": "no-direct-public-counterpart",
+          "comparison_report": "PATH_ARCS.md"
         },
         {
           "title_expression": "'Path#arcTo(to, radius, rotation, clockwise, large) when from and to are equal (#1613)'",
-          "status": "adapter-required",
-          "comparison_report": "path-status.json"
+          "status": "adapted-svg-normalization-match",
+          "comparison_report": "PATH_ARCS.md"
         },
         {
           "title_expression": "'Path#closed with blend mode'",
@@ -443,8 +443,8 @@
         },
         {
           "title_expression": "'#973'",
-          "status": "non-geometric-assertion-pending",
-          "comparison_report": "boolean-status.json"
+          "status": "adapted-signed-contour-orientation-match",
+          "comparison_report": "BOOLEAN_ORIENTATION.md"
         },
         {
           "title_expression": "'#1036'",
@@ -713,7 +713,8 @@
         },
         {
           "title_expression": "'Shape#contains()'",
-          "status": "adapter-required"
+          "status": "adapted-exact-shape-containment-match",
+          "comparison_report": "FINAL_AUDIT.md"
         },
         {
           "title_expression": "'Path#contains() (rectangle contours)'",
@@ -752,7 +753,8 @@
         },
         {
           "title_expression": "'IPathtem#contains() with non-invertible matrices (#1651)'",
-          "status": "adapter-required"
+          "status": "scene-matrix-api-difference-empty-geometry-checked",
+          "comparison_report": "FINAL_AUDIT.md"
         }
       ]
     },
@@ -1036,17 +1038,17 @@
       "test_blocks": [
         {
           "title_expression": "'Decomposition: rotate()'",
-          "status": "no-public-decomposition-counterpart",
+          "status": "adapted-decomposition-match",
           "comparison_report": "matrix-status.json"
         },
         {
           "title_expression": "'Decomposition: scale()'",
-          "status": "no-public-decomposition-counterpart",
+          "status": "adapted-decomposition-match",
           "comparison_report": "matrix-status.json"
         },
         {
           "title_expression": "'Decomposition: scale() & rotate()'",
-          "status": "no-public-decomposition-counterpart",
+          "status": "adapted-decomposition-match",
           "comparison_report": "matrix-status.json"
         }
       ]

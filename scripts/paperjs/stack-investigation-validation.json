@@ -1,0 +1,11 @@
+{
+  "sourceUnchanged": true,
+  "experiments": "temporary copy under /tmp/svg-path-stack-investigation only",
+  "casesPerBuild": 39,
+  "buildsCompared": 3,
+  "smallInputSemanticComparisons": 26,
+  "largeConstructionAndClosureResult": "all expected results with two structural rewrites",
+  "parserResult": "still overflows; tokenizer and command-dispatch recursion independently confirmed",
+  "fullSuiteRun": false,
+  "committed": false
+}

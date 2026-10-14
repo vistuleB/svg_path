@@ -1,0 +1,63 @@
+{
+  "runtime": "0.12.18",
+  "title": "Simplifying a path with three segments of the same position should not throw an error",
+  "input": {
+    "closed": false,
+    "nodes": [
+      [
+        "Point",
+        20,
+        20
+      ],
+      [
+        "Point",
+        20,
+        20
+      ],
+      [
+        "Point",
+        20,
+        20
+      ]
+    ],
+    "curves": [
+      [
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20
+      ],
+      [
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20
+      ]
+    ]
+  },
+  "output": {
+    "closed": false,
+    "nodes": [
+      [
+        "Point",
+        20,
+        20
+      ]
+    ],
+    "curves": []
+  },
+  "assertions": [
+    {
+      "actual": 1,
+      "expected": 1
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "command": "scripts/test-portable",
+  "erlang": {
+    "passed": 713,
+    "failed": 0
+  },
+  "javascript": {
+    "passed": 713,
+    "failed": 0
+  },
+  "upstreamBlocksExecuted": 6,
+  "noDirectPublicCounterpart": 5,
+  "adaptedRegressionTests": 1,
+  "productionCodeChanged": false,
+  "fullReleaseSuiteRun": false
+}

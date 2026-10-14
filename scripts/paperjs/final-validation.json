@@ -1,0 +1,78 @@
+{
+  "date": "2026-10-13",
+  "productionSourceUnchanged": true,
+  "confirmedBugs": 2,
+  "commands": [
+    {
+      "command": "gleam run --target erlang -m paper_final_checks",
+      "cwd": "test_paperjs",
+      "exit": 0,
+      "passGroups": 8,
+      "reportedFailures": 1
+    },
+    {
+      "command": "gleam run --target javascript -m paper_final_checks",
+      "cwd": "test_paperjs",
+      "exit": 0,
+      "passGroups": 8,
+      "reportedFailures": 1
+    },
+    {
+      "command": "gleam run --target erlang -m paper_bulk_checks",
+      "cwd": "test_paperjs",
+      "exit": 0,
+      "pointCounts": [
+        100000
+      ],
+      "coincidentAndDistinct": true
+    },
+    {
+      "command": "gleam run --target javascript -m paper_bulk_checks",
+      "cwd": "test_paperjs",
+      "exit": 1,
+      "cause": "confirmed stack overflow"
+    },
+    {
+      "command": "gleam run --target erlang -m paper_stroke_zero_probe",
+      "cwd": "test_paperjs",
+      "exit": 0,
+      "cases": 9
+    },
+    {
+      "command": "gleam run --target javascript -m paper_stroke_zero_probe",
+      "cwd": "test_paperjs",
+      "exit": 0,
+      "cases": 9
+    },
+    {
+      "command": "node scripts/paperjs/probe-bulk-construction.mjs",
+      "exit": 0,
+      "cases": 10,
+      "caughtStackOverflows": 6
+    },
+    {
+      "command": "node scripts/paperjs/extract-final-checks.cjs /tmp/svg-path-paper-audit/node_modules/paper",
+      "exit": 0
+    },
+    {
+      "command": "node scripts/paperjs/check-extra-paper-fixtures.cjs /tmp/svg-path-paper-audit/node_modules/paper",
+      "exit": 0,
+      "paperAssertions": 335
+    }
+  ],
+  "logs": {
+    "finalChecksErlang": "   Compiled in 0.31s\n    Running paper_final_checks.main\nPASS Shape containment: 17 upstream points, both fill rules\nPASS empty-path containment (geometry portion of #1651)\nPASS HitResult near-endpoint geometry\nPASS HitResult tolerance distance\nPASS HitResult miter-corner stroke containment\nFAIL rounded stroke: OffsetError(DegenerateTangent(0.0))\nPASS #1207 after removing only two zero-length lines\nPASS Point normalize and quarter rotation\nPASS SvgExport precision 5 and 0 path geometry\n",
+    "finalChecksJavaScript": "   Compiled in 0.04s\n    Running paper_final_checks.main\nPASS Shape containment: 17 upstream points, both fill rules\nPASS empty-path containment (geometry portion of #1651)\nPASS HitResult near-endpoint geometry\nPASS HitResult tolerance distance\nPASS HitResult miter-corner stroke containment\nFAIL rounded stroke: OffsetError(error: DegenerateTangent(t: 0))\nPASS #1207 after removing only two zero-length lines\nPASS Point normalize and quarter rotation\nPASS SvgExport precision 5 and 0 path geometry\n",
+    "bulkErlang": "  Compiling svg_path_paper_audit\n   Compiled in 0.32s\n    Running paper_bulk_checks.main\nPASS #1493: 100000 point construction, 99999 edges, zero length\n",
+    "bulkJavaScript": "warning: Unused imported module\n   \u250c\u2500 /Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/src/paper_final_checks.gleam:10:1\n   \u2502\n10 \u2502 import svg_path/measure\n   \u2502 ^^^^^^^^^^^^^^^^^^^^^^^ This imported module is never used\n\nHint: You can safely remove it.\n\n   Compiled in 0.04s\n    Running paper_bulk_checks.main\nfile:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/gleam_stdlib/gleam/list.mjs:784\nexport function append(first, second) {\n                      ^\n\nRangeError: Maximum call stack size exceeded\n    at Module.append (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/gleam_stdlib/gleam/list.mjs:784:23)\n    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2496:46\n    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)\n    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2493:22)\n    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2500:18\n    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)\n    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2493:22)\n    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2500:18\n    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)\n    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2493:22)\n\nNode.js v24.10.0\n",
+    "strokeControlsErlang": "  Compiling svg_path_paper_audit\n   Compiled in 0.33s\n    Running paper_stroke_zero_probe.main\nline: Ok(1)\nline with interior duplicate: Ok(1)\nline with leading duplicate: Ok(1)\nline with trailing duplicate: Ok(1)\narc: Ok(1)\narc with leading duplicate: Error(OffsetError(DegenerateTangent(0.0)))\nrounded radius 89.0: Ok(2)\nrounded radius 90.0: Error(OffsetError(DegenerateTangent(0.0)))\nrounded radius 100.0: Error(OffsetError(DegenerateTangent(0.0)))\n",
+    "strokeControlsJavaScript": "  Compiling svg_path_paper_audit\n   Compiled in 0.04s\n    Running paper_stroke_zero_probe.main\nline: Ok(1)\nline with interior duplicate: Ok(1)\nline with leading duplicate: Ok(1)\nline with trailing duplicate: Ok(1)\narc: Ok(1)\narc with leading duplicate: Error(OffsetError(error: DegenerateTangent(t: 0)))\nrounded radius 89: Ok(2)\nrounded radius 90: Error(OffsetError(error: DegenerateTangent(t: 0)))\nrounded radius 100: Error(OffsetError(error: DegenerateTangent(t: 0)))\n"
+  },
+  "lastPortableCheckpoint": {
+    "erlang": 716,
+    "javascript": 716,
+    "rerunThisFinalPass": false
+  },
+  "releaseSuiteRun": false,
+  "figuresRegenerated": false
+}

@@ -1,0 +1,136 @@
+Performance investigation: v1.0.0 versus current, 2026-10-14
+
+Conclusion
+----------
+The larger workflow time is overwhelmingly added coverage, not a broad slowdown
+of the existing workloads. There are small costs in the figure-eight hull cases,
+but nothing resembling the 42-second fast-suite increase.
+
+Method
+------
+Used the isolated snapshots from /tmp/svg-path-version-timing-20261014.
+v1.0.0: 06a94245c29b2b2fe6fd5c0121e4b5b393d0ff8d.
+Current: working-tree snapshot at 256c5e1, including earlier pending work.
+Gleam 1.18.1, Erlang/OTP 29; same root dependencies on both snapshots.
+No production source changes were made for this investigation.
+
+Each exported zero-argument _test function was run in its own process three
+ times, sequentially, recording elapsed time and Erlang reductions. All calls
+passed: 1,644 tests per old run and 1,992 per current run. Reported group totals
+sum per-test medians; they exclude compilation, EUnit discovery/reporting, and
+process-launch costs. They should not be equated to shell command wall time.
+
+Matching is conservative:
+- 611 tests have byte-identical modules and recursively imported test helpers.
+- 614 have byte-identical test modules (three import an adapted band fixture).
+- 1,309 have unchanged function code after whitespace/comment normalization;
+  this weaker category does not guarantee unchanged helpers/imports.
+- 1,627 share names; this includes tests adapted for the v3 API and changed
+  assertions. It is not claimed to be an exact-source comparison.
+
+Timing results (old -> current)
+-------------------------------
+611 identical modules plus helpers: 1.598s -> 1.576s.
+  Reductions: 327,889,227 -> 327,873,273 (essentially unchanged).
+614 identical modules: 3.433s -> 3.486s.
+1,309 unchanged function bodies: 6.369s -> 6.189s.
+All 1,627 shared names: 17.208s -> 17.135s.
+365 new test names: 42.200s. Seventeen old names no longer occur.
+The earlier fast-suite wall-time increase was 41.722s.
+
+The two figure-eight band/hull cases are the largest unchanged-function
+increases: 0.930 -> 0.971s and 0.895 -> 0.929s in the three-run medians.
+An additional six measurements per test, in reversed version order, gave
+0.969 -> 1.005s and 0.890 -> 0.966s. Timing varies with run conditions.
+Reductions increase only about 0.47% and 0.53%, respectively.
+
+A focused six-call stage profile of the first case gave:
+- Band construction: 699.0 -> 702.2ms/call.
+- Convex hull: 247.3 -> 253.7ms/call.
+- Support assertions: 1.92 -> 1.96ms/call.
+An eight-call sampling run had effectively equal total elapsed times:
+7.776s old, 7.754s current. Do not attribute all wall-time variation to a single
+source change. Call counts do show real added root-candidate normalization:
+18,250 visits to the new normalization-map callback, plus additional mapping,
+reversing and signed-zero checks. This work is in
+src/svg_path/internal/root.gleam:distinct_candidates and preserves a numerical
+correctness fix. It is a minor optimization candidate, not a reason to revert
+that fix. Moved functions must not be mistaken for new work when comparing
+call counts (for example bounding polygon helpers moved into internal/query).
+
+Where the added tests spend their time
+-------------------------------------
+Paper.js #1409 assertions 1/2/3: 1.074s, 3.538s, 15.724s; 20.337s combined.
+Paper Boolean full-overlap #107: 2.532s.
+Paper intersection-address fixtures 12 and 19: 2.396s and 1.576s.
+Long implicit parser arguments (7,501 segments): 2.112s.
+Zero-line/arc stroke normalization: 1.425s.
+Long explicit parser commands (5,000 segments): 0.914s.
+
+Sampling #1409 assertion 3 at approximately 2ms intervals collected 8,378
+samples. 7,583 (90.5%) included grouped crossing classification and 7,532
+(89.9%) included subpath_point_at_length_with. These are overlapping inclusive
+stack counts, not additive percentages. Only about 9.3% included the
+curve-curve intersection search. The dominant chain is:
+
+intersections.classify_grouped_subpath_intersection_with
+  -> classify_directions / sample_touching_order_loop
+  -> sample_subpath_branch_at_arc_length
+  -> query.subpath_point_at_length_with
+  -> segment_parameter_at_valid_length_loop
+  -> adaptive_segment_length_between / length_simpson / segment_speed
+
+The classifier samples branch points by arc length. Each point query repeats
+length work, and inversion bisects the parameter while integrating from zero
+again. A useful next optimization is reusable per-subpath segment lengths and
+prefix sums for a classification call, followed by reusing integration work
+inside local length inversion. This is a measured hotspot in added coverage,
+not evidence that the same 1.0.0 test became slower.
+
+Sampling the long implicit parser test found copying/revalidation rather than
+tokenization dominating. parse.append_segment calls subpath_append_segment,
+which appends to the entire list and rebuilds/rechecks the subpath on every
+segment. This gives quadratic construction work. A private reverse-accumulating
+parser builder with one final validation is the second optimization candidate,
+while preserving error locations, closure and smooth-control semantics.
+The recent stack-safety fixes did not remove this pre-existing algorithmic cost.
+
+Figures
+-------
+The original figure-workflow difference was 43.443s. Its fast-test rerun alone
+accounts for approximately 41.722s of that difference.
+Two further gallery-only runs, alternating version order, regenerated the same
+29 Erlang gallery jobs without rerunning tests:
+  v1.0.0: 32.553s, 34.401s
+  current: 31.975s, 32.708s
+All jobs succeeded. This does not show a Gallery slowdown. The four JS Gallery
+figures and thirteen README figures passed in the original full-workflow runs;
+they were not separately repeated in this follow-up.
+The slow profile was 34.719s old versus 34.173s current in the original timing;
+it was not rerun three times in this per-test investigation.
+
+Artifacts and reproduction
+--------------------------
+2026-10-14-results.json contains every common-test median, reduction count,
+source-match category, every added-test median, and Gallery repeat results.
+Raw per-run TSVs and profiler logs are under:
+  /tmp/svg-path-version-timing-20261014
+
+time-tests.escript runs the three measurements against the already-built
+Erlang modules of the current directory:
+  escript /absolute/path/to/time-tests.escript /absolute/path/to/results.tsv
+Build the ordinary test profile first. Do not use a build containing the slow
+profile's replacement module. The harness invokes test functions directly and
+records failures; it is diagnostic tooling, not a replacement for test-release.
+
+sample.escript takes MODULE FUNCTION REPEATS OUTPUT and samples current stack
+traces. Reported inclusive stack frequencies overlap. Its timings are profiling
+observations, not uninstrumented benchmark results.
+
+Recommended order
+-----------------
+1. Cache/reuse length work within crossing classification (#1409).
+2. Replace repeated whole-subpath rebuilding in the parser.
+3. Consider small root-candidate allocation improvements only if warranted;
+   retain signed-zero behavior and all numerical regressions.
+No implementation change is part of this investigation.

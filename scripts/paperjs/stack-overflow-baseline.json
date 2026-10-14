@@ -1,0 +1,569 @@
+{
+  "node": "v24.10.0",
+  "build": "/Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript",
+  "rows": [
+    {
+      "label": "Strict",
+      "count": 100,
+      "status": "Ok",
+      "edges": 100,
+      "ms": 0.9262920000000037
+    },
+    {
+      "label": "Bridge",
+      "count": 100,
+      "status": "Ok",
+      "edges": 100,
+      "ms": 0.48270800000000236
+    },
+    {
+      "label": "Wiggle",
+      "count": 100,
+      "status": "Ok",
+      "edges": 100,
+      "ms": 0.5848750000000038
+    },
+    {
+      "label": "WiggleWith",
+      "count": 100,
+      "status": "Ok",
+      "edges": 100,
+      "ms": 0.2581249999999997
+    },
+    {
+      "label": "WiggleElseBridge",
+      "count": 100,
+      "status": "Ok",
+      "edges": 100,
+      "ms": 0.30295799999999673
+    },
+    {
+      "label": "WiggleElseBridgeWith",
+      "count": 100,
+      "status": "Ok",
+      "edges": 100,
+      "ms": 0.22716599999999687
+    },
+    {
+      "label": "custom identity/context",
+      "count": 100,
+      "status": "Ok",
+      "edges": 100,
+      "calls": 99,
+      "first": 1,
+      "last": 1,
+      "closing": 0,
+      "ms": 0.20574999999999477
+    },
+    {
+      "label": "late discontinuity",
+      "count": 100,
+      "status": "Error",
+      "error": {
+        "previous_index": 98,
+        "next_index": 99,
+        "expected": {
+          "x": 99,
+          "y": 0
+        },
+        "got": {
+          "x": -1,
+          "y": 0
+        },
+        "distance": 100
+      },
+      "kind": "Discontinuous",
+      "ms": 0.40670799999999474
+    },
+    {
+      "label": "custom invalid late replacement",
+      "count": 100,
+      "status": "Error",
+      "error": {
+        "previous_index": 97,
+        "next_index": 98,
+        "expected": {
+          "x": 98,
+          "y": 0
+        },
+        "got": {
+          "x": -1,
+          "y": 0
+        },
+        "distance": 99
+      },
+      "kind": "Discontinuous",
+      "ms": 0.4064169999999976
+    },
+    {
+      "label": "polygon",
+      "count": 100,
+      "status": "Ok",
+      "edges": 101,
+      "ms": 0.5649579999999972
+    },
+    {
+      "label": "parse lines",
+      "count": 100,
+      "status": "Ok",
+      "subpaths": 1,
+      "ms": 17.575208000000003
+    },
+    {
+      "label": "custom bridge replacement",
+      "count": 100,
+      "status": "Ok",
+      "edges": 199,
+      "ms": 0.1955420000000032
+    },
+    {
+      "label": "custom removes pairs",
+      "count": 100,
+      "status": "Ok",
+      "edges": 0,
+      "ms": 0.3761659999999978
+    },
+    {
+      "label": "Strict",
+      "count": 10000,
+      "status": "threw",
+      "kind": "RangeError",
+      "message": "Maximum call stack size exceeded",
+      "stack": [
+        "RangeError: Maximum call stack size exceeded",
+        "    at reverse_and_prepend (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/gleam_stdlib/gleam/list.mjs:144:29)",
+        "    at reverse (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/gleam_stdlib/gleam/list.mjs:184:10)",
+        "    at Module.append (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/gleam_stdlib/gleam/list.mjs:785:22)",
+        "    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2496:46",
+        "    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)",
+        "    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2493:22)"
+      ],
+      "ms": 4.3336670000000055
+    },
+    {
+      "label": "Bridge",
+      "count": 10000,
+      "status": "threw",
+      "kind": "RangeError",
+      "message": "Maximum call stack size exceeded",
+      "stack": [
+        "RangeError: Maximum call stack size exceeded",
+        "    at continuous_from (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2326:25)",
+        "    at continuous (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2363:10)",
+        "    at strict_open_subpath_from (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2386:14)",
+        "    at validate_custom_replacement (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2443:13)",
+        "    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2494:9)",
+        "    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2500:18"
+      ],
+      "ms": 3.735749999999996
+    },
+    {
+      "label": "Wiggle",
+      "count": 10000,
+      "status": "threw",
+      "kind": "RangeError",
+      "message": "Maximum call stack size exceeded",
+      "stack": [
+        "RangeError: Maximum call stack size exceeded",
+        "    at continuous_from (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2326:25)",
+        "    at continuous (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2363:10)",
+        "    at strict_open_subpath_from (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2386:14)",
+        "    at validate_custom_replacement (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2443:13)",
+        "    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2494:9)",
+        "    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2500:18"
+      ],
+      "ms": 2.7882080000000116
+    },
+    {
+      "label": "WiggleWith",
+      "count": 10000,
+      "status": "threw",
+      "kind": "RangeError",
+      "message": "Maximum call stack size exceeded",
+      "stack": [
+        "RangeError: Maximum call stack size exceeded",
+        "    at segment_with_end (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2650:26)",
+        "    at wiggle_nearby_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2736:7)",
+        "    at wiggle_nearby_segment_pair (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2786:12)",
+        "    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2805:14",
+        "    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2488:25)",
+        "    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2500:18"
+      ],
+      "ms": 2.747957999999997
+    },
+    {
+      "label": "WiggleElseBridge",
+      "count": 10000,
+      "status": "threw",
+      "kind": "RangeError",
+      "message": "Maximum call stack size exceeded",
+      "stack": [
+        "RangeError: Maximum call stack size exceeded",
+        "    at segment_with_end (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2650:26)",
+        "    at wiggle_nearby_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2736:7)",
+        "    at wiggle_nearby_segment_pair (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2786:12)",
+        "    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2794:14",
+        "    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2488:25)",
+        "    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2500:18"
+      ],
+      "ms": 2.9182909999999964
+    },
+    {
+      "label": "WiggleElseBridgeWith",
+      "count": 10000,
+      "status": "threw",
+      "kind": "RangeError",
+      "message": "Maximum call stack size exceeded",
+      "stack": [
+        "RangeError: Maximum call stack size exceeded",
+        "    at segment_with_end (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2650:26)",
+        "    at wiggle_nearby_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2736:7)",
+        "    at wiggle_nearby_segment_pair (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2786:12)",
+        "    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2794:14",
+        "    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2488:25)",
+        "    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2500:18"
+      ],
+      "ms": 2.569458999999995
+    },
+    {
+      "label": "custom identity/context",
+      "count": 10000,
+      "status": "threw",
+      "kind": "RangeError",
+      "message": "Maximum call stack size exceeded",
+      "stack": [
+        "RangeError: Maximum call stack size exceeded",
+        "    at continuous_from (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2326:25)",
+        "    at continuous (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2363:10)",
+        "    at strict_open_subpath_from (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2386:14)",
+        "    at validate_custom_replacement (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2443:13)",
+        "    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2494:9)",
+        "    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2500:18"
+      ],
+      "ms": 2.5428750000000093
+    },
+    {
+      "label": "late discontinuity",
+      "count": 10000,
+      "status": "threw",
+      "kind": "RangeError",
+      "message": "Maximum call stack size exceeded",
+      "stack": [
+        "RangeError: Maximum call stack size exceeded",
+        "    at starts_at (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2366:19)",
+        "    at strict_open_subpath_from (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2384:11)",
+        "    at validate_custom_replacement (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2443:13)",
+        "    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2494:9)",
+        "    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2500:18",
+        "    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)"
+      ],
+      "ms": 2.498374999999996
+    },
+    {
+      "label": "custom invalid late replacement",
+      "count": 10000,
+      "status": "threw",
+      "kind": "RangeError",
+      "message": "Maximum call stack size exceeded",
+      "stack": [
+        "RangeError: Maximum call stack size exceeded",
+        "    at continuous_from (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2326:25)",
+        "    at continuous (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2363:10)",
+        "    at strict_open_subpath_from (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2386:14)",
+        "    at validate_custom_replacement (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2443:13)",
+        "    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2494:9)",
+        "    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2500:18"
+      ],
+      "ms": 2.3303340000000077
+    },
+    {
+      "label": "polygon",
+      "count": 10000,
+      "status": "threw",
+      "kind": "RangeError",
+      "message": "Maximum call stack size exceeded",
+      "stack": [
+        "RangeError: Maximum call stack size exceeded",
+        "    at strict_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2624:35)",
+        "    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2488:25)",
+        "    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2500:18",
+        "    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)",
+        "    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2493:22)",
+        "    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2500:18"
+      ],
+      "ms": 4.079334000000003
+    },
+    {
+      "label": "parse lines",
+      "count": 10000,
+      "status": "threw",
+      "kind": "RangeError",
+      "message": "Maximum call stack size exceeded",
+      "stack": [
+        "RangeError: Maximum call stack size exceeded",
+        "    at read_number (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path/parse.mjs:1435:21)",
+        "    at read_number_at_argument (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path/parse.mjs:1511:12)",
+        "    at tokenize_non_separator (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path/parse.mjs:1596:16)",
+        "    at tokenize_loop (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path/parse.mjs:1666:16)",
+        "    at tokenize_non_separator (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path/parse.mjs:1579:12)",
+        "    at tokenize_loop (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path/parse.mjs:1666:16)"
+      ],
+      "ms": 17.356792
+    },
+    {
+      "label": "custom bridge replacement",
+      "count": 10000,
+      "status": "threw",
+      "kind": "RangeError",
+      "message": "Maximum call stack size exceeded",
+      "stack": [
+        "RangeError: Maximum call stack size exceeded",
+        "    at validate_custom_replacement (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2439:37)",
+        "    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2494:9)",
+        "    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2500:18",
+        "    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)",
+        "    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2493:22)",
+        "    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2500:18"
+      ],
+      "ms": 4.789166999999992
+    },
+    {
+      "label": "custom removes pairs",
+      "count": 10000,
+      "status": "threw",
+      "kind": "RangeError",
+      "message": "Maximum call stack size exceeded",
+      "stack": [
+        "RangeError: Maximum call stack size exceeded",
+        "    at validate_custom_replacement (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2439:37)",
+        "    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2494:9)",
+        "    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2500:18",
+        "    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)",
+        "    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2493:22)",
+        "    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2500:18"
+      ],
+      "ms": 1.637791000000007
+    },
+    {
+      "label": "Strict",
+      "count": 100000,
+      "status": "threw",
+      "kind": "RangeError",
+      "message": "Maximum call stack size exceeded",
+      "stack": [
+        "RangeError: Maximum call stack size exceeded",
+        "    at starts_at (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2366:19)",
+        "    at strict_open_subpath_from (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2384:11)",
+        "    at validate_custom_replacement (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2443:13)",
+        "    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2494:9)",
+        "    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2500:18",
+        "    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)"
+      ],
+      "ms": 2.566958999999997
+    },
+    {
+      "label": "Bridge",
+      "count": 100000,
+      "status": "threw",
+      "kind": "RangeError",
+      "message": "Maximum call stack size exceeded",
+      "stack": [
+        "RangeError: Maximum call stack size exceeded",
+        "    at starts_at (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2366:19)",
+        "    at strict_open_subpath_from (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2384:11)",
+        "    at validate_custom_replacement (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2443:13)",
+        "    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2494:9)",
+        "    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2500:18",
+        "    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)"
+      ],
+      "ms": 2.4461250000000234
+    },
+    {
+      "label": "Wiggle",
+      "count": 100000,
+      "status": "threw",
+      "kind": "RangeError",
+      "message": "Maximum call stack size exceeded",
+      "stack": [
+        "RangeError: Maximum call stack size exceeded",
+        "    at wiggle_nearby_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2725:32)",
+        "    at wiggle_nearby_segment_pair (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2786:12)",
+        "    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2805:14",
+        "    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2488:25)",
+        "    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2500:18",
+        "    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)"
+      ],
+      "ms": 2.8175830000000133
+    },
+    {
+      "label": "WiggleWith",
+      "count": 100000,
+      "status": "threw",
+      "kind": "RangeError",
+      "message": "Maximum call stack size exceeded",
+      "stack": [
+        "RangeError: Maximum call stack size exceeded",
+        "    at wiggle_nearby_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2725:32)",
+        "    at wiggle_nearby_segment_pair (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2786:12)",
+        "    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2805:14",
+        "    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2488:25)",
+        "    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2500:18",
+        "    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)"
+      ],
+      "ms": 3.204166999999984
+    },
+    {
+      "label": "WiggleElseBridge",
+      "count": 100000,
+      "status": "threw",
+      "kind": "RangeError",
+      "message": "Maximum call stack size exceeded",
+      "stack": [
+        "RangeError: Maximum call stack size exceeded",
+        "    at distance (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2303:25)",
+        "    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2792:13",
+        "    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2488:25)",
+        "    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2500:18",
+        "    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)",
+        "    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2493:22)"
+      ],
+      "ms": 2.649791999999991
+    },
+    {
+      "label": "WiggleElseBridgeWith",
+      "count": 100000,
+      "status": "threw",
+      "kind": "RangeError",
+      "message": "Maximum call stack size exceeded",
+      "stack": [
+        "RangeError: Maximum call stack size exceeded",
+        "    at distance (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2303:25)",
+        "    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2792:13",
+        "    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2488:25)",
+        "    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2500:18",
+        "    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)",
+        "    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2493:22)"
+      ],
+      "ms": 3.125499999999988
+    },
+    {
+      "label": "custom identity/context",
+      "count": 100000,
+      "status": "threw",
+      "kind": "RangeError",
+      "message": "Maximum call stack size exceeded",
+      "stack": [
+        "RangeError: Maximum call stack size exceeded",
+        "    at continuous_from (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2326:25)",
+        "    at continuous (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2363:10)",
+        "    at strict_open_subpath_from (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2386:14)",
+        "    at validate_custom_replacement (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2443:13)",
+        "    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2494:9)",
+        "    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2500:18"
+      ],
+      "ms": 2.5655000000000143
+    },
+    {
+      "label": "late discontinuity",
+      "count": 100000,
+      "status": "threw",
+      "kind": "RangeError",
+      "message": "Maximum call stack size exceeded",
+      "stack": [
+        "RangeError: Maximum call stack size exceeded",
+        "    at starts_at (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2366:19)",
+        "    at strict_open_subpath_from (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2384:11)",
+        "    at validate_custom_replacement (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2443:13)",
+        "    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2494:9)",
+        "    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2500:18",
+        "    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)"
+      ],
+      "ms": 5.820375000000013
+    },
+    {
+      "label": "custom invalid late replacement",
+      "count": 100000,
+      "status": "threw",
+      "kind": "RangeError",
+      "message": "Maximum call stack size exceeded",
+      "stack": [
+        "RangeError: Maximum call stack size exceeded",
+        "    at strict_open_subpath_from (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2383:34)",
+        "    at validate_custom_replacement (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2443:13)",
+        "    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2494:9)",
+        "    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2500:18",
+        "    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)",
+        "    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2493:22)"
+      ],
+      "ms": 2.606375000000014
+    },
+    {
+      "label": "polygon",
+      "count": 100000,
+      "status": "threw",
+      "kind": "RangeError",
+      "message": "Maximum call stack size exceeded",
+      "stack": [
+        "RangeError: Maximum call stack size exceeded",
+        "    at strict_open_subpath_from (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2383:34)",
+        "    at validate_custom_replacement (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2443:13)",
+        "    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2494:9)",
+        "    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2500:18",
+        "    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)",
+        "    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2493:22)"
+      ],
+      "ms": 18.406999999999982
+    },
+    {
+      "label": "parse lines",
+      "count": 100000,
+      "status": "threw",
+      "kind": "RangeError",
+      "message": "Maximum call stack size exceeded",
+      "stack": [
+        "RangeError: Maximum call stack size exceeded",
+        "    at read_number (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path/parse.mjs:1435:21)",
+        "    at read_number_at_argument (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path/parse.mjs:1511:12)",
+        "    at tokenize_non_separator (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path/parse.mjs:1596:16)",
+        "    at tokenize_loop (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path/parse.mjs:1666:16)",
+        "    at tokenize_non_separator (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path/parse.mjs:1602:16)",
+        "    at tokenize_loop (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path/parse.mjs:1666:16)"
+      ],
+      "ms": 117.474167
+    },
+    {
+      "label": "custom bridge replacement",
+      "count": 100000,
+      "status": "threw",
+      "kind": "RangeError",
+      "message": "Maximum call stack size exceeded",
+      "stack": [
+        "RangeError: Maximum call stack size exceeded",
+        "    at strict_open_subpath_from (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2383:34)",
+        "    at validate_custom_replacement (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2443:13)",
+        "    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2494:9)",
+        "    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2500:18",
+        "    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)",
+        "    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2493:22)"
+      ],
+      "ms": 6.681583999999987
+    },
+    {
+      "label": "custom removes pairs",
+      "count": 100000,
+      "status": "threw",
+      "kind": "RangeError",
+      "message": "Maximum call stack size exceeded",
+      "stack": [
+        "RangeError: Maximum call stack size exceeded",
+        "    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2454:35)",
+        "    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2500:18",
+        "    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)",
+        "    at custom_reconcile_segments (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2493:22)",
+        "    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/svg_path/svg_path.mjs:2500:18",
+        "    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_paperjs/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)"
+      ],
+      "ms": 0.9582919999999717
+    }
+  ]
+}

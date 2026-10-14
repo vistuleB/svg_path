@@ -1,0 +1,57 @@
+--- a/src/svg_path.gleam
++++ b/src/svg_path.gleam
+@@ -6482,20 +6482,19 @@
+             closing: False,
+           ),
+         )
+-      use replacement <- result.try(validate_custom_replacement(
+-        previous,
+-        replacement,
+-        previous_index:,
+-      ))
+-      let reversed_accumulated = list.append(list.reverse(replacement), before)
+-
+-      custom_reconcile_segments(
+-        rest,
+-        reversed_accumulated,
+-        reconcile,
+-        previous_index: previous_index + list.length(replacement) - 1,
+-        first: False,
+-      )
++      case validate_custom_replacement(previous, replacement, previous_index:) {
++        Error(error) -> Error(error)
++        Ok(replacement) -> {
++          let reversed_accumulated = list.append(list.reverse(replacement), before)
++          custom_reconcile_segments(
++            rest,
++            reversed_accumulated,
++            reconcile,
++            previous_index: previous_index + list.length(replacement) - 1,
++            first: False,
++          )
++        }
++      }
+     }
+   }
+ }
+@@ -7198,15 +7197,13 @@
+ }
+ 
+ fn split_last(items: List(a)) -> Result(#(List(a), a), Error) {
++  split_last_loop(items, [])
++}
++fn split_last_loop(items: List(a), before: List(a)) -> Result(#(List(a), a), Error) {
+   case items {
+     [] -> Error(EmptySubpath)
+-    [only] -> Ok(#([], only))
+-    [first, ..rest] -> {
+-      case split_last(rest) {
+-        Ok(#(middle, last)) -> Ok(#([first, ..middle], last))
+-        Error(error) -> Error(error)
+-      }
+-    }
++    [only] -> Ok(#(list.reverse(before), only))
++    [first, ..rest] -> split_last_loop(rest, [first, ..before])
+   }
+ }
+ 

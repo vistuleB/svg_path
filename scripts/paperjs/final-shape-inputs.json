@@ -1,0 +1,161 @@
+{
+  "runtime": "0.12.18",
+  "samples": [
+    {
+      "type": "circle",
+      "point": [
+        0,
+        0
+      ],
+      "actual": true,
+      "expected": true
+    },
+    {
+      "type": "circle",
+      "point": [
+        0,
+        -100
+      ],
+      "actual": true,
+      "expected": true
+    },
+    {
+      "type": "circle",
+      "point": [
+        70.00357133746822,
+        70.0035713374682
+      ],
+      "actual": true,
+      "expected": true
+    },
+    {
+      "type": "circle",
+      "point": [
+        70.71067811865476,
+        70.71067811865474
+      ],
+      "actual": true,
+      "expected": true
+    },
+    {
+      "type": "circle",
+      "point": [
+        71.41778489984131,
+        71.4177848998413
+      ],
+      "actual": false,
+      "expected": false
+    },
+    {
+      "type": "ellipse",
+      "point": [
+        0,
+        0
+      ],
+      "actual": true,
+      "expected": true
+    },
+    {
+      "type": "ellipse",
+      "point": [
+        0,
+        -100
+      ],
+      "actual": true,
+      "expected": true
+    },
+    {
+      "type": "ellipse",
+      "point": [
+        31.819805153394643,
+        63.63961030678927
+      ],
+      "actual": true,
+      "expected": true
+    },
+    {
+      "type": "ellipse",
+      "point": [
+        35.35533905932738,
+        70.71067811865474
+      ],
+      "actual": true,
+      "expected": true
+    },
+    {
+      "type": "ellipse",
+      "point": [
+        38.89087296526012,
+        77.78174593052023
+      ],
+      "actual": false,
+      "expected": false
+    },
+    {
+      "type": "rectangle",
+      "point": [
+        0,
+        0
+      ],
+      "actual": true,
+      "expected": true
+    },
+    {
+      "type": "rectangle",
+      "point": [
+        0,
+        90
+      ],
+      "actual": true,
+      "expected": true
+    },
+    {
+      "type": "rectangle",
+      "point": [
+        0,
+        100
+      ],
+      "actual": true,
+      "expected": true
+    },
+    {
+      "type": "rectangle",
+      "point": [
+        0,
+        110.00000000000001
+      ],
+      "actual": false,
+      "expected": false
+    },
+    {
+      "type": "rectangle",
+      "point": [
+        45,
+        0
+      ],
+      "actual": true,
+      "expected": true
+    },
+    {
+      "type": "rectangle",
+      "point": [
+        50,
+        0
+      ],
+      "actual": true,
+      "expected": true
+    },
+    {
+      "type": "rectangle",
+      "point": [
+        55.00000000000001,
+        0
+      ],
+      "actual": false,
+      "expected": false
+    }
+  ],
+  "bulkNodes": 100000,
+  "bulkPaper": "completed",
+  "singularEmptyPaper": "false"
+}

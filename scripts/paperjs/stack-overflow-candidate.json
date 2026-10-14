@@ -1,0 +1,409 @@
+{
+  "node": "v24.10.0",
+  "build": "/tmp/svg-path-stack-investigation/build/dev/javascript",
+  "rows": [
+    {
+      "label": "Strict",
+      "count": 100,
+      "status": "Ok",
+      "edges": 100,
+      "ms": 0.8357080000000039
+    },
+    {
+      "label": "Bridge",
+      "count": 100,
+      "status": "Ok",
+      "edges": 100,
+      "ms": 0.2683749999999989
+    },
+    {
+      "label": "Wiggle",
+      "count": 100,
+      "status": "Ok",
+      "edges": 100,
+      "ms": 0.7912919999999986
+    },
+    {
+      "label": "WiggleWith",
+      "count": 100,
+      "status": "Ok",
+      "edges": 100,
+      "ms": 0.24762499999999932
+    },
+    {
+      "label": "WiggleElseBridge",
+      "count": 100,
+      "status": "Ok",
+      "edges": 100,
+      "ms": 0.30075000000000074
+    },
+    {
+      "label": "WiggleElseBridgeWith",
+      "count": 100,
+      "status": "Ok",
+      "edges": 100,
+      "ms": 0.21570899999999682
+    },
+    {
+      "label": "custom identity/context",
+      "count": 100,
+      "status": "Ok",
+      "edges": 100,
+      "calls": 99,
+      "first": 1,
+      "last": 1,
+      "closing": 0,
+      "ms": 0.18633300000000474
+    },
+    {
+      "label": "late discontinuity",
+      "count": 100,
+      "status": "Error",
+      "error": {
+        "previous_index": 98,
+        "next_index": 99,
+        "expected": {
+          "x": 99,
+          "y": 0
+        },
+        "got": {
+          "x": -1,
+          "y": 0
+        },
+        "distance": 100
+      },
+      "kind": "Discontinuous",
+      "ms": 0.3601249999999965
+    },
+    {
+      "label": "custom invalid late replacement",
+      "count": 100,
+      "status": "Error",
+      "error": {
+        "previous_index": 97,
+        "next_index": 98,
+        "expected": {
+          "x": 98,
+          "y": 0
+        },
+        "got": {
+          "x": -1,
+          "y": 0
+        },
+        "distance": 99
+      },
+      "kind": "Discontinuous",
+      "ms": 0.19858400000000387
+    },
+    {
+      "label": "polygon",
+      "count": 100,
+      "status": "Ok",
+      "edges": 101,
+      "ms": 0.8320829999999972
+    },
+    {
+      "label": "parse lines",
+      "count": 100,
+      "status": "Ok",
+      "subpaths": 1,
+      "ms": 17.045082999999998
+    },
+    {
+      "label": "custom bridge replacement",
+      "count": 100,
+      "status": "Ok",
+      "edges": 199,
+      "ms": 0.25541599999999676
+    },
+    {
+      "label": "custom removes pairs",
+      "count": 100,
+      "status": "Ok",
+      "edges": 0,
+      "ms": 0.05391699999999844
+    },
+    {
+      "label": "Strict",
+      "count": 10000,
+      "status": "Ok",
+      "edges": 10000,
+      "ms": 8.842624999999998
+    },
+    {
+      "label": "Bridge",
+      "count": 10000,
+      "status": "Ok",
+      "edges": 10000,
+      "ms": 6.126125000000002
+    },
+    {
+      "label": "Wiggle",
+      "count": 10000,
+      "status": "Ok",
+      "edges": 10000,
+      "ms": 9.405167000000006
+    },
+    {
+      "label": "WiggleWith",
+      "count": 10000,
+      "status": "Ok",
+      "edges": 10000,
+      "ms": 7.477041999999997
+    },
+    {
+      "label": "WiggleElseBridge",
+      "count": 10000,
+      "status": "Ok",
+      "edges": 10000,
+      "ms": 6.121834000000007
+    },
+    {
+      "label": "WiggleElseBridgeWith",
+      "count": 10000,
+      "status": "Ok",
+      "edges": 10000,
+      "ms": 5.964041999999992
+    },
+    {
+      "label": "custom identity/context",
+      "count": 10000,
+      "status": "Ok",
+      "edges": 10000,
+      "calls": 9999,
+      "first": 1,
+      "last": 1,
+      "closing": 0,
+      "ms": 5.407041000000007
+    },
+    {
+      "label": "late discontinuity",
+      "count": 10000,
+      "status": "Error",
+      "error": {
+        "previous_index": 9998,
+        "next_index": 9999,
+        "expected": {
+          "x": 9999,
+          "y": 0
+        },
+        "got": {
+          "x": -1,
+          "y": 0
+        },
+        "distance": 10000
+      },
+      "kind": "Discontinuous",
+      "ms": 4.501582999999997
+    },
+    {
+      "label": "custom invalid late replacement",
+      "count": 10000,
+      "status": "Error",
+      "error": {
+        "previous_index": 9997,
+        "next_index": 9998,
+        "expected": {
+          "x": 9998,
+          "y": 0
+        },
+        "got": {
+          "x": -1,
+          "y": 0
+        },
+        "distance": 9999
+      },
+      "kind": "Discontinuous",
+      "ms": 4.623917000000006
+    },
+    {
+      "label": "polygon",
+      "count": 10000,
+      "status": "threw",
+      "kind": "RangeError",
+      "message": "Maximum call stack size exceeded",
+      "stack": [
+        "RangeError: Maximum call stack size exceeded",
+        "    at split_last (file:///private/tmp/svg-path-stack-investigation/build/dev/javascript/svg_path/svg_path.mjs:3029:20)",
+        "    at split_last (file:///private/tmp/svg-path-stack-investigation/build/dev/javascript/svg_path/svg_path.mjs:3040:16)",
+        "    at split_last (file:///private/tmp/svg-path-stack-investigation/build/dev/javascript/svg_path/svg_path.mjs:3040:16)",
+        "    at split_last (file:///private/tmp/svg-path-stack-investigation/build/dev/javascript/svg_path/svg_path.mjs:3040:16)",
+        "    at split_last (file:///private/tmp/svg-path-stack-investigation/build/dev/javascript/svg_path/svg_path.mjs:3040:16)",
+        "    at split_last (file:///private/tmp/svg-path-stack-investigation/build/dev/javascript/svg_path/svg_path.mjs:3040:16)"
+      ],
+      "ms": 9.611249999999998
+    },
+    {
+      "label": "parse lines",
+      "count": 10000,
+      "status": "threw",
+      "kind": "RangeError",
+      "message": "Maximum call stack size exceeded",
+      "stack": [
+        "RangeError: Maximum call stack size exceeded",
+        "    at is_command (file:///private/tmp/svg-path-stack-investigation/build/dev/javascript/svg_path/svg_path/parse.mjs:1519:20)",
+        "    at tokenize_non_separator (file:///private/tmp/svg-path-stack-investigation/build/dev/javascript/svg_path/svg_path/parse.mjs:1577:11)",
+        "    at tokenize_loop (file:///private/tmp/svg-path-stack-investigation/build/dev/javascript/svg_path/svg_path/parse.mjs:1666:16)",
+        "    at tokenize_non_separator (file:///private/tmp/svg-path-stack-investigation/build/dev/javascript/svg_path/svg_path/parse.mjs:1579:12)",
+        "    at tokenize_loop (file:///private/tmp/svg-path-stack-investigation/build/dev/javascript/svg_path/svg_path/parse.mjs:1666:16)",
+        "    at tokenize_non_separator (file:///private/tmp/svg-path-stack-investigation/build/dev/javascript/svg_path/svg_path/parse.mjs:1602:16)"
+      ],
+      "ms": 17.822917000000004
+    },
+    {
+      "label": "custom bridge replacement",
+      "count": 10000,
+      "status": "Ok",
+      "edges": 19999,
+      "ms": 8.772832999999991
+    },
+    {
+      "label": "custom removes pairs",
+      "count": 10000,
+      "status": "Ok",
+      "edges": 0,
+      "ms": 1.1119170000000054
+    },
+    {
+      "label": "Strict",
+      "count": 100000,
+      "status": "Ok",
+      "edges": 100000,
+      "ms": 75.417834
+    },
+    {
+      "label": "Bridge",
+      "count": 100000,
+      "status": "Ok",
+      "edges": 100000,
+      "ms": 55.54849999999999
+    },
+    {
+      "label": "Wiggle",
+      "count": 100000,
+      "status": "Ok",
+      "edges": 100000,
+      "ms": 71.73654199999999
+    },
+    {
+      "label": "WiggleWith",
+      "count": 100000,
+      "status": "Ok",
+      "edges": 100000,
+      "ms": 71.430834
+    },
+    {
+      "label": "WiggleElseBridge",
+      "count": 100000,
+      "status": "Ok",
+      "edges": 100000,
+      "ms": 63.73312499999997
+    },
+    {
+      "label": "WiggleElseBridgeWith",
+      "count": 100000,
+      "status": "Ok",
+      "edges": 100000,
+      "ms": 67.010583
+    },
+    {
+      "label": "custom identity/context",
+      "count": 100000,
+      "status": "Ok",
+      "edges": 100000,
+      "calls": 99999,
+      "first": 1,
+      "last": 1,
+      "closing": 0,
+      "ms": 58.19929100000002
+    },
+    {
+      "label": "late discontinuity",
+      "count": 100000,
+      "status": "Error",
+      "error": {
+        "previous_index": 99998,
+        "next_index": 99999,
+        "expected": {
+          "x": 99999,
+          "y": 0
+        },
+        "got": {
+          "x": -1,
+          "y": 0
+        },
+        "distance": 100000
+      },
+      "kind": "Discontinuous",
+      "ms": 54.779249999999934
+    },
+    {
+      "label": "custom invalid late replacement",
+      "count": 100000,
+      "status": "Error",
+      "error": {
+        "previous_index": 99997,
+        "next_index": 99998,
+        "expected": {
+          "x": 99998,
+          "y": 0
+        },
+        "got": {
+          "x": -1,
+          "y": 0
+        },
+        "distance": 99999
+      },
+      "kind": "Discontinuous",
+      "ms": 49.73341700000003
+    },
+    {
+      "label": "polygon",
+      "count": 100000,
+      "status": "threw",
+      "kind": "RangeError",
+      "message": "Maximum call stack size exceeded",
+      "stack": [
+        "RangeError: Maximum call stack size exceeded",
+        "    at [Symbol.hasInstance] (<anonymous>)",
+        "    at split_last (file:///private/tmp/svg-path-stack-investigation/build/dev/javascript/svg_path/svg_path.mjs:3030:13)",
+        "    at split_last (file:///private/tmp/svg-path-stack-investigation/build/dev/javascript/svg_path/svg_path.mjs:3040:16)",
+        "    at split_last (file:///private/tmp/svg-path-stack-investigation/build/dev/javascript/svg_path/svg_path.mjs:3040:16)",
+        "    at split_last (file:///private/tmp/svg-path-stack-investigation/build/dev/javascript/svg_path/svg_path.mjs:3040:16)",
+        "    at split_last (file:///private/tmp/svg-path-stack-investigation/build/dev/javascript/svg_path/svg_path.mjs:3040:16)"
+      ],
+      "ms": 78.7439579999999
+    },
+    {
+      "label": "parse lines",
+      "count": 100000,
+      "status": "threw",
+      "kind": "RangeError",
+      "message": "Maximum call stack size exceeded",
+      "stack": [
+        "RangeError: Maximum call stack size exceeded",
+        "    at is_command (file:///private/tmp/svg-path-stack-investigation/build/dev/javascript/svg_path/svg_path/parse.mjs:1519:20)",
+        "    at tokenize_non_separator (file:///private/tmp/svg-path-stack-investigation/build/dev/javascript/svg_path/svg_path/parse.mjs:1577:11)",
+        "    at tokenize_loop (file:///private/tmp/svg-path-stack-investigation/build/dev/javascript/svg_path/svg_path/parse.mjs:1666:16)",
+        "    at tokenize_non_separator (file:///private/tmp/svg-path-stack-investigation/build/dev/javascript/svg_path/svg_path/parse.mjs:1602:16)",
+        "    at tokenize_loop (file:///private/tmp/svg-path-stack-investigation/build/dev/javascript/svg_path/svg_path/parse.mjs:1666:16)",
+        "    at tokenize_non_separator (file:///private/tmp/svg-path-stack-investigation/build/dev/javascript/svg_path/svg_path/parse.mjs:1579:12)"
+      ],
+      "ms": 122.36429200000009
+    },
+    {
+      "label": "custom bridge replacement",
+      "count": 100000,
+      "status": "Ok",
+      "edges": 199999,
+      "ms": 244.60291700000005
+    },
+    {
+      "label": "custom removes pairs",
+      "count": 100000,
+      "status": "Ok",
+      "edges": 0,
+      "ms": 6.122125000000096
+    }
+  ]
+}

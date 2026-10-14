@@ -1,0 +1,15 @@
+{
+  "upstream": "#973",
+  "command": "scripts/test-portable",
+  "erlang": {
+    "passed": 712,
+    "failed": 0
+  },
+  "javascript": {
+    "passed": 712,
+    "failed": 0
+  },
+  "orientation": "[clockwise, counterclockwise, clockwise] matches via csg.nested_contours",
+  "offBoundarySamples": 821,
+  "productionChanged": false
+}
