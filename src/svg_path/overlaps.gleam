@@ -152,7 +152,9 @@ pub fn segment(
 /// Find segment overlaps using an explicit finite, non-negative tolerance.
 ///
 /// The tolerance is measured in path-coordinate distance. Candidate parameter
-/// comparisons use an internal fixed parameter-space tolerance.
+/// comparisons use an internal fixed parameter-space tolerance. Line overlap
+/// correspondences must also agree in their paired traversal directions;
+/// proximity alone does not establish a backwards overlap near an endpoint.
 pub fn segment_with(
   left: svg_path.Segment,
   right: svg_path.Segment,

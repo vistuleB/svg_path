@@ -1,0 +1,37 @@
+{
+  "implementation": "f10fa997a0e118c5f0c56e03de3d76869540eb38",
+  "probeSettings": {
+    "timeoutMs": 60000,
+    "minimumLength": 0.00001,
+    "distanceMaxDepth": 48,
+    "distanceTolerance": 1e-9,
+    "diagnosticRuntime": true
+  },
+  "rows": [
+    {
+      "id": 4920,
+      "mode": "arrangement",
+      "tolerance": 0.000001,
+      "scale": 1,
+      "result": {
+        "stage": "windings",
+        "winds": [
+          {
+            "ok": true
+          },
+          {
+            "type": "ContradictoryWinding",
+            "edge_id": 24,
+            "face_id": 0,
+            "assigned": 0,
+            "required": -1
+          }
+        ],
+        "vertices": 66,
+        "edges": 70,
+        "faces": 6
+      },
+      "ms": 78.67837500000002
+    }
+  ]
+}

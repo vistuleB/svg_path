@@ -1,10 +1,10 @@
 # Remaining Flatten.js observations: triage on 3.1.3
 
-**Triage complete; FL002, FL003 and FL005 have Gleam fixes; FL004 remains open.** All 21 polygon
-observations have a disposition. This does not mean the audit's fixes are
-complete, nor that every upstream assertion has been adapted. Do not infer
-release readiness from the passing release suite while these findings remain
-open. The earlier FL001 is fixed separately.
+**Triage complete; FL002–FL005 have Gleam fixes. FL004 still requires a smaller minimum length for a successful result; default filtering now reports an explicit closure error.** All 21 polygon
+observations have a disposition. No confirmed native bug in this inventory
+remains without a Gleam fix. F# ports, the pending FL005 commit, and explicitly
+deferred comparisons remain outstanding; this is not full upstream assertion
+parity or release readiness. The earlier FL001 is fixed separately.
 
 Triage baseline: Gleam `a0d45fbc` (3.1.3). No production source was changed for
 the initial investigation. The subsequent FL005 implementation is described below. The original comparison records are preserved. New evidence
@@ -15,11 +15,11 @@ is in `remaining-*.json`, with executable probes alongside it.
 | Classification | Observations | Detail |
 | --- | ---: | --- |
 | Native numerical failures, fixed in Gleam | 6 | FL002 and FL003; F# port pending |
-| Native numerical failure, open | 1 | FL004 dual construction |
+| Native crossing bug fixed; size-policy limitation remains | 1 | FL004: explicit closure error at default minimum length; success with retained short pieces |
 | Native performance failure, fixed in Gleam | 1 | FL005; all recorded distance cases now pass; F# port pending |
 | Adapter contract mismatches | 12 | Strict path construction rejects discontinuous upstream coordinates |
 | Upstream orientation-contract mismatch | 1 | Oppositely oriented operands in the rectangle subtraction fixture |
-| Unclassified | 0 | Root-cause fixes and broader assertion adaptations remain outstanding |
+| Unclassified | 0 | F# ports and broader assertion adaptations remain outstanding |
 
 These are **failure groups**, not proof of four independent implementation
 mistakes. Some numerical failures may share a cause. No new wrong successful
@@ -429,3 +429,140 @@ Counts and figure hashes are retained in `remaining-local-sampling-validation.tx
 and `remaining-local-sampling-figures.json`. This validates the combined worktree,
 including the still-pending FL005 change; it does not close FL004 or the adapter
 and assertion-coverage gaps.
+
+## FL004 follow-up: two independent mechanisms
+
+Investigation after `f10fa99`; no production source changed. The pending FL005
+closest-pair implementation remains in the worktree but is not involved in
+these line-only queries.
+
+### Discarded split pieces (documented size policy)
+
+At default `minimum_length = 1e-5`, the right operand has four vertices with
+nonzero source flow. Two gaps are about 4.74e-6 and 3.095e-6 units long, larger
+than the 1e-6 vertex tolerance but smaller than the minimum length. The original
+segments were longer than the threshold; these are pieces produced by splitting.
+The CSG options documentation explicitly says refined pieces below this bound
+are discarded. Therefore original input closure does not guarantee source-flow
+closure after this configured filter. This part is an understood consequence
+of the current policy, not evidence of a missed input segment.
+
+With `minimum_length = 1e-9`, all source flows balance, but both operand windings
+still contradict. Retaining small pieces alone does not resolve FL004.
+
+### Tolerance-sized reversed overlap hides a real crossing
+
+Two lines suffice to reproduce the second mechanism:
+
+- A: `(0, 0)` to `(1, 1)`.
+- B: `(-2e-7, 2e-7)` to `(1, 0.999997)`.
+
+Their genuine crossing is near `(0.117646882357, 0.117646882357)`, about 0.166
+units from the clustered start. At intersection/overlap tolerance 5e-7,
+`overlaps.segment_with` instead finds a short correspondence:
+A parameters `[0, 2e-7]`, B parameters `[1.9999996000000803e-7, 0]`.
+That correspondence is reversed despite the lines' nearly equal directions.
+Its A span is about 2.83e-7 units. Both endpoint residuals satisfy the tolerance,
+so the current affine-distance test accepts it. This is not floating-point
+cancellation or the earlier cyclic-angle sampling problem.
+
+`intersections.segment_with` returns `OverlappingSegments` as specified when
+any overlap is detected. In arrangement construction,
+`pair_cuts_with_common_endpoint_sliver` treats that error as no additional cuts
+when an endpoint vertex is shared. The resulting graph contains two edges and
+three vertices, omitting the genuine interior crossing. This conflicts with
+the arrangement's documented atomic-edge invariant. The overlap query itself
+has a distance-based contract; rejection of such correspondences is a proposed
+refinement of that policy, not an assertion that its current endpoint-distance
+calculation is wrong.
+
+The reduced case reproduces on Erlang and JavaScript. Changing operand order
+has the same outcome. See `probe-fl004-reduced.mjs`,
+`probe/src/flatten_fl004_probe.gleam`, `remaining-fl004-reduced.json`, and
+`remaining-fl004-reduced-erlang.log`.
+
+### Candidate fix experiment, not adopted
+
+`prepare-fl004-runtime.py` copies the JavaScript runtime to a temporary directory
+and rejects a line correspondence when its two paired displacement vectors
+have nonpositive dot product. It leaves the normal build and production source
+unchanged. With this diagnostic guard:
+
+- The two-line fixture recovers the interior crossing in either operand order;
+  its arrangement has four vertices and three edges (the short common prefix
+  merges within tolerance).
+- The original FL004 graph with minimum length 1e-9 has 67 vertices, 75 edges,
+  10 faces, and consistent windings for both operands. Its intersection succeeds,
+  with signed area 0.1889795884135252 versus the upstream result's
+  0.18897957530876658. This is an area observation, not a complete boundary check.
+- With the default minimum length, dual construction now succeeds, but right
+  operand winding propagation still fails because of the four flow imbalances.
+
+Recommendation: first consider the narrow line-direction guard, with dedicated
+regressions and full validation before adoption. Separately decide whether CSG
+should retain topology-essential short pieces or report filtering-induced
+closure loss more explicitly. Silently raising the vertex tolerance or lowering
+the user's minimum length is not part of this experiment. FL004 stays open;
+this investigation does not claim a default-options fix or release readiness.
+
+Evidence: `remaining-fl004-crossings.json`, `remaining-fl004-source-balance.json`,
+`remaining-fl004-small-minimum-balance.json`, `remaining-fl004-topology.json`,
+`remaining-fl004-small-minimum-topology.json`, and the
+`remaining-fl004-direction-*.json` and `remaining-fl004-reduced-direction-guard.json`
+reports. Exact rational checks of stored line segments are available through
+`probe-topology.py <snapshot filename> <report filename>`.
+
+Reproduction of the candidate (diagnostic only):
+
+```shell
+python3 scripts/flatten/prepare-fl004-runtime.py > /tmp/fl004-runtime-url
+PROBE_RUNTIME="$(cat /tmp/fl004-runtime-url)" PROBE_MINIMUM=1e-9 PROBE_LABEL=fl004-direction-small-minimum node scripts/flatten/investigate-remaining.mjs arrangement 4920
+PROBE_RUNTIME="$(cat /tmp/fl004-runtime-url)" PROBE_MINIMUM=1e-9 PROBE_LABEL=fl004-direction-small-minimum-boolean node scripts/flatten/investigate-remaining.mjs boolean 4920
+```
+
+No full test suite or figure regeneration was run for this investigation because
+no production fix was adopted. The previous localized-sampling validation is
+recorded separately above.
+
+## FL004 implementation: direction guard and explicit closure failure
+
+The line correspondence guard is now implemented in Gleam. Unit directions
+are compared with the signs of the paired parameter intervals, avoiding a
+product of vector magnitudes and parameter spans. It rejects a backwards
+correspondence between codirectional lines while retaining a genuine overlap
+traversed in opposite directions. The crossing and reduced arrangement are
+covered for both operand orders; the intersection regression also covers both
+traversal directions.
+
+CSG now validates each operand's directed source flow after arrangement
+construction. If any vertex has nonzero incoming-minus-outgoing multiplicity,
+it returns `RefinedBoundaryNotClosed(path_index, vertex, net_flow)` before dual
+construction or winding propagation. This is a new public error variant;
+callers exhaustively matching `csg.Error` must handle it. Binary and unary CSG
+use the same check. Vertex selection is deterministic. The error describes
+the observed loss of closure, not a claim that filtering is the only possible
+cause. The documented minimum-length policy remains unchanged.
+
+At default options, original call 4920 now reports
+`RefinedBoundaryNotClosed(1, 8, -1)` on Erlang, identifying the right operand.
+With `minimum_length = 1e-9`, the original intersection succeeds. Both outcomes
+have portable native regressions in `svg_path_flatten_boundary_test.gleam`.
+No tolerance widening, automatic retries, or silent minimum-length override
+were introduced. Thus the crossing bug has a fix, while successful default
+CSG for this fixture remains limited by the configured size-filter policy.
+
+The adopted JavaScript implementation returns the same explicit error at default
+options. With minimum length 1e-9, all 169 sampled containment points match the
+upstream output; signed-area error is about 1.31e-8. See
+`remaining-fl004-implemented.json` and `probe-fl004-implemented.mjs`.
+The original reduced baseline is preserved separately from
+`remaining-fl004-implemented-reduced.json`.
+
+Final implementation validation: `scripts/test-release` passed 2,034 main tests,
+31 slow tests, and 780 portable tests on each of Erlang and JavaScript.
+`scripts/generate-published-figures` regenerated all 13 README and 33 Gallery
+figures successfully; all 46 are byte-for-byte unchanged. Formatting and
+`git diff --check` passed. See `remaining-fl004-implemented-validation.txt`
+and `remaining-fl004-implemented-figures.json`. These checks cover the combined
+worktree, including the pending FL005 changes. F# ports remain pending, and the
+adapter-continuity and assertion-coverage gaps are unchanged.

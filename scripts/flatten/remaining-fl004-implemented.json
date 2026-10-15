@@ -1,0 +1,15 @@
+{
+  "defaultResult": {
+    "type": "RefinedBoundaryNotClosed",
+    "path_index": 1,
+    "vertex": 8,
+    "net_flow": -1
+  },
+  "minimumLength": 1e-9,
+  "actualArea": 0.1889795884135252,
+  "expectedArea": 0.18897957530876655,
+  "areaError": 1.310475863935956e-8,
+  "checked": 169,
+  "boundary": 0,
+  "mismatches": []
+}

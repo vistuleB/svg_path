@@ -26,7 +26,9 @@ const default_minimum_length = 0.00001
 /// endpoint adjustments to their shared vertex positions. `minimum_length` is a
 /// size threshold: refined pieces are discarded when their segment length upper bound is below it,
 /// not merely when their endpoints are close. Both values must be finite and
-/// greater than zero.
+/// greater than zero. If discarding pieces opens an operand boundary, the
+/// operation returns `RefinedBoundaryNotClosed`; it does not silently lower
+/// the threshold or widen endpoint clustering.
 pub type Options {
   Options(tolerance: Float, minimum_length: Float)
 }
@@ -35,6 +37,13 @@ pub type Options {
 pub type Error {
   /// Arrangement construction, dual certification, or winding consistency failed.
   ArrangementGraphError(error: arrangement.Error)
+
+  /// Refinement left an operand's directed boundary open at this vertex.
+  /// `path_index` is zero-based (left operand 0, right operand 1). A nonzero
+  /// `net_flow` is incoming minus outgoing source multiplicity. Discarding
+  /// split pieces below `minimum_length` can cause this; reducing that option
+  /// may retain the missing connections. No winding result is inferred.
+  RefinedBoundaryNotClosed(path_index: Int, vertex: Int, net_flow: Int)
 
   /// An underlying path operation failed.
   PathError(error: svg_path.Error)
@@ -236,15 +245,91 @@ fn csg_arrangement_build(
   paths: List(svg_path.Path),
   options: Options,
 ) -> Result(arrangement.ArrangementSegmentBuild, Error) {
-  arrangement.build_with(
-    csg_path_segments(paths, segments: []),
-    vertex_tolerance: options.tolerance,
-    minimum_length: options.minimum_length,
-    endpoint_sliver_tolerance: 0.0,
+  use built <- result.try(
+    arrangement.build_with(
+      csg_path_segments(paths, segments: []),
+      vertex_tolerance: options.tolerance,
+      minimum_length: options.minimum_length,
+      endpoint_sliver_tolerance: 0.0,
+    )
+    |> result.map_error(fn(error) {
+      ArrangementGraphError(arrangement.public_error(error))
+    }),
   )
-  |> result.map_error(fn(error) {
-    ArrangementGraphError(arrangement.public_error(error))
-  })
+  let edges =
+    dict.from_list(list.map(built.graph.edges, fn(edge) { #(edge.id, edge) }))
+  use _ <- result.try(validate_refined_boundaries(
+    paths,
+    built.edge_images,
+    edges,
+    0,
+    0,
+  ))
+  Ok(built)
+}
+
+fn validate_refined_boundaries(
+  paths: List(svg_path.Path),
+  images: List(arrangement.ArrangementEdgeImage),
+  edges: Dict(Int, ArrangementEdge),
+  path_index: Int,
+  first_segment: Int,
+) -> Result(Nil, Error) {
+  case paths {
+    [] -> Ok(Nil)
+    [path, ..rest] -> {
+      let next_segment =
+        first_segment + list.length(csg_path_segments([path], []))
+      let flows =
+        list.fold(images, dict.new(), fn(flows, image) {
+          let weight =
+            list.fold(image.sources, 0, fn(total, source) {
+              case
+                source.segment_index >= first_segment
+                && source.segment_index < next_segment
+              {
+                False -> total
+                True ->
+                  total
+                  + case source.reversed {
+                    True -> -1
+                    False -> 1
+                  }
+              }
+            })
+          case dict.get(edges, image.edge_id) {
+            Error(_) -> flows
+            Ok(edge) -> {
+              let start =
+                result.unwrap(dict.get(flows, edge.start_vertex), 0) - weight
+              let flows = dict.insert(flows, edge.start_vertex, start)
+              let end =
+                result.unwrap(dict.get(flows, edge.end_vertex), 0) + weight
+              dict.insert(flows, edge.end_vertex, end)
+            }
+          }
+        })
+      // Vertex order makes diagnostics deterministic across runtime targets.
+      use _ <- result.try(
+        list.try_each(
+          dict.to_list(flows) |> list.sort(fn(a, b) { int.compare(a.0, b.0) }),
+          fn(entry) {
+            case entry.1 {
+              0 -> Ok(Nil)
+              flow -> Error(RefinedBoundaryNotClosed(path_index, entry.0, flow))
+            }
+          },
+        ),
+      )
+      validate_refined_boundaries(
+        rest,
+        images,
+        edges,
+        path_index + 1,
+        next_segment,
+      )
+    }
+  }
 }
 
 fn csg_path_segments(

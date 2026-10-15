@@ -1,5 +1,6 @@
 import gleam/list
 import svg_path.{Line, Point}
+import svg_path/arrangement
 import svg_path/intersections
 import svg_path/overlaps
 
@@ -55,4 +56,60 @@ pub fn crossing_lines_are_not_continuous_overlap_test() {
   let assert Ok([hit]) = intersections.segment(left, right)
   assert hit.left_t == 0.5
   assert hit.right_t == 0.5
+}
+
+pub fn near_endpoint_reverse_correspondence_preserves_crossing_test() {
+  let left = Line(Point(0.0, 0.0), Point(1.0, 1.0))
+  let right = Line(Point(-0.0000002, 0.0000002), Point(1.0, 0.999997))
+  list.each([left, svg_path.segment_reverse(left)], fn(a) {
+    list.each([right, svg_path.segment_reverse(right)], fn(b) {
+      list.each([#(a, b), #(b, a)], fn(pair) {
+        assert overlaps.segment_with(pair.0, pair.1, 0.0000005) == Ok([])
+        let assert Ok(hits) =
+          intersections.segment_with(
+            pair.0,
+            pair.1,
+            intersections.IntersectionOptions(
+              ..intersections.default_options(),
+              tolerance: 0.0000005,
+            ),
+          )
+        assert list.any(hits, fn(hit) {
+          hit.point.x >. 0.11764
+          && hit.point.x <. 0.11765
+          && hit.point.y >. 0.11764
+          && hit.point.y <. 0.11765
+        })
+      })
+    })
+  })
+}
+
+pub fn short_genuine_line_overlap_preserves_reversed_traversal_test() {
+  let left = Line(Point(0.0, 0.0), Point(1.0, 0.0))
+  let right = Line(Point(0.0000002, 0.0), Point(0.0, 0.0))
+  let assert Ok([hit]) = overlaps.segment_with(left, right, 0.0000005)
+  assert hit.left_to >. hit.left_from
+  assert hit.right_from >. hit.right_to
+}
+
+pub fn near_endpoint_overlap_does_not_hide_arrangement_crossing_test() {
+  let left = Line(Point(0.0, 0.0), Point(1.0, 1.0))
+  let right = Line(Point(-0.0000002, 0.0000002), Point(1.0, 0.999997))
+  list.each([[left, right], [right, left]], fn(segments) {
+    let assert Ok(built) =
+      arrangement.build_with(
+        segments,
+        vertex_tolerance: 0.000001,
+        minimum_length: 0.000000001,
+        endpoint_sliver_tolerance: 0.0,
+      )
+    assert list.any(built.graph.vertices, fn(vertex) {
+      vertex.point.x >. 0.11764
+      && vertex.point.x <. 0.11765
+      && vertex.point.y >. 0.11764
+      && vertex.point.y <. 0.11765
+    })
+    assert list.length(built.graph.edges) == 3
+  })
 }

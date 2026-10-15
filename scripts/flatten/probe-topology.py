@@ -1,11 +1,13 @@
 """Inspect saved arrangement rotations without changing library code."""
-import json, math
+import json, math, sys
 from pathlib import Path
 from functools import cmp_to_key
 from fractions import Fraction
 root=Path(__file__).parent
 reports=[]
-for row in json.loads((root/'remaining-topology-snapshots.json').read_text())['rows']:
+source=root/(sys.argv[1] if len(sys.argv)>1 else 'remaining-topology-snapshots.json')
+destination=root/(sys.argv[2] if len(sys.argv)>2 else 'remaining-topology-analysis.json')
+for row in json.loads(source.read_text())['rows']:
  g=row['result'];edges={e['id']:e for e in g['edges']};vertices={v['id']:v for v in g['vertices']}
  orders={o['id']:[(d['edge_id'],d['reversed']) for group in o['groups'] for d in group] for o in g['orders']}
  def walks(order):
@@ -53,4 +55,4 @@ for row in json.loads((root/'remaining-topology-snapshots.json').read_text())['r
  report={'id':row['id'],'vertices':len(vertices),'edges':len(edges),'storedWalks':len(walks(orders)),'alternativeWalks':{k:len(walks(v)) for k,v in variants.items()},'mismatches':mismatches,'properStoredSegmentCrossings':crossings}
  reports.append(report)
  print(row['id'],'walk counts',report['storedWalks'],report['alternativeWalks'],'ordering differences',len(mismatches),'interior crossings',len(crossings))
-(root/'remaining-topology-analysis.json').write_text(json.dumps(reports,indent=2)+'\n')
+destination.write_text(json.dumps(reports,indent=2)+'\n')

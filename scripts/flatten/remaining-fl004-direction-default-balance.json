@@ -1,0 +1,436 @@
+{
+  "implementation": "f10fa997a0e118c5f0c56e03de3d76869540eb38",
+  "probeSettings": {
+    "timeoutMs": 60000,
+    "minimumLength": 0.00001,
+    "distanceMaxDepth": 48,
+    "distanceTolerance": 1e-9,
+    "diagnosticRuntime": true
+  },
+  "rows": [
+    {
+      "id": 4920,
+      "mode": "source-balance",
+      "tolerance": 0.000001,
+      "scale": 1,
+      "result": {
+        "balances": [
+          [],
+          [
+            {
+              "id": 8,
+              "flow": -1,
+              "vertex": {
+                "id": 8,
+                "point": {
+                  "x": -0.68773,
+                  "y": 1.45762
+                },
+                "endpoint_samples": {
+                  "head": {
+                    "x": -0.68773,
+                    "y": 1.45762
+                  },
+                  "tail": {
+                    "head": {
+                      "x": -0.68773,
+                      "y": 1.45762
+                    },
+                    "tail": {
+                      "head": {
+                        "x": -0.68773,
+                        "y": 1.45762
+                      },
+                      "tail": {
+                        "head": {
+                          "x": -0.68773,
+                          "y": 1.45762
+                        },
+                        "tail": {}
+                      }
+                    }
+                  }
+                }
+              },
+              "incident": [
+                {
+                  "edge": {
+                    "id": 22,
+                    "segment": {
+                      "start": {
+                        "x": -0.33038966500580935,
+                        "y": 1.104644864825939
+                      },
+                      "end": {
+                        "x": -0.68773,
+                        "y": 1.45762
+                      }
+                    },
+                    "bounds": {
+                      "min": {
+                        "x": -0.68773,
+                        "y": 1.104644864825939
+                      },
+                      "max": {
+                        "x": -0.33038966500580935,
+                        "y": 1.45762
+                      }
+                    },
+                    "start_vertex": 22,
+                    "end_vertex": 8,
+                    "forward_multiplicity": 1,
+                    "reverse_multiplicity": 0
+                  },
+                  "image": {
+                    "edge_id": 22,
+                    "sources": {
+                      "head": {
+                        "segment_index": 7,
+                        "ta": 0.1810131669550086,
+                        "tb": 1,
+                        "reversed": false
+                      },
+                      "tail": {}
+                    }
+                  }
+                },
+                {
+                  "edge": {
+                    "id": 8,
+                    "segment": {
+                      "start": {
+                        "x": -0.68773,
+                        "y": 1.45762
+                      },
+                      "end": {
+                        "x": -0.6959278730909698,
+                        "y": 1.4493213255927
+                      }
+                    },
+                    "bounds": {
+                      "min": {
+                        "x": -0.6959278730909698,
+                        "y": 1.4493213255927
+                      },
+                      "max": {
+                        "x": -0.68773,
+                        "y": 1.45762
+                      }
+                    },
+                    "start_vertex": 8,
+                    "end_vertex": 24,
+                    "forward_multiplicity": 2,
+                    "reverse_multiplicity": 0
+                  },
+                  "image": {
+                    "edge_id": 8,
+                    "sources": {
+                      "head": {
+                        "segment_index": 8,
+                        "ta": 0,
+                        "tb": 0.0701932029091454,
+                        "reversed": false
+                      },
+                      "tail": {
+                        "head": {
+                          "segment_index": 20,
+                          "ta": 0.000048683034179351076,
+                          "tb": 0.11993718666915801,
+                          "reversed": false
+                        },
+                        "tail": {}
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": 26,
+              "flow": -1,
+              "vertex": {
+                "id": 26,
+                "point": {
+                  "x": -0.7561073517413794,
+                  "y": 1.3884018780995548
+                },
+                "endpoint_samples": {
+                  "head": {
+                    "x": -0.7561073517413794,
+                    "y": 1.3884018780995548
+                  },
+                  "tail": {
+                    "head": {
+                      "x": -0.7561073517413794,
+                      "y": 1.3884018780995548
+                    },
+                    "tail": {
+                      "head": {
+                        "x": -0.7561073517413794,
+                        "y": 1.3884018780995548
+                      },
+                      "tail": {}
+                    }
+                  }
+                }
+              },
+              "incident": [
+                {
+                  "edge": {
+                    "id": 25,
+                    "segment": {
+                      "start": {
+                        "x": -0.6959278730909698,
+                        "y": 1.4493213255927
+                      },
+                      "end": {
+                        "x": -0.7561073517413794,
+                        "y": 1.3884018780995548
+                      }
+                    },
+                    "bounds": {
+                      "min": {
+                        "x": -0.7561073517413794,
+                        "y": 1.3884018780995548
+                      },
+                      "max": {
+                        "x": -0.6959278730909698,
+                        "y": 1.4493213255927
+                      }
+                    },
+                    "start_vertex": 24,
+                    "end_vertex": 26,
+                    "forward_multiplicity": 1,
+                    "reverse_multiplicity": 0
+                  },
+                  "image": {
+                    "edge_id": 25,
+                    "sources": {
+                      "head": {
+                        "segment_index": 8,
+                        "ta": 0.0701932029091454,
+                        "tb": 0.5854720208415426,
+                        "reversed": false
+                      },
+                      "tail": {}
+                    }
+                  }
+                },
+                {
+                  "edge": {
+                    "id": 27,
+                    "segment": {
+                      "start": {
+                        "x": -0.7561073517413794,
+                        "y": 1.3884018780995548
+                      },
+                      "end": {
+                        "x": -0.804520127123574,
+                        "y": 1.339393817643834
+                      }
+                    },
+                    "bounds": {
+                      "min": {
+                        "x": -0.804520127123574,
+                        "y": 1.339393817643834
+                      },
+                      "max": {
+                        "x": -0.7561073517413794,
+                        "y": 1.3884018780995548
+                      }
+                    },
+                    "start_vertex": 26,
+                    "end_vertex": 0,
+                    "forward_multiplicity": 1,
+                    "reverse_multiplicity": 0
+                  },
+                  "image": {
+                    "edge_id": 27,
+                    "sources": {
+                      "head": {
+                        "segment_index": 8,
+                        "ta": 0.5854720208415426,
+                        "tb": 1,
+                        "reversed": false
+                      },
+                      "tail": {}
+                    }
+                  }
+                },
+                {
+                  "edge": {
+                    "id": 28,
+                    "segment": {
+                      "start": {
+                        "x": -0.7561073517413794,
+                        "y": 1.3884018780995548
+                      },
+                      "end": {
+                        "x": -1.443720258787936,
+                        "y": 1.384182680361611
+                      }
+                    },
+                    "bounds": {
+                      "min": {
+                        "x": -1.443720258787936,
+                        "y": 1.384182680361611
+                      },
+                      "max": {
+                        "x": -0.7561073517413794,
+                        "y": 1.3884018780995548
+                      }
+                    },
+                    "start_vertex": 26,
+                    "end_vertex": 27,
+                    "forward_multiplicity": 1,
+                    "reverse_multiplicity": 0
+                  },
+                  "image": {
+                    "edge_id": 28,
+                    "sources": {
+                      "head": {
+                        "segment_index": 21,
+                        "ta": 0.0000045009447316057515,
+                        "tb": 1,
+                        "reversed": false
+                      },
+                      "tail": {}
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": 23,
+              "flow": 1,
+              "vertex": {
+                "id": 23,
+                "point": {
+                  "x": -0.687726883276347,
+                  "y": 1.457623579428936
+                },
+                "endpoint_samples": {
+                  "head": {
+                    "x": -0.687726883276347,
+                    "y": 1.457623579428936
+                  },
+                  "tail": {}
+                }
+              },
+              "incident": [
+                {
+                  "edge": {
+                    "id": 24,
+                    "segment": {
+                      "start": {
+                        "x": -0.3303896650058094,
+                        "y": 1.104644864825939
+                      },
+                      "end": {
+                        "x": -0.687726883276347,
+                        "y": 1.457623579428936
+                      }
+                    },
+                    "bounds": {
+                      "min": {
+                        "x": -0.687726883276347,
+                        "y": 1.104644864825939
+                      },
+                      "max": {
+                        "x": -0.3303896650058094,
+                        "y": 1.457623579428936
+                      }
+                    },
+                    "start_vertex": 22,
+                    "end_vertex": 23,
+                    "forward_multiplicity": 1,
+                    "reverse_multiplicity": 0
+                  },
+                  "image": {
+                    "edge_id": 24,
+                    "sources": {
+                      "head": {
+                        "segment_index": 19,
+                        "ta": 0.18100991090351057,
+                        "tb": 1,
+                        "reversed": false
+                      },
+                      "tail": {}
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": 25,
+              "flow": 1,
+              "vertex": {
+                "id": 25,
+                "point": {
+                  "x": -0.756104256819758,
+                  "y": 1.388401897090016
+                },
+                "endpoint_samples": {
+                  "head": {
+                    "x": -0.756104256819758,
+                    "y": 1.388401897090016
+                  },
+                  "tail": {}
+                }
+              },
+              "incident": [
+                {
+                  "edge": {
+                    "id": 26,
+                    "segment": {
+                      "start": {
+                        "x": -0.6959278730909699,
+                        "y": 1.4493213255927
+                      },
+                      "end": {
+                        "x": -0.756104256819758,
+                        "y": 1.388401897090016
+                      }
+                    },
+                    "bounds": {
+                      "min": {
+                        "x": -0.756104256819758,
+                        "y": 1.388401897090016
+                      },
+                      "max": {
+                        "x": -0.6959278730909699,
+                        "y": 1.4493213255927
+                      }
+                    },
+                    "start_vertex": 24,
+                    "end_vertex": 25,
+                    "forward_multiplicity": 1,
+                    "reverse_multiplicity": 0
+                  },
+                  "image": {
+                    "edge_id": 26,
+                    "sources": {
+                      "head": {
+                        "segment_index": 20,
+                        "ta": 0.11993718666915801,
+                        "tb": 1,
+                        "reversed": false
+                      },
+                      "tail": {}
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        ],
+        "vertices": 66,
+        "edges": 70,
+        "components": 1,
+        "planarEulerFaceCount": 6,
+        "dualFaces": 6
+      },
+      "ms": 82.95112499999999
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+Working tree based on f10fa99, including pending FL005.
+Command: scripts/test-release
+2034 passed, no failures
+31 passed, no failures
+Portable numerical tests (all, all): Erlang
+780 passed, no failures
+Portable numerical tests (all, all): JavaScript
+780 passed, no failures
+Command: scripts/generate-published-figures
+46 completed; 0 changed.
+Formatting and git diff --check passed.

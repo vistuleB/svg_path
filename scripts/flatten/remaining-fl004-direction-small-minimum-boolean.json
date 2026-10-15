@@ -1,0 +1,24 @@
+{
+  "implementation": "f10fa997a0e118c5f0c56e03de3d76869540eb38",
+  "probeSettings": {
+    "timeoutMs": 60000,
+    "minimumLength": 1e-9,
+    "distanceMaxDepth": 48,
+    "distanceTolerance": 1e-9,
+    "diagnosticRuntime": true
+  },
+  "rows": [
+    {
+      "id": 4920,
+      "mode": "boolean",
+      "tolerance": 0.000001,
+      "scale": 1,
+      "result": {
+        "ok": true,
+        "area": 0.1889795884135252,
+        "segments": 15
+      },
+      "ms": 91.03270800000001
+    }
+  ]
+}

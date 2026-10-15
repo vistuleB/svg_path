@@ -11,6 +11,13 @@ rather than only the tag object.
 
 ## Unreleased
 
+- Reject line overlap correspondences whose paired traversal directions disagree,
+  preventing tolerance-sized endpoint matches from hiding interior crossings.
+- Report `csg.RefinedBoundaryNotClosed` with the operand index, vertex and net
+  source flow when refinement leaves an operand boundary open. Size filtering
+  retains its documented policy; CSG does not silently change either tolerance
+  or minimum length to recover a result.
+
 - Sample arrangement incident edges in vertex-local coordinates, preventing
   rounded world-space samples from reversing nearly parallel edges and causing
   Boolean winding contradictions at large coordinates.

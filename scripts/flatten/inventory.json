@@ -20703,7 +20703,7 @@
               "call": 4920,
               "operation": "algorithm:intersect",
               "observedStatus": "needs-investigation",
-              "status": "confirmed-native-failure"
+              "status": "known-size-policy-limitation"
             }
           ],
           "auditStatus": "selected-operations-compared",

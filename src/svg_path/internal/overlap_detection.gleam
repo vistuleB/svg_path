@@ -1108,11 +1108,31 @@ fn line_correspondence_valid(
   tolerance: Float,
 ) -> Result(Bool, svg_path.Error) {
   let #(lf, lt, rf, rt, _, _) = overlap
+  // Proximity alone admits backwards correspondences inside a tolerance-sized
+  // neighborhood. They are not a continuation of these lines in the paired
+  // direction and can hide a separate interior crossing.
+  let left_direction =
+    point.subtract(svg_path.segment_end(left), svg_path.segment_start(left))
+  let right_direction =
+    point.subtract(svg_path.segment_end(right), svg_path.segment_start(right))
+  let aligned = case
+    point.normalize(left_direction),
+    point.normalize(right_direction)
+  {
+    Ok(left_unit), Ok(right_unit) -> {
+      let direction = point.dot(left_unit, right_unit)
+      case lt >. lf == rt >. rf {
+        True -> direction >. 0.0
+        False -> direction <. 0.0
+      }
+    }
+    _, _ -> False
+  }
   use a <- result.try(svg_path.segment_point(left, lf))
   use b <- result.try(svg_path.segment_point(left, lt))
   use c <- result.try(svg_path.segment_point(right, rf))
   use d <- result.try(svg_path.segment_point(right, rt))
-  Ok(points_near(a, c, tolerance) && points_near(b, d, tolerance))
+  Ok(aligned && points_near(a, c, tolerance) && points_near(b, d, tolerance))
 }
 
 fn sampled_overlap_valid_loop(

@@ -1312,11 +1312,12 @@
       }
     },
     "disposition": {
-      "status": "confirmed-native-failure",
+      "status": "known-size-policy-limitation",
       "finding": "FL004",
-      "fixStatus": "open",
-      "reason": "Confirmed native dual sweep contradiction on accepted line polygons; public error reproduced on JavaScript and Erlang.",
-      "verification": "remaining-internal.json"
+      "fixStatus": "crossing-fixed-in-gleam-fsharp-port-pending",
+      "reason": "Reversed line overlap guard fixes missed crossing. Default size filtering leaves an open operand and now reports RefinedBoundaryNotClosed; minimum_length=1e-9 succeeds with matching sampled geometry. No automatic threshold change.",
+      "verification": "remaining-fl004-implemented.json",
+      "diagnosticVerification": "remaining-fl004-direction-small-minimum.json"
     }
   }
 ]

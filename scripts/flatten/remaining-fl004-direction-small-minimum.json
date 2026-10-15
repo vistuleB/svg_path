@@ -1,0 +1,33 @@
+{
+  "implementation": "f10fa997a0e118c5f0c56e03de3d76869540eb38",
+  "probeSettings": {
+    "timeoutMs": 60000,
+    "minimumLength": 1e-9,
+    "distanceMaxDepth": 48,
+    "distanceTolerance": 1e-9,
+    "diagnosticRuntime": true
+  },
+  "rows": [
+    {
+      "id": 4920,
+      "mode": "arrangement",
+      "tolerance": 0.000001,
+      "scale": 1,
+      "result": {
+        "stage": "windings",
+        "winds": [
+          {
+            "ok": true
+          },
+          {
+            "ok": true
+          }
+        ],
+        "vertices": 67,
+        "edges": 75,
+        "faces": 10
+      },
+      "ms": 88.10725000000002
+    }
+  ]
+}
