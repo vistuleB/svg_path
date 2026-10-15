@@ -9,6 +9,13 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## Unreleased
+
+- Replace supplementary curve-intersection searches with one centered, axis-scaled
+  search for eligible polynomial pairs. Preserve original-coordinate endpoint
+  matching, overlap decisions and certification errors; reduce redundant
+  numerical candidates around several flat and tangential contacts.
+
 ## 3.1.1 - 2026-10-14
 
 - Remove optional numeric separators in compact path output while preserving

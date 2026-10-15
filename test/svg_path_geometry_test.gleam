@@ -2560,8 +2560,8 @@ pub fn segment_intersections_prefers_shared_endpoint_over_near_endpoint_minimum_
   contract.assert_candidates(raw, left, right, 0.000000001)
   contract.assert_candidates(intersections, left, right, 0.000000001)
   // Count snapshots flag changes, not the number of mathematical roots.
-  assert list.length(raw) == 4
-  assert list.length(intersections) == 4
+  assert list.length(raw) == 2
+  assert list.length(intersections) == 2
   let shared_endpoint = svg_path.Point(2.8236048558813205, 2.9152343073348637)
 
   list.each([raw, intersections], fn(found) {

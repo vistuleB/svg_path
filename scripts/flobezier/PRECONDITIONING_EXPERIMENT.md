@@ -1,5 +1,10 @@
 # Supplementary polynomial intersection preconditioning
 
+> Historical experiment: the supplementary implementation described below was
+> superseded by the centered single-search implementation. See
+> [CENTERED_NORMALIZATION.md](CENTERED_NORMALIZATION.md) for the adopted design
+> and its validation.
+
 Experiment and candidate implementation, 2026-10-14, based on `e09bef8`.
 
 ## Decision

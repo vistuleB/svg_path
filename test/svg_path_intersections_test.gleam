@@ -333,9 +333,9 @@ pub fn production_off_center_kissing_quadratics_test() {
   let assert Ok(found) = intersections.segment(left, right)
   contract.assert_known(found, 0.37, 0.63, 0.0000001)
   contract.assert_candidates(found, left, right, 0.0000000000001)
-  // Numerical-candidate count snapshot, not four distinct mathematical roots.
+  // Numerical-candidate count snapshot, not a proof of mathematical root multiplicity.
   // Keep this alert in either direction; investigate changes before updating.
-  assert list.length(found) == 4
+  assert list.length(found) == 1
 }
 
 pub fn production_two_close_quadratic_crossings_test() {
@@ -376,7 +376,7 @@ pub fn flat_cubic_crossing_regression_test() {
   contract.assert_candidates(found, rising, falling, 0.0000000000001)
   // Count snapshot of the flat-contact candidate cloud, not root multiplicity.
   // Flag both increases and decreases for review across solver/backend changes.
-  assert list.length(found) == 9
+  assert list.length(found) == 6
 }
 
 pub fn disjoint_quadratics_regression_test() {
