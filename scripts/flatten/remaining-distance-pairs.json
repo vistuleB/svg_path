@@ -1,0 +1,1655 @@
+{
+  "implementation": "a0d45fbc4a7e1485791cd19e2d18a58787001012",
+  "rows": [
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 0,
+      "j": 1,
+      "result": {
+        "distance": 175,
+        "left": {
+          "start": {
+            "x": 100,
+            "y": 20
+          },
+          "end": {
+            "x": 250,
+            "y": 75
+          }
+        },
+        "right": {
+          "start": {
+            "x": 250,
+            "y": 250
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 300,
+            "y": 300
+          }
+        }
+      },
+      "ms": 18.344375000000014
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 0,
+      "j": 0,
+      "result": {
+        "distance": 175,
+        "left": {
+          "start": {
+            "x": 100,
+            "y": 20
+          },
+          "end": {
+            "x": 250,
+            "y": 75
+          }
+        },
+        "right": {
+          "start": {
+            "x": 199.99999999999994,
+            "y": 300.00000000000006
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 250,
+            "y": 250
+          }
+        }
+      },
+      "ms": 20.12075
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 0,
+      "j": 2,
+      "result": {
+        "distance": 230.4886114323222,
+        "left": {
+          "start": {
+            "x": 100,
+            "y": 20
+          },
+          "end": {
+            "x": 250,
+            "y": 75
+          }
+        },
+        "right": {
+          "start": {
+            "x": 300,
+            "y": 300
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 250.00000000000003,
+            "y": 350
+          }
+        }
+      },
+      "ms": 25.365083
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 0,
+      "j": 3,
+      "result": {
+        "distance": 230.4886114323221,
+        "left": {
+          "start": {
+            "x": 100,
+            "y": 20
+          },
+          "end": {
+            "x": 250,
+            "y": 75
+          }
+        },
+        "right": {
+          "start": {
+            "x": 250.00000000000003,
+            "y": 350
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 200.00000000000006,
+            "y": 299.99999999999994
+          }
+        }
+      },
+      "ms": 28.410959000000005
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 1,
+      "j": 2,
+      "result": {
+        "distance": 225,
+        "left": {
+          "start": {
+            "x": 250,
+            "y": 75
+          },
+          "end": {
+            "x": 350,
+            "y": 75
+          }
+        },
+        "right": {
+          "start": {
+            "x": 300,
+            "y": 300
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 250.00000000000003,
+            "y": 350
+          }
+        }
+      },
+      "ms": 12.240250000000003
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 1,
+      "j": 0,
+      "result": {
+        "distance": 175,
+        "left": {
+          "start": {
+            "x": 250,
+            "y": 75
+          },
+          "end": {
+            "x": 350,
+            "y": 75
+          }
+        },
+        "right": {
+          "start": {
+            "x": 199.99999999999994,
+            "y": 300.00000000000006
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 250,
+            "y": 250
+          }
+        }
+      },
+      "ms": 20.001499999999993
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 1,
+      "j": 1,
+      "result": {
+        "distance": 175,
+        "left": {
+          "start": {
+            "x": 250,
+            "y": 75
+          },
+          "end": {
+            "x": 350,
+            "y": 75
+          }
+        },
+        "right": {
+          "start": {
+            "x": 250,
+            "y": 250
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 300,
+            "y": 300
+          }
+        }
+      },
+      "ms": 29.63954100000001
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 1,
+      "j": 3,
+      "result": {
+        "distance": 230.4886114323221,
+        "left": {
+          "start": {
+            "x": 250,
+            "y": 75
+          },
+          "end": {
+            "x": 350,
+            "y": 75
+          }
+        },
+        "right": {
+          "start": {
+            "x": 250.00000000000003,
+            "y": 350
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 200.00000000000006,
+            "y": 299.99999999999994
+          }
+        }
+      },
+      "ms": 28.491375000000005
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 2,
+      "j": 0,
+      "result": {
+        "distance": 70.71067811865476,
+        "left": {
+          "start": {
+            "x": 350,
+            "y": 75
+          },
+          "end": {
+            "x": 300,
+            "y": 200
+          }
+        },
+        "right": {
+          "start": {
+            "x": 199.99999999999994,
+            "y": 300.00000000000006
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 250,
+            "y": 250
+          }
+        }
+      },
+      "ms": 12.234083999999996
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 2,
+      "j": 2,
+      "result": {
+        "distance": 100,
+        "left": {
+          "start": {
+            "x": 350,
+            "y": 75
+          },
+          "end": {
+            "x": 300,
+            "y": 200
+          }
+        },
+        "right": {
+          "start": {
+            "x": 300,
+            "y": 300
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 250.00000000000003,
+            "y": 350
+          }
+        }
+      },
+      "ms": 10.487875000000031
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 2,
+      "j": 3,
+      "result": {
+        "distance": 141.42135623730942,
+        "left": {
+          "start": {
+            "x": 350,
+            "y": 75
+          },
+          "end": {
+            "x": 300,
+            "y": 200
+          }
+        },
+        "right": {
+          "start": {
+            "x": 250.00000000000003,
+            "y": 350
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 200.00000000000006,
+            "y": 299.99999999999994
+          }
+        }
+      },
+      "ms": 27.651166999999987
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 3,
+      "j": 0,
+      "result": {
+        "distance": 50,
+        "left": {
+          "start": {
+            "x": 300,
+            "y": 200
+          },
+          "end": {
+            "x": 170,
+            "y": 200
+          }
+        },
+        "right": {
+          "start": {
+            "x": 199.99999999999994,
+            "y": 300.00000000000006
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 250,
+            "y": 250
+          }
+        }
+      },
+      "ms": 28.217208000000028
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 3,
+      "j": 1,
+      "result": {
+        "distance": 50,
+        "left": {
+          "start": {
+            "x": 300,
+            "y": 200
+          },
+          "end": {
+            "x": 170,
+            "y": 200
+          }
+        },
+        "right": {
+          "start": {
+            "x": 250,
+            "y": 250
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 300,
+            "y": 300
+          }
+        }
+      },
+      "ms": 28.96237500000001
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 3,
+      "j": 2,
+      "result": {
+        "distance": 100,
+        "left": {
+          "start": {
+            "x": 300,
+            "y": 200
+          },
+          "end": {
+            "x": 170,
+            "y": 200
+          }
+        },
+        "right": {
+          "start": {
+            "x": 300,
+            "y": 300
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 250.00000000000003,
+            "y": 350
+          }
+        }
+      },
+      "ms": 14.727666999999997
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 3,
+      "j": 3,
+      "result": {
+        "distance": 99.99999999999994,
+        "left": {
+          "start": {
+            "x": 300,
+            "y": 200
+          },
+          "end": {
+            "x": 170,
+            "y": 200
+          }
+        },
+        "right": {
+          "start": {
+            "x": 250.00000000000003,
+            "y": 350
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 200.00000000000006,
+            "y": 299.99999999999994
+          }
+        }
+      },
+      "ms": 19.92991599999999
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 2,
+      "j": 1,
+      "result": {
+        "distance": 61.80339887498947,
+        "left": {
+          "start": {
+            "x": 350,
+            "y": 75
+          },
+          "end": {
+            "x": 300,
+            "y": 200
+          }
+        },
+        "right": {
+          "start": {
+            "x": 250,
+            "y": 250
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 300,
+            "y": 300
+          }
+        }
+      },
+      "ms": 387.535208
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 4,
+      "j": 1,
+      "result": {
+        "distance": 91.706052144883,
+        "left": {
+          "start": {
+            "x": 170,
+            "y": 200
+          },
+          "end": {
+            "x": 120,
+            "y": 350
+          }
+        },
+        "right": {
+          "start": {
+            "x": 250,
+            "y": 250
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 300,
+            "y": 300
+          }
+        }
+      },
+      "ms": 558.5225
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 4,
+      "j": 3,
+      "result": {
+        "distance": 60.08327554319923,
+        "left": {
+          "start": {
+            "x": 170,
+            "y": 200
+          },
+          "end": {
+            "x": 120,
+            "y": 350
+          }
+        },
+        "right": {
+          "start": {
+            "x": 250.00000000000003,
+            "y": 350
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 200.00000000000006,
+            "y": 299.99999999999994
+          }
+        }
+      },
+      "ms": 613.778875
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 4,
+      "j": 2,
+      "result": {
+        "distance": 123.32882874656683,
+        "left": {
+          "start": {
+            "x": 170,
+            "y": 200
+          },
+          "end": {
+            "x": 120,
+            "y": 350
+          }
+        },
+        "right": {
+          "start": {
+            "x": 300,
+            "y": 300
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 250.00000000000003,
+            "y": 350
+          }
+        }
+      },
+      "ms": 855.3259589999999
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 5,
+      "j": 2,
+      "result": {
+        "distance": 130.00000000000003,
+        "left": {
+          "start": {
+            "x": 120,
+            "y": 350
+          },
+          "end": {
+            "x": 70,
+            "y": 120
+          }
+        },
+        "right": {
+          "start": {
+            "x": 300,
+            "y": 300
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 250.00000000000003,
+            "y": 350
+          }
+        }
+      },
+      "ms": 26.2517499999999
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 5,
+      "j": 0,
+      "result": {
+        "distance": 88.79559133037618,
+        "left": {
+          "start": {
+            "x": 120,
+            "y": 350
+          },
+          "end": {
+            "x": 70,
+            "y": 120
+          }
+        },
+        "right": {
+          "start": {
+            "x": 199.99999999999994,
+            "y": 300.00000000000006
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 250,
+            "y": 250
+          }
+        }
+      },
+      "ms": 512.259292
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 5,
+      "j": 1,
+      "result": {
+        "distance": 148.27589174306848,
+        "left": {
+          "start": {
+            "x": 120,
+            "y": 350
+          },
+          "end": {
+            "x": 70,
+            "y": 120
+          }
+        },
+        "right": {
+          "start": {
+            "x": 250,
+            "y": 250
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 300,
+            "y": 300
+          }
+        }
+      },
+      "ms": 740.4661659999999
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 6,
+      "j": 1,
+      "result": {
+        "distance": 222.03603311174516,
+        "left": {
+          "start": {
+            "x": 70,
+            "y": 120
+          },
+          "end": {
+            "x": 100,
+            "y": 20
+          }
+        },
+        "right": {
+          "start": {
+            "x": 250,
+            "y": 250
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 300,
+            "y": 300
+          }
+        }
+      },
+      "ms": 18.789874999999938
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 6,
+      "j": 2,
+      "result": {
+        "distance": 292.0616373302047,
+        "left": {
+          "start": {
+            "x": 70,
+            "y": 120
+          },
+          "end": {
+            "x": 100,
+            "y": 20
+          }
+        },
+        "right": {
+          "start": {
+            "x": 300,
+            "y": 300
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 250.00000000000003,
+            "y": 350
+          }
+        }
+      },
+      "ms": 22.872125000000324
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 6,
+      "j": 3,
+      "result": {
+        "distance": 222.03603311174516,
+        "left": {
+          "start": {
+            "x": 70,
+            "y": 120
+          },
+          "end": {
+            "x": 100,
+            "y": 20
+          }
+        },
+        "right": {
+          "start": {
+            "x": 250.00000000000003,
+            "y": 350
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 200.00000000000006,
+            "y": 299.99999999999994
+          }
+        }
+      },
+      "ms": 17.629667000000154
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 4,
+      "j": 0,
+      "timeout": true
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 7,
+      "j": 1,
+      "result": {
+        "distance": 145,
+        "left": {
+          "start": {
+            "x": 144.99999999999997,
+            "y": 150.00000000000003
+          },
+          "radius": {
+            "x": 30,
+            "y": 30
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 175,
+            "y": 120
+          }
+        },
+        "right": {
+          "start": {
+            "x": 250,
+            "y": 250
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 300,
+            "y": 300
+          }
+        }
+      },
+      "ms": 24.58962500000007
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 7,
+      "j": 2,
+      "result": {
+        "distance": 215.6965461012299,
+        "left": {
+          "start": {
+            "x": 144.99999999999997,
+            "y": 150.00000000000003
+          },
+          "radius": {
+            "x": 30,
+            "y": 30
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 175,
+            "y": 120
+          }
+        },
+        "right": {
+          "start": {
+            "x": 300,
+            "y": 300
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 250.00000000000003,
+            "y": 350
+          }
+        }
+      },
+      "ms": 26.797292000000198
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 7,
+      "j": 3,
+      "result": {
+        "distance": 159.76545308670453,
+        "left": {
+          "start": {
+            "x": 144.99999999999997,
+            "y": 150.00000000000003
+          },
+          "radius": {
+            "x": 30,
+            "y": 30
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 175,
+            "y": 120
+          }
+        },
+        "right": {
+          "start": {
+            "x": 250.00000000000003,
+            "y": 350
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 200.00000000000006,
+            "y": 299.99999999999994
+          }
+        }
+      },
+      "ms": 25.157624999999825
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 6,
+      "j": 0,
+      "result": {
+        "distance": 204.55844122715703,
+        "left": {
+          "start": {
+            "x": 70,
+            "y": 120
+          },
+          "end": {
+            "x": 100,
+            "y": 20
+          }
+        },
+        "right": {
+          "start": {
+            "x": 199.99999999999994,
+            "y": 300.00000000000006
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 250,
+            "y": 250
+          }
+        }
+      },
+      "ms": 1918.652084
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 8,
+      "j": 1,
+      "result": {
+        "distance": 109.65856099730654,
+        "left": {
+          "start": {
+            "x": 175,
+            "y": 120
+          },
+          "radius": {
+            "x": 30,
+            "y": 30
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 205,
+            "y": 150
+          }
+        },
+        "right": {
+          "start": {
+            "x": 250,
+            "y": 250
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 300,
+            "y": 300
+          }
+        }
+      },
+      "ms": 23.404042000000118
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 7,
+      "j": 0,
+      "result": {
+        "distance": 133.09833423600548,
+        "left": {
+          "start": {
+            "x": 144.99999999999997,
+            "y": 150.00000000000003
+          },
+          "radius": {
+            "x": 30,
+            "y": 30
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 175,
+            "y": 120
+          }
+        },
+        "right": {
+          "start": {
+            "x": 199.99999999999994,
+            "y": 300.00000000000006
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 250,
+            "y": 250
+          }
+        }
+      },
+      "ms": 1429.714
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 8,
+      "j": 2,
+      "result": {
+        "distance": 177.55280904564702,
+        "left": {
+          "start": {
+            "x": 175,
+            "y": 120
+          },
+          "radius": {
+            "x": 30,
+            "y": 30
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 205,
+            "y": 150
+          }
+        },
+        "right": {
+          "start": {
+            "x": 300,
+            "y": 300
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 250.00000000000003,
+            "y": 350
+          }
+        }
+      },
+      "ms": 23.467959000000064
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 8,
+      "j": 3,
+      "result": {
+        "distance": 150.0833101980363,
+        "left": {
+          "start": {
+            "x": 175,
+            "y": 120
+          },
+          "radius": {
+            "x": 30,
+            "y": 30
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 205,
+            "y": 150
+          }
+        },
+        "right": {
+          "start": {
+            "x": 250.00000000000003,
+            "y": 350
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 200.00000000000006,
+            "y": 299.99999999999994
+          }
+        }
+      },
+      "ms": 19.847999999999956
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 8,
+      "j": 0,
+      "result": {
+        "distance": 106.60459763365822,
+        "left": {
+          "start": {
+            "x": 175,
+            "y": 120
+          },
+          "radius": {
+            "x": 30,
+            "y": 30
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 205,
+            "y": 150
+          }
+        },
+        "right": {
+          "start": {
+            "x": 199.99999999999994,
+            "y": 300.00000000000006
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 250,
+            "y": 250
+          }
+        }
+      },
+      "ms": 625.1172500000002
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 9,
+      "j": 1,
+      "result": {
+        "distance": 94.99999999999999,
+        "left": {
+          "start": {
+            "x": 205,
+            "y": 150
+          },
+          "radius": {
+            "x": 30,
+            "y": 30
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 175,
+            "y": 180
+          }
+        },
+        "right": {
+          "start": {
+            "x": 250,
+            "y": 250
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 300,
+            "y": 300
+          }
+        }
+      },
+      "ms": 324.7764169999996
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 5,
+      "j": 3,
+      "timeout": true
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 9,
+      "j": 3,
+      "result": {
+        "distance": 122.06906325745543,
+        "left": {
+          "start": {
+            "x": 205,
+            "y": 150
+          },
+          "radius": {
+            "x": 30,
+            "y": 30
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 175,
+            "y": 180
+          }
+        },
+        "right": {
+          "start": {
+            "x": 250.00000000000003,
+            "y": 350
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 200.00000000000006,
+            "y": 299.99999999999994
+          }
+        }
+      },
+      "ms": 189.98612500000036
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 10,
+      "j": 1,
+      "result": {
+        "distance": 102.59142264341597,
+        "left": {
+          "start": {
+            "x": 175,
+            "y": 180
+          },
+          "radius": {
+            "x": 30,
+            "y": 30
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 145.00000000000003,
+            "y": 149.99999999999997
+          }
+        },
+        "right": {
+          "start": {
+            "x": 250,
+            "y": 250
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 300,
+            "y": 300
+          }
+        }
+      },
+      "ms": 11.897500000000036
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 10,
+      "j": 2,
+      "result": {
+        "distance": 173.27723451163456,
+        "left": {
+          "start": {
+            "x": 175,
+            "y": 180
+          },
+          "radius": {
+            "x": 30,
+            "y": 30
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 145.00000000000003,
+            "y": 149.99999999999997
+          }
+        },
+        "right": {
+          "start": {
+            "x": 300,
+            "y": 300
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 250.00000000000003,
+            "y": 350
+          }
+        }
+      },
+      "ms": 24.137416999999914
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 10,
+      "j": 3,
+      "result": {
+        "distance": 122.5765067213126,
+        "left": {
+          "start": {
+            "x": 175,
+            "y": 180
+          },
+          "radius": {
+            "x": 30,
+            "y": 30
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 145.00000000000003,
+            "y": 149.99999999999997
+          }
+        },
+        "right": {
+          "start": {
+            "x": 250.00000000000003,
+            "y": 350
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 200.00000000000006,
+            "y": 299.99999999999994
+          }
+        }
+      },
+      "ms": 19.875584000000345
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 9,
+      "j": 2,
+      "result": {
+        "distance": 165.25624189766634,
+        "left": {
+          "start": {
+            "x": 205,
+            "y": 150
+          },
+          "radius": {
+            "x": 30,
+            "y": 30
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 175,
+            "y": 180
+          }
+        },
+        "right": {
+          "start": {
+            "x": 300,
+            "y": 300
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 250.00000000000003,
+            "y": 350
+          }
+        }
+      },
+      "ms": 633.4202500000001
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 10,
+      "j": 0,
+      "result": {
+        "distance": 91.50971698084898,
+        "left": {
+          "start": {
+            "x": 175,
+            "y": 180
+          },
+          "radius": {
+            "x": 30,
+            "y": 30
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 145.00000000000003,
+            "y": 149.99999999999997
+          }
+        },
+        "right": {
+          "start": {
+            "x": 199.99999999999994,
+            "y": 300.00000000000006
+          },
+          "radius": {
+            "x": 50,
+            "y": 50
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 250,
+            "y": 250
+          }
+        }
+      },
+      "ms": 612.87475
+    },
+    {
+      "id": 317,
+      "mode": "distance-pairs",
+      "i": 9,
+      "j": 0,
+      "timeout": true
+    }
+  ],
+  "probeSettings": {
+    "timeoutMs": 3000,
+    "minimumLength": 1e-05,
+    "distanceMaxDepth": 48,
+    "distanceTolerance": 1e-09,
+    "diagnosticRuntime": false
+  }
+}

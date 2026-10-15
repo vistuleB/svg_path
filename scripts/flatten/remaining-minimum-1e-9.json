@@ -1,0 +1,70 @@
+{
+  "implementation": "a0d45fbc4a7e1485791cd19e2d18a58787001012",
+  "rows": [
+    {
+      "id": 3497,
+      "mode": "arrangement",
+      "tolerance": 1e-06,
+      "scale": 1,
+      "result": {
+        "stage": "windings",
+        "winds": [
+          {
+            "type": "ContradictoryWinding",
+            "edge_id": 47,
+            "face_id": 1,
+            "assigned": 0,
+            "required": -1
+          },
+          {
+            "type": "ContradictoryWinding",
+            "edge_id": 52,
+            "face_id": 1,
+            "assigned": -1,
+            "required": 1
+          }
+        ],
+        "vertices": 54,
+        "edges": 63,
+        "faces": 9
+      },
+      "ms": 97.10275
+    },
+    {
+      "id": 4920,
+      "mode": "arrangement",
+      "tolerance": 1e-06,
+      "scale": 1,
+      "result": {
+        "stage": "windings",
+        "winds": [
+          {
+            "type": "ContradictoryWinding",
+            "edge_id": 30,
+            "face_id": 1,
+            "assigned": 0,
+            "required": -1
+          },
+          {
+            "type": "ContradictoryWinding",
+            "edge_id": 31,
+            "face_id": 0,
+            "assigned": 0,
+            "required": -1
+          }
+        ],
+        "vertices": 66,
+        "edges": 74,
+        "faces": 8
+      },
+      "ms": 96.093
+    }
+  ],
+  "probeSettings": {
+    "timeoutMs": 60000,
+    "minimumLength": 1e-09,
+    "distanceMaxDepth": 48,
+    "distanceTolerance": 1e-09,
+    "diagnosticRuntime": false
+  }
+}

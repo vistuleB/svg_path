@@ -1,0 +1,51 @@
+{
+  "implementation": "a0d45fbc4a7e1485791cd19e2d18a58787001012",
+  "rows": [
+    {
+      "id": 3497,
+      "mode": "arrangement",
+      "tolerance": 1e-08,
+      "scale": 1,
+      "result": {
+        "stage": "build",
+        "error": {
+          "type": "InternalPathError",
+          "error": {
+            "type": "CrossingMaxIterationsReached",
+            "estimate": 0.2551721557252611,
+            "value": -0.020263671875
+          }
+        }
+      },
+      "ms": 42.30037499999999
+    },
+    {
+      "id": 4920,
+      "mode": "arrangement",
+      "tolerance": 1e-08,
+      "scale": 1,
+      "result": {
+        "stage": "windings",
+        "winds": [
+          {
+            "ok": true
+          },
+          {
+            "ok": true
+          }
+        ],
+        "vertices": 68,
+        "edges": 76,
+        "faces": 10
+      },
+      "ms": 90.48145800000002
+    }
+  ],
+  "probeSettings": {
+    "timeoutMs": 60000,
+    "minimumLength": 1e-09,
+    "distanceMaxDepth": 48,
+    "distanceTolerance": 1e-09,
+    "diagnosticRuntime": false
+  }
+}

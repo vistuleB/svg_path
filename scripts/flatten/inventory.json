@@ -7626,7 +7626,7 @@
               "call": 3115,
               "operation": "algorithm:unify",
               "observedStatus": "needs-investigation",
-              "status": "needs-investigation"
+              "status": "adapter-contract-difference"
             }
           ],
           "auditStatus": "selected-operations-compared",
@@ -9520,7 +9520,7 @@
               "call": 3380,
               "operation": "algorithm:unify",
               "observedStatus": "needs-investigation",
-              "status": "needs-investigation"
+              "status": "confirmed-native-failure"
             }
           ],
           "auditStatus": "selected-operations-compared",
@@ -10352,7 +10352,7 @@
               "call": 3497,
               "operation": "algorithm:unify",
               "observedStatus": "needs-investigation",
-              "status": "needs-investigation"
+              "status": "confirmed-native-failure"
             }
           ],
           "auditStatus": "selected-operations-compared",
@@ -14273,7 +14273,7 @@
               "call": 4033,
               "operation": "algorithm:subtract",
               "observedStatus": "needs-investigation",
-              "status": "needs-investigation"
+              "status": "confirmed-native-failure"
             }
           ],
           "auditStatus": "selected-operations-compared",
@@ -15105,7 +15105,7 @@
               "call": 4150,
               "operation": "algorithm:subtract",
               "observedStatus": "needs-investigation",
-              "status": "needs-investigation"
+              "status": "confirmed-native-failure"
             }
           ],
           "auditStatus": "selected-operations-compared",
@@ -16092,35 +16092,35 @@
               "call": 4278,
               "operation": "algorithm:intersect",
               "observedStatus": "needs-investigation",
-              "status": "needs-investigation"
+              "status": "adapter-contract-difference"
             },
             {
               "batch": "polygons",
               "call": 4279,
               "operation": "algorithm:subtract",
               "observedStatus": "needs-investigation",
-              "status": "needs-investigation"
+              "status": "adapter-contract-difference"
             },
             {
               "batch": "polygons",
               "call": 4280,
               "operation": "algorithm:intersect",
               "observedStatus": "needs-investigation",
-              "status": "needs-investigation"
+              "status": "adapter-contract-difference"
             },
             {
               "batch": "polygons",
               "call": 4281,
               "operation": "algorithm:subtract",
               "observedStatus": "needs-investigation",
-              "status": "needs-investigation"
+              "status": "adapter-contract-difference"
             },
             {
               "batch": "polygons",
               "call": 4282,
               "operation": "algorithm:intersect",
               "observedStatus": "needs-investigation",
-              "status": "needs-investigation"
+              "status": "adapter-contract-difference"
             }
           ],
           "auditStatus": "selected-operations-compared",
@@ -16196,42 +16196,42 @@
               "call": 4291,
               "operation": "algorithm:intersect",
               "observedStatus": "needs-investigation",
-              "status": "needs-investigation"
+              "status": "adapter-contract-difference"
             },
             {
               "batch": "polygons",
               "call": 4292,
               "operation": "algorithm:subtract",
               "observedStatus": "needs-investigation",
-              "status": "needs-investigation"
+              "status": "adapter-contract-difference"
             },
             {
               "batch": "polygons",
               "call": 4293,
               "operation": "algorithm:intersect",
               "observedStatus": "needs-investigation",
-              "status": "needs-investigation"
+              "status": "adapter-contract-difference"
             },
             {
               "batch": "polygons",
               "call": 4294,
               "operation": "algorithm:subtract",
               "observedStatus": "needs-investigation",
-              "status": "needs-investigation"
+              "status": "adapter-contract-difference"
             },
             {
               "batch": "polygons",
               "call": 4295,
               "operation": "algorithm:intersect",
               "observedStatus": "needs-investigation",
-              "status": "needs-investigation"
+              "status": "adapter-contract-difference"
             },
             {
               "batch": "polygons",
               "call": 4296,
               "operation": "algorithm:subtract",
               "observedStatus": "needs-investigation",
-              "status": "needs-investigation"
+              "status": "adapter-contract-difference"
             }
           ],
           "auditStatus": "selected-operations-compared",
@@ -16663,7 +16663,7 @@
               "call": 4354,
               "operation": "algorithm:subtract",
               "observedStatus": "needs-investigation",
-              "status": "needs-investigation"
+              "status": "upstream-contract-difference"
             }
           ],
           "auditStatus": "selected-operations-compared",
@@ -19011,7 +19011,7 @@
               "call": 4682,
               "operation": "algorithm:intersect",
               "observedStatus": "needs-investigation",
-              "status": "needs-investigation"
+              "status": "confirmed-native-failure"
             }
           ],
           "auditStatus": "selected-operations-compared",
@@ -19843,7 +19843,7 @@
               "call": 4799,
               "operation": "algorithm:intersect",
               "observedStatus": "needs-investigation",
-              "status": "needs-investigation"
+              "status": "confirmed-native-failure"
             }
           ],
           "auditStatus": "selected-operations-compared",
@@ -20703,7 +20703,7 @@
               "call": 4920,
               "operation": "algorithm:intersect",
               "observedStatus": "needs-investigation",
-              "status": "needs-investigation"
+              "status": "confirmed-native-failure"
             }
           ],
           "auditStatus": "selected-operations-compared",
@@ -32287,7 +32287,7 @@
               "call": 317,
               "operation": "distanceTo",
               "observedStatus": "needs-investigation",
-              "status": "needs-investigation"
+              "status": "fixed"
             }
           ],
           "auditStatus": "selected-operations-compared",

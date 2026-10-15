@@ -1,0 +1,11 @@
+  Compiling svg_path
+  Compiling flatten_remaining_probe
+   Compiled in 1.40s
+    Running flatten_remaining_probe.main
+3380 union: Error(ArrangementGraphError(ConstructionFailed))
+3380 difference: Error(ArrangementGraphError(ConstructionFailed))
+3380 intersection: Error(ArrangementGraphError(ConstructionFailed))
+3497 union: Error(ArrangementGraphError(ConstructionFailed))
+3497 difference: Error(ArrangementGraphError(ConstructionFailed))
+3497 intersection: Error(ArrangementGraphError(ConstructionFailed))
+4920 intersection: Error(ArrangementGraphError(ConstructionFailed))

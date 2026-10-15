@@ -1,0 +1,35 @@
+{
+  "implementation": "a0d45fbc4a7e1485791cd19e2d18a58787001012",
+  "probeSettings": {
+    "timeoutMs": 60000,
+    "minimumLength": 0.00001,
+    "distanceMaxDepth": 48,
+    "distanceTolerance": 1e-9,
+    "diagnosticRuntime": false
+  },
+  "rows": [
+    {
+      "id": 317,
+      "mode": "replay",
+      "tolerance": 0.000001,
+      "scale": 1,
+      "result": {
+        "status": "match",
+        "value": {
+          "distance": 50,
+          "left": {
+            "x": 250,
+            "y": 200
+          },
+          "right": {
+            "x": 250,
+            "y": 250
+          }
+        },
+        "referenceDistance": 50,
+        "error": 0
+      },
+      "ms": 32.95837500000002
+    }
+  ]
+}

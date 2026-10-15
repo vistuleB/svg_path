@@ -1,0 +1,1662 @@
+{
+  "description": "Working-tree FL005 line/arc and arc/arc improvements",
+  "timeoutMs": 5000,
+  "counts": {
+    "match": 120,
+    "scope-difference": 4
+  },
+  "rows": [
+    {
+      "batch": "arc-circle",
+      "id": 88,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 1.267886079296281e-16,
+          "left": {
+            "x": -1.232595164407831e-32,
+            "y": 0.9999999999999999
+          },
+          "right": {
+            "x": 6.123233995736766e-17,
+            "y": 1
+          }
+        },
+        "referenceDistance": 0,
+        "error": 1.267886079296281e-16
+      }
+    },
+    {
+      "batch": "arc-circle",
+      "id": 89,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 1.8284271247461903,
+          "left": {
+            "x": 0.7071067811865476,
+            "y": 0.7071067811865475
+          },
+          "right": {
+            "x": 2,
+            "y": 2
+          }
+        },
+        "referenceDistance": 1.8284271247461903,
+        "error": 0
+      }
+    },
+    {
+      "batch": "arc-circle",
+      "id": 90,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 0.2928932188134525,
+          "left": {
+            "x": 0.7071067811865476,
+            "y": 0.7071067811865475
+          },
+          "right": {
+            "x": 0.5,
+            "y": 0.5
+          }
+        },
+        "referenceDistance": 0.2928932188134524,
+        "error": 5.551115123125783e-17
+      }
+    },
+    {
+      "batch": "arc-circle",
+      "id": 91,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 0.29289321881345254,
+          "left": {
+            "x": -0.7071067811865477,
+            "y": -0.7071067811865475
+          },
+          "right": {
+            "x": -0.5,
+            "y": -0.5
+          }
+        },
+        "referenceDistance": 0.2928932188134524,
+        "error": 1.1102230246251565e-16
+      }
+    },
+    {
+      "batch": "arc-circle",
+      "id": 92,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 1,
+          "left": {
+            "x": 2,
+            "y": 0.5000000000000001
+          },
+          "right": {
+            "x": 1,
+            "y": 0.5000000000000001
+          }
+        },
+        "referenceDistance": 1,
+        "error": 0
+      }
+    },
+    {
+      "batch": "arc-circle",
+      "id": 108,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 50,
+          "left": {
+            "x": 200,
+            "y": 150
+          },
+          "right": {
+            "x": 200,
+            "y": 100
+          }
+        },
+        "referenceDistance": 50,
+        "error": 0
+      }
+    },
+    {
+      "batch": "arc-circle",
+      "id": 109,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 20,
+          "left": {
+            "x": 200,
+            "y": 150
+          },
+          "right": {
+            "x": 199.99999999999997,
+            "y": 130
+          }
+        },
+        "referenceDistance": 20,
+        "error": 0
+      }
+    },
+    {
+      "batch": "arc-circle",
+      "id": 110,
+      "comparison": {
+        "status": "scope-difference",
+        "reason": "No direct public distance-to-infinite-line query; do not silently clip the line."
+      }
+    },
+    {
+      "batch": "arc-circle",
+      "id": 111,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 20,
+          "left": {
+            "x": 200,
+            "y": 150
+          },
+          "right": {
+            "x": 200,
+            "y": 130
+          }
+        },
+        "referenceDistance": 20,
+        "error": 0
+      }
+    },
+    {
+      "batch": "arc-circle",
+      "id": 112,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 30,
+          "left": {
+            "x": 200,
+            "y": 150
+          },
+          "right": {
+            "x": 200,
+            "y": 120
+          }
+        },
+        "referenceDistance": 30,
+        "error": 0
+      }
+    },
+    {
+      "batch": "arc-circle",
+      "id": 115,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 25,
+          "left": {
+            "x": 300,
+            "y": 50
+          },
+          "right": {
+            "x": 300,
+            "y": 75
+          }
+        },
+        "referenceDistance": 25,
+        "error": 0
+      }
+    },
+    {
+      "batch": "arc-circle",
+      "id": 116,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 1,
+          "left": {
+            "x": 2,
+            "y": 0.5000000000000001
+          },
+          "right": {
+            "x": 1,
+            "y": 0.5000000000000001
+          }
+        },
+        "referenceDistance": 1,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 1,
+      "comparison": {
+        "status": "match",
+        "value": 2,
+        "reference": 2,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 2,
+      "comparison": {
+        "status": "match",
+        "value": 1,
+        "reference": 1,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 3,
+      "comparison": {
+        "status": "match",
+        "value": 2,
+        "reference": 2,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 5,
+      "comparison": {
+        "status": "match",
+        "value": 2,
+        "reference": 2,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 6,
+      "comparison": {
+        "status": "match",
+        "value": 1,
+        "reference": 1,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 7,
+      "comparison": {
+        "status": "match",
+        "value": 2,
+        "reference": 2,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 9,
+      "comparison": {
+        "status": "match",
+        "value": 2,
+        "reference": 2,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 10,
+      "comparison": {
+        "status": "match",
+        "value": 1,
+        "reference": 1,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 11,
+      "comparison": {
+        "status": "match",
+        "value": 2,
+        "reference": 2,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 13,
+      "comparison": {
+        "status": "match",
+        "value": 2,
+        "reference": 2,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 14,
+      "comparison": {
+        "status": "match",
+        "value": 1,
+        "reference": 1,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 15,
+      "comparison": {
+        "status": "match",
+        "value": 2,
+        "reference": 2,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 17,
+      "comparison": {
+        "status": "match",
+        "value": 2,
+        "reference": 2,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 18,
+      "comparison": {
+        "status": "match",
+        "value": 1,
+        "reference": 1,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 19,
+      "comparison": {
+        "status": "match",
+        "value": 2,
+        "reference": 2,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 31,
+      "comparison": {
+        "status": "match",
+        "value": 2,
+        "reference": 2,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 35,
+      "comparison": {
+        "status": "match",
+        "value": 100,
+        "reference": 100,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 36,
+      "comparison": {
+        "status": "match",
+        "value": 20,
+        "reference": 20,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 37,
+      "comparison": {
+        "status": "match",
+        "value": 100,
+        "reference": 100,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 39,
+      "comparison": {
+        "status": "match",
+        "value": 20,
+        "reference": 20,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 40,
+      "comparison": {
+        "status": "match",
+        "value": 100,
+        "reference": 100,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 41,
+      "comparison": {
+        "status": "match",
+        "value": 100,
+        "reference": 100,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 42,
+      "comparison": {
+        "status": "match",
+        "value": 20,
+        "reference": 20,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 43,
+      "comparison": {
+        "status": "match",
+        "value": 100,
+        "reference": 100,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 45,
+      "comparison": {
+        "status": "match",
+        "value": 20,
+        "reference": 20,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 46,
+      "comparison": {
+        "status": "match",
+        "value": 100,
+        "reference": 100,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 47,
+      "comparison": {
+        "status": "match",
+        "value": 100,
+        "reference": 100,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 48,
+      "comparison": {
+        "status": "match",
+        "value": 100,
+        "reference": 100,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 49,
+      "comparison": {
+        "status": "match",
+        "value": 20,
+        "reference": 20,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 50,
+      "comparison": {
+        "status": "match",
+        "value": 100,
+        "reference": 100,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 53,
+      "comparison": {
+        "status": "match",
+        "value": 20,
+        "reference": 20,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 54,
+      "comparison": {
+        "status": "match",
+        "value": 100,
+        "reference": 100,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 55,
+      "comparison": {
+        "status": "match",
+        "value": 20,
+        "reference": 20,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 58,
+      "comparison": {
+        "status": "match",
+        "value": 200,
+        "reference": 200,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 59,
+      "comparison": {
+        "status": "match",
+        "value": 240,
+        "reference": 240,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 60,
+      "comparison": {
+        "status": "match",
+        "value": 172.04650534085255,
+        "reference": 172.04650534085255,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 61,
+      "comparison": {
+        "status": "match",
+        "value": 148.66068747318505,
+        "reference": 148.66068747318505,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 62,
+      "comparison": {
+        "status": "match",
+        "value": 60,
+        "reference": 60,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 63,
+      "comparison": {
+        "status": "match",
+        "value": 148.66068747318505,
+        "reference": 148.66068747318505,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 64,
+      "comparison": {
+        "status": "match",
+        "value": 172.04650534085255,
+        "reference": 172.04650534085255,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 65,
+      "comparison": {
+        "status": "match",
+        "value": 240,
+        "reference": 240,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 66,
+      "comparison": {
+        "status": "match",
+        "value": 200,
+        "reference": 200,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 80,
+      "comparison": {
+        "status": "match",
+        "value": 100,
+        "reference": 100,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 81,
+      "comparison": {
+        "status": "match",
+        "value": 20,
+        "reference": 20,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 82,
+      "comparison": {
+        "status": "match",
+        "value": 100,
+        "reference": 100,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 151,
+      "comparison": {
+        "status": "match",
+        "value": 2,
+        "reference": 2,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 152,
+      "comparison": {
+        "status": "match",
+        "value": 1,
+        "reference": 1,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 155,
+      "comparison": {
+        "status": "match",
+        "value": 3,
+        "reference": 3,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 159,
+      "comparison": {
+        "status": "match",
+        "value": 2,
+        "reference": 2,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 160,
+      "comparison": {
+        "status": "match",
+        "value": 3,
+        "reference": 3,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 163,
+      "comparison": {
+        "status": "match",
+        "value": 1,
+        "reference": 1,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 167,
+      "comparison": {
+        "status": "match",
+        "value": 111.80339887498948,
+        "reference": 111.80339887498948,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 168,
+      "comparison": {
+        "status": "match",
+        "value": 111.80339887498948,
+        "reference": 111.80339887498948,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 169,
+      "comparison": {
+        "status": "match",
+        "value": 111.80339887498948,
+        "reference": 111.80339887498948,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 170,
+      "comparison": {
+        "status": "match",
+        "value": 111.80339887498948,
+        "reference": 111.80339887498948,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 172,
+      "comparison": {
+        "status": "match",
+        "value": 111.80339887498948,
+        "reference": 111.80339887498948,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 175,
+      "comparison": {
+        "status": "match",
+        "value": 50,
+        "reference": 50,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 176,
+      "comparison": {
+        "status": "match",
+        "value": 50,
+        "reference": 50,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 180,
+      "comparison": {
+        "status": "match",
+        "value": 50,
+        "reference": 50,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 181,
+      "comparison": {
+        "status": "match",
+        "value": 50,
+        "reference": 50,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 182,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 25,
+          "left": {
+            "x": 25,
+            "y": 0
+          },
+          "right": {
+            "x": 25,
+            "y": 25
+          }
+        },
+        "referenceDistance": 25,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 183,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 25,
+          "left": {
+            "x": 0,
+            "y": 0
+          },
+          "right": {
+            "x": -25,
+            "y": 0
+          }
+        },
+        "referenceDistance": 25,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 184,
+      "comparison": {
+        "status": "match",
+        "value": 111.80339887498948,
+        "reference": 111.80339887498948,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 185,
+      "comparison": {
+        "status": "match",
+        "value": 111.80339887498948,
+        "reference": 111.80339887498948,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 186,
+      "comparison": {
+        "status": "match",
+        "value": 55.90169943749474,
+        "reference": 55.90169943749474,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 187,
+      "comparison": {
+        "status": "match",
+        "value": 111.80339887498948,
+        "reference": 111.80339887498948,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 188,
+      "comparison": {
+        "status": "match",
+        "value": 55.90169943749474,
+        "reference": 55.90169943749474,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 189,
+      "comparison": {
+        "status": "match",
+        "value": 111.80339887498948,
+        "reference": 111.80339887498948,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 190,
+      "comparison": {
+        "status": "match",
+        "value": 55.90169943749474,
+        "reference": 55.90169943749474,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 191,
+      "comparison": {
+        "status": "match",
+        "value": 111.80339887498948,
+        "reference": 111.80339887498948,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 192,
+      "comparison": {
+        "status": "match",
+        "value": 55.90169943749474,
+        "reference": 55.90169943749474,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 193,
+      "comparison": {
+        "status": "match",
+        "value": 111.80339887498948,
+        "reference": 111.80339887498948,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 194,
+      "comparison": {
+        "status": "match",
+        "value": 111.80339887498948,
+        "reference": 111.80339887498948,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 195,
+      "comparison": {
+        "status": "match",
+        "value": 111.80339887498948,
+        "reference": 111.80339887498948,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 196,
+      "comparison": {
+        "status": "match",
+        "value": 50,
+        "reference": 50,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 197,
+      "comparison": {
+        "status": "match",
+        "value": 111.80339887498948,
+        "reference": 111.80339887498948,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 198,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 2,
+          "left": {
+            "x": 3,
+            "y": 0.5
+          },
+          "right": {
+            "x": 1,
+            "y": 0.5
+          }
+        },
+        "referenceDistance": 2,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 199,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 3,
+          "left": {
+            "x": 3,
+            "y": 0.5
+          },
+          "right": {
+            "x": 0,
+            "y": 0.5
+          }
+        },
+        "referenceDistance": 3,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 200,
+      "comparison": {
+        "status": "match",
+        "value": 111.80339887498948,
+        "reference": 111.80339887498948,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 201,
+      "comparison": {
+        "status": "match",
+        "value": 111.80339887498948,
+        "reference": 111.80339887498948,
+        "error": 0
+      }
+    },
+    {
+      "batch": "chains",
+      "id": 202,
+      "comparison": {
+        "status": "match",
+        "value": 111.80339887498948,
+        "reference": 111.80339887498948,
+        "error": 0
+      }
+    },
+    {
+      "batch": "linear",
+      "id": 60,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 0,
+          "left": {
+            "x": 31.25,
+            "y": 36.557426400375626
+          },
+          "right": {
+            "x": 31.25,
+            "y": 36.55742640037563
+          }
+        },
+        "referenceDistance": 0,
+        "error": 0
+      }
+    },
+    {
+      "batch": "linear",
+      "id": 62,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 0,
+          "left": {
+            "x": 1,
+            "y": 1
+          },
+          "right": {
+            "x": 1,
+            "y": 1
+          }
+        },
+        "referenceDistance": 0,
+        "error": 0
+      }
+    },
+    {
+      "batch": "linear",
+      "id": 63,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 0.7071067811865476,
+          "left": {
+            "x": 0.5,
+            "y": 0.5
+          },
+          "right": {
+            "x": 1,
+            "y": 0
+          }
+        },
+        "referenceDistance": 0.7071067811865475,
+        "error": 1.1102230246251565e-16
+      }
+    },
+    {
+      "batch": "linear",
+      "id": 64,
+      "comparison": {
+        "status": "scope-difference",
+        "reason": "No direct public distance-to-infinite-line query; do not silently clip the line."
+      }
+    },
+    {
+      "batch": "linear",
+      "id": 65,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 1.2246467864107189e-16,
+          "left": {
+            "x": -2.980232283178452e-8,
+            "y": 2
+          },
+          "right": {
+            "x": -2.9802322709319844e-8,
+            "y": 2
+          }
+        },
+        "referenceDistance": 0,
+        "error": 1.2246467864107189e-16
+      }
+    },
+    {
+      "batch": "linear",
+      "id": 66,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 4.440892098500626e-16,
+          "left": {
+            "x": 2.236067977499789,
+            "y": 2
+          },
+          "right": {
+            "x": 2.236067977499789,
+            "y": 2.0000000000000004
+          }
+        },
+        "referenceDistance": 0,
+        "error": 4.440892098500626e-16
+      }
+    },
+    {
+      "batch": "linear",
+      "id": 67,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 4.440892098500626e-16,
+          "left": {
+            "x": 2.236067977499789,
+            "y": 2
+          },
+          "right": {
+            "x": 2.236067977499789,
+            "y": 2.0000000000000004
+          }
+        },
+        "referenceDistance": 0,
+        "error": 4.440892098500626e-16
+      }
+    },
+    {
+      "batch": "linear",
+      "id": 68,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 2,
+          "left": {
+            "x": 0,
+            "y": 4
+          },
+          "right": {
+            "x": 1.2246467991473532e-16,
+            "y": 2
+          }
+        },
+        "referenceDistance": 2,
+        "error": 0
+      }
+    },
+    {
+      "batch": "linear",
+      "id": 69,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 0.8284271247461902,
+          "left": {
+            "x": 2,
+            "y": 2
+          },
+          "right": {
+            "x": 1.4142135623730951,
+            "y": 1.414213562373095
+          }
+        },
+        "referenceDistance": 0.8284271247461903,
+        "error": 1.1102230246251565e-16
+      }
+    },
+    {
+      "batch": "linear",
+      "id": 70,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 0.585786437626905,
+          "left": {
+            "x": 1,
+            "y": 1
+          },
+          "right": {
+            "x": 1.4142135623730951,
+            "y": 1.414213562373095
+          }
+        },
+        "referenceDistance": 0.5857864376269049,
+        "error": 1.1102230246251565e-16
+      }
+    },
+    {
+      "batch": "linear",
+      "id": 146,
+      "comparison": {
+        "status": "scope-difference",
+        "reason": "No corresponding public infinite-line/ray object operation; bounded-shape intersections are compared separately."
+      }
+    },
+    {
+      "batch": "polygons",
+      "id": 302,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 25,
+          "left": {
+            "x": 300,
+            "y": 75
+          },
+          "right": {
+            "x": 300,
+            "y": 50
+          }
+        },
+        "referenceDistance": 25,
+        "error": 0
+      }
+    },
+    {
+      "batch": "polygons",
+      "id": 317,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 50,
+          "left": {
+            "x": 250,
+            "y": 200
+          },
+          "right": {
+            "x": 250,
+            "y": 250
+          }
+        },
+        "referenceDistance": 50,
+        "error": 0
+      }
+    },
+    {
+      "batch": "polygons",
+      "id": 334,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 450,
+          "left": {
+            "x": 200,
+            "y": 50
+          },
+          "right": {
+            "x": 200,
+            "y": 500
+          }
+        },
+        "referenceDistance": 450,
+        "error": 0
+      }
+    },
+    {
+      "batch": "polygons",
+      "id": 1501,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 2,
+          "left": {
+            "x": 3,
+            "y": 0
+          },
+          "right": {
+            "x": 1,
+            "y": 0
+          }
+        },
+        "referenceDistance": 2,
+        "error": 0
+      }
+    },
+    {
+      "batch": "primitives",
+      "id": 20,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 1,
+          "left": {
+            "x": 1,
+            "y": 0.5
+          },
+          "right": {
+            "x": 2,
+            "y": 0.5
+          }
+        },
+        "referenceDistance": 1,
+        "error": 0
+      }
+    },
+    {
+      "batch": "primitives",
+      "id": 21,
+      "comparison": {
+        "status": "match",
+        "value": 1.4142135623730951,
+        "reference": 1.4142135623730951,
+        "error": 0
+      }
+    },
+    {
+      "batch": "primitives",
+      "id": 25,
+      "comparison": {
+        "status": "scope-difference",
+        "reason": "No direct point-to-infinite-line distance API."
+      }
+    },
+    {
+      "batch": "primitives",
+      "id": 26,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 2,
+          "left": {
+            "x": 2,
+            "y": 2
+          },
+          "right": {
+            "x": 2,
+            "y": 4
+          }
+        },
+        "referenceDistance": 2,
+        "error": 0
+      }
+    },
+    {
+      "batch": "primitives",
+      "id": 27,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 3,
+          "left": {
+            "x": -2,
+            "y": 2
+          },
+          "right": {
+            "x": -5,
+            "y": 2
+          }
+        },
+        "referenceDistance": 3,
+        "error": 0
+      }
+    },
+    {
+      "batch": "primitives",
+      "id": 28,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 4,
+          "left": {
+            "x": 2,
+            "y": 2
+          },
+          "right": {
+            "x": 6,
+            "y": 2
+          }
+        },
+        "referenceDistance": 4,
+        "error": 0
+      }
+    },
+    {
+      "batch": "primitives",
+      "id": 29,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 2,
+          "left": {
+            "x": 3,
+            "y": 0
+          },
+          "right": {
+            "x": 5,
+            "y": 0
+          }
+        },
+        "referenceDistance": 2,
+        "error": 0
+      }
+    },
+    {
+      "batch": "primitives",
+      "id": 30,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 1,
+          "left": {
+            "x": 1.8369701987210297e-16,
+            "y": 3
+          },
+          "right": {
+            "x": 0,
+            "y": 2
+          }
+        },
+        "referenceDistance": 1,
+        "error": 0
+      }
+    },
+    {
+      "batch": "primitives",
+      "id": 31,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 2,
+          "left": {
+            "x": 3,
+            "y": -7.347880794884119e-16
+          },
+          "right": {
+            "x": 5,
+            "y": 0
+          }
+        },
+        "referenceDistance": 2,
+        "error": 0
+      }
+    },
+    {
+      "batch": "primitives",
+      "id": 32,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 1,
+          "left": {
+            "x": 9.18485099360515e-16,
+            "y": 3
+          },
+          "right": {
+            "x": 0,
+            "y": 2
+          }
+        },
+        "referenceDistance": 1,
+        "error": 0
+      }
+    },
+    {
+      "batch": "primitives",
+      "id": 67,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 25,
+          "left": {
+            "x": 300,
+            "y": 75
+          },
+          "right": {
+            "x": 300,
+            "y": 50
+          }
+        },
+        "referenceDistance": 25,
+        "error": 0
+      }
+    },
+    {
+      "batch": "primitives",
+      "id": 195,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 10,
+          "left": {
+            "x": 20,
+            "y": 0
+          },
+          "right": {
+            "x": 30,
+            "y": 0
+          }
+        },
+        "referenceDistance": 10,
+        "error": 0
+      }
+    },
+    {
+      "batch": "primitives",
+      "id": 196,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 0,
+          "left": {
+            "x": 13.374691009521484,
+            "y": 6.649463176727295
+          },
+          "right": {
+            "x": 13.374691009521484,
+            "y": 6.649463176727295
+          }
+        },
+        "referenceDistance": 0,
+        "error": 0
+      }
+    },
+    {
+      "batch": "primitives",
+      "id": 197,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 2,
+          "left": {
+            "x": 1,
+            "y": 0
+          },
+          "right": {
+            "x": 3,
+            "y": 0
+          }
+        },
+        "referenceDistance": 2,
+        "error": 0
+      }
+    },
+    {
+      "batch": "primitives",
+      "id": 198,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 2,
+          "left": {
+            "x": 1,
+            "y": 0
+          },
+          "right": {
+            "x": 3,
+            "y": 0
+          }
+        },
+        "referenceDistance": 2,
+        "error": 0
+      }
+    },
+    {
+      "batch": "primitives",
+      "id": 199,
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 1,
+          "left": {
+            "x": -1,
+            "y": 0.5
+          },
+          "right": {
+            "x": 0,
+            "y": 0.5
+          }
+        },
+        "referenceDistance": 1,
+        "error": 0
+      }
+    }
+  ]
+}

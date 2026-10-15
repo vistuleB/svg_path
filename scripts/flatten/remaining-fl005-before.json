@@ -1,0 +1,19 @@
+{
+  "implementation": "a0d45fbc4a7e1485791cd19e2d18a58787001012",
+  "probeSettings": {
+    "timeoutMs": 3000,
+    "minimumLength": 0.00001,
+    "distanceMaxDepth": 48,
+    "distanceTolerance": 1e-9,
+    "diagnosticRuntime": false
+  },
+  "rows": [
+    {
+      "id": 317,
+      "mode": "distance-reduced",
+      "tolerance": 0.000001,
+      "scale": 1,
+      "timeout": true
+    }
+  ]
+}

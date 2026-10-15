@@ -1,0 +1,36 @@
+{
+  "implementation": "a0d45fbc4a7e1485791cd19e2d18a58787001012",
+  "rows": [
+    {
+      "id": 3380,
+      "mode": "pairs",
+      "tolerance": 1e-06,
+      "scale": 1,
+      "result": [],
+      "ms": 49.43925
+    },
+    {
+      "id": 3497,
+      "mode": "pairs",
+      "tolerance": 1e-06,
+      "scale": 1,
+      "result": [],
+      "ms": 87.15258299999999
+    },
+    {
+      "id": 4920,
+      "mode": "pairs",
+      "tolerance": 1e-06,
+      "scale": 1,
+      "result": [],
+      "ms": 90.64649999999999
+    }
+  ],
+  "probeSettings": {
+    "timeoutMs": 60000,
+    "minimumLength": 1e-05,
+    "distanceMaxDepth": 48,
+    "distanceTolerance": 1e-09,
+    "diagnosticRuntime": false
+  }
+}

@@ -1,5 +1,11 @@
 # Flatten.js audit — first batch
 
+**Latest status:** the history below predates the 3.1.3 remaining-observation
+triage. [REMAINING-TRIAGE.md](REMAINING-TRIAGE.md) classifies all 21 later flags
+and records three open native failure groups (FL002–FL004) and the validated
+Gleam FL005 fix (F# port pending). Statements
+below that only FL001 was confirmed describe the earlier inventory snapshot.
+
 2026-10-15. Gleam implementation: `ba6988cc036dc340e69bde411fb6ffab11ce98fa`
 (3.1.2). Upstream pinned revision/version and archive hashes are in
 `provenance.json`. No production changes or new native regressions in this pass.

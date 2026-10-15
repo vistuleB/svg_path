@@ -278,10 +278,10 @@ function compare(c) {
  }
  return {status:'scope-difference',reason:'Operation not adapted in this batch'};
 }
-if(!isMainThread) {
+if(!isMainThread && process.env.FLATTEN_LIBRARY_ONLY!=='1') {
  try { parentPort.postMessage(compare(workerData)); }
  catch(e){parentPort.postMessage(e.scope?{status:'scope-difference',reason:e.scope,details:e}:{status:'needs-investigation',error:e.geometryError??String(e),phase,stack:e.stack,details:errorDetails(e.details)});}
-} else {
+} else if(process.env.FLATTEN_LIBRARY_ONLY!=='1') {
  const allCalls=fs.readFileSync(new URL(`${batch}-calls.jsonl`,import.meta.url),'utf8').trim().split('\n').map(JSON.parse);
  const selection=process.env.FLATTEN_CALL?Number(process.env.FLATTEN_CALL):null;
  if(selection!==null && (!Number.isInteger(selection)||selection<1||selection>allCalls.length)) throw Error('Invalid FLATTEN_CALL');
@@ -303,3 +303,5 @@ if(!isMainThread) {
  fs.writeFileSync(new URL(selection===null?`${batch}-results.json`:`${batch}-call${selection}-${process.env.FLATTEN_DISTANCE_ADAPTER==='exhaustive-segment-pairs'?'exhaustive':'public'}-results.json`,import.meta.url),JSON.stringify(report,null,2)+'\n');console.log(counts);
  for(const row of rows.filter(r=>r.comparison.status==='needs-investigation'))console.log(row.call,row.test,JSON.stringify(row.comparison));
 }
+// Investigation tools reuse the exact original adapter without running its batch.
+export {pieces, polygonPath, compare, errorDetails};

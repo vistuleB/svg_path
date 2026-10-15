@@ -1,0 +1,22 @@
+{
+  "implementation": "a0d45fbc4a7e1485791cd19e2d18a58787001012",
+  "probeSettings": {
+    "timeoutMs": 15000,
+    "minimumLength": 0.00001,
+    "distanceMaxDepth": 48,
+    "distanceTolerance": 1e-9,
+    "diagnosticRuntime": false
+  },
+  "rows": [
+    {
+      "id": 317,
+      "mode": "distance-reduced",
+      "tolerance": 0.000001,
+      "scale": 1,
+      "error": {
+        "type": "RangeError"
+      },
+      "stack": "RangeError: Maximum call stack size exceeded\n    at new TerminalWindow (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:612:14)\n    at number_terminal_windows (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5021:7)\n    at number_terminal_windows (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5022:7)\n    at number_terminal_windows (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5022:7)\n    at number_terminal_windows (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5022:7)\n    at number_terminal_windows (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5022:7)\n    at number_terminal_windows (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5022:7)\n    at number_terminal_windows (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5022:7)\n    at number_terminal_windows (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5022:7)\n    at number_terminal_windows (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5022:7)"
+    }
+  ]
+}

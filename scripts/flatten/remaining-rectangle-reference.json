@@ -1,0 +1,40 @@
+[
+  {
+    "leftOrientation": -1,
+    "rightOrientation": 1,
+    "leftValid": true,
+    "rightValid": true,
+    "area": 20000,
+    "samples": [
+      {
+        "x": 50,
+        "y": 100,
+        "inside": false
+      },
+      {
+        "x": 150,
+        "y": 100,
+        "inside": true
+      }
+    ]
+  },
+  {
+    "leftOrientation": -1,
+    "rightOrientation": -1,
+    "leftValid": true,
+    "rightValid": true,
+    "area": 20000,
+    "samples": [
+      {
+        "x": 50,
+        "y": 100,
+        "inside": true
+      },
+      {
+        "x": 150,
+        "y": 100,
+        "inside": false
+      }
+    ]
+  }
+]

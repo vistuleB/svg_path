@@ -1,0 +1,51 @@
+{
+  "implementation": "a0d45fbc4a7e1485791cd19e2d18a58787001012",
+  "probeSettings": {
+    "timeoutMs": 60000,
+    "minimumLength": 0.00001,
+    "distanceMaxDepth": 48,
+    "distanceTolerance": 1e-9,
+    "diagnosticRuntime": false
+  },
+  "rows": [
+    {
+      "id": 3380,
+      "mode": "boolean",
+      "tolerance": 0.000001,
+      "scale": 1,
+      "result": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "ConstructionFailed"
+        }
+      },
+      "ms": 95.828334
+    },
+    {
+      "id": 4033,
+      "mode": "boolean",
+      "tolerance": 0.000001,
+      "scale": 1,
+      "result": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "ConstructionFailed"
+        }
+      },
+      "ms": 89.80170900000002
+    },
+    {
+      "id": 4682,
+      "mode": "boolean",
+      "tolerance": 0.000001,
+      "scale": 1,
+      "result": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "ConstructionFailed"
+        }
+      },
+      "ms": 98.162291
+    }
+  ]
+}

@@ -1,0 +1,923 @@
+[
+  {
+    "id": 3380,
+    "samples": [
+      {
+        "vertex": 12,
+        "radii": [
+          {
+            "radius": 112107.93437795565,
+            "result": [
+              {
+                "oriented_edge": {
+                  "edge_id": 11,
+                  "reversed": true
+                },
+                "point": {
+                  "x": 1286204948.849552,
+                  "y": 54794212.98346091
+                },
+                "angle": 104.13705705229364
+              },
+              {
+                "oriented_edge": {
+                  "edge_id": 39,
+                  "reversed": true
+                },
+                "point": {
+                  "x": 1286173075.575901,
+                  "y": 54780668.91730506
+                },
+                "angle": 121.9076076083749
+              },
+              {
+                "oriented_edge": {
+                  "edge_id": 41,
+                  "reversed": false
+                },
+                "point": {
+                  "x": 1286291585.109805,
+                  "y": 54590331.726573616
+                },
+                "angle": 301.90760760833666
+              },
+              {
+                "oriented_edge": {
+                  "edge_id": 12,
+                  "reversed": false
+                },
+                "point": {
+                  "x": 1286291585.109805,
+                  "y": 54590331.72657381
+                },
+                "angle": 301.90760760838896
+              }
+            ]
+          },
+          {
+            "radius": 89686.34750236453,
+            "result": [
+              {
+                "oriented_edge": {
+                  "edge_id": 11,
+                  "reversed": true
+                },
+                "point": {
+                  "x": 1286210425.1482122,
+                  "y": 54772470.45115661
+                },
+                "angle": 104.13705705226434
+              },
+              {
+                "oriented_edge": {
+                  "edge_id": 39,
+                  "reversed": true
+                },
+                "point": {
+                  "x": 1286184926.5292916,
+                  "y": 54761635.19823155
+                },
+                "angle": 121.90760760840027
+              },
+              {
+                "oriented_edge": {
+                  "edge_id": 41,
+                  "reversed": false
+                },
+                "point": {
+                  "x": 1286279734.1564145,
+                  "y": 54609365.445647165
+                },
+                "angle": 301.907607608365
+              },
+              {
+                "oriented_edge": {
+                  "edge_id": 12,
+                  "reversed": false
+                },
+                "point": {
+                  "x": 1286279734.1564145,
+                  "y": 54609365.44564732
+                },
+                "angle": 301.90760760841783
+              }
+            ]
+          },
+          {
+            "radius": 71749.07800189163,
+            "result": [
+              {
+                "oriented_edge": {
+                  "edge_id": 11,
+                  "reversed": true
+                },
+                "point": {
+                  "x": 1286214806.1871402,
+                  "y": 54755076.42531342
+                },
+                "angle": 104.13705705232599
+              },
+              {
+                "oriented_edge": {
+                  "edge_id": 39,
+                  "reversed": true
+                },
+                "point": {
+                  "x": 1286194407.2920034,
+                  "y": 54746408.22297388
+                },
+                "angle": 121.90760760843384
+              },
+              {
+                "oriented_edge": {
+                  "edge_id": 41,
+                  "reversed": false
+                },
+                "point": {
+                  "x": 1286270253.3937027,
+                  "y": 54624592.42090483
+                },
+                "angle": 301.90760760838975
+              },
+              {
+                "oriented_edge": {
+                  "edge_id": 12,
+                  "reversed": false
+                },
+                "point": {
+                  "x": 1286270253.3937027,
+                  "y": 54624592.42090495
+                },
+                "angle": 301.9076076084401
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "reducedFans": [
+      {
+        "vertex": 12,
+        "edges": [
+          11,
+          41,
+          12
+        ],
+        "variants": [
+          {
+            "centered": false,
+            "groups": [
+              [
+                {
+                  "edge_id": 11,
+                  "reversed": true
+                }
+              ],
+              [
+                {
+                  "edge_id": 41,
+                  "reversed": false
+                },
+                {
+                  "edge_id": 12,
+                  "reversed": false
+                }
+              ]
+            ]
+          },
+          {
+            "centered": true,
+            "groups": [
+              [
+                {
+                  "edge_id": 11,
+                  "reversed": true
+                }
+              ],
+              [
+                {
+                  "edge_id": 12,
+                  "reversed": false
+                },
+                {
+                  "edge_id": 41,
+                  "reversed": false
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    ],
+    "experiments": [
+      {
+        "changedVertices": [],
+        "dual": {
+          "ok": true
+        },
+        "faces": 11,
+        "winds": [
+          {
+            "error": {
+              "edge_id": 25,
+              "face_id": 10,
+              "assigned": 0,
+              "required": 1
+            }
+          },
+          {
+            "error": {
+              "edge_id": 41,
+              "face_id": 0,
+              "assigned": 0,
+              "required": -1
+            }
+          }
+        ],
+        "operations": [
+          {
+            "name": "union",
+            "error": {
+              "error": {}
+            },
+            "signedArea": null,
+            "segments": null
+          },
+          {
+            "name": "difference",
+            "error": {
+              "error": {}
+            },
+            "signedArea": null,
+            "segments": null
+          },
+          {
+            "name": "intersection",
+            "error": {
+              "error": {}
+            },
+            "signedArea": null,
+            "segments": null
+          }
+        ]
+      },
+      {
+        "changedVertices": [
+          12
+        ],
+        "dual": {
+          "ok": true
+        },
+        "faces": 13,
+        "winds": [
+          {
+            "ok": true
+          },
+          {
+            "ok": true
+          }
+        ],
+        "operations": [
+          {
+            "name": "union",
+            "ok": true,
+            "signedArea": 3850923260959683.5,
+            "segments": 32
+          },
+          {
+            "name": "difference",
+            "ok": true,
+            "signedArea": 216330110959663.7,
+            "segments": 13
+          },
+          {
+            "name": "intersection",
+            "ok": true,
+            "signedArea": 3577492351034988.5,
+            "segments": 27
+          }
+        ]
+      },
+      {
+        "changedVertices": "all vertices resampled in local coordinates",
+        "dual": {
+          "ok": true
+        },
+        "faces": 13,
+        "winds": [
+          {
+            "ok": true
+          },
+          {
+            "ok": true
+          }
+        ],
+        "operations": [
+          {
+            "name": "union",
+            "ok": true,
+            "signedArea": 3850923260959683.5,
+            "segments": 32
+          },
+          {
+            "name": "difference",
+            "ok": true,
+            "signedArea": 216330110959663.7,
+            "segments": 13
+          },
+          {
+            "name": "intersection",
+            "ok": true,
+            "signedArea": 3577492351034988.5,
+            "segments": 27
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 3497,
+    "samples": [
+      {
+        "vertex": 8,
+        "radii": [
+          {
+            "radius": 589.7530410766602,
+            "result": [
+              {
+                "oriented_edge": {
+                  "edge_id": 8,
+                  "reversed": false
+                },
+                "point": {
+                  "x": 976070589.753041,
+                  "y": 221360000
+                },
+                "angle": 0
+              },
+              {
+                "oriented_edge": {
+                  "edge_id": 7,
+                  "reversed": true
+                },
+                "point": {
+                  "x": 976069813.5780852,
+                  "y": 221360559.51364622
+                },
+                "angle": 108.42733273292798
+              },
+              {
+                "oriented_edge": {
+                  "edge_id": 53,
+                  "reversed": true
+                },
+                "point": {
+                  "x": 976069813.5780853,
+                  "y": 221360559.51364568
+                },
+                "angle": 108.42733273841449
+              }
+            ]
+          },
+          {
+            "radius": 471.8024328613282,
+            "result": [
+              {
+                "oriented_edge": {
+                  "edge_id": 8,
+                  "reversed": false
+                },
+                "point": {
+                  "x": 976070471.8024329,
+                  "y": 221360000
+                },
+                "angle": 0
+              },
+              {
+                "oriented_edge": {
+                  "edge_id": 53,
+                  "reversed": true
+                },
+                "point": {
+                  "x": 976069850.8624685,
+                  "y": 221360447.6109159
+                },
+                "angle": 108.42733273565663
+              },
+              {
+                "oriented_edge": {
+                  "edge_id": 7,
+                  "reversed": true
+                },
+                "point": {
+                  "x": 976069850.8624682,
+                  "y": 221360447.61091655
+                },
+                "angle": 108.42733273795687
+              }
+            ]
+          },
+          {
+            "radius": 377.4419462890626,
+            "result": [
+              {
+                "oriented_edge": {
+                  "edge_id": 8,
+                  "reversed": false
+                },
+                "point": {
+                  "x": 976070377.4419466,
+                  "y": 221360000
+                },
+                "angle": 0
+              },
+              {
+                "oriented_edge": {
+                  "edge_id": 53,
+                  "reversed": true
+                },
+                "point": {
+                  "x": 976069880.6899745,
+                  "y": 221360358.08873338
+                },
+                "angle": 108.42733273853194
+              },
+              {
+                "oriented_edge": {
+                  "edge_id": 7,
+                  "reversed": true
+                },
+                "point": {
+                  "x": 976069880.6899744,
+                  "y": 221360358.08873367
+                },
+                "angle": 108.42733274139964
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "vertex": 50,
+        "radii": [
+          {
+            "radius": 128532.61689980254,
+            "result": [
+              {
+                "oriented_edge": {
+                  "edge_id": 52,
+                  "reversed": false
+                },
+                "point": {
+                  "x": 975855715.3346936,
+                  "y": 232150321.9570877
+                },
+                "angle": 109.02742617745139
+              },
+              {
+                "oriented_edge": {
+                  "edge_id": 51,
+                  "reversed": false
+                },
+                "point": {
+                  "x": 975855715.334693,
+                  "y": 232150321.9570892
+                },
+                "angle": 109.02742617748602
+              },
+              {
+                "oriented_edge": {
+                  "edge_id": 45,
+                  "reversed": true
+                },
+                "point": {
+                  "x": 975939523.926077,
+                  "y": 231907302.0928001
+                },
+                "angle": 289.02742617744354
+              }
+            ]
+          },
+          {
+            "radius": 102826.09351984203,
+            "result": [
+              {
+                "oriented_edge": {
+                  "edge_id": 52,
+                  "reversed": false
+                },
+                "point": {
+                  "x": 975864096.1938317,
+                  "y": 232126019.97065955
+                },
+                "angle": 109.02742617745334
+              },
+              {
+                "oriented_edge": {
+                  "edge_id": 51,
+                  "reversed": false
+                },
+                "point": {
+                  "x": 975864096.1938314,
+                  "y": 232126019.97066018
+                },
+                "angle": 109.02742617746523
+              },
+              {
+                "oriented_edge": {
+                  "edge_id": 45,
+                  "reversed": true
+                },
+                "point": {
+                  "x": 975931143.0669386,
+                  "y": 231931604.07922894
+                },
+                "angle": 289.0274261774425
+              }
+            ]
+          },
+          {
+            "radius": 82260.87481587364,
+            "result": [
+              {
+                "oriented_edge": {
+                  "edge_id": 52,
+                  "reversed": false
+                },
+                "point": {
+                  "x": 975870800.8811421,
+                  "y": 232106578.38151702
+                },
+                "angle": 109.02742617749121
+              },
+              {
+                "oriented_edge": {
+                  "edge_id": 51,
+                  "reversed": false
+                },
+                "point": {
+                  "x": 975870800.8811423,
+                  "y": 232106578.38151667
+                },
+                "angle": 109.02742617749394
+              },
+              {
+                "oriented_edge": {
+                  "edge_id": 45,
+                  "reversed": true
+                },
+                "point": {
+                  "x": 975924438.3796281,
+                  "y": 231951045.66837174
+                },
+                "angle": 289.0274261774601
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "reducedFans": [
+      {
+        "vertex": 8,
+        "edges": [
+          8,
+          53,
+          7
+        ],
+        "variants": [
+          {
+            "centered": false,
+            "groups": [
+              [
+                {
+                  "edge_id": 8,
+                  "reversed": false
+                }
+              ],
+              [
+                {
+                  "edge_id": 53,
+                  "reversed": true
+                },
+                {
+                  "edge_id": 7,
+                  "reversed": true
+                }
+              ]
+            ]
+          },
+          {
+            "centered": true,
+            "groups": [
+              [
+                {
+                  "edge_id": 8,
+                  "reversed": false
+                }
+              ],
+              [
+                {
+                  "edge_id": 7,
+                  "reversed": true
+                },
+                {
+                  "edge_id": 53,
+                  "reversed": true
+                }
+              ]
+            ]
+          }
+        ]
+      },
+      {
+        "vertex": 50,
+        "edges": [
+          52,
+          51,
+          45
+        ],
+        "variants": [
+          {
+            "centered": false,
+            "groups": [
+              [
+                {
+                  "edge_id": 52,
+                  "reversed": false
+                }
+              ],
+              [
+                {
+                  "edge_id": 51,
+                  "reversed": false
+                }
+              ],
+              [
+                {
+                  "edge_id": 45,
+                  "reversed": true
+                }
+              ]
+            ]
+          },
+          {
+            "centered": true,
+            "groups": [
+              [
+                {
+                  "edge_id": 51,
+                  "reversed": false
+                }
+              ],
+              [
+                {
+                  "edge_id": 52,
+                  "reversed": false
+                }
+              ],
+              [
+                {
+                  "edge_id": 45,
+                  "reversed": true
+                }
+              ]
+            ]
+          }
+        ]
+      }
+    ],
+    "experiments": [
+      {
+        "changedVertices": [],
+        "dual": {
+          "ok": true
+        },
+        "faces": 9,
+        "winds": [
+          {
+            "error": {
+              "edge_id": 47,
+              "face_id": 1,
+              "assigned": 0,
+              "required": -1
+            }
+          },
+          {
+            "error": {
+              "edge_id": 52,
+              "face_id": 1,
+              "assigned": -1,
+              "required": 1
+            }
+          }
+        ],
+        "operations": [
+          {
+            "name": "union",
+            "error": {
+              "error": {}
+            },
+            "signedArea": null,
+            "segments": null
+          },
+          {
+            "name": "difference",
+            "error": {
+              "error": {}
+            },
+            "signedArea": null,
+            "segments": null
+          },
+          {
+            "name": "intersection",
+            "error": {
+              "error": {}
+            },
+            "signedArea": null,
+            "segments": null
+          }
+        ]
+      },
+      {
+        "changedVertices": [
+          8
+        ],
+        "dual": {
+          "ok": true
+        },
+        "faces": 9,
+        "winds": [
+          {
+            "error": {
+              "edge_id": 47,
+              "face_id": 0,
+              "assigned": 0,
+              "required": -1
+            }
+          },
+          {
+            "error": {
+              "edge_id": 52,
+              "face_id": 0,
+              "assigned": 0,
+              "required": -1
+            }
+          }
+        ],
+        "operations": [
+          {
+            "name": "union",
+            "error": {
+              "error": {}
+            },
+            "signedArea": null,
+            "segments": null
+          },
+          {
+            "name": "difference",
+            "error": {
+              "error": {}
+            },
+            "signedArea": null,
+            "segments": null
+          },
+          {
+            "name": "intersection",
+            "error": {
+              "error": {}
+            },
+            "signedArea": null,
+            "segments": null
+          }
+        ]
+      },
+      {
+        "changedVertices": [
+          50
+        ],
+        "dual": {
+          "ok": true
+        },
+        "faces": 9,
+        "winds": [
+          {
+            "error": {
+              "edge_id": 47,
+              "face_id": 8,
+              "assigned": 0,
+              "required": 1
+            }
+          },
+          {
+            "error": {
+              "edge_id": 53,
+              "face_id": 0,
+              "assigned": 0,
+              "required": -1
+            }
+          }
+        ],
+        "operations": [
+          {
+            "name": "union",
+            "error": {
+              "error": {}
+            },
+            "signedArea": null,
+            "segments": null
+          },
+          {
+            "name": "difference",
+            "error": {
+              "error": {}
+            },
+            "signedArea": null,
+            "segments": null
+          },
+          {
+            "name": "intersection",
+            "error": {
+              "error": {}
+            },
+            "signedArea": null,
+            "segments": null
+          }
+        ]
+      },
+      {
+        "changedVertices": [
+          8,
+          50
+        ],
+        "dual": {
+          "ok": true
+        },
+        "faces": 11,
+        "winds": [
+          {
+            "ok": true
+          },
+          {
+            "ok": true
+          }
+        ],
+        "operations": [
+          {
+            "name": "union",
+            "ok": true,
+            "signedArea": 1556053202065645.5,
+            "segments": 31
+          },
+          {
+            "name": "difference",
+            "ok": true,
+            "signedArea": 10704102065675.133,
+            "segments": 10
+          },
+          {
+            "name": "intersection",
+            "ok": true,
+            "signedArea": 1146910082740329,
+            "segments": 47
+          }
+        ]
+      },
+      {
+        "changedVertices": "all vertices resampled in local coordinates",
+        "dual": {
+          "ok": true
+        },
+        "faces": 11,
+        "winds": [
+          {
+            "ok": true
+          },
+          {
+            "ok": true
+          }
+        ],
+        "operations": [
+          {
+            "name": "union",
+            "ok": true,
+            "signedArea": 1556053202065645.5,
+            "segments": 31
+          },
+          {
+            "name": "difference",
+            "ok": true,
+            "signedArea": 10704102065675.133,
+            "segments": 10
+          },
+          {
+            "name": "intersection",
+            "ok": true,
+            "signedArea": 1146910082740329,
+            "segments": 47
+          }
+        ]
+      }
+    ]
+  }
+]

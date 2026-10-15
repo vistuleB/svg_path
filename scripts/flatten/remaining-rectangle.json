@@ -1,0 +1,130 @@
+{
+  "implementation": "a0d45fbc4a7e1485791cd19e2d18a58787001012",
+  "rows": [
+    {
+      "id": 4354,
+      "mode": "rectangle",
+      "tolerance": 1e-06,
+      "scale": 1,
+      "result": {
+        "actual": {
+          "type": "Path",
+          "subpaths": {
+            "type": "NonEmpty",
+            "head": {
+              "type": "Subpath",
+              "start": {
+                "type": "Point",
+                "x": 100,
+                "y": 200
+              },
+              "segments": {
+                "type": "NonEmpty",
+                "head": {
+                  "type": "Line",
+                  "start": {
+                    "type": "Point",
+                    "x": 100,
+                    "y": 200
+                  },
+                  "end": {
+                    "type": "Point",
+                    "x": 0,
+                    "y": 200
+                  }
+                },
+                "tail": {
+                  "type": "NonEmpty",
+                  "head": {
+                    "type": "Line",
+                    "start": {
+                      "type": "Point",
+                      "x": 0,
+                      "y": 200
+                    },
+                    "end": {
+                      "type": "Point",
+                      "x": 0,
+                      "y": 0
+                    }
+                  },
+                  "tail": {
+                    "type": "NonEmpty",
+                    "head": {
+                      "type": "Line",
+                      "start": {
+                        "type": "Point",
+                        "x": 0,
+                        "y": 0
+                      },
+                      "end": {
+                        "type": "Point",
+                        "x": 100,
+                        "y": 0
+                      }
+                    },
+                    "tail": {
+                      "type": "NonEmpty",
+                      "head": {
+                        "type": "Line",
+                        "start": {
+                          "type": "Point",
+                          "x": 100,
+                          "y": 0
+                        },
+                        "end": {
+                          "type": "Point",
+                          "x": 100,
+                          "y": 200
+                        }
+                      },
+                      "tail": {
+                        "type": "Empty"
+                      }
+                    }
+                  }
+                }
+              },
+              "closed": true
+            },
+            "tail": {
+              "type": "Empty"
+            }
+          }
+        },
+        "samples": [
+          {
+            "point": {
+              "x": 50,
+              "y": 100
+            },
+            "left": {
+              "ok": true
+            },
+            "ours": "Inside",
+            "upstream": "Outside"
+          },
+          {
+            "point": {
+              "x": 150,
+              "y": 100
+            },
+            "left": {
+              "ok": true
+            },
+            "ours": "Outside",
+            "upstream": "Inside"
+          }
+        ]
+      },
+      "ms": 33.12737499999999
+    }
+  ],
+  "probeSettings": {
+    "timeoutMs": 60000,
+    "minimumLength": 1e-05,
+    "distanceMaxDepth": 48,
+    "distanceTolerance": 1e-09,
+    "diagnosticRuntime": false
+  }
+}

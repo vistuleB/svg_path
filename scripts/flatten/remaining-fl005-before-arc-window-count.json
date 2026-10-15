@@ -1,0 +1,30 @@
+{
+  "implementation": "a0d45fbc4a7e1485791cd19e2d18a58787001012",
+  "probeSettings": {
+    "timeoutMs": 60000,
+    "minimumLength": 0.00001,
+    "distanceMaxDepth": 48,
+    "distanceTolerance": 1e-9,
+    "diagnosticRuntime": true
+  },
+  "rows": [
+    {
+      "id": 317,
+      "mode": "distance-arc-reduced",
+      "tolerance": 0.000001,
+      "scale": 1,
+      "error": {
+        "type": "Object",
+        "diagnosticStop": true,
+        "windows": 200000,
+        "remaining_depth": 29,
+        "best": {
+          "type": "DistanceMinimum",
+          "left_t": 1,
+          "right_t": 0.6443846310209482,
+          "distance_squared": 8374.02830191509
+        }
+      }
+    }
+  ]
+}

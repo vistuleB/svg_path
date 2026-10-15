@@ -42,7 +42,14 @@
       "status": "needs-investigation",
       "timeout": true
     },
-    "disposition": null
+    "disposition": {
+      "status": "fixed",
+      "finding": "FL005",
+      "fixStatus": "fixed-in-gleam-fsharp-port-pending",
+      "reason": "Line/arc finite candidates and tighter arc/arc projection bounds resolve the original polygon query and all 44 constituent pair queries. Full Gleam validation passed; F# port pending.",
+      "verification": "remaining-fl005-complete-replay.json",
+      "pairVerification": "remaining-fl005-bound-pairs.json"
+    }
   },
   {
     "id": "polygons:3115",
@@ -70,7 +77,11 @@
         "distance": 5.684341886080802e-14
       }
     },
-    "disposition": null
+    "disposition": {
+      "status": "adapter-contract-difference",
+      "reason": "Captured upstream contour has unequal consecutive endpoints. Strict subpath construction correctly rejects it before the affected query. Geometry comparison remains unexecuted pending an explicit adapter continuity policy.",
+      "verification": "remaining-gaps.json"
+    }
   },
   {
     "id": "polygons:3380",
@@ -91,7 +102,15 @@
         }
       }
     },
-    "disposition": null
+    "disposition": {
+      "status": "confirmed-native-failure",
+      "finding": "FL002",
+      "fixStatus": "partial",
+      "reason": "Line-overlap classifier fixed separately. Remaining winding failure localized to reversed cyclic order at vertex 12. Diagnostic vertex-local resampling restores 13 faces and successful Boolean operations; production topology fix pending.",
+      "verification": "remaining-fl002-endpoint-original.json",
+      "reducedVerification": "remaining-fl002-endpoint-reduced.json",
+      "topologyVerification": "remaining-topology-replay.json"
+    }
   },
   {
     "id": "polygons:3497",
@@ -109,7 +128,14 @@
         }
       }
     },
-    "disposition": null
+    "disposition": {
+      "status": "confirmed-native-failure",
+      "finding": "FL003",
+      "fixStatus": "open",
+      "reason": "Winding failure localized to reversed cyclic orders at vertices 8 and 50. Diagnostic vertex-local resampling restores 11 faces and successful Boolean operations; production fix pending.",
+      "verification": "remaining-arrangement.json",
+      "topologyVerification": "remaining-topology-replay.json"
+    }
   },
   {
     "id": "polygons:4033",
@@ -130,7 +156,15 @@
         }
       }
     },
-    "disposition": null
+    "disposition": {
+      "status": "confirmed-native-failure",
+      "finding": "FL002",
+      "fixStatus": "partial",
+      "reason": "Line-overlap classifier fixed separately. Remaining winding failure localized to reversed cyclic order at vertex 12. Diagnostic vertex-local resampling restores 13 faces and successful Boolean operations; production topology fix pending.",
+      "verification": "remaining-fl002-endpoint-original.json",
+      "reducedVerification": "remaining-fl002-endpoint-reduced.json",
+      "topologyVerification": "remaining-topology-replay.json"
+    }
   },
   {
     "id": "polygons:4150",
@@ -148,7 +182,14 @@
         }
       }
     },
-    "disposition": null
+    "disposition": {
+      "status": "confirmed-native-failure",
+      "finding": "FL003",
+      "fixStatus": "open",
+      "reason": "Winding failure localized to reversed cyclic orders at vertices 8 and 50. Diagnostic vertex-local resampling restores 11 faces and successful Boolean operations; production fix pending.",
+      "verification": "remaining-arrangement.json",
+      "topologyVerification": "remaining-topology-replay.json"
+    }
   },
   {
     "id": "polygons:4278",
@@ -176,7 +217,11 @@
         "distance": 1.4210854715202004e-13
       }
     },
-    "disposition": null
+    "disposition": {
+      "status": "adapter-contract-difference",
+      "reason": "Captured upstream contour has unequal consecutive endpoints. Strict subpath construction correctly rejects it before the affected query. Geometry comparison remains unexecuted pending an explicit adapter continuity policy.",
+      "verification": "remaining-gaps.json"
+    }
   },
   {
     "id": "polygons:4279",
@@ -204,7 +249,11 @@
         "distance": 1.4210854715202004e-13
       }
     },
-    "disposition": null
+    "disposition": {
+      "status": "adapter-contract-difference",
+      "reason": "Captured upstream contour has unequal consecutive endpoints. Strict subpath construction correctly rejects it before the affected query. Geometry comparison remains unexecuted pending an explicit adapter continuity policy.",
+      "verification": "remaining-gaps.json"
+    }
   },
   {
     "id": "polygons:4280",
@@ -232,7 +281,11 @@
         "distance": 2.2737367544323206e-13
       }
     },
-    "disposition": null
+    "disposition": {
+      "status": "adapter-contract-difference",
+      "reason": "Captured upstream contour has unequal consecutive endpoints. Strict subpath construction correctly rejects it before the affected query. Geometry comparison remains unexecuted pending an explicit adapter continuity policy.",
+      "verification": "remaining-gaps.json"
+    }
   },
   {
     "id": "polygons:4281",
@@ -260,7 +313,11 @@
         "distance": 6.629024818318271e-13
       }
     },
-    "disposition": null
+    "disposition": {
+      "status": "adapter-contract-difference",
+      "reason": "Captured upstream contour has unequal consecutive endpoints. Strict subpath construction correctly rejects it before the affected query. Geometry comparison remains unexecuted pending an explicit adapter continuity policy.",
+      "verification": "remaining-gaps.json"
+    }
   },
   {
     "id": "polygons:4282",
@@ -288,7 +345,11 @@
         "distance": 7.190186943645084e-13
       }
     },
-    "disposition": null
+    "disposition": {
+      "status": "adapter-contract-difference",
+      "reason": "Captured upstream contour has unequal consecutive endpoints. Strict subpath construction correctly rejects it before the affected query. Geometry comparison remains unexecuted pending an explicit adapter continuity policy.",
+      "verification": "remaining-gaps.json"
+    }
   },
   {
     "id": "polygons:4291",
@@ -316,7 +377,11 @@
         "distance": 1.4238583238573986e-14
       }
     },
-    "disposition": null
+    "disposition": {
+      "status": "adapter-contract-difference",
+      "reason": "Captured upstream contour has unequal consecutive endpoints. Strict subpath construction correctly rejects it before the affected query. Geometry comparison remains unexecuted pending an explicit adapter continuity policy.",
+      "verification": "remaining-gaps.json"
+    }
   },
   {
     "id": "polygons:4292",
@@ -344,7 +409,11 @@
         "distance": 1.4238583238573986e-14
       }
     },
-    "disposition": null
+    "disposition": {
+      "status": "adapter-contract-difference",
+      "reason": "Captured upstream contour has unequal consecutive endpoints. Strict subpath construction correctly rejects it before the affected query. Geometry comparison remains unexecuted pending an explicit adapter continuity policy.",
+      "verification": "remaining-gaps.json"
+    }
   },
   {
     "id": "polygons:4293",
@@ -372,7 +441,11 @@
         "distance": 1.724530548492318e-14
       }
     },
-    "disposition": null
+    "disposition": {
+      "status": "adapter-contract-difference",
+      "reason": "Captured upstream contour has unequal consecutive endpoints. Strict subpath construction correctly rejects it before the affected query. Geometry comparison remains unexecuted pending an explicit adapter continuity policy.",
+      "verification": "remaining-gaps.json"
+    }
   },
   {
     "id": "polygons:4294",
@@ -400,7 +473,11 @@
         "distance": 1.724530548492318e-14
       }
     },
-    "disposition": null
+    "disposition": {
+      "status": "adapter-contract-difference",
+      "reason": "Captured upstream contour has unequal consecutive endpoints. Strict subpath construction correctly rejects it before the affected query. Geometry comparison remains unexecuted pending an explicit adapter continuity policy.",
+      "verification": "remaining-gaps.json"
+    }
   },
   {
     "id": "polygons:4295",
@@ -428,7 +505,11 @@
         "distance": 1.0048591735576161e-14
       }
     },
-    "disposition": null
+    "disposition": {
+      "status": "adapter-contract-difference",
+      "reason": "Captured upstream contour has unequal consecutive endpoints. Strict subpath construction correctly rejects it before the affected query. Geometry comparison remains unexecuted pending an explicit adapter continuity policy.",
+      "verification": "remaining-gaps.json"
+    }
   },
   {
     "id": "polygons:4296",
@@ -456,7 +537,11 @@
         "distance": 1.0048591735576161e-14
       }
     },
-    "disposition": null
+    "disposition": {
+      "status": "adapter-contract-difference",
+      "reason": "Captured upstream contour has unequal consecutive endpoints. Strict subpath construction correctly rejects it before the affected query. Geometry comparison remains unexecuted pending an explicit adapter continuity policy.",
+      "verification": "remaining-gaps.json"
+    }
   },
   {
     "id": "polygons:4354",
@@ -1150,7 +1235,11 @@
         }
       ]
     },
-    "disposition": null
+    "disposition": {
+      "status": "upstream-contract-difference",
+      "reason": "Opposite face orientations violate Flatten Boolean operand precondition; reversing its cutter yields our correct left-half subtraction. Original upstream test checks only edge/face counts.",
+      "verification": "remaining-rectangle-reference.json"
+    }
   },
   {
     "id": "polygons:4682",
@@ -1171,7 +1260,15 @@
         }
       }
     },
-    "disposition": null
+    "disposition": {
+      "status": "confirmed-native-failure",
+      "finding": "FL002",
+      "fixStatus": "partial",
+      "reason": "Line-overlap classifier fixed separately. Remaining winding failure localized to reversed cyclic order at vertex 12. Diagnostic vertex-local resampling restores 13 faces and successful Boolean operations; production topology fix pending.",
+      "verification": "remaining-fl002-endpoint-original.json",
+      "reducedVerification": "remaining-fl002-endpoint-reduced.json",
+      "topologyVerification": "remaining-topology-replay.json"
+    }
   },
   {
     "id": "polygons:4799",
@@ -1189,7 +1286,14 @@
         }
       }
     },
-    "disposition": null
+    "disposition": {
+      "status": "confirmed-native-failure",
+      "finding": "FL003",
+      "fixStatus": "open",
+      "reason": "Winding failure localized to reversed cyclic orders at vertices 8 and 50. Diagnostic vertex-local resampling restores 11 faces and successful Boolean operations; production fix pending.",
+      "verification": "remaining-arrangement.json",
+      "topologyVerification": "remaining-topology-replay.json"
+    }
   },
   {
     "id": "polygons:4920",
@@ -1207,6 +1311,12 @@
         }
       }
     },
-    "disposition": null
+    "disposition": {
+      "status": "confirmed-native-failure",
+      "finding": "FL004",
+      "fixStatus": "open",
+      "reason": "Confirmed native dual sweep contradiction on accepted line polygons; public error reproduced on JavaScript and Erlang.",
+      "verification": "remaining-internal.json"
+    }
   }
 ]

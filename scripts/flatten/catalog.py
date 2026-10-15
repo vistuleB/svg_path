@@ -45,7 +45,7 @@ for c in comparisons:
     flags.append({'id':key,'file':c['file'],'test':c['test'],'operation':c['operation'],
                   'observation':c['comparison'],'disposition':dispositions.get(key)})
 (root/'discrepancy-queue.json').write_text(json.dumps(flags,indent=2)+'\n')
-queue=['# Deferred discrepancy queue','','Raw flagged comparisons, not a count of confirmed bugs. See FINDINGS.md for known diagnoses.','',
+queue=['# Discrepancy dispositions','','Raw flagged comparisons, not a count of confirmed bugs. See REMAINING-TRIAGE.md for current diagnoses and open fixes; FINDINGS.md retains the history.','',
        '| Call | Upstream file and test | Observation | Disposition |','| --- | --- | --- | --- |']
 for f in flags:
     d=f['observation'];detail=d.get('error','30-second timeout' if d.get('timeout') else 'sampled geometry mismatch')

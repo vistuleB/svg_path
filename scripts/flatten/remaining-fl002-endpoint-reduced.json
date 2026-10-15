@@ -1,0 +1,71 @@
+{
+  "implementation": "a0d45fbc4a7e1485791cd19e2d18a58787001012",
+  "probeSettings": {
+    "timeoutMs": 60000,
+    "minimumLength": 0.00001,
+    "distanceMaxDepth": 48,
+    "distanceTolerance": 1e-9,
+    "diagnosticRuntime": false
+  },
+  "rows": [
+    {
+      "id": 3380,
+      "mode": "overlap-reduced",
+      "tolerance": 0.000001,
+      "scale": 1,
+      "result": {
+        "left": {
+          "start": {
+            "x": 1336017144.7222269,
+            "y": 514632.0777871349
+          },
+          "end": {
+            "x": 1336017149.883367,
+            "y": 514641.78073088516
+          }
+        },
+        "right": {
+          "start": {
+            "x": 1336017144.722227,
+            "y": 514632.077786993
+          },
+          "end": {
+            "x": 1336017149.8833673,
+            "y": 514641.780730718
+          }
+        },
+        "tolerance": 5e-7,
+        "intersections": {
+          "type": "OverlappingSegments"
+        },
+        "overlaps": {
+          "0": {
+            "type": "NonEmpty",
+            "head": {
+              "type": "SegmentOverlap",
+              "left_from": 0,
+              "left_to": 1,
+              "right_from": 0,
+              "right_to": 1,
+              "start": {
+                "type": "Point",
+                "x": 1336017144.7222269,
+                "y": 514632.0777871349
+              },
+              "end": {
+                "type": "Point",
+                "x": 1336017149.883367,
+                "y": 514641.78073088516
+              }
+            },
+            "tail": {
+              "type": "Empty"
+            }
+          },
+          "type": "Ok"
+        }
+      },
+      "ms": 5.559250000000006
+    }
+  ]
+}

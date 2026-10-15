@@ -1,0 +1,600 @@
+[
+  {
+    "id": 3380,
+    "vertices": 37,
+    "edges": 48,
+    "storedWalks": 11,
+    "alternativeWalks": {
+      "vertex": 13,
+      "segment": 13
+    },
+    "mismatches": [
+      {
+        "mode": "vertex",
+        "vertex": 12,
+        "point": {
+          "x": 1286232330.342853,
+          "y": 54685500.32193941
+        },
+        "stored": [
+          [
+            11,
+            true
+          ],
+          [
+            39,
+            true
+          ],
+          [
+            41,
+            false
+          ],
+          [
+            12,
+            false
+          ]
+        ],
+        "alternative": [
+          [
+            11,
+            true
+          ],
+          [
+            39,
+            true
+          ],
+          [
+            12,
+            false
+          ],
+          [
+            41,
+            false
+          ]
+        ],
+        "walkCountAfterSingleReplacement": 13,
+        "directions": [
+          {
+            "dart": [
+              11,
+              true
+            ],
+            "angle": 104.13705705231746
+          },
+          {
+            "dart": [
+              39,
+              true
+            ],
+            "angle": 121.90760760836606
+          },
+          {
+            "dart": [
+              12,
+              false
+            ],
+            "angle": -58.09239239163599
+          },
+          {
+            "dart": [
+              41,
+              false
+            ],
+            "angle": -58.09239239163385
+          }
+        ]
+      },
+      {
+        "mode": "segment",
+        "vertex": 12,
+        "point": {
+          "x": 1286232330.342853,
+          "y": 54685500.32193941
+        },
+        "stored": [
+          [
+            11,
+            true
+          ],
+          [
+            39,
+            true
+          ],
+          [
+            41,
+            false
+          ],
+          [
+            12,
+            false
+          ]
+        ],
+        "alternative": [
+          [
+            11,
+            true
+          ],
+          [
+            39,
+            true
+          ],
+          [
+            12,
+            false
+          ],
+          [
+            41,
+            false
+          ]
+        ],
+        "walkCountAfterSingleReplacement": 13,
+        "directions": [
+          {
+            "dart": [
+              11,
+              true
+            ],
+            "angle": 104.13705705231746
+          },
+          {
+            "dart": [
+              39,
+              true
+            ],
+            "angle": 121.90760760836606
+          },
+          {
+            "dart": [
+              12,
+              false
+            ],
+            "angle": -58.09239239163599
+          },
+          {
+            "dart": [
+              41,
+              false
+            ],
+            "angle": -58.09239239163384
+          }
+        ]
+      }
+    ],
+    "properStoredSegmentCrossings": [
+      {
+        "edges": [
+          1,
+          33
+        ],
+        "t": 2.3351022243425594e-13,
+        "u": 1.9159705448316567e-13,
+        "position": {
+          "x": 1171782510.0105433,
+          "y": 256209390.9308948
+        },
+        "sharedVertices": [
+          1
+        ],
+        "distanceToShared": [
+          4.298152059869753e-06
+        ]
+      },
+      {
+        "edges": [
+          4,
+          35
+        ],
+        "t": 1.301062774052781e-12,
+        "u": 2.7099518148033037e-13,
+        "position": {
+          "x": 1154272706.1855671,
+          "y": 267950000.0
+        },
+        "sharedVertices": [
+          4
+        ],
+        "distanceToShared": [
+          2.9802322387695312e-08
+        ]
+      },
+      {
+        "edges": [
+          40,
+          42
+        ],
+        "t": 8.07251066049327e-11,
+        "u": 3.0324181935492787e-12,
+        "position": {
+          "x": 1319996203.9439182,
+          "y": 457619.7647728033
+        },
+        "sharedVertices": [
+          34
+        ],
+        "distanceToShared": [
+          1.4079162607308747e-06
+        ]
+      },
+      {
+        "edges": [
+          19,
+          46
+        ],
+        "t": 0.9999999999409863,
+        "u": 0.9999999999992002,
+        "position": {
+          "x": 1336017144.722227,
+          "y": 514632.07778686157
+        },
+        "sharedVertices": [
+          20
+        ],
+        "distanceToShared": [
+          2.0238803699612617e-07
+        ]
+      },
+      {
+        "edges": [
+          30,
+          32
+        ],
+        "t": 1.945294319734738e-14,
+        "u": 4.4693264904816645e-15,
+        "position": {
+          "x": 1335867232.6775198,
+          "y": 757832.3222160346
+        },
+        "sharedVertices": [
+          30
+        ],
+        "distanceToShared": [
+          1.366820791794937e-06
+        ]
+      }
+    ]
+  },
+  {
+    "id": 3497,
+    "vertices": 54,
+    "edges": 63,
+    "storedWalks": 9,
+    "alternativeWalks": {
+      "vertex": 11,
+      "segment": 11
+    },
+    "mismatches": [
+      {
+        "mode": "vertex",
+        "vertex": 8,
+        "point": {
+          "x": 976070000,
+          "y": 221360000
+        },
+        "stored": [
+          [
+            8,
+            false
+          ],
+          [
+            53,
+            true
+          ],
+          [
+            7,
+            true
+          ]
+        ],
+        "alternative": [
+          [
+            8,
+            false
+          ],
+          [
+            7,
+            true
+          ],
+          [
+            53,
+            true
+          ]
+        ],
+        "walkCountAfterSingleReplacement": 9,
+        "directions": [
+          {
+            "dart": [
+              8,
+              false
+            ],
+            "angle": 0.0
+          },
+          {
+            "dart": [
+              7,
+              true
+            ],
+            "angle": 108.42733273757098
+          },
+          {
+            "dart": [
+              53,
+              true
+            ],
+            "angle": 108.42733274168107
+          }
+        ]
+      },
+      {
+        "mode": "vertex",
+        "vertex": 50,
+        "point": {
+          "x": 975897619.6303852,
+          "y": 232028812.02494428
+        },
+        "stored": [
+          [
+            52,
+            false
+          ],
+          [
+            51,
+            false
+          ],
+          [
+            45,
+            true
+          ]
+        ],
+        "alternative": [
+          [
+            51,
+            false
+          ],
+          [
+            52,
+            false
+          ],
+          [
+            45,
+            true
+          ]
+        ],
+        "walkCountAfterSingleReplacement": 9,
+        "directions": [
+          {
+            "dart": [
+              51,
+              false
+            ],
+            "angle": 109.02742617746709
+          },
+          {
+            "dart": [
+              52,
+              false
+            ],
+            "angle": 109.02742617747036
+          },
+          {
+            "dart": [
+              45,
+              true
+            ],
+            "angle": -70.97257382254291
+          }
+        ]
+      },
+      {
+        "mode": "segment",
+        "vertex": 8,
+        "point": {
+          "x": 976070000,
+          "y": 221360000
+        },
+        "stored": [
+          [
+            8,
+            false
+          ],
+          [
+            53,
+            true
+          ],
+          [
+            7,
+            true
+          ]
+        ],
+        "alternative": [
+          [
+            8,
+            false
+          ],
+          [
+            7,
+            true
+          ],
+          [
+            53,
+            true
+          ]
+        ],
+        "walkCountAfterSingleReplacement": 9,
+        "directions": [
+          {
+            "dart": [
+              8,
+              false
+            ],
+            "angle": 0.0
+          },
+          {
+            "dart": [
+              7,
+              true
+            ],
+            "angle": 108.42733273757098
+          },
+          {
+            "dart": [
+              53,
+              true
+            ],
+            "angle": 108.42733274168107
+          }
+        ]
+      },
+      {
+        "mode": "segment",
+        "vertex": 50,
+        "point": {
+          "x": 975897619.6303852,
+          "y": 232028812.02494428
+        },
+        "stored": [
+          [
+            52,
+            false
+          ],
+          [
+            51,
+            false
+          ],
+          [
+            45,
+            true
+          ]
+        ],
+        "alternative": [
+          [
+            51,
+            false
+          ],
+          [
+            52,
+            false
+          ],
+          [
+            45,
+            true
+          ]
+        ],
+        "walkCountAfterSingleReplacement": 9,
+        "directions": [
+          {
+            "dart": [
+              51,
+              false
+            ],
+            "angle": 109.02742617746709
+          },
+          {
+            "dart": [
+              52,
+              false
+            ],
+            "angle": 109.02742617747052
+          },
+          {
+            "dart": [
+              45,
+              true
+            ],
+            "angle": -70.97257382254637
+          }
+        ]
+      }
+    ],
+    "properStoredSegmentCrossings": [
+      {
+        "edges": [
+          9,
+          55
+        ],
+        "t": 0.9999999999577329,
+        "u": 0.9999999999571026,
+        "position": {
+          "x": 976133768.8287531,
+          "y": 221170835.3623828
+        },
+        "sharedVertices": [
+          10
+        ],
+        "distanceToShared": [
+          8.427051306687483e-06
+        ]
+      },
+      {
+        "edges": [
+          11,
+          56
+        ],
+        "t": 4.1768295893486033e-13,
+        "u": 1.3016896381359242e-13,
+        "position": {
+          "x": 978480316.5153545,
+          "y": 212915423.20106918
+        },
+        "sharedVertices": [
+          11
+        ],
+        "distanceToShared": [
+          2.5259995580216755e-06
+        ]
+      },
+      {
+        "edges": [
+          15,
+          57
+        ],
+        "t": 3.8423573550668965e-13,
+        "u": 1.5131985383212126e-15,
+        "position": {
+          "x": 985572292.7782382,
+          "y": 187965072.76810953
+        },
+        "sharedVertices": [
+          15
+        ],
+        "distanceToShared": [
+          1.4901161193847656e-07
+        ]
+      },
+      {
+        "edges": [
+          24,
+          59
+        ],
+        "t": 9.543327687922337e-13,
+        "u": 1.1822391700527749e-12,
+        "position": {
+          "x": 1042106828.0223792,
+          "y": 253171.97762089045
+        },
+        "sharedVertices": [
+          24
+        ],
+        "distanceToShared": [
+          3.2240386482919657e-07
+        ]
+      },
+      {
+        "edges": [
+          30,
+          61
+        ],
+        "t": 0.9999999999997954,
+        "u": 0.9999999999998647,
+        "position": {
+          "x": 1046506509.4862503,
+          "y": 11004971.706642656
+        },
+        "sharedVertices": [
+          31
+        ],
+        "distanceToShared": [
+          1.5034223524032403e-06
+        ]
+      }
+    ]
+  }
+]

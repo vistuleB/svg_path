@@ -1,0 +1,17 @@
+  Resolving versions
+Downloading packages
+ Downloaded 1 package in 0.02s
+      Added gleam_stdlib v1.0.5
+      Added svg_path v3.1.3
+  Compiling gleam_stdlib
+  Compiling svg_path
+  Compiling flatten_remaining_probe
+   Compiled in 2.23s
+    Running flatten_remaining_probe.main
+3380 union: Error(ArrangementGraphError(PathError(InternalOverlapClassificationInconsistency)))
+3380 difference: Error(ArrangementGraphError(PathError(InternalOverlapClassificationInconsistency)))
+3380 intersection: Error(ArrangementGraphError(PathError(InternalOverlapClassificationInconsistency)))
+3497 union: Error(ArrangementGraphError(ConstructionFailed))
+3497 difference: Error(ArrangementGraphError(ConstructionFailed))
+3497 intersection: Error(ArrangementGraphError(ConstructionFailed))
+4920 intersection: Error(ArrangementGraphError(ConstructionFailed))

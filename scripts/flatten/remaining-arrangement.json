@@ -1,0 +1,72 @@
+{
+  "implementation": "a0d45fbc4a7e1485791cd19e2d18a58787001012",
+  "rows": [
+    {
+      "id": 3380,
+      "mode": "arrangement",
+      "tolerance": 1e-06,
+      "scale": 1,
+      "result": {
+        "stage": "build",
+        "error": {
+          "type": "InternalPathError",
+          "error": {
+            "type": "InternalOverlapClassificationInconsistency"
+          }
+        }
+      },
+      "ms": 57.87691699999999
+    },
+    {
+      "id": 3497,
+      "mode": "arrangement",
+      "tolerance": 1e-06,
+      "scale": 1,
+      "result": {
+        "stage": "windings",
+        "winds": [
+          {
+            "type": "ContradictoryWinding",
+            "edge_id": 47,
+            "face_id": 1,
+            "assigned": 0,
+            "required": -1
+          },
+          {
+            "type": "ContradictoryWinding",
+            "edge_id": 52,
+            "face_id": 1,
+            "assigned": -1,
+            "required": 1
+          }
+        ],
+        "vertices": 54,
+        "edges": 63,
+        "faces": 9
+      },
+      "ms": 99.37204200000002
+    },
+    {
+      "id": 4920,
+      "mode": "arrangement",
+      "tolerance": 1e-06,
+      "scale": 1,
+      "result": {
+        "stage": "dual",
+        "error": {
+          "type": "ConstructionFailed"
+        },
+        "vertices": 65,
+        "edges": 69
+      },
+      "ms": 84.257417
+    }
+  ],
+  "probeSettings": {
+    "timeoutMs": 60000,
+    "minimumLength": 1e-05,
+    "distanceMaxDepth": 48,
+    "distanceTolerance": 1e-09,
+    "diagnosticRuntime": false
+  }
+}

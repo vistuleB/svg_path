@@ -1,0 +1,49 @@
+{
+  "implementation": "a0d45fbc4a7e1485791cd19e2d18a58787001012",
+  "rows": [
+    {
+      "id": 3380,
+      "mode": "boolean",
+      "tolerance": 1e-05,
+      "scale": 1,
+      "result": {
+        "ok": true,
+        "area": 3850923260959689.5,
+        "segments": 30
+      },
+      "ms": 78.14424999999999
+    },
+    {
+      "id": 3497,
+      "mode": "boolean",
+      "tolerance": 1e-05,
+      "scale": 1,
+      "result": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "ConstructionFailed"
+        }
+      },
+      "ms": 97.71820799999999
+    },
+    {
+      "id": 4920,
+      "mode": "boolean",
+      "tolerance": 1e-05,
+      "scale": 1,
+      "result": {
+        "ok": true,
+        "area": 0.18898030397878127,
+        "segments": 10
+      },
+      "ms": 105.29987499999999
+    }
+  ],
+  "probeSettings": {
+    "timeoutMs": 60000,
+    "minimumLength": 1e-05,
+    "distanceMaxDepth": 48,
+    "distanceTolerance": 1e-09,
+    "diagnosticRuntime": false
+  }
+}

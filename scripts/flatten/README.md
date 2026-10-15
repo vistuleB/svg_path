@@ -1,5 +1,18 @@
 # Flatten.js geometry audit
 
+## Current status after 3.1.3 triage
+
+All 21 previously deferred polygon observations are classified. **Three native
+failure groups remain open:** FL002 (overlap classifier fixed, later winding failure unresolved), winding contradiction
+(FL003), and dual sweep contradiction (FL004). The seven Boolean errors reproduce
+on Erlang as well as JavaScript. The excessive closest-pair search (FL005) is
+fixed and validated in the Gleam working tree; its F# port is pending. Twelve
+observations are adapter continuity-contract differences; one is an upstream
+orientation-contract mismatch. See [the full triage and reproductions](REMAINING-TRIAGE.md).
+
+This completes discrepancy classification, **not fixes or full assertion parity**.
+The original inventory counts below are retained as historical observations.
+
 Bug-finding comparison of overlapping public contracts, started 2026-10-15.
 Production geometry code was unchanged during inventory. FL001 now has a validated
 fix documented in FINDINGS.md. This audit is separate from the completed
@@ -115,10 +128,13 @@ Installation disables lifecycle scripts. Dependencies and coverage/cache outputs
 are ignored; the source archive remains hash-verified. Capture and comparison
 logs are stored beside their machine-readable reports.
 
-## Remaining scope
+## Remaining scope after triage
 
-The deferred discrepancy queue is ready for investigation. Stronger boundary
+FL002–FL004 in REMAINING-TRIAGE.md need fixes and validation; FL005 needs its F# port.
+The twelve conversion cases need an explicit audit-adapter continuity policy
+before their geometry comparisons can run; they are not passing comparisons.
+Stronger boundary
 checks, cutting/clipping, island grouping, point-based splitting, distance
 witnesses and path-string round trips remain explicit adaptation gaps, not
 silently passing tests. Whole-shape relations/validity are recorded as API-scope
-ideas. No fixes were attempted during inventory; see the later FL001 fix validation in FINDINGS.md.
+ideas. FL001 is fixed in both implementations; FL005 is fixed in Gleam.
