@@ -11,6 +11,9 @@
 //// near-tangent geometry can yield several acceptable candidates for one
 //// mathematical contact. Continuous overlaps are reported as errors here;
 //// use `svg_path/encounters` to query both overlaps and isolated intersections.
+//// Extremely unequal polynomial coordinate ranges may trigger a supplementary
+//// normalized search. Its candidates are checked in the original coordinates;
+//// it does not replace the original search or change overlap tolerances.
 
 import gleam/dict.{type Dict}
 import gleam/float
@@ -5139,15 +5142,134 @@ fn curve_curve_intersections(
   right: Segment,
   options: IntersectionOptions,
 ) -> Result(List(SegmentIntersection), svg_path.Error) {
-  elizabeth_beam_intersections(left, right, options)
-  |> result.map(fn(report) { report.intersections })
-  |> result.map_error(fn(error) {
-    case error {
-      CurveSolverPathError(error) -> error
-      CurveSolverDepthLimit(a, b, c, d) ->
-        svg_path.IntersectionDepthLimitReached(a, b, c, d)
+  use report <- result.try(
+    elizabeth_beam_intersections(left, right, options)
+    |> result.map_error(fn(error) {
+      case error {
+        CurveSolverPathError(error) -> error
+        CurveSolverDepthLimit(a, b, c, d) ->
+          svg_path.IntersectionDepthLimitReached(a, b, c, d)
+      }
+    }),
+  )
+  Ok(supplement_conditioned_candidates(
+    left,
+    right,
+    options,
+    report.intersections,
+  ))
+}
+
+// Supplement, never replace, the original-metric search. Axis normalization
+// changes distances and must not decide overlap or discard existing contacts.
+// Only polynomial pairs with an extreme control-range aspect ratio participate.
+fn supplement_conditioned_candidates(
+  left: Segment,
+  right: Segment,
+  options: IntersectionOptions,
+  original: List(SegmentIntersection),
+) -> List(SegmentIntersection) {
+  let points = case left, right {
+    Arc(..), _ | _, Arc(..) -> []
+    _, _ ->
+      list.append(
+        polynomial_control_points(left),
+        polynomial_control_points(right),
+      )
+  }
+  case points {
+    [] -> original
+    [first, ..rest] -> {
+      let #(low, high) =
+        list.fold(rest, #(first, first), fn(bounds, p) {
+          #(
+            Point(float.min(bounds.0.x, p.x), float.min(bounds.0.y, p.y)),
+            Point(float.max(bounds.1.x, p.x), float.max(bounds.1.y, p.y)),
+          )
+        })
+      let dx = high.x -. low.x
+      let dy = high.y -. low.y
+      case
+        number.is_finite(dx)
+        && number.is_finite(dy)
+        && dx >. 0.0
+        && dy >. 0.0
+        && float.min(dx, dy) <. 0.000001 *. float.max(dx, dy)
+      {
+        False -> original
+        True -> {
+          let normalize = fn(p: Point) {
+            Point({ p.x -. low.x } /. dx, { p.y -. low.y } /. dy)
+          }
+          let normalized = {
+            use a <- result.try(svg_path.segment_map_points(
+              left,
+              with: normalize,
+            ))
+            use b <- result.try(svg_path.segment_map_points(
+              right,
+              with: normalize,
+            ))
+            Ok(#(a, b))
+          }
+          case normalized {
+            Error(_) -> original
+            Ok(#(a, b)) ->
+              case
+                elizabeth_beam_intersections(
+                  a,
+                  b,
+                  IntersectionOptions(
+                    ..options,
+                    tolerance: 0.000000000001,
+                    parameter_snap: NoParameterSnap,
+                  ),
+                )
+              {
+                Error(_) -> original
+                Ok(extra) ->
+                  extra.intersections
+                  |> list.fold(original, fn(kept, candidate) {
+                    case
+                      svg_path.segment_point(left, candidate.left_t),
+                      svg_path.segment_point(right, candidate.right_t)
+                    {
+                      Ok(p), Ok(q) -> {
+                        let midpoint = window_preserving_midpoint(p, q)
+                        case
+                          distance(p, midpoint) <=. options.tolerance
+                          && distance(q, midpoint) <=. options.tolerance
+                          && !list.any(kept, fn(existing) {
+                            elizabeth_candidate_distance(candidate, existing)
+                            <=. elizabeth_dedupe_resolution
+                          })
+                        {
+                          True -> [
+                            SegmentIntersection(..candidate, point: midpoint),
+                            ..kept
+                          ]
+                          False -> kept
+                        }
+                      }
+                      _, _ -> kept
+                    }
+                  })
+                  |> sort_segment_intersections
+              }
+          }
+        }
+      }
     }
-  })
+  }
+}
+
+fn polynomial_control_points(segment: Segment) -> List(Point) {
+  case segment {
+    Line(a, b) -> [a, b]
+    QuadraticBezier(a, b, c) -> [a, b, c]
+    CubicBezier(a, b, c, d) -> [a, b, c, d]
+    Arc(..) -> []
+  }
 }
 
 fn segment_pair_projection_minima(
