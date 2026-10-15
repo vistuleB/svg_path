@@ -9,7 +9,7 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
-## Unreleased
+## 3.1.3 - 2026-10-15
 
 - Fix JavaScript closest-pair stack overflow for crossing line/arc geometry.
   Make descent-list traversal stack-safe and seed line/curve distance searches
