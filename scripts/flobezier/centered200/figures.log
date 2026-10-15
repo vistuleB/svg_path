@@ -1,0 +1,172 @@
+Running fast test profile.
+Downloading packages
+ Downloaded 2 packages in 0.02s
+  Compiling gleam_stdlib
+  Compiling gleeunit
+  Compiling svg_path
+   Compiled in 4.13s
+    Running svg_path_test.main
+............................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................
+2012 passed, no failures
+  Compiling svg_path
+  Compiling readme_arrangement_figures
+   Compiled in 1.17s
+START gallery-rounded-rectangle-union.svg pid=<0.83.0>
+START gallery-stroke-caps.svg pid=<0.84.0>
+START gallery-dashed-strokes.svg pid=<0.85.0>
+START gallery-recursive-dashes.svg pid=<0.86.0>
+START gallery-figure-eight-band.svg pid=<0.87.0>
+START gallery-symmetric-figure-eight-bands.svg pid=<0.88.0>
+START gallery-figure-eight-correspondence-blocks.svg pid=<0.89.0>
+START gallery-figure-eight-convex-hulls.svg pid=<0.90.0>
+START gallery-stroke-offset-tracks.svg pid=<0.91.0>
+START gallery-earth-tone-offsets.svg pid=<0.92.0>
+START gallery-package-title-first-offset.svg pid=<0.93.0>
+START gallery-package-title-second-offset-arrangement.svg pid=<0.94.0>
+START gallery-lazy-dog-offset-coil.svg pid=<0.95.0>
+START gallery-lazy-dog-offset-decaying-spiral.svg pid=<0.96.0>
+START gallery-crescent-hull.svg pid=<0.97.0>
+START gallery-package-title-nine-offsets.svg pid=<0.98.0>
+START gallery-cut-radiator.svg pid=<0.99.0>
+START gallery-intersection-rectangles.svg pid=<0.100.0>
+START gallery-intersection-circle-rectangle.svg pid=<0.101.0>
+START gallery-intersection-nested-nonzero.svg pid=<0.102.0>
+START gallery-intersection-nested-evenodd.svg pid=<0.103.0>
+START gallery-intersection-bowtie-rectangle.svg pid=<0.104.0>
+START gallery-intersection-edge-tangent.svg pid=<0.105.0>
+START gallery-difference-rectangles.svg pid=<0.106.0>
+START gallery-difference-hole.svg pid=<0.107.0>
+START gallery-difference-circle-rectangle.svg pid=<0.108.0>
+START gallery-difference-nested-nonzero.svg pid=<0.109.0>
+START gallery-difference-nested-evenodd.svg pid=<0.110.0>
+START gallery-difference-bowtie-rectangle.svg pid=<0.111.0>
+DONE gallery-crescent-hull.svg elapsed=0.17s reductions=1706005
+DONE gallery-rounded-rectangle-union.svg elapsed=0.18s reductions=2887779
+DONE gallery-difference-rectangles.svg elapsed=0.17s reductions=837798
+DONE gallery-intersection-edge-tangent.svg elapsed=0.18s reductions=735655
+DONE gallery-intersection-bowtie-rectangle.svg elapsed=0.18s reductions=1596652
+DONE gallery-difference-hole.svg elapsed=0.18s reductions=737754
+DONE gallery-difference-bowtie-rectangle.svg elapsed=0.18s reductions=1607895
+DONE gallery-intersection-rectangles.svg elapsed=0.19s reductions=833834
+DONE gallery-intersection-nested-evenodd.svg elapsed=0.19s reductions=1025311
+DONE gallery-intersection-nested-nonzero.svg elapsed=0.20s reductions=1061730
+DONE gallery-difference-nested-nonzero.svg elapsed=0.20s reductions=1099179
+DONE gallery-difference-nested-evenodd.svg elapsed=0.20s reductions=1099195
+DONE gallery-cut-radiator.svg elapsed=0.24s reductions=35495062
+DONE gallery-intersection-circle-rectangle.svg elapsed=0.29s reductions=8526977
+DONE gallery-difference-circle-rectangle.svg elapsed=0.34s reductions=8523878
+DONE gallery-earth-tone-offsets.svg elapsed=0.67s reductions=29828279
+DONE gallery-stroke-offset-tracks.svg elapsed=0.72s reductions=36201003
+DONE gallery-stroke-caps.svg elapsed=0.80s reductions=64512438
+DONE gallery-figure-eight-correspondence-blocks.svg elapsed=1.09s reductions=112067101
+DONE gallery-figure-eight-band.svg elapsed=1.22s reductions=109183242
+DONE gallery-figure-eight-convex-hulls.svg elapsed=2.60s reductions=308874023
+DONE gallery-dashed-strokes.svg elapsed=3.77s reductions=410071088
+DONE gallery-recursive-dashes.svg elapsed=4.47s reductions=559808002
+DONE gallery-symmetric-figure-eight-bands.svg elapsed=5.20s reductions=674584040
+DONE gallery-package-title-first-offset.svg elapsed=7.49s reductions=1243046380
+DONE gallery-package-title-second-offset-arrangement.svg elapsed=10.94s reductions=2796
+RUNNING gallery-lazy-dog-offset-coil.svg elapsed=20.94s reductions=2152631634 pid=<0.95.0>
+RUNNING gallery-lazy-dog-offset-decaying-spiral.svg elapsed=20.94s reductions=2173521849 pid=<0.96.0>
+RUNNING gallery-package-title-nine-offsets.svg elapsed=20.94s reductions=3895395064 pid=<0.98.0>
+DONE gallery-lazy-dog-offset-coil.svg elapsed=21.32s reductions=2175827460
+DONE gallery-package-title-nine-offsets.svg elapsed=29.91s reductions=5782780479
+DONE gallery-lazy-dog-offset-decaying-spiral.svg elapsed=30.90s reductions=3213974855
+Gallery: 29 succeeded, 0 failed.
+   Compiled in 0.32s
+    Running readme_arrangement_figures.main
+   Compiled in 0.38s
+    Running arrangement_csg_readme_figures.main
+   Compiled in 0.30s
+    Running svg_path_side_umbrella_offset_fixture.main
+   Compiled in 0.29s
+    Running svg_path_offside_trimming_fixture.main
+   Compiled in 0.29s
+    Running svg_path_two_corner_square_bands_fixture.main
+   Compiled in 0.29s
+    Running svg_path_band_trimming_fixture.main
+  Compiling svg_path
+  Compiling svg_path_public_api_smoke
+   Compiled in 0.23s
+miter_clip_comparison.svg [
+  { style: 'Miter(4)', subpaths: 1 },
+  { style: 'Miter(1.5)', subpaths: 1 },
+  { style: 'MiterClip(1.5)', subpaths: 1 },
+  { style: 'Round', subpaths: 1 }
+]
+miter_clip_limits.svg [
+  { style: 'MiterClip(0.5)', subpaths: 1 },
+  { style: 'MiterClip(1)', subpaths: 1 },
+  { style: 'MiterClip(1.5)', subpaths: 1 },
+  { style: 'MiterClip(2)', subpaths: 1 }
+]
+arcs_join_comparison_1.svg [
+  { join: 'MiterClip(4)', subpaths: 1 },
+  { join: 'Round', subpaths: 1 },
+  { join: 'Arcs(4)', subpaths: 1 },
+  { join: 'Arcs(1.1)', subpaths: 1 }
+]
+arcs_join_comparison_2.svg [
+  { join: 'MiterClip(4)', subpaths: 1 },
+  { join: 'Round', subpaths: 1 },
+  { join: 'Arcs(4)', subpaths: 1 },
+  { join: 'Arcs(1.1)', subpaths: 1 }
+]
+arcs_join_self_intersection.svg [
+  { join: 'MiterClip(4)', subpaths: 2 },
+  { join: 'Round', subpaths: 2 },
+  { join: 'Arcs(4)', subpaths: 2 },
+  { join: 'Arcs(1.1)', subpaths: 2 }
+]
+[
+  {
+    "file": "linejoin-construction-fallback.svg",
+    "subpaths": 1,
+    "bounds": {
+      "min": {
+        "x": 20,
+        "y": 49.99999999999999
+      },
+      "max": {
+        "x": 351.48504256809167,
+        "y": 199.4744111674235
+      }
+    }
+  },
+  {
+    "file": "linejoin-construction-fallback2.svg",
+    "subpaths": 1,
+    "bounds": {
+      "min": {
+        "x": 180.00300526611727,
+        "y": -21.59983895645695
+      },
+      "max": {
+        "x": 324.63583607610025,
+        "y": 271.599838956457
+      }
+    }
+  },
+  {
+    "file": "linejoin-construction-fallback3.svg",
+    "subpaths": 1,
+    "bounds": {
+      "min": {
+        "x": 130,
+        "y": 24.99999999999999
+      },
+      "max": {
+        "x": 270,
+        "y": 225
+      }
+    }
+  },
+  {
+    "file": "miter-limit.svg",
+    "expectedMaxX": 227.5,
+    "actualMaxX": 227.5
+  }
+]
+Generated 13 README figures in test/generated/readme.
+Generated and promoted 33 Gallery figures.
+Gallery verification: all 33 figures recomputed, including the production-traced second-offset arrangement and four W3C join comparisons.

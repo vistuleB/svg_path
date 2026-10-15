@@ -1,0 +1,24 @@
+diff --git a/src/svg_path/intersections.gleam b/src/svg_path/intersections.gleam
+index c888272..5c91c44 100644
+--- a/src/svg_path/intersections.gleam
++++ b/src/svg_path/intersections.gleam
+@@ -12,7 +12,7 @@
+ //// mathematical contact. Continuous overlaps are reported as errors here;
+ //// use `svg_path/encounters` to query both overlaps and isolated intersections.
+ //// General polynomial pairs with finite positive control-point ranges use one
+-//// search centered and scaled independently to spans of 100 on each axis.
++//// search centered and scaled independently to approximately [-100,100] per axis.
+ //// Endpoint matching, overlap decisions and final certification use the original
+ //// coordinates. Normalization does not change the caller's geometric tolerance.
+ 
+@@ -5193,8 +5193,8 @@ fn curve_curve_intersections(
+         True -> {
+           let normalize = fn(p: Point) {
+             Point(
+-              100.0 *. { { p.x -. { low.x +. dx /. 2.0 } } /. dx },
+-              100.0 *. { { p.y -. { low.y +. dy /. 2.0 } } /. dy },
++              200.0 *. { { p.x -. { low.x +. dx /. 2.0 } } /. dx },
++              200.0 *. { { p.y -. { low.y +. dy /. 2.0 } } /. dy },
+             )
+           }
+           use a <- result.try(

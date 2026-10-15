@@ -1,0 +1,278 @@
+[
+  {
+    "file": "test/generated/readme/miter_clip_comparison.svg",
+    "before_sha256": "e9323241c546e6aee779e4ebebff38d3d1b6130845cc0232ad2241dcb43c0509",
+    "after_sha256": "e9323241c546e6aee779e4ebebff38d3d1b6130845cc0232ad2241dcb43c0509",
+    "identical": true
+  },
+  {
+    "file": "test/generated/readme/miter_clip_limits.svg",
+    "before_sha256": "9a075adfceacf7585d08580e375663790ba151c4550ca125366cb8b7bd9cbc46",
+    "after_sha256": "9a075adfceacf7585d08580e375663790ba151c4550ca125366cb8b7bd9cbc46",
+    "identical": true
+  },
+  {
+    "file": "test/generated/readme/arcs_join_self_intersection.svg",
+    "before_sha256": "1af1f3422f309c20bc11842b51a19834823954570750f51db3fc5b70b5fe230e",
+    "after_sha256": "1af1f3422f309c20bc11842b51a19834823954570750f51db3fc5b70b5fe230e",
+    "identical": true
+  },
+  {
+    "file": "test/generated/readme/arcs_join_comparison_2.svg",
+    "before_sha256": "15ef6a7d1a0e86719d76c8eb4f7dce0c5a0909c14e55c260390354313293dd7c",
+    "after_sha256": "15ef6a7d1a0e86719d76c8eb4f7dce0c5a0909c14e55c260390354313293dd7c",
+    "identical": true
+  },
+  {
+    "file": "test/generated/readme/zero_length_closepath_probe.svg",
+    "before_sha256": "b79a8ebdaca4625b7cec498694f8bb67ec4c4dabe83436a560dc6b1e71255748",
+    "after_sha256": "b79a8ebdaca4625b7cec498694f8bb67ec4c4dabe83436a560dc6b1e71255748",
+    "identical": true
+  },
+  {
+    "file": "test/generated/readme/arrangement_graph_overlapping_squares.svg",
+    "before_sha256": "b9a325b37a82d1190bcc3a800f989edc321ac04a48484884d30cfedf791b0cc2",
+    "after_sha256": "b9a325b37a82d1190bcc3a800f989edc321ac04a48484884d30cfedf791b0cc2",
+    "identical": true
+  },
+  {
+    "file": "test/generated/readme/arrangement_graph_semantic_circle_overlap.svg",
+    "before_sha256": "d0ef02711d2dbb2f890bee48fe2a5acdd547bd9b4e1426b294ddef281c819d17",
+    "after_sha256": "d0ef02711d2dbb2f890bee48fe2a5acdd547bd9b4e1426b294ddef281c819d17",
+    "identical": true
+  },
+  {
+    "file": "test/generated/readme/arrangement_csg_nonzero.svg",
+    "before_sha256": "0d0341b25716be1e0f3b391a94b027582fb3112164be7ed101495b1ac46eea2b",
+    "after_sha256": "0d0341b25716be1e0f3b391a94b027582fb3112164be7ed101495b1ac46eea2b",
+    "identical": true
+  },
+  {
+    "file": "test/generated/readme/arrangement_csg_evenodd.svg",
+    "before_sha256": "a982a2ddfc01ccb5c15a843b561ad11e449cf6439ed9a33903973b518fa7cf87",
+    "after_sha256": "a982a2ddfc01ccb5c15a843b561ad11e449cf6439ed9a33903973b518fa7cf87",
+    "identical": true
+  },
+  {
+    "file": "test/generated/readme/single_offset_final_trimming.svg",
+    "before_sha256": "4652ca9db022683c96e6f5e96a5515329348d22394c4a92cba12f2203963f4d9",
+    "after_sha256": "4652ca9db022683c96e6f5e96a5515329348d22394c4a92cba12f2203963f4d9",
+    "identical": true
+  },
+  {
+    "file": "test/generated/readme/single_offset_offside_trimming.svg",
+    "before_sha256": "7f227e8aaadb8d7ce24e8f022db33a0081279b57dcabbea2b7ca1b4318d83b29",
+    "after_sha256": "7f227e8aaadb8d7ce24e8f022db33a0081279b57dcabbea2b7ca1b4318d83b29",
+    "identical": true
+  },
+  {
+    "file": "test/generated/readme/band_cusp_trimming.svg",
+    "before_sha256": "fd77b6cc3cb4b301ac4664250bb35c6faf385375362928699290717be35e0b2e",
+    "after_sha256": "fd77b6cc3cb4b301ac4664250bb35c6faf385375362928699290717be35e0b2e",
+    "identical": true
+  },
+  {
+    "file": "test/generated/readme/band_in_band_trimming.svg",
+    "before_sha256": "1564757eaba743044f9b0d8c4396a5638dc8146db1af5fc8391b563921fbb63c",
+    "after_sha256": "1564757eaba743044f9b0d8c4396a5638dc8146db1af5fc8391b563921fbb63c",
+    "identical": true
+  },
+  {
+    "file": "test/generated/gallery/w3c-miter-limit.svg",
+    "before_sha256": "13a6f2b243197f65c2e6dc8e0db2564d38244c811af965836fa60031e139dbef",
+    "after_sha256": "13a6f2b243197f65c2e6dc8e0db2564d38244c811af965836fa60031e139dbef",
+    "identical": true
+  },
+  {
+    "file": "test/generated/gallery/w3c-linejoin-construction-fallback.svg",
+    "before_sha256": "70e4742a50609c2be18d0a94f9b6154a57d599325edf77dd177393caa5a02a79",
+    "after_sha256": "70e4742a50609c2be18d0a94f9b6154a57d599325edf77dd177393caa5a02a79",
+    "identical": true
+  },
+  {
+    "file": "test/generated/gallery/w3c-linejoin-construction-fallback2.svg",
+    "before_sha256": "11ed834f9467f0f21837eb8fe9b7b39a8d3c53ec1d3e62765b6f0a2493ae80b5",
+    "after_sha256": "11ed834f9467f0f21837eb8fe9b7b39a8d3c53ec1d3e62765b6f0a2493ae80b5",
+    "identical": true
+  },
+  {
+    "file": "test/generated/gallery/w3c-linejoin-construction-fallback3.svg",
+    "before_sha256": "ccc010bf6893b7b82bef97731d14f97798dd244c3c22dd1ab51198b41711fe27",
+    "after_sha256": "ccc010bf6893b7b82bef97731d14f97798dd244c3c22dd1ab51198b41711fe27",
+    "identical": true
+  },
+  {
+    "file": "test/generated/gallery/gallery-rounded-rectangle-union.svg",
+    "before_sha256": "f38d58e20f19e15d781ceb5d9f6784ca19f9a222dcd50bf76fde227ebc974f08",
+    "after_sha256": "f38d58e20f19e15d781ceb5d9f6784ca19f9a222dcd50bf76fde227ebc974f08",
+    "identical": true
+  },
+  {
+    "file": "test/generated/gallery/gallery-intersection-rectangles.svg",
+    "before_sha256": "7346414938363106c23acc80cafca03ea7411721e9f263836813e4b79c17628d",
+    "after_sha256": "7346414938363106c23acc80cafca03ea7411721e9f263836813e4b79c17628d",
+    "identical": true
+  },
+  {
+    "file": "test/generated/gallery/gallery-intersection-circle-rectangle.svg",
+    "before_sha256": "f2466d5d2bc0fea78bdb4d0ef47308bb7e3a154b50b2648065aa9e89b3e67fb3",
+    "after_sha256": "f2466d5d2bc0fea78bdb4d0ef47308bb7e3a154b50b2648065aa9e89b3e67fb3",
+    "identical": true
+  },
+  {
+    "file": "test/generated/gallery/gallery-intersection-edge-tangent.svg",
+    "before_sha256": "1d293bb92451dee43f495e51de263a6b564b0ae41a5747cee33d577b082bd43e",
+    "after_sha256": "1d293bb92451dee43f495e51de263a6b564b0ae41a5747cee33d577b082bd43e",
+    "identical": true
+  },
+  {
+    "file": "test/generated/gallery/gallery-intersection-nested-nonzero.svg",
+    "before_sha256": "4480661884a57d0671e006a8191d81e24c6d7012883f8a43983e05d23af0a47d",
+    "after_sha256": "4480661884a57d0671e006a8191d81e24c6d7012883f8a43983e05d23af0a47d",
+    "identical": true
+  },
+  {
+    "file": "test/generated/gallery/gallery-intersection-nested-evenodd.svg",
+    "before_sha256": "fbbbe8cbf1ca0a80807d173ec7d5825867bc5188ec69e660fddd18185a05347b",
+    "after_sha256": "fbbbe8cbf1ca0a80807d173ec7d5825867bc5188ec69e660fddd18185a05347b",
+    "identical": true
+  },
+  {
+    "file": "test/generated/gallery/gallery-intersection-bowtie-rectangle.svg",
+    "before_sha256": "d1f644e96d83b9510d9a4b64aa384d1aaa90b6b4510661aff5b5d2b98c1ff287",
+    "after_sha256": "d1f644e96d83b9510d9a4b64aa384d1aaa90b6b4510661aff5b5d2b98c1ff287",
+    "identical": true
+  },
+  {
+    "file": "test/generated/gallery/gallery-difference-rectangles.svg",
+    "before_sha256": "f4315ad5647c6bf3f6451f281e9181b7bcc76c0260c35f185e167684082ddfae",
+    "after_sha256": "f4315ad5647c6bf3f6451f281e9181b7bcc76c0260c35f185e167684082ddfae",
+    "identical": true
+  },
+  {
+    "file": "test/generated/gallery/gallery-difference-circle-rectangle.svg",
+    "before_sha256": "138265b9568edbe9a2b0583e5ce8da336fdcc4cf7a513aceedd07ddc53af549a",
+    "after_sha256": "138265b9568edbe9a2b0583e5ce8da336fdcc4cf7a513aceedd07ddc53af549a",
+    "identical": true
+  },
+  {
+    "file": "test/generated/gallery/gallery-difference-hole.svg",
+    "before_sha256": "cb94b69c9f1ffd1e2c25334569704ee04e6fd9d255973036108bfe11b3e28933",
+    "after_sha256": "cb94b69c9f1ffd1e2c25334569704ee04e6fd9d255973036108bfe11b3e28933",
+    "identical": true
+  },
+  {
+    "file": "test/generated/gallery/gallery-difference-nested-nonzero.svg",
+    "before_sha256": "9a18458056efc24878de892b32797e35c376bbacb854b40cfbe8bdfe67273106",
+    "after_sha256": "9a18458056efc24878de892b32797e35c376bbacb854b40cfbe8bdfe67273106",
+    "identical": true
+  },
+  {
+    "file": "test/generated/gallery/gallery-difference-nested-evenodd.svg",
+    "before_sha256": "aae1cb0eaad4c372e55a24f26ec380181b13e822a2521153a27be5983e53f659",
+    "after_sha256": "aae1cb0eaad4c372e55a24f26ec380181b13e822a2521153a27be5983e53f659",
+    "identical": true
+  },
+  {
+    "file": "test/generated/gallery/gallery-difference-bowtie-rectangle.svg",
+    "before_sha256": "29cfdd042e96f6ad574db2f2a06e8a4bd3cb64a1e65bf787911f6f27d903c73b",
+    "after_sha256": "29cfdd042e96f6ad574db2f2a06e8a4bd3cb64a1e65bf787911f6f27d903c73b",
+    "identical": true
+  },
+  {
+    "file": "test/generated/gallery/gallery-stroke-caps.svg",
+    "before_sha256": "d4db54d45b26f9a9265211dfe37251168b3a6146f7b8cf21ade9b9997bad29c5",
+    "after_sha256": "d4db54d45b26f9a9265211dfe37251168b3a6146f7b8cf21ade9b9997bad29c5",
+    "identical": true
+  },
+  {
+    "file": "test/generated/gallery/gallery-dashed-strokes.svg",
+    "before_sha256": "076c669f562ce8fdb8abd0d260e4ac78f8d324e733757507734b138753ef355b",
+    "after_sha256": "076c669f562ce8fdb8abd0d260e4ac78f8d324e733757507734b138753ef355b",
+    "identical": true
+  },
+  {
+    "file": "test/generated/gallery/gallery-recursive-dashes.svg",
+    "before_sha256": "e89aa5a948d0d57d02dbb694a8e378ba05ae5096d74f6890adcc8c24783fd6eb",
+    "after_sha256": "e89aa5a948d0d57d02dbb694a8e378ba05ae5096d74f6890adcc8c24783fd6eb",
+    "identical": true
+  },
+  {
+    "file": "test/generated/gallery/gallery-figure-eight-band.svg",
+    "before_sha256": "1f867769df4c9cedd68efe61ebf8dee101de308409b3ec82e5ddb72dea3c313b",
+    "after_sha256": "1f867769df4c9cedd68efe61ebf8dee101de308409b3ec82e5ddb72dea3c313b",
+    "identical": true
+  },
+  {
+    "file": "test/generated/gallery/gallery-symmetric-figure-eight-bands.svg",
+    "before_sha256": "72ba3fcd01382d44c0fbb9719b9732431dc2b493a65d50eef3b816bf1f8ad73c",
+    "after_sha256": "72ba3fcd01382d44c0fbb9719b9732431dc2b493a65d50eef3b816bf1f8ad73c",
+    "identical": true
+  },
+  {
+    "file": "test/generated/gallery/gallery-figure-eight-correspondence-blocks.svg",
+    "before_sha256": "9ddf99f4f7de5323a65dbef642037b9dba070e0a2bd9ce73f9c6946e3b09872c",
+    "after_sha256": "9ddf99f4f7de5323a65dbef642037b9dba070e0a2bd9ce73f9c6946e3b09872c",
+    "identical": true
+  },
+  {
+    "file": "test/generated/gallery/gallery-figure-eight-convex-hulls.svg",
+    "before_sha256": "e93a64ed5d8c84ff68ea85c946ccbfabf1083c91c03f8a40779cd974f29d8195",
+    "after_sha256": "e93a64ed5d8c84ff68ea85c946ccbfabf1083c91c03f8a40779cd974f29d8195",
+    "identical": true
+  },
+  {
+    "file": "test/generated/gallery/gallery-stroke-offset-tracks.svg",
+    "before_sha256": "4c49fa3187c401743a2864acfc9240db6a136d8f3740fb6ce52d104622d86045",
+    "after_sha256": "4c49fa3187c401743a2864acfc9240db6a136d8f3740fb6ce52d104622d86045",
+    "identical": true
+  },
+  {
+    "file": "test/generated/gallery/gallery-package-title-first-offset.svg",
+    "before_sha256": "31b29abfde3755384f1d8ce86fea1ad314a784c933076085acab77dd31a4337a",
+    "after_sha256": "31b29abfde3755384f1d8ce86fea1ad314a784c933076085acab77dd31a4337a",
+    "identical": true
+  },
+  {
+    "file": "test/generated/gallery/gallery-package-title-second-offset-arrangement.svg",
+    "before_sha256": "57e637a974a511dd24478d27ee554bbf124a32d354aeb0bbb2ab70f6b427ed82",
+    "after_sha256": "57e637a974a511dd24478d27ee554bbf124a32d354aeb0bbb2ab70f6b427ed82",
+    "identical": true
+  },
+  {
+    "file": "test/generated/gallery/gallery-earth-tone-offsets.svg",
+    "before_sha256": "c6f8ba7c8fd91279a951e49129f3da79e98409d0d85a5223c6d620b84fc903b4",
+    "after_sha256": "c6f8ba7c8fd91279a951e49129f3da79e98409d0d85a5223c6d620b84fc903b4",
+    "identical": true
+  },
+  {
+    "file": "test/generated/gallery/gallery-lazy-dog-offset-coil.svg",
+    "before_sha256": "b2dfd9642b84733cdc3a413d5ae110db37122c0ed6a0f873d75edd70da3131a3",
+    "after_sha256": "b2dfd9642b84733cdc3a413d5ae110db37122c0ed6a0f873d75edd70da3131a3",
+    "identical": true
+  },
+  {
+    "file": "test/generated/gallery/gallery-lazy-dog-offset-decaying-spiral.svg",
+    "before_sha256": "253a06e8158fddec11b2ba0fe00369ab409b6969cdd0b1ab3ee3154fa42917e2",
+    "after_sha256": "253a06e8158fddec11b2ba0fe00369ab409b6969cdd0b1ab3ee3154fa42917e2",
+    "identical": true
+  },
+  {
+    "file": "test/generated/gallery/gallery-crescent-hull.svg",
+    "before_sha256": "5f90ced7a16c2a526495a8e7950bcd4ea65c7dc3230983983e9d1db010160a9b",
+    "after_sha256": "5f90ced7a16c2a526495a8e7950bcd4ea65c7dc3230983983e9d1db010160a9b",
+    "identical": true
+  },
+  {
+    "file": "test/generated/gallery/gallery-package-title-nine-offsets.svg",
+    "before_sha256": "e7c6c521dbb00e57c040b1054f076f5b57f008da92adec2d331f4cebb78d1973",
+    "after_sha256": "e7c6c521dbb00e57c040b1054f076f5b57f008da92adec2d331f4cebb78d1973",
+    "identical": true
+  },
+  {
+    "file": "test/generated/gallery/gallery-cut-radiator.svg",
+    "before_sha256": "a52d60966d9600644ca45291cb819db5687f1d7f4722da72dcbecc1ef52d9313",
+    "after_sha256": "a52d60966d9600644ca45291cb819db5687f1d7f4722da72dcbecc1ef52d9313",
+    "identical": true
+  }
+]

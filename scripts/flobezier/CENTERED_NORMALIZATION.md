@@ -8,10 +8,10 @@ Adopted 2026-10-15, replacing the supplementary-search approach recorded in
 For eligible polynomial pairs reaching the general curve solver, use their
 combined control-point bounds (not expensive exact curve bounds). With positive,
 finite coordinate ranges, translate to the box center and scale independently
-into approximately [-50,50] on each axis:
+into approximately [-100,100] on each axis:
 
 ```
-x' = 100 * ((x - (xmin + (xmax - xmin) / 2)) / (xmax - xmin))
+x' = 200 * ((x - (xmin + (xmax - xmin) / 2)) / (xmax - xmin))
 ```
 
 Use the analogous mapping for y. Run one beam search with normalized internal
@@ -64,8 +64,8 @@ maximum original-coordinate curve-to-curve residuals in all three snapshot cases
 
 ## Figure validation
 
-All 13 README and 33 Gallery figures regenerated successfully against this
-algorithm before adoption. The canonical generator's test-fast gate was run
+All 13 README and 33 Gallery figures regenerated successfully against the
+original [-50,50] version of this algorithm before adoption. The canonical generator's test-fast gate was run
 separately because the then-unchanged snapshots failed; all subsequent generation,
 verification and promotion steps ran unchanged, with an explicit root build.
 
@@ -85,3 +85,12 @@ expectations on 2026-10-15:
 - Portable combined JavaScript: 758 passed, no failures.
 
 `git diff --check` also passed. F# migration is not included in this change.
+
+## Normalized window follow-up
+
+On 2026-10-15 the multiplier was doubled to 200 for a [-100,100] window.
+All four full profiles passed with unchanged test expectations: 2,012 fast,
+31 slow, 758 portable Erlang and 758 portable JavaScript. See
+[centered200/README.md](centered200/README.md) for commands and logs. The canonical figure generator was also rerun successfully: all 46 published
+SVGs are byte-identical to the [-50,50] outputs. The captured-comparison corpus
+was not rerun for this window-size follow-up.
