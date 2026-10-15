@@ -1,0 +1,936 @@
+{
+  "stats": {
+    "suites": 11,
+    "tests": 131,
+    "passes": 131,
+    "pending": 0,
+    "failures": 0,
+    "start": "2026-10-15T12:32:50.835Z",
+    "end": "2026-10-15T12:32:50.982Z",
+    "duration": 147
+  },
+  "files": [
+    "test/classes/polygon.js",
+    "test/algorithms/ray_shooting.js",
+    "test/algorithms/boolean_op.js"
+  ],
+  "tests": [
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon May create new instance of Polygon",
+      "testOrdinal": 1,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Default construct creates instance of Polygon faces edges as instances of PlanarSet",
+      "testOrdinal": 2,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Default construct creates instance of Polygon with 0 faces and 0 edges",
+      "testOrdinal": 3,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can construct Polygon from array of 3 points",
+      "testOrdinal": 4,
+      "state": "passed",
+      "duration": 2
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can construct Polygon from array of 3 segments",
+      "testOrdinal": 5,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can construct Polygon with multiple faces",
+      "testOrdinal": 6,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can construct polygon from Circle in CCW orientation",
+      "testOrdinal": 7,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can construct polygon from a box in CCW orientation",
+      "testOrdinal": 8,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can construct polygon from a box and circle as a hole",
+      "testOrdinal": 9,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can construct polygon using class constructor",
+      "testOrdinal": 10,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can construct polygon using array of pairs of numbers",
+      "testOrdinal": 11,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Allow creation of Polygon from a Nested Array of Points #23",
+      "testOrdinal": 12,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Uncaught ReferenceError: Illegal Parameters for Nested Multipolygon #79",
+      "testOrdinal": 13,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can parse GeoJSON one-loop polygon",
+      "testOrdinal": 14,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can parse GeoJSON polygon with hole",
+      "testOrdinal": 15,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can parse GeoJSON multi-polygon",
+      "testOrdinal": 16,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can remove faces from polygon",
+      "testOrdinal": 17,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can construct multi polygon using constructor",
+      "testOrdinal": 18,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can create new instance of the polygon",
+      "testOrdinal": 19,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can return bounding box of the polygon",
+      "testOrdinal": 20,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can return array of vertices",
+      "testOrdinal": 21,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can calculate area of the one-face polygon",
+      "testOrdinal": 22,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon \"Illegal parameters\" when computing area of a valid polygon #220 case 3",
+      "testOrdinal": 23,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon \"Illegal parameters\" when computing area of a valid polygon #220 case #1",
+      "testOrdinal": 24,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon \"Illegal parameters\" when computing area of a valid polygon #220 case #2",
+      "testOrdinal": 25,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can check point in contour. Donut Case 1 Boundary top",
+      "testOrdinal": 26,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can check point in contour. Donut Case 2 Center",
+      "testOrdinal": 27,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can check point in contour. Donut Case 3 Inside",
+      "testOrdinal": 28,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can check point in contour. Donut Case 4 Boundary inner circle start",
+      "testOrdinal": 29,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can check if contour contains segment (issue #31)",
+      "testOrdinal": 30,
+      "state": "passed",
+      "duration": 4
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can measure distance between circle and polygon",
+      "testOrdinal": 31,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can measure distance between two polygons",
+      "testOrdinal": 32,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon distanceTo between Polygons: First point of segment is not always on the this polygon #57",
+      "testOrdinal": 33,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can add new vertex to face and split edge of polygon (segment)",
+      "testOrdinal": 34,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can add new vertex to face and split edge of polygon (arc)",
+      "testOrdinal": 35,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can remove vertex and merge edges",
+      "testOrdinal": 36,
+      "state": "passed",
+      "duration": 2
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can calculate inclusion flag of the edge",
+      "testOrdinal": 37,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can remove chain of edges from face",
+      "testOrdinal": 38,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can stringify and parse polygon with segments",
+      "testOrdinal": 39,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can stringify and parse polygon with segments and arcs",
+      "testOrdinal": 40,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can check if polygon is valid",
+      "testOrdinal": 41,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can check if polygon is invalid if one of faces is not simple",
+      "testOrdinal": 42,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can translate polygon",
+      "testOrdinal": 43,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can rotate polygon",
+      "testOrdinal": 44,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can transform polygon",
+      "testOrdinal": 45,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Issue #18 Division by zero error when checking if polygon contains a point",
+      "testOrdinal": 46,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can split polygon into islands (issue #9 in @flatten-js/boolean-op)",
+      "testOrdinal": 47,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon splitToIslands should not fail if the polygon is empty",
+      "testOrdinal": 48,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can cut polygon with holes by line. Case 1. Line cuts edge not in vertex",
+      "testOrdinal": 49,
+      "state": "passed",
+      "duration": 2
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can cut polygon with holes by line. Case 2. Line is touching hole in vertex",
+      "testOrdinal": 50,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can cut polygon without holes by line. Line is touching concave vertex",
+      "testOrdinal": 51,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can cut polygon with MultiLine #159",
+      "testOrdinal": 52,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Polygon.cut error #175",
+      "testOrdinal": 53,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Polygon cut error #176",
+      "testOrdinal": 54,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Self-intersecting output when cutting a multipolygon with a multiline #205",
+      "testOrdinal": 55,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can measure distance between polygon and box",
+      "testOrdinal": 56,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon #Flatten.Polygon.intersect(shape) methods Intersect arc with polygon",
+      "testOrdinal": 57,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon #Flatten.Polygon.intersect(shape) methods Intersect circle with polygon",
+      "testOrdinal": 58,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon #Flatten.Polygon.intersect(shape) methods Line to polygon intersection",
+      "testOrdinal": 59,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon #Flatten.Polygon.intersect(shape) methods Intersection with Polygon",
+      "testOrdinal": 60,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon #Flatten.Polygon.cut(multiline) methods Can cut polygon with line. Case of non-intersection",
+      "testOrdinal": 61,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon #Flatten.Polygon.cut(multiline) methods Can cut polygon with multiline line. Case of touching in one point",
+      "testOrdinal": 62,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon #Flatten.Polygon.cut(multiline) methods Can cut polygon with line into 2 polygons",
+      "testOrdinal": 63,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon #Flatten.Polygon.cut(multiline) methods Can cut polygon with line into 3 polygons",
+      "testOrdinal": 64,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon #Intersections Can perform intersection between polygons",
+      "testOrdinal": 65,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon #Intersections Can perform intersection between multiline and polygon",
+      "testOrdinal": 66,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon #SVG output Can create path element",
+      "testOrdinal": 67,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon #SVG output Can create dpath string",
+      "testOrdinal": 68,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/ray_shooting.js",
+      "test": "#Algorithms.Ray_Shooting Function defined",
+      "testOrdinal": 1,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/ray_shooting.js",
+      "test": "#Algorithms.Ray_Shooting Can check point in contour. Rectangle Case 1 Inside",
+      "testOrdinal": 2,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/ray_shooting.js",
+      "test": "#Algorithms.Ray_Shooting Can check point in contour. Rectangle Case 2 Quick reject - outside",
+      "testOrdinal": 3,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/ray_shooting.js",
+      "test": "#Algorithms.Ray_Shooting Can check point in contour. Rectangle Case 3. Boundary overlapping",
+      "testOrdinal": 4,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/ray_shooting.js",
+      "test": "#Algorithms.Ray_Shooting Can check point in contour. Circle Case 1 Boundary top",
+      "testOrdinal": 5,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/ray_shooting.js",
+      "test": "#Algorithms.Ray_Shooting Can check point in contour. Donut Case 1 Boundary top",
+      "testOrdinal": 6,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/ray_shooting.js",
+      "test": "#Algorithms.Ray_Shooting Can check point in contour. Donut Case 2 Center",
+      "testOrdinal": 7,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/ray_shooting.js",
+      "test": "#Algorithms.Ray_Shooting Can check point in contour. Donut Case 3 Inside",
+      "testOrdinal": 8,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/ray_shooting.js",
+      "test": "#Algorithms.Ray_Shooting Can check point in contour. Donut Case 4 Boundary inner circle start",
+      "testOrdinal": 9,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/ray_shooting.js",
+      "test": "#Algorithms.Ray_Shooting Can check point in contour. Donut Case 5 Another island inside",
+      "testOrdinal": 10,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/ray_shooting.js",
+      "test": "#Algorithms.Ray_Shooting Can check point in contour. Donut Case 6 Another island inside",
+      "testOrdinal": 11,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/ray_shooting.js",
+      "test": "#Algorithms.Ray_Shooting Can check point in contour. Multipolygon with touching faces - outside",
+      "testOrdinal": 12,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/ray_shooting.js",
+      "test": "#Algorithms.Ray_Shooting Can check point in contour. Multipolygon with touching faces - boundary",
+      "testOrdinal": 13,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/ray_shooting.js",
+      "test": "#Algorithms.Ray_Shooting Can check point in contour. Polygon with self-touching face - outside",
+      "testOrdinal": 14,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Function unify defined",
+      "testOrdinal": 1,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. 2 polygons, intersect",
+      "testOrdinal": 2,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. 2 polygons, disjoint",
+      "testOrdinal": 3,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. 2 polygons, 1 in 2",
+      "testOrdinal": 4,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. 2 polygons, 2 in 1",
+      "testOrdinal": 5,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. 2 polygons, 2 in 1 touching from inside, overlapping same",
+      "testOrdinal": 6,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. 2 polygons, 2 in 1 touching from outside, overlapping opposite",
+      "testOrdinal": 7,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. 2 polygons form cross-shape",
+      "testOrdinal": 8,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. 2 disjoint polygons",
+      "testOrdinal": 9,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. 1st polygon with one round hole, 2nd polygon partially intersect hole ",
+      "testOrdinal": 10,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. 1st polygon with one round hole, 2nd polygon fully cover hole ",
+      "testOrdinal": 11,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. 2 polygons create one triangular hole after unify",
+      "testOrdinal": 12,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. Fixed: Infinite loop for boolean union over (valid) polygons. Issue #53",
+      "testOrdinal": 13,
+      "state": "passed",
+      "duration": 36
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. Fixed: Infinite loop for boolean union over (valid) polygons. Issue #55 case 0",
+      "testOrdinal": 14,
+      "state": "passed",
+      "duration": 2
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. Not fixed: Infinite loop for boolean union over (valid) polygons. Issue #55 case 1",
+      "testOrdinal": 15,
+      "state": "passed",
+      "duration": 4
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. Fixed: Infinite loop for boolean union over (valid) polygons. Issue #55 case 2",
+      "testOrdinal": 16,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. Fixed: Infinite loop for boolean union over (valid) polygons. Issue #55 case 3",
+      "testOrdinal": 17,
+      "state": "passed",
+      "duration": 3
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Fixed: Infinity Loop When unifying polygon Issue #82",
+      "testOrdinal": 18,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Fixed: Infinite Loop when calling unify on polygons #94",
+      "testOrdinal": 19,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Fixed: Infinite Loop when calling unify for multipolygon with touching faces #171",
+      "testOrdinal": 20,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Fixed: Infinite Loop when calling unify for multipolygon with touching faces #171: case 2 - self-touching face",
+      "testOrdinal": 21,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Can perform subtract. 2 intersecting polygons",
+      "testOrdinal": 22,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Can perform subtract. 1-face polygon split with 2nd to 2-faced polygon and vice a verse",
+      "testOrdinal": 23,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Can perform subtract. 2 intersecting polygons produce 2-island result",
+      "testOrdinal": 24,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Can perform (boolean) subtraction. First polygon inside the second",
+      "testOrdinal": 25,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Can perform subtract big polygon from smaller polygon and get empty result (Issue #4)",
+      "testOrdinal": 26,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Can subtract one polygon from another and create a hole (Issue #7)",
+      "testOrdinal": 27,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Can perform subtract. Fixed: Issue #55 case 0",
+      "testOrdinal": 28,
+      "state": "passed",
+      "duration": 2
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Can perform subtract. Fixed: Issue #55 case 1",
+      "testOrdinal": 29,
+      "state": "passed",
+      "duration": 3
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Can perform subtract. Fixed: Infinite loop for boolean union over (valid) polygons. Issue #55 case 2",
+      "testOrdinal": 30,
+      "state": "passed",
+      "duration": 2
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Can perform subtract. Fixed: Infinite loop for boolean union over (valid) polygons. Issue #55 case 3",
+      "testOrdinal": 31,
+      "state": "passed",
+      "duration": 3
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Fixed: Infinite loop when subtracting polygons (v1.2.20) Issue #81",
+      "testOrdinal": 32,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Can perform subtract. Fixed issue #76",
+      "testOrdinal": 33,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Can perform (boolean) intersection. 2 intersecting polygons",
+      "testOrdinal": 34,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Can perform (boolean) intersection. Other 2 intersecting polygons",
+      "testOrdinal": 35,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Can perform (boolean) intersection. First polygon inside the second",
+      "testOrdinal": 36,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection issue #42 Intersect does not seem to work when a second is inside first",
+      "testOrdinal": 37,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Issue #2 with intersection of circle and box",
+      "testOrdinal": 38,
+      "state": "passed",
+      "duration": 2
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Issue #3",
+      "testOrdinal": 39,
+      "state": "passed",
+      "duration": 4
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Fixed: Issue #8",
+      "testOrdinal": 40,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Subtract bug from flatten-js/core 1.2 onwards #15",
+      "testOrdinal": 41,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Can perform subtract without creating a degenerate sliver for partially overlapped polygon (#243)",
+      "testOrdinal": 42,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Can perform intersection. Fixed: Issue #55 case 0",
+      "testOrdinal": 43,
+      "state": "passed",
+      "duration": 2
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Can perform intersection. Fixed: Issue #55 case 1",
+      "testOrdinal": 44,
+      "state": "passed",
+      "duration": 3
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Can perform intersect. Fixed: Infinite loop for boolean union over (valid) polygons. Issue #55 case 2",
+      "testOrdinal": 45,
+      "state": "passed",
+      "duration": 2
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Can perform intersect. Fixed: Infinite loop for boolean union over (valid) polygons. Issue #55 case 3",
+      "testOrdinal": 46,
+      "state": "passed",
+      "duration": 3
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Fixed: Infinite Loop when intersecting Polygons (v1.3.4) #139",
+      "testOrdinal": 47,
+      "state": "passed",
+      "duration": 2
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Infinite Loop when intersecting Polygons (v1.3.4) #139 case 2",
+      "testOrdinal": 48,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations Boolean operations with empty polygon Can operate with empty polygon",
+      "testOrdinal": 49,
+      "state": "passed",
+      "duration": 2
+    }
+  ]
+}

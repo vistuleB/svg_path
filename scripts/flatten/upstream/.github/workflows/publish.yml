@@ -1,0 +1,29 @@
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*'            # e.g. v1.6.7
+
+permissions:
+  contents: read
+  id-token: write       # Required for OIDC trusted publishing
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+          package-manager-cache: false
+
+      - run: npm ci
+      - run: npm run -s build
+      - run: npm test --silent
+
+      - name: Publish
+        run: npm publish --provenance --access public

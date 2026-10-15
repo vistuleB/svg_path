@@ -1,0 +1,798 @@
+[
+  {
+    "id": "G01",
+    "title": "Boolean boundary topology",
+    "status": "deferred-adaptation",
+    "note": "Area and a 13\u00d713 grid do not validate every boundary, vertex/face count, edge ordering or zero-area contact.",
+    "tests": [
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. 2 polygons, intersect",
+        "testOrdinal": 2
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. 2 polygons, disjoint",
+        "testOrdinal": 3
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. 2 polygons, 1 in 2",
+        "testOrdinal": 4
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. 2 polygons, 2 in 1",
+        "testOrdinal": 5
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. 2 polygons, 2 in 1 touching from inside, overlapping same",
+        "testOrdinal": 6
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. 2 polygons, 2 in 1 touching from outside, overlapping opposite",
+        "testOrdinal": 7
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. 2 polygons form cross-shape",
+        "testOrdinal": 8
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. 2 disjoint polygons",
+        "testOrdinal": 9
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. 1st polygon with one round hole, 2nd polygon partially intersect hole ",
+        "testOrdinal": 10
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. 1st polygon with one round hole, 2nd polygon fully cover hole ",
+        "testOrdinal": 11
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. 2 polygons create one triangular hole after unify",
+        "testOrdinal": 12
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. Fixed: Infinite loop for boolean union over (valid) polygons. Issue #53",
+        "testOrdinal": 13
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. Fixed: Infinite loop for boolean union over (valid) polygons. Issue #55 case 0",
+        "testOrdinal": 14
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. Not fixed: Infinite loop for boolean union over (valid) polygons. Issue #55 case 1",
+        "testOrdinal": 15
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. Fixed: Infinite loop for boolean union over (valid) polygons. Issue #55 case 2",
+        "testOrdinal": 16
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. Fixed: Infinite loop for boolean union over (valid) polygons. Issue #55 case 3",
+        "testOrdinal": 17
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Fixed: Infinity Loop When unifying polygon Issue #82",
+        "testOrdinal": 18
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Fixed: Infinite Loop when calling unify on polygons #94",
+        "testOrdinal": 19
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Fixed: Infinite Loop when calling unify for multipolygon with touching faces #171",
+        "testOrdinal": 20
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Fixed: Infinite Loop when calling unify for multipolygon with touching faces #171: case 2 - self-touching face",
+        "testOrdinal": 21
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Can perform subtract. 2 intersecting polygons",
+        "testOrdinal": 22
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Can perform subtract. 1-face polygon split with 2nd to 2-faced polygon and vice a verse",
+        "testOrdinal": 23
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Can perform subtract. 2 intersecting polygons produce 2-island result",
+        "testOrdinal": 24
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Can perform (boolean) subtraction. First polygon inside the second",
+        "testOrdinal": 25
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Can perform subtract big polygon from smaller polygon and get empty result (Issue #4)",
+        "testOrdinal": 26
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Can subtract one polygon from another and create a hole (Issue #7)",
+        "testOrdinal": 27
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Can perform subtract. Fixed: Issue #55 case 0",
+        "testOrdinal": 28
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Can perform subtract. Fixed: Issue #55 case 1",
+        "testOrdinal": 29
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Can perform subtract. Fixed: Infinite loop for boolean union over (valid) polygons. Issue #55 case 2",
+        "testOrdinal": 30
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Can perform subtract. Fixed: Infinite loop for boolean union over (valid) polygons. Issue #55 case 3",
+        "testOrdinal": 31
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Fixed: Infinite loop when subtracting polygons (v1.2.20) Issue #81",
+        "testOrdinal": 32
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Can perform subtract. Fixed issue #76",
+        "testOrdinal": 33
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Can perform (boolean) intersection. 2 intersecting polygons",
+        "testOrdinal": 34
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Can perform (boolean) intersection. Other 2 intersecting polygons",
+        "testOrdinal": 35
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Can perform (boolean) intersection. First polygon inside the second",
+        "testOrdinal": 36
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection issue #42 Intersect does not seem to work when a second is inside first",
+        "testOrdinal": 37
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Issue #2 with intersection of circle and box",
+        "testOrdinal": 38
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Issue #3",
+        "testOrdinal": 39
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Fixed: Issue #8",
+        "testOrdinal": 40
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Subtract bug from flatten-js/core 1.2 onwards #15",
+        "testOrdinal": 41
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Can perform subtract without creating a degenerate sliver for partially overlapped polygon (#243)",
+        "testOrdinal": 42
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Can perform intersection. Fixed: Issue #55 case 0",
+        "testOrdinal": 43
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Can perform intersection. Fixed: Issue #55 case 1",
+        "testOrdinal": 44
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Can perform intersect. Fixed: Infinite loop for boolean union over (valid) polygons. Issue #55 case 2",
+        "testOrdinal": 45
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Can perform intersect. Fixed: Infinite loop for boolean union over (valid) polygons. Issue #55 case 3",
+        "testOrdinal": 46
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Fixed: Infinite Loop when intersecting Polygons (v1.3.4) #139",
+        "testOrdinal": 47
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Infinite Loop when intersecting Polygons (v1.3.4) #139 case 2",
+        "testOrdinal": 48
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations Boolean operations with empty polygon Can operate with empty polygon",
+        "testOrdinal": 49
+      }
+    ]
+  },
+  {
+    "id": "G02",
+    "title": "Polygon cutting and clip output lists",
+    "status": "deferred-adaptation",
+    "note": "Cut/multiline partition outputs, innerClip/outerClip pieces and paired intersection ordering require dedicated geometry adapters; helper queries are not those assertions.",
+    "tests": [
+      {
+        "file": "test/classes/polygon.js",
+        "test": "#Flatten.Polygon Can cut polygon with holes by line. Case 1. Line cuts edge not in vertex",
+        "testOrdinal": 49
+      },
+      {
+        "file": "test/classes/polygon.js",
+        "test": "#Flatten.Polygon Can cut polygon with holes by line. Case 2. Line is touching hole in vertex",
+        "testOrdinal": 50
+      },
+      {
+        "file": "test/classes/polygon.js",
+        "test": "#Flatten.Polygon Can cut polygon without holes by line. Line is touching concave vertex",
+        "testOrdinal": 51
+      },
+      {
+        "file": "test/classes/polygon.js",
+        "test": "#Flatten.Polygon Can cut polygon with MultiLine #159",
+        "testOrdinal": 52
+      },
+      {
+        "file": "test/classes/polygon.js",
+        "test": "#Flatten.Polygon Polygon.cut error #175",
+        "testOrdinal": 53
+      },
+      {
+        "file": "test/classes/polygon.js",
+        "test": "#Flatten.Polygon Polygon cut error #176",
+        "testOrdinal": 54
+      },
+      {
+        "file": "test/classes/polygon.js",
+        "test": "#Flatten.Polygon Self-intersecting output when cutting a multipolygon with a multiline #205",
+        "testOrdinal": 55
+      },
+      {
+        "file": "test/classes/polygon.js",
+        "test": "#Flatten.Polygon #Flatten.Polygon.cut(multiline) methods Can cut polygon with line. Case of non-intersection",
+        "testOrdinal": 61
+      },
+      {
+        "file": "test/classes/polygon.js",
+        "test": "#Flatten.Polygon #Flatten.Polygon.cut(multiline) methods Can cut polygon with multiline line. Case of touching in one point",
+        "testOrdinal": 62
+      },
+      {
+        "file": "test/classes/polygon.js",
+        "test": "#Flatten.Polygon #Flatten.Polygon.cut(multiline) methods Can cut polygon with line into 2 polygons",
+        "testOrdinal": 63
+      },
+      {
+        "file": "test/classes/polygon.js",
+        "test": "#Flatten.Polygon #Flatten.Polygon.cut(multiline) methods Can cut polygon with line into 3 polygons",
+        "testOrdinal": 64
+      },
+      {
+        "file": "test/algorithms/boolean_op.js",
+        "test": "#Algorithms.Boolean Operations Boolean operations with empty polygon Can operate with empty polygon",
+        "testOrdinal": 49
+      }
+    ]
+  },
+  {
+    "id": "G03",
+    "title": "Island extraction",
+    "status": "deferred-adaptation",
+    "note": "Compare semantic grouping with csg.nested_contours, including the empty case; upstream island ordering and edge count need an explicit mapping.",
+    "tests": [
+      {
+        "file": "test/classes/polygon.js",
+        "test": "#Flatten.Polygon Can split polygon into islands (issue #9 in @flatten-js/boolean-op)",
+        "testOrdinal": 47
+      },
+      {
+        "file": "test/classes/polygon.js",
+        "test": "#Flatten.Polygon splitToIslands should not fail if the polygon is empty",
+        "testOrdinal": 48
+      }
+    ]
+  },
+  {
+    "id": "G04",
+    "title": "Point-based chain splitting",
+    "status": "deferred-adaptation",
+    "note": "Upstream vertex insertion and splitting take points and mutate edge lists; possible geometric adaptation through projection plus parameter splitting remains unimplemented.",
+    "tests": [
+      {
+        "file": "test/classes/multiline.js",
+        "test": "#Flatten.Multiline May add vertex to polyline",
+        "testOrdinal": 19
+      },
+      {
+        "file": "test/classes/multiline.js",
+        "test": "#Flatten.Multiline May split polyline with intersections",
+        "testOrdinal": 20
+      },
+      {
+        "file": "test/classes/multiline.js",
+        "test": "#Flatten.Multiline May split polyline with array of points",
+        "testOrdinal": 21
+      },
+      {
+        "file": "test/classes/polygon.js",
+        "test": "#Flatten.Polygon Can add new vertex to face and split edge of polygon (segment)",
+        "testOrdinal": 34
+      },
+      {
+        "file": "test/classes/polygon.js",
+        "test": "#Flatten.Polygon Can add new vertex to face and split edge of polygon (arc)",
+        "testOrdinal": 35
+      }
+    ]
+  },
+  {
+    "id": "G05",
+    "title": "Distance witnesses",
+    "status": "deferred-assertion",
+    "note": "Distance adapters compare scalar distance, not every witness coordinate, direction or choice among tied minima. Named tests may contain scalar-only assertions as well.",
+    "tests": [
+      {
+        "file": "test/classes/arc.js",
+        "test": "#Flatten.Arc #Flatten.Arc.distanceTo distance to point on arc",
+        "testOrdinal": 59
+      },
+      {
+        "file": "test/classes/arc.js",
+        "test": "#Flatten.Arc #Flatten.Arc.distanceTo distance to point outside arc",
+        "testOrdinal": 60
+      },
+      {
+        "file": "test/classes/arc.js",
+        "test": "#Flatten.Arc #Flatten.Arc.distanceTo distance to point inside arc",
+        "testOrdinal": 61
+      },
+      {
+        "file": "test/classes/arc.js",
+        "test": "#Flatten.Arc #Flatten.Arc.distanceTo distance to point inside 3rd quadrant of the arc",
+        "testOrdinal": 62
+      },
+      {
+        "file": "test/classes/arc.js",
+        "test": "#Flatten.Arc #Flatten.Arc.distanceTo distance to box",
+        "testOrdinal": 63
+      },
+      {
+        "file": "test/classes/box.js",
+        "test": "#Flatten.Box Can measure distance to box",
+        "testOrdinal": 10
+      },
+      {
+        "file": "test/classes/box.js",
+        "test": "#Flatten.Box distanceTo(Box) (issue #210) returns zero for boxes with intersecting boundaries",
+        "testOrdinal": 11
+      },
+      {
+        "file": "test/classes/box.js",
+        "test": "#Flatten.Box distanceTo(Box) (issue #210) returns the boundary gap for disjoint boxes",
+        "testOrdinal": 12
+      },
+      {
+        "file": "test/classes/box.js",
+        "test": "#Flatten.Box distanceTo(Box) (issue #210) returns a shortest segment from the calling box to the other box",
+        "testOrdinal": 13
+      },
+      {
+        "file": "test/classes/box.js",
+        "test": "#Flatten.Box distanceTo(Box) (issue #210) supports Segment.distanceTo(Box)",
+        "testOrdinal": 14
+      },
+      {
+        "file": "test/classes/circle.js",
+        "test": "#Flatten.Circle #Flatten.Circle.DistanceTo Can measure distance between circle and point",
+        "testOrdinal": 24
+      },
+      {
+        "file": "test/classes/circle.js",
+        "test": "#Flatten.Circle #Flatten.Circle.DistanceTo Can measure distance between circle and circle",
+        "testOrdinal": 25
+      },
+      {
+        "file": "test/classes/circle.js",
+        "test": "#Flatten.Circle #Flatten.Circle.DistanceTo Can measure distance between circle and line",
+        "testOrdinal": 26
+      },
+      {
+        "file": "test/classes/circle.js",
+        "test": "#Flatten.Circle #Flatten.Circle.DistanceTo Can measure distance between circle and segment",
+        "testOrdinal": 27
+      },
+      {
+        "file": "test/classes/circle.js",
+        "test": "#Flatten.Circle #Flatten.Circle.DistanceTo Can measure distance between circle and arc",
+        "testOrdinal": 28
+      },
+      {
+        "file": "test/classes/circle.js",
+        "test": "#Flatten.Circle #Flatten.Circle.DistanceTo Can measure distance between circle and polygon",
+        "testOrdinal": 29
+      },
+      {
+        "file": "test/classes/circle.js",
+        "test": "#Flatten.Circle #Flatten.Circle.DistanceTo Can measure distance between circle and box",
+        "testOrdinal": 30
+      },
+      {
+        "file": "test/classes/line.js",
+        "test": "#Flatten.Line Can measure distance from line to box",
+        "testOrdinal": 17
+      },
+      {
+        "file": "test/classes/multiline.js",
+        "test": "#Flatten.Multiline May calculate distance between a point and a multiline",
+        "testOrdinal": 13
+      },
+      {
+        "file": "test/classes/multiline.js",
+        "test": "#Flatten.Multiline Can measure distance between multiline and box",
+        "testOrdinal": 23
+      },
+      {
+        "file": "test/classes/multiline.js",
+        "test": "#Flatten.Multiline Can measure distance between multiline and point",
+        "testOrdinal": 24
+      },
+      {
+        "file": "test/classes/point.js",
+        "test": "#Flatten.Point Can measure distance from point to box",
+        "testOrdinal": 18
+      },
+      {
+        "file": "test/classes/point.js",
+        "test": "#Flatten.Point #Flatten.Point.Distance methods Method distanceTo return distance to other point ",
+        "testOrdinal": 23
+      },
+      {
+        "file": "test/classes/point.js",
+        "test": "#Flatten.Point #Flatten.Point.Distance methods Method distanceTo calculates distance to given line",
+        "testOrdinal": 24
+      },
+      {
+        "file": "test/classes/point.js",
+        "test": "#Flatten.Point #Flatten.Point.Distance methods Method distanceTo returns distance to segment",
+        "testOrdinal": 25
+      },
+      {
+        "file": "test/classes/point.js",
+        "test": "#Flatten.Point #Flatten.Point.Distance methods Method distanceTo returns distance to circle",
+        "testOrdinal": 26
+      },
+      {
+        "file": "test/classes/point.js",
+        "test": "#Flatten.Point #Flatten.Point.Distance methods Method distanceTo returns distance to arc",
+        "testOrdinal": 27
+      },
+      {
+        "file": "test/classes/point.js",
+        "test": "#Flatten.Point #Flatten.Point.Distance methods Method distanceTo returns distance to polygon",
+        "testOrdinal": 28
+      },
+      {
+        "file": "test/classes/polygon.js",
+        "test": "#Flatten.Polygon Can measure distance between circle and polygon",
+        "testOrdinal": 31
+      },
+      {
+        "file": "test/classes/polygon.js",
+        "test": "#Flatten.Polygon Can measure distance between two polygons",
+        "testOrdinal": 32
+      },
+      {
+        "file": "test/classes/polygon.js",
+        "test": "#Flatten.Polygon distanceTo between Polygons: First point of segment is not always on the this polygon #57",
+        "testOrdinal": 33
+      },
+      {
+        "file": "test/classes/polygon.js",
+        "test": "#Flatten.Polygon Can measure distance between polygon and box",
+        "testOrdinal": 56
+      },
+      {
+        "file": "test/classes/segment.js",
+        "test": "#Flatten.Segment #Flatten.Segment.DistanceTo Distance to Segment Case 1 Intersected Segments",
+        "testOrdinal": 32
+      },
+      {
+        "file": "test/classes/segment.js",
+        "test": "#Flatten.Segment #Flatten.Segment.DistanceTo Distance to Segment Case 2 Not Intersected Segments",
+        "testOrdinal": 33
+      },
+      {
+        "file": "test/classes/segment.js",
+        "test": "#Flatten.Segment #Flatten.Segment.DistanceTo Distance to Line",
+        "testOrdinal": 34
+      },
+      {
+        "file": "test/classes/segment.js",
+        "test": "#Flatten.Segment #Flatten.Segment.DistanceTo Distance to Circle Case 1 Intersection - touching",
+        "testOrdinal": 35
+      },
+      {
+        "file": "test/classes/segment.js",
+        "test": "#Flatten.Segment #Flatten.Segment.DistanceTo Distance to Circle Case 1 Intersection - two points",
+        "testOrdinal": 36
+      },
+      {
+        "file": "test/classes/segment.js",
+        "test": "#Flatten.Segment #Flatten.Segment.DistanceTo Distance to Circle Case 1 Intersection - one points",
+        "testOrdinal": 37
+      },
+      {
+        "file": "test/classes/segment.js",
+        "test": "#Flatten.Segment #Flatten.Segment.DistanceTo Distance to Circle Case 2 Projection",
+        "testOrdinal": 38
+      },
+      {
+        "file": "test/classes/segment.js",
+        "test": "#Flatten.Segment #Flatten.Segment.DistanceTo Distance to Circle Case 3 End point out of the circle",
+        "testOrdinal": 39
+      },
+      {
+        "file": "test/classes/segment.js",
+        "test": "#Flatten.Segment #Flatten.Segment.DistanceTo Distance to Circle Case 3 End point inside the circle",
+        "testOrdinal": 40
+      },
+      {
+        "file": "test/data_structures/planar_set.js",
+        "test": "#Data_structures.PlanarSet May calculate distance between shape and planar set",
+        "testOrdinal": 12
+      }
+    ]
+  },
+  {
+    "id": "G06",
+    "title": "Path-string outputs",
+    "status": "deferred-adaptation",
+    "note": "Nonempty path-data/SVG strings need a parse/geometry round-trip adapter; element styling itself remains outside scope.",
+    "tests": [
+      {
+        "file": "test/classes/face.js",
+        "test": "#Flatten.Face Method svg can return string to be used to generate svg path",
+        "testOrdinal": 11
+      },
+      {
+        "file": "test/classes/multiline.js",
+        "test": "#Flatten.Multiline May create svg path",
+        "testOrdinal": 25
+      },
+      {
+        "file": "test/classes/multiline.js",
+        "test": "#Flatten.Multiline May create dpath string to be inserted into \"d\" atrtibute",
+        "testOrdinal": 26
+      },
+      {
+        "file": "test/classes/multiline.js",
+        "test": "#Flatten.Multiline May create points string to be inserted into \"points\" atrtibute",
+        "testOrdinal": 27
+      },
+      {
+        "file": "test/classes/polygon.js",
+        "test": "#Flatten.Polygon #SVG output Can create path element",
+        "testOrdinal": 67
+      },
+      {
+        "file": "test/classes/polygon.js",
+        "test": "#Flatten.Polygon #SVG output Can create dpath string",
+        "testOrdinal": 68
+      }
+    ]
+  },
+  {
+    "id": "G07",
+    "title": "Whole-shape relations and validity",
+    "status": "scope-or-api-idea",
+    "note": "No direct DE-9IM/whole-shape containment or polygon-validity Boolean API. Do not infer these predicates solely from sampled points or empty boundary intersections.",
+    "tests": [
+      {
+        "file": "test/algorithms/relation.js",
+        "test": "#Algorithms.Relation Function relate defined",
+        "testOrdinal": 1
+      },
+      {
+        "file": "test/algorithms/relation.js",
+        "test": "#Algorithms.Relation Namespace Relations exist on Flatten",
+        "testOrdinal": 2
+      },
+      {
+        "file": "test/algorithms/relation.js",
+        "test": "#Algorithms.Relation Relations may be consumed from Flatten.Relations namespace",
+        "testOrdinal": 3
+      },
+      {
+        "file": "test/algorithms/relation.js",
+        "test": "#Algorithms.Relation Functions disjoint,equals,intersects,touches exist",
+        "testOrdinal": 4
+      },
+      {
+        "file": "test/algorithms/relation.js",
+        "test": "#Algorithms.Relation v1.4 Relations.intersect() doesnt allow Polygon argument #149",
+        "testOrdinal": 5
+      },
+      {
+        "file": "test/algorithms/relation.js",
+        "test": "#Algorithms.Relation #Algorithms.Relation.Line2Line Parallel case (disjoint)",
+        "testOrdinal": 6
+      },
+      {
+        "file": "test/algorithms/relation.js",
+        "test": "#Algorithms.Relation #Algorithms.Relation.Line2Line Equal case",
+        "testOrdinal": 7
+      },
+      {
+        "file": "test/algorithms/relation.js",
+        "test": "#Algorithms.Relation #Algorithms.Relation.Line2Line Intersection case",
+        "testOrdinal": 8
+      },
+      {
+        "file": "test/algorithms/relation.js",
+        "test": "#Algorithms.Relation #Algorithms.Relation.Line2Circle Disjoint case",
+        "testOrdinal": 9
+      },
+      {
+        "file": "test/algorithms/relation.js",
+        "test": "#Algorithms.Relation #Algorithms.Relation.Line2Circle Touching case",
+        "testOrdinal": 10
+      },
+      {
+        "file": "test/algorithms/relation.js",
+        "test": "#Algorithms.Relation #Algorithms.Relation.Line2Circle Intersection case",
+        "testOrdinal": 11
+      },
+      {
+        "file": "test/algorithms/relation.js",
+        "test": "#Algorithms.Relation #Algorithms.Relation.Line2Box Intersection case",
+        "testOrdinal": 12
+      },
+      {
+        "file": "test/algorithms/relation.js",
+        "test": "#Algorithms.Relation #Algorithms.Relation.Line2Polygon Disjoint case",
+        "testOrdinal": 13
+      },
+      {
+        "file": "test/algorithms/relation.js",
+        "test": "#Algorithms.Relation #Algorithms.Relation.Line2Polygon Touching case - touch in one point",
+        "testOrdinal": 14
+      },
+      {
+        "file": "test/algorithms/relation.js",
+        "test": "#Algorithms.Relation #Algorithms.Relation.Line2Polygon Intersection case - 2 intersection point",
+        "testOrdinal": 15
+      },
+      {
+        "file": "test/algorithms/relation.js",
+        "test": "#Algorithms.Relation #Algorithms.Relation.Line2Polygon Can properly detect contains / covered relation. Issue #65",
+        "testOrdinal": 16
+      },
+      {
+        "file": "test/algorithms/relation.js",
+        "test": "#Algorithms.Relation #Algorithms.Relation.Line2Polygon Can properly detect touch relation. Issue #65",
+        "testOrdinal": 17
+      },
+      {
+        "file": "test/algorithms/relation.js",
+        "test": "#Algorithms.Relation #Algorithms.Relation.Circle2Circle Intersection case",
+        "testOrdinal": 18
+      },
+      {
+        "file": "test/algorithms/relation.js",
+        "test": "#Algorithms.Relation #Algorithms.Relation.Circle2Circle Disjoint case",
+        "testOrdinal": 19
+      },
+      {
+        "file": "test/algorithms/relation.js",
+        "test": "#Algorithms.Relation #Algorithms.Relation.Circle2Circle Touching case",
+        "testOrdinal": 20
+      },
+      {
+        "file": "test/algorithms/relation.js",
+        "test": "#Algorithms.Relation #Algorithms.Relation.Circle2Circle Contain case",
+        "testOrdinal": 21
+      },
+      {
+        "file": "test/algorithms/relation.js",
+        "test": "#Algorithms.Relation #Algorithms.Relation.Circle2Circle Inside case",
+        "testOrdinal": 22
+      },
+      {
+        "file": "test/algorithms/relation.js",
+        "test": "#Algorithms.Relation #Algorithms.Relation.Polygon2Polygon May calculate relations. Disjoint case",
+        "testOrdinal": 23
+      },
+      {
+        "file": "test/algorithms/relation.js",
+        "test": "#Algorithms.Relation #Algorithms.Relation.Polygon2Polygon May calculate relations. Touching from outside case",
+        "testOrdinal": 24
+      },
+      {
+        "file": "test/algorithms/relation.js",
+        "test": "#Algorithms.Relation #Algorithms.Relation.Polygon2Polygon May calculate relations. Case of inclusion",
+        "testOrdinal": 25
+      },
+      {
+        "file": "test/algorithms/relation.js",
+        "test": "#Algorithms.Relation #Algorithms.Relation.Polygon2Polygon May calculate relations. Case of covered",
+        "testOrdinal": 26
+      },
+      {
+        "file": "test/algorithms/relation.js",
+        "test": "#Algorithms.Relation #Algorithms.Relation.Polygon2Polygon May calculate relations. Case of intersected polygons",
+        "testOrdinal": 27
+      },
+      {
+        "file": "test/algorithms/relation.js",
+        "test": "#Algorithms.Relation #Algorithms.Relation.Polygon2Polygon Infinite loop error in Relations.relate()  issue #63",
+        "testOrdinal": 28
+      },
+      {
+        "file": "test/algorithms/relation.js",
+        "test": "#Algorithms.Relation #Algorithms.Relation.Polygon2Polygon Calculate contains relation for multipolygon. Issue #81",
+        "testOrdinal": 29
+      },
+      {
+        "file": "test/classes/polygon.js",
+        "test": "#Flatten.Polygon Can check if contour contains segment (issue #31)",
+        "testOrdinal": 30
+      },
+      {
+        "file": "test/classes/polygon.js",
+        "test": "#Flatten.Polygon Can calculate inclusion flag of the edge",
+        "testOrdinal": 37
+      },
+      {
+        "file": "test/classes/polygon.js",
+        "test": "#Flatten.Polygon Can check if polygon is valid",
+        "testOrdinal": 41
+      },
+      {
+        "file": "test/classes/polygon.js",
+        "test": "#Flatten.Polygon Can check if polygon is invalid if one of faces is not simple",
+        "testOrdinal": 42
+      }
+    ]
+  }
+]

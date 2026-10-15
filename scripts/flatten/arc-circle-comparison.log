@@ -1,0 +1,5 @@
+{
+  match: 110,
+  'continuous-overlap-contract-difference': 4,
+  'scope-difference': 2
+}

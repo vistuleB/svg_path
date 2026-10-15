@@ -1,0 +1,649 @@
+{
+  "stats": {
+    "suites": 7,
+    "tests": 90,
+    "passes": 90,
+    "pending": 0,
+    "failures": 0,
+    "start": "2026-10-15T12:28:28.870Z",
+    "end": "2026-10-15T12:28:28.893Z",
+    "duration": 23
+  },
+  "files": [
+    "test/classes/segment.js",
+    "test/classes/line.js",
+    "test/classes/ray.js"
+  ],
+  "tests": [
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment May create new instance of Segment",
+      "testOrdinal": 1,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment Constructor Segment(ps, pe) creates new instance of Segment",
+      "testOrdinal": 2,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment May construct segment when second point is omitted",
+      "testOrdinal": 3,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment May constructor by array [4] ",
+      "testOrdinal": 4,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment New segment may be constructed by function call",
+      "testOrdinal": 5,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment Constructor with illegal parameters throw error",
+      "testOrdinal": 6,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment Method clone copy to a new instance of Segment",
+      "testOrdinal": 7,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment Method length returns length of segment",
+      "testOrdinal": 8,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment Method box returns bounding box of segment",
+      "testOrdinal": 9,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment Method slope returns slope of segment",
+      "testOrdinal": 10,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment Method contains returns true if point belongs to segment",
+      "testOrdinal": 11,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment Method tangentInStart and tangentInEnd returns vector [ps pe] and [pe, ps]",
+      "testOrdinal": 12,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment Calculates middle point",
+      "testOrdinal": 13,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment Can translate segment by given vector",
+      "testOrdinal": 14,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment Can rotate by angle around center of bounding box",
+      "testOrdinal": 15,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment Can rotate by angle around given point",
+      "testOrdinal": 16,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment Method svg() without parameters creates svg string with default attributes",
+      "testOrdinal": 17,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment Method svg() with extra parameters may add additional attributes",
+      "testOrdinal": 18,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.Intersect Intersection with Segment - not parallel segments case (one point)",
+      "testOrdinal": 19,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.Intersect Intersection with Segment - overlapping segments case (two points)",
+      "testOrdinal": 20,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.Intersect Intersection with Segment - boxes intersecting, segments not intersecting",
+      "testOrdinal": 21,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.Intersect Intersection with Segment - boxes not intersecting, quick reject",
+      "testOrdinal": 22,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.Intersect Intersection with Line - not parallel segments case (one point)",
+      "testOrdinal": 23,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.Intersect Intersection with Line - segment lays on line case (two points)",
+      "testOrdinal": 24,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.Intersect intersectSegment2Segment does not report touching segments #85",
+      "testOrdinal": 25,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.Intersect Intersection with Circle",
+      "testOrdinal": 26,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.Intersect Intersection with Circle - case of tangent",
+      "testOrdinal": 27,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.Intersect Intersection with Polygon",
+      "testOrdinal": 28,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.Intersect Intersection with Box",
+      "testOrdinal": 29,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.Intersect Intersection between two very close lines returns zero intersections (#99)",
+      "testOrdinal": 30,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.Intersect Intersection with Segment - near parallel segments still report crossing point",
+      "testOrdinal": 31,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.DistanceTo Distance to Segment Case 1 Intersected Segments",
+      "testOrdinal": 32,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.DistanceTo Distance to Segment Case 2 Not Intersected Segments",
+      "testOrdinal": 33,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.DistanceTo Distance to Line",
+      "testOrdinal": 34,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.DistanceTo Distance to Circle Case 1 Intersection - touching",
+      "testOrdinal": 35,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.DistanceTo Distance to Circle Case 1 Intersection - two points",
+      "testOrdinal": 36,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.DistanceTo Distance to Circle Case 1 Intersection - one points",
+      "testOrdinal": 37,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.DistanceTo Distance to Circle Case 2 Projection",
+      "testOrdinal": 38,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.DistanceTo Distance to Circle Case 3 End point out of the circle",
+      "testOrdinal": 39,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.DistanceTo Distance to Circle Case 3 End point inside the circle",
+      "testOrdinal": 40,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.pointAtLength gets the point at specific length",
+      "testOrdinal": 41,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.pointAtLength points at specific length is on segment",
+      "testOrdinal": 42,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line May create new instance of Line",
+      "testOrdinal": 1,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line Default constructor creates new line that is equal to axe x",
+      "testOrdinal": 2,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line Constructor Line(pt1, pt2) creates line that passes through two points",
+      "testOrdinal": 3,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line Constructor Line(pt, norm) creates same line as Line(norm,pt)",
+      "testOrdinal": 4,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line Constructor with illegal parameters throws error. Case 1",
+      "testOrdinal": 5,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line Constructor with illegal parameters throws error. Case 2",
+      "testOrdinal": 6,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line Constructor with illegal parameters throws error. Case 3",
+      "testOrdinal": 7,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line Constructor with zero vector throws error",
+      "testOrdinal": 8,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line New line may be constructed by function call",
+      "testOrdinal": 9,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line May create new instance by clone",
+      "testOrdinal": 10,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line Get slope - angle in radians between line and axe x",
+      "testOrdinal": 11,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line Method contains returns true if point belongs to the line",
+      "testOrdinal": 12,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line May split line by point into array of two rays",
+      "testOrdinal": 13,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line May return 1-dim coordinate of point on line",
+      "testOrdinal": 14,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line May check if two lines are parallel",
+      "testOrdinal": 15,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line May check if two lines are not parallel",
+      "testOrdinal": 16,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line Can measure distance from line to box",
+      "testOrdinal": 17,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line Method svg() creates same svg string as segment with same points",
+      "testOrdinal": 18,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line Method svg() without parameters creates svg string with default attributes",
+      "testOrdinal": 19,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line Method svg() with extra parameters may add additional attributes",
+      "testOrdinal": 20,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line May stringify and parse line",
+      "testOrdinal": 21,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line #Flatten.Line.intersect methods return array of intersection points if intersection exist Line to line intersection ",
+      "testOrdinal": 22,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line #Flatten.Line.intersect methods return array of intersection points if intersection exist Method intersect returns zero length array if intersection does not exist",
+      "testOrdinal": 23,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line #Flatten.Line.intersect methods return array of intersection points if intersection exist Line to circle intersection - horizontal line, line constricted with 2 points",
+      "testOrdinal": 24,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line #Flatten.Line.intersect methods return array of intersection points if intersection exist Line to circle intersection - horizontal line, line constructed with point and vector ",
+      "testOrdinal": 25,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line #Flatten.Line.intersect methods return array of intersection points if intersection exist Line to circle intersection - diagonal line, line constructed with point and vector ",
+      "testOrdinal": 26,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line #Flatten.Line.intersect methods return array of intersection points if intersection exist Line to arc intersection - quick reject ",
+      "testOrdinal": 27,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line #Flatten.Line.intersect methods return array of intersection points if intersection exist Line to polygon intersection",
+      "testOrdinal": 28,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line #Flatten.Line.intersect methods return array of intersection points if intersection exist Line to box intersection",
+      "testOrdinal": 29,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May create new instance of Ray",
+      "testOrdinal": 1,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May return bounding box of ray",
+      "testOrdinal": 2,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May find intersection between ray and segment. Case 1. Quick reject",
+      "testOrdinal": 3,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May find intersection between ray and segment. Case 2. No intersection",
+      "testOrdinal": 4,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May find intersection between ray and segment. Case 3. Start intersection",
+      "testOrdinal": 5,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May find intersection between ray and segment. Case 4. One not start intersection",
+      "testOrdinal": 6,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May find intersection between ray and segment. Case 5. Two intersections",
+      "testOrdinal": 7,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May find intersection between ray and arc. Case 1. Quick reject",
+      "testOrdinal": 8,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May find intersection between ray and arc. Case 2. No interection",
+      "testOrdinal": 9,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May find intersection between ray and arc. Case 3. One touching interection",
+      "testOrdinal": 10,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May find intersection between ray and arc. Case 4. One regular interection",
+      "testOrdinal": 11,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May find intersection between ray and arc. Case 5. Two interections",
+      "testOrdinal": 12,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May construct and treat ray by pi/4 slope",
+      "testOrdinal": 13,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May construct and treat ray by pi/2 slope",
+      "testOrdinal": 14,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May construct and treat ray by 3*pi/4 slope",
+      "testOrdinal": 15,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May construct and treat ray by pi slope",
+      "testOrdinal": 16,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May construct and treat ray by 5*pi/4 slope",
+      "testOrdinal": 17,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May construct and treat ray by 3*pi/2 slope",
+      "testOrdinal": 18,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May construct and treat ray by 7*pi/4 slope",
+      "testOrdinal": 19,
+      "state": "passed",
+      "duration": 0
+    }
+  ]
+}

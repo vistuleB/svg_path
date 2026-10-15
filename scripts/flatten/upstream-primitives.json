@@ -1,0 +1,594 @@
+{
+  "stats": {
+    "suites": 7,
+    "tests": 82,
+    "passes": 82,
+    "pending": 0,
+    "failures": 0,
+    "start": "2026-10-15T12:31:53.100Z",
+    "end": "2026-10-15T12:31:53.124Z",
+    "duration": 24
+  },
+  "files": [
+    "test/classes/point.js",
+    "test/classes/vector.js",
+    "test/classes/matrix.js",
+    "test/classes/box.js"
+  ],
+  "tests": [
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point May create new Point",
+      "testOrdinal": 1,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point Default constructor creates new (0,0) point",
+      "testOrdinal": 2,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point New point may be constructed by function call",
+      "testOrdinal": 3,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point New point may be constructed with array of two numbers",
+      "testOrdinal": 4,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point Constructor with illegal parameters throw error",
+      "testOrdinal": 5,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point Method clone creates new instance of Point",
+      "testOrdinal": 6,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point Method equalTo return true if points are equal",
+      "testOrdinal": 7,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point Method equalTo return true if points are equal up to DP_TOL tolerance",
+      "testOrdinal": 8,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point Method translate returns new point translated by (dx, dy)",
+      "testOrdinal": 9,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point Method rotates returns new point rotated by default around (0.0), counterclockwise",
+      "testOrdinal": 10,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point Method rotate returns new point rotated around center, counterclockwise",
+      "testOrdinal": 11,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point Method translate returns new point translated by vector",
+      "testOrdinal": 12,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point Can scale point with scale factor",
+      "testOrdinal": 13,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point Method translate with illegal parameters throws error",
+      "testOrdinal": 14,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point Method returns projection point on given line",
+      "testOrdinal": 15,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point Method transform returns new point transformed by affine transformation matrix",
+      "testOrdinal": 16,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point Method leftTo returns true if point is on the \"left\" semi plane, which is the side of the normal vector",
+      "testOrdinal": 17,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point Can measure distance from point to box",
+      "testOrdinal": 18,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point Method svg() without parameters creates svg string with default attributes",
+      "testOrdinal": 19,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point Method svg() with extra parameters may add additional attributes",
+      "testOrdinal": 20,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point May stringify and parse point",
+      "testOrdinal": 21,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point May stringify and parse array of points",
+      "testOrdinal": 22,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point #Flatten.Point.Distance methods Method distanceTo return distance to other point ",
+      "testOrdinal": 23,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point #Flatten.Point.Distance methods Method distanceTo calculates distance to given line",
+      "testOrdinal": 24,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point #Flatten.Point.Distance methods Method distanceTo returns distance to segment",
+      "testOrdinal": 25,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point #Flatten.Point.Distance methods Method distanceTo returns distance to circle",
+      "testOrdinal": 26,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point #Flatten.Point.Distance methods Method distanceTo returns distance to arc",
+      "testOrdinal": 27,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point #Flatten.Point.Distance methods Method distanceTo returns distance to polygon",
+      "testOrdinal": 28,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point #Flatten.Point.On inclusion queries Method \"on\" returns true if point checked with same points",
+      "testOrdinal": 29,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point #Flatten.Point.On inclusion queries Method \"on\" returns true if point belongs to line",
+      "testOrdinal": 30,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point #Flatten.Point.On inclusion queries Method \"on\" returns true if point belongs to circle",
+      "testOrdinal": 31,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point #Flatten.Point.On inclusion queries Method \"on\" returns true if point belongs to segment",
+      "testOrdinal": 32,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point #Flatten.Point.On inclusion queries Method \"on\" returns true if point belongs to arc",
+      "testOrdinal": 33,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point #Flatten.Point.On inclusion queries Method \"on\" returns true if point belong to polygon",
+      "testOrdinal": 34,
+      "state": "passed",
+      "duration": 2
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector May create new instance of Vector",
+      "testOrdinal": 1,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Default constructor creates new Vector(0, 0)",
+      "testOrdinal": 2,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Constructor Vector(x, y) creates vector [x, y]",
+      "testOrdinal": 3,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Constructor Vector(ps, pe) creates vector [ps, pe]",
+      "testOrdinal": 4,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Constructor Vector([x, y]) creates vector [x, y]",
+      "testOrdinal": 5,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Constructor Vector with illegal parameters throw error",
+      "testOrdinal": 6,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector New vector may be constructed by function call",
+      "testOrdinal": 7,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Method clone creates new instance of Vector",
+      "testOrdinal": 8,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Method mutliply vector by scalar",
+      "testOrdinal": 9,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Method dot calculates dot product",
+      "testOrdinal": 10,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Method cross calculates cross product",
+      "testOrdinal": 11,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Method length calculates vector length",
+      "testOrdinal": 12,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Get slope - angle in radians between vector and axe x",
+      "testOrdinal": 13,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Method normalize returns unit vector",
+      "testOrdinal": 14,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Method normalize throw error on zero length vector",
+      "testOrdinal": 15,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Method rotate returns new vector rotated by given angle, positive angle defines rotation in counterclockwise direction",
+      "testOrdinal": 16,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Method rotate rotates clockwise when angle is negative",
+      "testOrdinal": 17,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Method add return sum of two vectors",
+      "testOrdinal": 18,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Method subtract returns difference between two vectors",
+      "testOrdinal": 19,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Method invert returns inverted vector",
+      "testOrdinal": 20,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Method angle returns angle between two vectors",
+      "testOrdinal": 21,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Method projection returns new vector case 1",
+      "testOrdinal": 22,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Method projection returns new vector case 2",
+      "testOrdinal": 23,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Method projection returns new vector case 3",
+      "testOrdinal": 24,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/matrix.js",
+      "test": "#Flatten.Matrix May create new instance of Matrix",
+      "testOrdinal": 1,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/matrix.js",
+      "test": "#Flatten.Matrix Default constructor creates identity matrix",
+      "testOrdinal": 2,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/matrix.js",
+      "test": "#Flatten.Matrix Matrix can translate vector",
+      "testOrdinal": 3,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/matrix.js",
+      "test": "#Flatten.Matrix Method translate returns translation matrix",
+      "testOrdinal": 4,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/matrix.js",
+      "test": "#Flatten.Matrix Matrix can rotate vector counterclockwise",
+      "testOrdinal": 5,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/matrix.js",
+      "test": "#Flatten.Matrix Method rotate returns rotation matrix to rotate around (0,0)",
+      "testOrdinal": 6,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/matrix.js",
+      "test": "#Flatten.Matrix Method rotate and translate may compose rotation matrix to rotate around point other than (0,0)",
+      "testOrdinal": 7,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/matrix.js",
+      "test": "#Flatten.Matrix Composition of methods rotate and translate return same matrix as formula",
+      "testOrdinal": 8,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/matrix.js",
+      "test": "#Flatten.Matrix Matrix can scale vector",
+      "testOrdinal": 9,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/matrix.js",
+      "test": "#Flatten.Matrix Method scale returns matrix that may scale vector",
+      "testOrdinal": 10,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/box.js",
+      "test": "#Flatten.Box May create new instance of Box",
+      "testOrdinal": 1,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/box.js",
+      "test": "#Flatten.Box Method intersect returns true if two boxes intersected",
+      "testOrdinal": 2,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/box.js",
+      "test": "#Flatten.Box Method expand expands current box with other",
+      "testOrdinal": 3,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/box.js",
+      "test": "#Flatten.Box Method contains correctly marks arc as contained in box",
+      "testOrdinal": 4,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/box.js",
+      "test": "#Flatten.Box Method contains correctly marks arc as not contained in box (fully outside)",
+      "testOrdinal": 5,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/box.js",
+      "test": "#Flatten.Box Method contains correctly marks arc as not contained in box (middle of arc partly outside)",
+      "testOrdinal": 6,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/box.js",
+      "test": "#Flatten.Box Method contains correctly marks arc as not contained in box (endpoint of arc outside)",
+      "testOrdinal": 7,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/box.js",
+      "test": "#Flatten.Box Method svg() without parameters creates svg string with default attributes",
+      "testOrdinal": 8,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/box.js",
+      "test": "#Flatten.Box Method svg() with extra parameters may add additional attributes",
+      "testOrdinal": 9,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/box.js",
+      "test": "#Flatten.Box Can measure distance to box",
+      "testOrdinal": 10,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/box.js",
+      "test": "#Flatten.Box distanceTo(Box) (issue #210) returns zero for boxes with intersecting boundaries",
+      "testOrdinal": 11,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/box.js",
+      "test": "#Flatten.Box distanceTo(Box) (issue #210) returns the boundary gap for disjoint boxes",
+      "testOrdinal": 12,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/box.js",
+      "test": "#Flatten.Box distanceTo(Box) (issue #210) returns a shortest segment from the calling box to the other box",
+      "testOrdinal": 13,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/box.js",
+      "test": "#Flatten.Box distanceTo(Box) (issue #210) supports Segment.distanceTo(Box)",
+      "testOrdinal": 14,
+      "state": "passed",
+      "duration": 1
+    }
+  ]
+}

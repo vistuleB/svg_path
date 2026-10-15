@@ -1,0 +1,1210 @@
+[
+  {
+    "id": "linear:66",
+    "file": "test/classes/segment.js",
+    "test": "#Flatten.Segment #Flatten.Segment.DistanceTo Distance to Circle Case 1 Intersection - two points",
+    "operation": "distanceTo",
+    "observation": {
+      "status": "needs-investigation",
+      "error": "RangeError: Maximum call stack size exceeded",
+      "stack": "RangeError: Maximum call stack size exceeded\n    at center_prime (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/ellipse.mjs:518:22)\n    at do_endpoint_to_center (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/ellipse.mjs:577:26)\n    at Module.endpoint_to_center (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/ellipse.mjs:1090:10)\n    at arc_center_data (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5223:22)\n    at Module.segment_point (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5337:15)\n    at global_piece_point (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:4375:20)\n    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:4383:9\n    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)\n    at global_distance_minimum_at (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:4379:18)\n    at initial_descent_records_loop (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:4939:11)"
+    },
+    "disposition": {
+      "status": "confirmed-library-bug",
+      "finding": "FL001",
+      "reason": "Native segment and path closest-pair APIs overflow on JavaScript; reproduced independently in probe-distance-stack.mjs."
+    }
+  },
+  {
+    "id": "linear:67",
+    "file": "test/classes/segment.js",
+    "test": "#Flatten.Segment #Flatten.Segment.DistanceTo Distance to Circle Case 1 Intersection - one points",
+    "operation": "distanceTo",
+    "observation": {
+      "status": "needs-investigation",
+      "error": "RangeError: Maximum call stack size exceeded",
+      "stack": "RangeError: Maximum call stack size exceeded\n    at square_root (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/ellipse.mjs:203:21)\n    at do_endpoint_to_center (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/ellipse.mjs:574:19)\n    at Module.endpoint_to_center (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/ellipse.mjs:1090:10)\n    at arc_center_data (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5223:22)\n    at Module.segment_point (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5337:15)\n    at global_piece_point (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:4375:20)\n    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:4383:9\n    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)\n    at global_distance_minimum_at (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:4379:18)\n    at initial_descent_records_loop (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:4939:11)"
+    },
+    "disposition": {
+      "status": "confirmed-library-bug",
+      "finding": "FL001",
+      "reason": "Same JavaScript recursion failure as linear:66; standalone native reproducer uses this positive-x quarter-circle crossing."
+    }
+  },
+  {
+    "id": "polygons:317",
+    "file": "test/classes/polygon.js",
+    "test": "#Flatten.Polygon Can measure distance between two polygons",
+    "operation": "distanceTo",
+    "observation": {
+      "status": "needs-investigation",
+      "timeout": true
+    },
+    "disposition": null
+  },
+  {
+    "id": "polygons:3115",
+    "file": "test/algorithms/boolean_op.js",
+    "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. Fixed: Infinite loop for boolean union over (valid) polygons. Issue #53",
+    "operation": "algorithm:unify",
+    "observation": {
+      "status": "needs-investigation",
+      "error": "Discontinuous",
+      "phase": "adapt-upstream-output",
+      "details": {
+        "type": "Discontinuous",
+        "previous_index": 98,
+        "next_index": 99,
+        "expected": {
+          "type": "Point",
+          "x": 623.3,
+          "y": 421.6
+        },
+        "got": {
+          "type": "Point",
+          "x": 623.3,
+          "y": 421.6000000000001
+        },
+        "distance": 5.684341886080802e-14
+      }
+    },
+    "disposition": null
+  },
+  {
+    "id": "polygons:3380",
+    "file": "test/algorithms/boolean_op.js",
+    "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. Fixed: Infinite loop for boolean union over (valid) polygons. Issue #55 case 2",
+    "operation": "algorithm:unify",
+    "observation": {
+      "status": "needs-investigation",
+      "error": "ArrangementGraphError",
+      "phase": "native-boolean-query",
+      "details": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "InternalOverlapClassificationInconsistency"
+          }
+        }
+      }
+    },
+    "disposition": null
+  },
+  {
+    "id": "polygons:3497",
+    "file": "test/algorithms/boolean_op.js",
+    "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. Fixed: Infinite loop for boolean union over (valid) polygons. Issue #55 case 3",
+    "operation": "algorithm:unify",
+    "observation": {
+      "status": "needs-investigation",
+      "error": "ArrangementGraphError",
+      "phase": "native-boolean-query",
+      "details": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "ConstructionFailed"
+        }
+      }
+    },
+    "disposition": null
+  },
+  {
+    "id": "polygons:4033",
+    "file": "test/algorithms/boolean_op.js",
+    "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Can perform subtract. Fixed: Infinite loop for boolean union over (valid) polygons. Issue #55 case 2",
+    "operation": "algorithm:subtract",
+    "observation": {
+      "status": "needs-investigation",
+      "error": "ArrangementGraphError",
+      "phase": "native-boolean-query",
+      "details": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "InternalOverlapClassificationInconsistency"
+          }
+        }
+      }
+    },
+    "disposition": null
+  },
+  {
+    "id": "polygons:4150",
+    "file": "test/algorithms/boolean_op.js",
+    "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Can perform subtract. Fixed: Infinite loop for boolean union over (valid) polygons. Issue #55 case 3",
+    "operation": "algorithm:subtract",
+    "observation": {
+      "status": "needs-investigation",
+      "error": "ArrangementGraphError",
+      "phase": "native-boolean-query",
+      "details": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "ConstructionFailed"
+        }
+      }
+    },
+    "disposition": null
+  },
+  {
+    "id": "polygons:4278",
+    "file": "test/algorithms/boolean_op.js",
+    "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Issue #2 with intersection of circle and box",
+    "operation": "algorithm:intersect",
+    "observation": {
+      "status": "needs-investigation",
+      "error": "Discontinuous",
+      "phase": "adapt-upstream-output",
+      "details": {
+        "type": "Discontinuous",
+        "previous_index": 0,
+        "next_index": 1,
+        "expected": {
+          "type": "Point",
+          "x": 240.62418831031914,
+          "y": 50
+        },
+        "got": {
+          "type": "Point",
+          "x": 240.62418831031928,
+          "y": 50
+        },
+        "distance": 1.4210854715202004e-13
+      }
+    },
+    "disposition": null
+  },
+  {
+    "id": "polygons:4279",
+    "file": "test/algorithms/boolean_op.js",
+    "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Issue #2 with intersection of circle and box",
+    "operation": "algorithm:subtract",
+    "observation": {
+      "status": "needs-investigation",
+      "error": "Discontinuous",
+      "phase": "adapt-left-input",
+      "details": {
+        "type": "Discontinuous",
+        "previous_index": 0,
+        "next_index": 1,
+        "expected": {
+          "type": "Point",
+          "x": 240.62418831031914,
+          "y": 50
+        },
+        "got": {
+          "type": "Point",
+          "x": 240.62418831031928,
+          "y": 50
+        },
+        "distance": 1.4210854715202004e-13
+      }
+    },
+    "disposition": null
+  },
+  {
+    "id": "polygons:4280",
+    "file": "test/algorithms/boolean_op.js",
+    "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Issue #2 with intersection of circle and box",
+    "operation": "algorithm:intersect",
+    "observation": {
+      "status": "needs-investigation",
+      "error": "Discontinuous",
+      "phase": "adapt-left-input",
+      "details": {
+        "type": "Discontinuous",
+        "previous_index": 0,
+        "next_index": 1,
+        "expected": {
+          "type": "Point",
+          "x": 778.3957862167549,
+          "y": 949.9999999999998
+        },
+        "got": {
+          "type": "Point",
+          "x": 778.3957862167549,
+          "y": 950
+        },
+        "distance": 2.2737367544323206e-13
+      }
+    },
+    "disposition": null
+  },
+  {
+    "id": "polygons:4281",
+    "file": "test/algorithms/boolean_op.js",
+    "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Issue #2 with intersection of circle and box",
+    "operation": "algorithm:subtract",
+    "observation": {
+      "status": "needs-investigation",
+      "error": "Discontinuous",
+      "phase": "adapt-left-input",
+      "details": {
+        "type": "Discontinuous",
+        "previous_index": 0,
+        "next_index": 1,
+        "expected": {
+          "type": "Point",
+          "x": 49.99999999999966,
+          "y": 69.19389774239289
+        },
+        "got": {
+          "type": "Point",
+          "x": 50,
+          "y": 69.19389774239232
+        },
+        "distance": 6.629024818318271e-13
+      }
+    },
+    "disposition": null
+  },
+  {
+    "id": "polygons:4282",
+    "file": "test/algorithms/boolean_op.js",
+    "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Issue #2 with intersection of circle and box",
+    "operation": "algorithm:intersect",
+    "observation": {
+      "status": "needs-investigation",
+      "error": "Discontinuous",
+      "phase": "adapt-left-input",
+      "details": {
+        "type": "Discontinuous",
+        "previous_index": 0,
+        "next_index": 1,
+        "expected": {
+          "type": "Point",
+          "x": 341.75000000000034,
+          "y": 81.51922311895896
+        },
+        "got": {
+          "type": "Point",
+          "x": 341.74999999999966,
+          "y": 81.51922311895919
+        },
+        "distance": 7.190186943645084e-13
+      }
+    },
+    "disposition": null
+  },
+  {
+    "id": "polygons:4291",
+    "file": "test/algorithms/boolean_op.js",
+    "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Issue #3",
+    "operation": "algorithm:intersect",
+    "observation": {
+      "status": "needs-investigation",
+      "error": "Discontinuous",
+      "phase": "adapt-upstream-output",
+      "details": {
+        "type": "Discontinuous",
+        "previous_index": 0,
+        "next_index": 1,
+        "expected": {
+          "type": "Point",
+          "x": 84.36483818588435,
+          "y": 5.999999999999999
+        },
+        "got": {
+          "type": "Point",
+          "x": 84.36483818588437,
+          "y": 6
+        },
+        "distance": 1.4238583238573986e-14
+      }
+    },
+    "disposition": null
+  },
+  {
+    "id": "polygons:4292",
+    "file": "test/algorithms/boolean_op.js",
+    "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Issue #3",
+    "operation": "algorithm:subtract",
+    "observation": {
+      "status": "needs-investigation",
+      "error": "Discontinuous",
+      "phase": "adapt-left-input",
+      "details": {
+        "type": "Discontinuous",
+        "previous_index": 0,
+        "next_index": 1,
+        "expected": {
+          "type": "Point",
+          "x": 84.36483818588435,
+          "y": 5.999999999999999
+        },
+        "got": {
+          "type": "Point",
+          "x": 84.36483818588437,
+          "y": 6
+        },
+        "distance": 1.4238583238573986e-14
+      }
+    },
+    "disposition": null
+  },
+  {
+    "id": "polygons:4293",
+    "file": "test/algorithms/boolean_op.js",
+    "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Issue #3",
+    "operation": "algorithm:intersect",
+    "observation": {
+      "status": "needs-investigation",
+      "error": "Discontinuous",
+      "phase": "adapt-left-input",
+      "details": {
+        "type": "Discontinuous",
+        "previous_index": 0,
+        "next_index": 1,
+        "expected": {
+          "type": "Point",
+          "x": 5.99999999999999,
+          "y": 84.28609980746559
+        },
+        "got": {
+          "type": "Point",
+          "x": 6,
+          "y": 84.2860998074656
+        },
+        "distance": 1.724530548492318e-14
+      }
+    },
+    "disposition": null
+  },
+  {
+    "id": "polygons:4294",
+    "file": "test/algorithms/boolean_op.js",
+    "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Issue #3",
+    "operation": "algorithm:subtract",
+    "observation": {
+      "status": "needs-investigation",
+      "error": "Discontinuous",
+      "phase": "adapt-left-input",
+      "details": {
+        "type": "Discontinuous",
+        "previous_index": 0,
+        "next_index": 1,
+        "expected": {
+          "type": "Point",
+          "x": 5.99999999999999,
+          "y": 84.28609980746559
+        },
+        "got": {
+          "type": "Point",
+          "x": 6,
+          "y": 84.2860998074656
+        },
+        "distance": 1.724530548492318e-14
+      }
+    },
+    "disposition": null
+  },
+  {
+    "id": "polygons:4295",
+    "file": "test/algorithms/boolean_op.js",
+    "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Issue #3",
+    "operation": "algorithm:intersect",
+    "observation": {
+      "status": "needs-investigation",
+      "error": "Discontinuous",
+      "phase": "adapt-left-input",
+      "details": {
+        "type": "Discontinuous",
+        "previous_index": 0,
+        "next_index": 1,
+        "expected": {
+          "type": "Point",
+          "x": 59.76266460082577,
+          "y": 59.848557559390336
+        },
+        "got": {
+          "type": "Point",
+          "x": 59.762664600825765,
+          "y": 59.84855755939034
+        },
+        "distance": 1.0048591735576161e-14
+      }
+    },
+    "disposition": null
+  },
+  {
+    "id": "polygons:4296",
+    "file": "test/algorithms/boolean_op.js",
+    "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Issue #3",
+    "operation": "algorithm:subtract",
+    "observation": {
+      "status": "needs-investigation",
+      "error": "Discontinuous",
+      "phase": "adapt-left-input",
+      "details": {
+        "type": "Discontinuous",
+        "previous_index": 0,
+        "next_index": 1,
+        "expected": {
+          "type": "Point",
+          "x": 59.76266460082577,
+          "y": 59.848557559390336
+        },
+        "got": {
+          "type": "Point",
+          "x": 59.762664600825765,
+          "y": 59.84855755939034
+        },
+        "distance": 1.0048591735576161e-14
+      }
+    },
+    "disposition": null
+  },
+  {
+    "id": "polygons:4354",
+    "file": "test/algorithms/boolean_op.js",
+    "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Subtract bug from flatten-js/core 1.2 onwards #15",
+    "operation": "algorithm:subtract",
+    "observation": {
+      "status": "needs-investigation",
+      "actualArea": 20000,
+      "expectedArea": 20000,
+      "areaError": 0,
+      "areaTolerance": 0.02,
+      "checked": 169,
+      "boundary": 0,
+      "mismatches": [
+        {
+          "x": 5.6923076923076925,
+          "y": 9.384615384615385
+        },
+        {
+          "x": 5.6923076923076925,
+          "y": 24.76923076923077
+        },
+        {
+          "x": 5.6923076923076925,
+          "y": 40.15384615384615
+        },
+        {
+          "x": 5.6923076923076925,
+          "y": 55.53846153846154
+        },
+        {
+          "x": 5.6923076923076925,
+          "y": 70.92307692307693
+        },
+        {
+          "x": 5.6923076923076925,
+          "y": 86.3076923076923
+        },
+        {
+          "x": 5.6923076923076925,
+          "y": 101.6923076923077
+        },
+        {
+          "x": 5.6923076923076925,
+          "y": 117.07692307692308
+        },
+        {
+          "x": 5.6923076923076925,
+          "y": 132.46153846153845
+        },
+        {
+          "x": 5.6923076923076925,
+          "y": 147.84615384615384
+        },
+        {
+          "x": 5.6923076923076925,
+          "y": 163.23076923076923
+        },
+        {
+          "x": 5.6923076923076925,
+          "y": 178.6153846153846
+        },
+        {
+          "x": 5.6923076923076925,
+          "y": 194
+        },
+        {
+          "x": 21.076923076923077,
+          "y": 9.384615384615385
+        },
+        {
+          "x": 21.076923076923077,
+          "y": 24.76923076923077
+        },
+        {
+          "x": 21.076923076923077,
+          "y": 40.15384615384615
+        },
+        {
+          "x": 21.076923076923077,
+          "y": 55.53846153846154
+        },
+        {
+          "x": 21.076923076923077,
+          "y": 70.92307692307693
+        },
+        {
+          "x": 21.076923076923077,
+          "y": 86.3076923076923
+        },
+        {
+          "x": 21.076923076923077,
+          "y": 101.6923076923077
+        },
+        {
+          "x": 21.076923076923077,
+          "y": 117.07692307692308
+        },
+        {
+          "x": 21.076923076923077,
+          "y": 132.46153846153845
+        },
+        {
+          "x": 21.076923076923077,
+          "y": 147.84615384615384
+        },
+        {
+          "x": 21.076923076923077,
+          "y": 163.23076923076923
+        },
+        {
+          "x": 21.076923076923077,
+          "y": 178.6153846153846
+        },
+        {
+          "x": 21.076923076923077,
+          "y": 194
+        },
+        {
+          "x": 36.46153846153846,
+          "y": 9.384615384615385
+        },
+        {
+          "x": 36.46153846153846,
+          "y": 24.76923076923077
+        },
+        {
+          "x": 36.46153846153846,
+          "y": 40.15384615384615
+        },
+        {
+          "x": 36.46153846153846,
+          "y": 55.53846153846154
+        },
+        {
+          "x": 36.46153846153846,
+          "y": 70.92307692307693
+        },
+        {
+          "x": 36.46153846153846,
+          "y": 86.3076923076923
+        },
+        {
+          "x": 36.46153846153846,
+          "y": 101.6923076923077
+        },
+        {
+          "x": 36.46153846153846,
+          "y": 117.07692307692308
+        },
+        {
+          "x": 36.46153846153846,
+          "y": 132.46153846153845
+        },
+        {
+          "x": 36.46153846153846,
+          "y": 147.84615384615384
+        },
+        {
+          "x": 36.46153846153846,
+          "y": 163.23076923076923
+        },
+        {
+          "x": 36.46153846153846,
+          "y": 178.6153846153846
+        },
+        {
+          "x": 36.46153846153846,
+          "y": 194
+        },
+        {
+          "x": 51.84615384615385,
+          "y": 9.384615384615385
+        },
+        {
+          "x": 51.84615384615385,
+          "y": 24.76923076923077
+        },
+        {
+          "x": 51.84615384615385,
+          "y": 40.15384615384615
+        },
+        {
+          "x": 51.84615384615385,
+          "y": 55.53846153846154
+        },
+        {
+          "x": 51.84615384615385,
+          "y": 70.92307692307693
+        },
+        {
+          "x": 51.84615384615385,
+          "y": 86.3076923076923
+        },
+        {
+          "x": 51.84615384615385,
+          "y": 101.6923076923077
+        },
+        {
+          "x": 51.84615384615385,
+          "y": 117.07692307692308
+        },
+        {
+          "x": 51.84615384615385,
+          "y": 132.46153846153845
+        },
+        {
+          "x": 51.84615384615385,
+          "y": 147.84615384615384
+        },
+        {
+          "x": 51.84615384615385,
+          "y": 163.23076923076923
+        },
+        {
+          "x": 51.84615384615385,
+          "y": 178.6153846153846
+        },
+        {
+          "x": 51.84615384615385,
+          "y": 194
+        },
+        {
+          "x": 67.23076923076923,
+          "y": 9.384615384615385
+        },
+        {
+          "x": 67.23076923076923,
+          "y": 24.76923076923077
+        },
+        {
+          "x": 67.23076923076923,
+          "y": 40.15384615384615
+        },
+        {
+          "x": 67.23076923076923,
+          "y": 55.53846153846154
+        },
+        {
+          "x": 67.23076923076923,
+          "y": 70.92307692307693
+        },
+        {
+          "x": 67.23076923076923,
+          "y": 86.3076923076923
+        },
+        {
+          "x": 67.23076923076923,
+          "y": 101.6923076923077
+        },
+        {
+          "x": 67.23076923076923,
+          "y": 117.07692307692308
+        },
+        {
+          "x": 67.23076923076923,
+          "y": 132.46153846153845
+        },
+        {
+          "x": 67.23076923076923,
+          "y": 147.84615384615384
+        },
+        {
+          "x": 67.23076923076923,
+          "y": 163.23076923076923
+        },
+        {
+          "x": 67.23076923076923,
+          "y": 178.6153846153846
+        },
+        {
+          "x": 67.23076923076923,
+          "y": 194
+        },
+        {
+          "x": 82.61538461538461,
+          "y": 9.384615384615385
+        },
+        {
+          "x": 82.61538461538461,
+          "y": 24.76923076923077
+        },
+        {
+          "x": 82.61538461538461,
+          "y": 40.15384615384615
+        },
+        {
+          "x": 82.61538461538461,
+          "y": 55.53846153846154
+        },
+        {
+          "x": 82.61538461538461,
+          "y": 70.92307692307693
+        },
+        {
+          "x": 82.61538461538461,
+          "y": 86.3076923076923
+        },
+        {
+          "x": 82.61538461538461,
+          "y": 101.6923076923077
+        },
+        {
+          "x": 82.61538461538461,
+          "y": 117.07692307692308
+        },
+        {
+          "x": 82.61538461538461,
+          "y": 132.46153846153845
+        },
+        {
+          "x": 82.61538461538461,
+          "y": 147.84615384615384
+        },
+        {
+          "x": 82.61538461538461,
+          "y": 163.23076923076923
+        },
+        {
+          "x": 82.61538461538461,
+          "y": 178.6153846153846
+        },
+        {
+          "x": 82.61538461538461,
+          "y": 194
+        },
+        {
+          "x": 98,
+          "y": 9.384615384615385
+        },
+        {
+          "x": 98,
+          "y": 24.76923076923077
+        },
+        {
+          "x": 98,
+          "y": 40.15384615384615
+        },
+        {
+          "x": 98,
+          "y": 55.53846153846154
+        },
+        {
+          "x": 98,
+          "y": 70.92307692307693
+        },
+        {
+          "x": 98,
+          "y": 86.3076923076923
+        },
+        {
+          "x": 98,
+          "y": 101.6923076923077
+        },
+        {
+          "x": 98,
+          "y": 117.07692307692308
+        },
+        {
+          "x": 98,
+          "y": 132.46153846153845
+        },
+        {
+          "x": 98,
+          "y": 147.84615384615384
+        },
+        {
+          "x": 98,
+          "y": 163.23076923076923
+        },
+        {
+          "x": 98,
+          "y": 178.6153846153846
+        },
+        {
+          "x": 98,
+          "y": 194
+        },
+        {
+          "x": 113.38461538461539,
+          "y": 9.384615384615385
+        },
+        {
+          "x": 113.38461538461539,
+          "y": 24.76923076923077
+        },
+        {
+          "x": 113.38461538461539,
+          "y": 40.15384615384615
+        },
+        {
+          "x": 113.38461538461539,
+          "y": 55.53846153846154
+        },
+        {
+          "x": 113.38461538461539,
+          "y": 70.92307692307693
+        },
+        {
+          "x": 113.38461538461539,
+          "y": 86.3076923076923
+        },
+        {
+          "x": 113.38461538461539,
+          "y": 101.6923076923077
+        },
+        {
+          "x": 113.38461538461539,
+          "y": 117.07692307692308
+        },
+        {
+          "x": 113.38461538461539,
+          "y": 132.46153846153845
+        },
+        {
+          "x": 113.38461538461539,
+          "y": 147.84615384615384
+        },
+        {
+          "x": 113.38461538461539,
+          "y": 163.23076923076923
+        },
+        {
+          "x": 113.38461538461539,
+          "y": 178.6153846153846
+        },
+        {
+          "x": 113.38461538461539,
+          "y": 194
+        },
+        {
+          "x": 128.76923076923075,
+          "y": 9.384615384615385
+        },
+        {
+          "x": 128.76923076923075,
+          "y": 24.76923076923077
+        },
+        {
+          "x": 128.76923076923075,
+          "y": 40.15384615384615
+        },
+        {
+          "x": 128.76923076923075,
+          "y": 55.53846153846154
+        },
+        {
+          "x": 128.76923076923075,
+          "y": 70.92307692307693
+        },
+        {
+          "x": 128.76923076923075,
+          "y": 86.3076923076923
+        },
+        {
+          "x": 128.76923076923075,
+          "y": 101.6923076923077
+        },
+        {
+          "x": 128.76923076923075,
+          "y": 117.07692307692308
+        },
+        {
+          "x": 128.76923076923075,
+          "y": 132.46153846153845
+        },
+        {
+          "x": 128.76923076923075,
+          "y": 147.84615384615384
+        },
+        {
+          "x": 128.76923076923075,
+          "y": 163.23076923076923
+        },
+        {
+          "x": 128.76923076923075,
+          "y": 178.6153846153846
+        },
+        {
+          "x": 128.76923076923075,
+          "y": 194
+        },
+        {
+          "x": 144.15384615384613,
+          "y": 9.384615384615385
+        },
+        {
+          "x": 144.15384615384613,
+          "y": 24.76923076923077
+        },
+        {
+          "x": 144.15384615384613,
+          "y": 40.15384615384615
+        },
+        {
+          "x": 144.15384615384613,
+          "y": 55.53846153846154
+        },
+        {
+          "x": 144.15384615384613,
+          "y": 70.92307692307693
+        },
+        {
+          "x": 144.15384615384613,
+          "y": 86.3076923076923
+        },
+        {
+          "x": 144.15384615384613,
+          "y": 101.6923076923077
+        },
+        {
+          "x": 144.15384615384613,
+          "y": 117.07692307692308
+        },
+        {
+          "x": 144.15384615384613,
+          "y": 132.46153846153845
+        },
+        {
+          "x": 144.15384615384613,
+          "y": 147.84615384615384
+        },
+        {
+          "x": 144.15384615384613,
+          "y": 163.23076923076923
+        },
+        {
+          "x": 144.15384615384613,
+          "y": 178.6153846153846
+        },
+        {
+          "x": 144.15384615384613,
+          "y": 194
+        },
+        {
+          "x": 159.53846153846155,
+          "y": 9.384615384615385
+        },
+        {
+          "x": 159.53846153846155,
+          "y": 24.76923076923077
+        },
+        {
+          "x": 159.53846153846155,
+          "y": 40.15384615384615
+        },
+        {
+          "x": 159.53846153846155,
+          "y": 55.53846153846154
+        },
+        {
+          "x": 159.53846153846155,
+          "y": 70.92307692307693
+        },
+        {
+          "x": 159.53846153846155,
+          "y": 86.3076923076923
+        },
+        {
+          "x": 159.53846153846155,
+          "y": 101.6923076923077
+        },
+        {
+          "x": 159.53846153846155,
+          "y": 117.07692307692308
+        },
+        {
+          "x": 159.53846153846155,
+          "y": 132.46153846153845
+        },
+        {
+          "x": 159.53846153846155,
+          "y": 147.84615384615384
+        },
+        {
+          "x": 159.53846153846155,
+          "y": 163.23076923076923
+        },
+        {
+          "x": 159.53846153846155,
+          "y": 178.6153846153846
+        },
+        {
+          "x": 159.53846153846155,
+          "y": 194
+        },
+        {
+          "x": 174.92307692307693,
+          "y": 9.384615384615385
+        },
+        {
+          "x": 174.92307692307693,
+          "y": 24.76923076923077
+        },
+        {
+          "x": 174.92307692307693,
+          "y": 40.15384615384615
+        },
+        {
+          "x": 174.92307692307693,
+          "y": 55.53846153846154
+        },
+        {
+          "x": 174.92307692307693,
+          "y": 70.92307692307693
+        },
+        {
+          "x": 174.92307692307693,
+          "y": 86.3076923076923
+        },
+        {
+          "x": 174.92307692307693,
+          "y": 101.6923076923077
+        },
+        {
+          "x": 174.92307692307693,
+          "y": 117.07692307692308
+        },
+        {
+          "x": 174.92307692307693,
+          "y": 132.46153846153845
+        },
+        {
+          "x": 174.92307692307693,
+          "y": 147.84615384615384
+        },
+        {
+          "x": 174.92307692307693,
+          "y": 163.23076923076923
+        },
+        {
+          "x": 174.92307692307693,
+          "y": 178.6153846153846
+        },
+        {
+          "x": 174.92307692307693,
+          "y": 194
+        },
+        {
+          "x": 190.30769230769232,
+          "y": 9.384615384615385
+        },
+        {
+          "x": 190.30769230769232,
+          "y": 24.76923076923077
+        },
+        {
+          "x": 190.30769230769232,
+          "y": 40.15384615384615
+        },
+        {
+          "x": 190.30769230769232,
+          "y": 55.53846153846154
+        },
+        {
+          "x": 190.30769230769232,
+          "y": 70.92307692307693
+        },
+        {
+          "x": 190.30769230769232,
+          "y": 86.3076923076923
+        },
+        {
+          "x": 190.30769230769232,
+          "y": 101.6923076923077
+        },
+        {
+          "x": 190.30769230769232,
+          "y": 117.07692307692308
+        },
+        {
+          "x": 190.30769230769232,
+          "y": 132.46153846153845
+        },
+        {
+          "x": 190.30769230769232,
+          "y": 147.84615384615384
+        },
+        {
+          "x": 190.30769230769232,
+          "y": 163.23076923076923
+        },
+        {
+          "x": 190.30769230769232,
+          "y": 178.6153846153846
+        },
+        {
+          "x": 190.30769230769232,
+          "y": 194
+        }
+      ]
+    },
+    "disposition": null
+  },
+  {
+    "id": "polygons:4682",
+    "file": "test/algorithms/boolean_op.js",
+    "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Can perform intersect. Fixed: Infinite loop for boolean union over (valid) polygons. Issue #55 case 2",
+    "operation": "algorithm:intersect",
+    "observation": {
+      "status": "needs-investigation",
+      "error": "ArrangementGraphError",
+      "phase": "native-boolean-query",
+      "details": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "PathError",
+          "error": {
+            "type": "InternalOverlapClassificationInconsistency"
+          }
+        }
+      }
+    },
+    "disposition": null
+  },
+  {
+    "id": "polygons:4799",
+    "file": "test/algorithms/boolean_op.js",
+    "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Can perform intersect. Fixed: Infinite loop for boolean union over (valid) polygons. Issue #55 case 3",
+    "operation": "algorithm:intersect",
+    "observation": {
+      "status": "needs-investigation",
+      "error": "ArrangementGraphError",
+      "phase": "native-boolean-query",
+      "details": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "ConstructionFailed"
+        }
+      }
+    },
+    "disposition": null
+  },
+  {
+    "id": "polygons:4920",
+    "file": "test/algorithms/boolean_op.js",
+    "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Fixed: Infinite Loop when intersecting Polygons (v1.3.4) #139",
+    "operation": "algorithm:intersect",
+    "observation": {
+      "status": "needs-investigation",
+      "error": "ArrangementGraphError",
+      "phase": "native-boolean-query",
+      "details": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "ConstructionFailed"
+        }
+      }
+    },
+    "disposition": null
+  }
+]

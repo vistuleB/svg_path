@@ -1,0 +1,2815 @@
+{
+  "distanceAdapter": "public-path-query",
+  "timeoutMs": 30000,
+  "implementation": "ba6988cc036dc340e69bde411fb6ffab11ce98fa",
+  "diagnosticTolerance": 0.000001,
+  "counts": {
+    "match": 30
+  },
+  "rows": [
+    {
+      "call": 1,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Getter arc.box returns arc bounding box, CCW case",
+      "testOrdinal": 19,
+      "operation": "breakToFunctional",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": -0.7853981633974483,
+        "endAngle": 0.7853981633974483,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": -0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        }
+      },
+      "arguments": [],
+      "result": [
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 5.497787143782138,
+          "endAngle": 0,
+          "ccw": true,
+          "sweep": 0.7853981633974483,
+          "start": {
+            "type": "point",
+            "x": 0.7071067811865474,
+            "y": -0.7071067811865477
+          },
+          "end": {
+            "type": "point",
+            "x": 1,
+            "y": 0
+          }
+        },
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 0,
+          "endAngle": 0.7853981633974483,
+          "ccw": true,
+          "sweep": 0.7853981633974483,
+          "start": {
+            "type": "point",
+            "x": 1,
+            "y": 0
+          },
+          "end": {
+            "type": "point",
+            "x": 0.7071067811865476,
+            "y": 0.7071067811865475
+          }
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "pieces": 2,
+        "referencePieces": 2,
+        "points": [
+          {
+            "x": 1,
+            "y": 0
+          }
+        ],
+        "reference": [
+          {
+            "type": "point",
+            "x": 1,
+            "y": 0
+          }
+        ]
+      }
+    },
+    {
+      "call": 2,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Getter arc.box returns arc bounding box, CW case",
+      "testOrdinal": 20,
+      "operation": "breakToFunctional",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": -0.7853981633974483,
+        "endAngle": 0.7853981633974483,
+        "ccw": false,
+        "sweep": 4.71238898038469,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": -0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        }
+      },
+      "arguments": [],
+      "result": [
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 5.497787143782138,
+          "endAngle": 4.71238898038469,
+          "ccw": false,
+          "sweep": 0.7853981633974483,
+          "start": {
+            "type": "point",
+            "x": 0.7071067811865474,
+            "y": -0.7071067811865477
+          },
+          "end": {
+            "type": "point",
+            "x": -1.8369701987210297e-16,
+            "y": -1
+          }
+        },
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 4.71238898038469,
+          "endAngle": 3.141592653589793,
+          "ccw": false,
+          "sweep": 1.5707963267948966,
+          "start": {
+            "type": "point",
+            "x": -1.8369701987210297e-16,
+            "y": -1
+          },
+          "end": {
+            "type": "point",
+            "x": -1,
+            "y": 1.2246467991473532e-16
+          }
+        },
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 3.141592653589793,
+          "endAngle": 1.5707963267948966,
+          "ccw": false,
+          "sweep": 1.5707963267948966,
+          "start": {
+            "type": "point",
+            "x": -1,
+            "y": 1.2246467991473532e-16
+          },
+          "end": {
+            "type": "point",
+            "x": 6.123233995736766e-17,
+            "y": 1
+          }
+        },
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 1.5707963267948966,
+          "endAngle": 0.7853981633974483,
+          "ccw": false,
+          "sweep": 0.7853981633974483,
+          "start": {
+            "type": "point",
+            "x": 6.123233995736766e-17,
+            "y": 1
+          },
+          "end": {
+            "type": "point",
+            "x": 0.7071067811865476,
+            "y": 0.7071067811865475
+          }
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "pieces": 4,
+        "referencePieces": 4,
+        "points": [
+          {
+            "x": 0,
+            "y": -1
+          },
+          {
+            "x": -1,
+            "y": 0
+          },
+          {
+            "x": 0,
+            "y": 1
+          }
+        ],
+        "reference": [
+          {
+            "type": "point",
+            "x": -1.8369701987210297e-16,
+            "y": -1
+          },
+          {
+            "type": "point",
+            "x": -1,
+            "y": 1.2246467991473532e-16
+          },
+          {
+            "type": "point",
+            "x": 6.123233995736766e-17,
+            "y": 1
+          }
+        ]
+      }
+    },
+    {
+      "call": 3,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Getter arc.box returns arc bounding box, circle case",
+      "testOrdinal": 21,
+      "operation": "breakToFunctional",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 200,
+          "y": 200
+        },
+        "radius": 75,
+        "startAngle": 3.141592653589793,
+        "endAngle": -3.141592653589793,
+        "ccw": false,
+        "sweep": 6.283185307179586,
+        "start": {
+          "type": "point",
+          "x": 125,
+          "y": 200.00000000000003
+        },
+        "end": {
+          "type": "point",
+          "x": 125,
+          "y": 199.99999999999997
+        }
+      },
+      "arguments": [],
+      "result": [
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 200,
+            "y": 200
+          },
+          "radius": 75,
+          "startAngle": 3.141592653589793,
+          "endAngle": 1.5707963267948966,
+          "ccw": false,
+          "sweep": 1.5707963267948966,
+          "start": {
+            "type": "point",
+            "x": 125,
+            "y": 200.00000000000003
+          },
+          "end": {
+            "type": "point",
+            "x": 200.00000000000003,
+            "y": 275
+          }
+        },
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 200,
+            "y": 200
+          },
+          "radius": 75,
+          "startAngle": 1.5707963267948966,
+          "endAngle": 0,
+          "ccw": false,
+          "sweep": 1.5707963267948966,
+          "start": {
+            "type": "point",
+            "x": 200.00000000000003,
+            "y": 275
+          },
+          "end": {
+            "type": "point",
+            "x": 275,
+            "y": 200
+          }
+        },
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 200,
+            "y": 200
+          },
+          "radius": 75,
+          "startAngle": 0,
+          "endAngle": 4.71238898038469,
+          "ccw": false,
+          "sweep": 1.5707963267948966,
+          "start": {
+            "type": "point",
+            "x": 275,
+            "y": 200
+          },
+          "end": {
+            "type": "point",
+            "x": 199.99999999999997,
+            "y": 124.99999999999994
+          }
+        },
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 200,
+            "y": 200
+          },
+          "radius": 75,
+          "startAngle": 4.71238898038469,
+          "endAngle": 3.141592653589793,
+          "ccw": false,
+          "sweep": 1.5707963267948966,
+          "start": {
+            "type": "point",
+            "x": 199.99999999999997,
+            "y": 124.99999999999994
+          },
+          "end": {
+            "type": "point",
+            "x": 125,
+            "y": 200.00000000000003
+          }
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "pieces": 4,
+        "referencePieces": 4,
+        "points": [
+          {
+            "x": 200,
+            "y": 275
+          },
+          {
+            "x": 275,
+            "y": 200
+          },
+          {
+            "x": 200,
+            "y": 125
+          }
+        ],
+        "reference": [
+          {
+            "type": "point",
+            "x": 200.00000000000003,
+            "y": 275
+          },
+          {
+            "type": "point",
+            "x": 275,
+            "y": 200
+          },
+          {
+            "type": "point",
+            "x": 199.99999999999997,
+            "y": 124.99999999999994
+          }
+        ]
+      }
+    },
+    {
+      "call": 4,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Calculate signed area under circular arc, full circle case, CCW",
+      "testOrdinal": 22,
+      "operation": "definiteIntegral",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 1
+        },
+        "radius": 1,
+        "startAngle": 0,
+        "endAngle": 6.283185307179586,
+        "ccw": true,
+        "sweep": 6.283185307179586,
+        "start": {
+          "type": "point",
+          "x": 1,
+          "y": 1
+        },
+        "end": {
+          "type": "point",
+          "x": 1,
+          "y": 0.9999999999999998
+        }
+      },
+      "arguments": [],
+      "result": -3.141592653589793,
+      "comparison": {
+        "status": "match",
+        "value": -3.141592653589793,
+        "error": 0
+      }
+    },
+    {
+      "call": 5,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Calculate signed area under circular arc, full circle case, CW",
+      "testOrdinal": 23,
+      "operation": "definiteIntegral",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 1
+        },
+        "radius": 1,
+        "startAngle": 0,
+        "endAngle": 6.283185307179586,
+        "ccw": false,
+        "sweep": 6.283185307179586,
+        "start": {
+          "type": "point",
+          "x": 1,
+          "y": 1
+        },
+        "end": {
+          "type": "point",
+          "x": 1,
+          "y": 0.9999999999999998
+        }
+      },
+      "arguments": [],
+      "result": 3.141592653589793,
+      "comparison": {
+        "status": "match",
+        "value": 3.141592653589793,
+        "error": 0
+      }
+    },
+    {
+      "call": 6,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc It can calculate tangent vector in start point, CCW case",
+      "testOrdinal": 24,
+      "operation": "tangentInStart",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 5,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 3.5355339059327378,
+          "y": 3.5355339059327373
+        },
+        "end": {
+          "type": "point",
+          "x": -3.5355339059327373,
+          "y": 3.5355339059327378
+        }
+      },
+      "arguments": [],
+      "result": {
+        "type": "vector",
+        "x": -0.7071067811865475,
+        "y": 0.7071067811865476
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": -0.7071067811865476,
+          "y": 0.7071067811865477
+        },
+        "error": 1.5700924586837752e-16
+      }
+    },
+    {
+      "call": 7,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc It can calculate tangent vector in start point, CW case",
+      "testOrdinal": 25,
+      "operation": "tangentInStart",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 5,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": false,
+        "sweep": 4.71238898038469,
+        "start": {
+          "type": "point",
+          "x": 3.5355339059327378,
+          "y": 3.5355339059327373
+        },
+        "end": {
+          "type": "point",
+          "x": -3.5355339059327373,
+          "y": 3.5355339059327378
+        }
+      },
+      "arguments": [],
+      "result": {
+        "type": "vector",
+        "x": 0.7071067811865475,
+        "y": -0.7071067811865476
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": 0.7071067811865475,
+          "y": -0.7071067811865476
+        },
+        "error": 0
+      }
+    },
+    {
+      "call": 8,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc It can calculate tangent vector in end point, CCW case",
+      "testOrdinal": 26,
+      "operation": "tangentInEnd",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 5,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 3.5355339059327378,
+          "y": 3.5355339059327373
+        },
+        "end": {
+          "type": "point",
+          "x": -3.5355339059327373,
+          "y": 3.5355339059327378
+        }
+      },
+      "arguments": [],
+      "result": {
+        "type": "vector",
+        "x": 0.7071067811865476,
+        "y": 0.7071067811865475
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": 0.7071067811865477,
+          "y": 0.7071067811865476
+        },
+        "error": 1.5700924586837752e-16
+      }
+    },
+    {
+      "call": 9,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc It can calculate tangent vector in end point, CW case",
+      "testOrdinal": 27,
+      "operation": "tangentInEnd",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 5,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": false,
+        "sweep": 4.71238898038469,
+        "start": {
+          "type": "point",
+          "x": 3.5355339059327378,
+          "y": 3.5355339059327373
+        },
+        "end": {
+          "type": "point",
+          "x": -3.5355339059327373,
+          "y": 3.5355339059327378
+        }
+      },
+      "arguments": [],
+      "result": {
+        "type": "vector",
+        "x": -0.7071067811865476,
+        "y": -0.7071067811865475
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": -0.7071067811865474,
+          "y": -0.7071067811865478
+        },
+        "error": 4.0029660424867215e-16
+      }
+    },
+    {
+      "call": 10,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc It can calculate middle point case 1 full circle",
+      "testOrdinal": 28,
+      "operation": "middle",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 3,
+        "startAngle": 3.141592653589793,
+        "endAngle": -3.141592653589793,
+        "ccw": true,
+        "sweep": 6.283185307179586,
+        "start": {
+          "type": "point",
+          "x": -3,
+          "y": 3.6739403974420594e-16
+        },
+        "end": {
+          "type": "point",
+          "x": -3,
+          "y": -3.6739403974420594e-16
+        }
+      },
+      "arguments": [],
+      "result": {
+        "type": "point",
+        "x": 3,
+        "y": -7.347880794884119e-16
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": 3.0000000000000004,
+          "y": -5.485952458484027e-10
+        },
+        "error": 5.485945110605029e-10
+      }
+    },
+    {
+      "call": 11,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc It can calculate middle point case 2 ccw",
+      "testOrdinal": 29,
+      "operation": "middle",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 5,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 3.5355339059327378,
+          "y": 3.5355339059327373
+        },
+        "end": {
+          "type": "point",
+          "x": -3.5355339059327373,
+          "y": 3.5355339059327378
+        }
+      },
+      "arguments": [],
+      "result": {
+        "type": "point",
+        "x": 3.061616997868383e-16,
+        "y": 5
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": 0,
+          "y": 5
+        },
+        "error": 3.061616997868383e-16
+      }
+    },
+    {
+      "call": 12,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc It can calculate middle point case 3 cw",
+      "testOrdinal": 30,
+      "operation": "middle",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 5,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": false,
+        "sweep": 4.71238898038469,
+        "start": {
+          "type": "point",
+          "x": 3.5355339059327378,
+          "y": 3.5355339059327373
+        },
+        "end": {
+          "type": "point",
+          "x": -3.5355339059327373,
+          "y": 3.5355339059327378
+        }
+      },
+      "arguments": [],
+      "result": {
+        "type": "point",
+        "x": 3.061616997868383e-16,
+        "y": -5
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": 0,
+          "y": -5
+        },
+        "error": 3.061616997868383e-16
+      }
+    },
+    {
+      "call": 13,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc It can calculate middle point case 4 cw, startAngle > endAngle",
+      "testOrdinal": 31,
+      "operation": "middle",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 5,
+        "startAngle": 0.7853981633974483,
+        "endAngle": -0.7853981633974483,
+        "ccw": false,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 3.5355339059327378,
+          "y": 3.5355339059327373
+        },
+        "end": {
+          "type": "point",
+          "x": 3.5355339059327378,
+          "y": -3.5355339059327373
+        }
+      },
+      "arguments": [],
+      "result": {
+        "type": "point",
+        "x": 5,
+        "y": 0
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": 5,
+          "y": 6.200655107570901e-16
+        },
+        "error": 6.200655107570901e-16
+      }
+    },
+    {
+      "call": 14,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Can reverse arc",
+      "testOrdinal": 32,
+      "operation": "reverse",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 5,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 3.5355339059327378,
+          "y": 3.5355339059327373
+        },
+        "end": {
+          "type": "point",
+          "x": -3.5355339059327373,
+          "y": 3.5355339059327378
+        }
+      },
+      "arguments": [],
+      "result": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 5,
+        "startAngle": 2.356194490192345,
+        "endAngle": 0.7853981633974483,
+        "ccw": false,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": -3.5355339059327373,
+          "y": 3.5355339059327378
+        },
+        "end": {
+          "type": "point",
+          "x": 3.5355339059327378,
+          "y": 3.5355339059327373
+        }
+      },
+      "comparison": {
+        "status": "match",
+        "error": 0
+      }
+    },
+    {
+      "call": 15,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Can mirror arc by Y axis using transformation matrix",
+      "testOrdinal": 33,
+      "operation": "transform",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 10
+        },
+        "radius": 20,
+        "startAngle": -0.7853981633974483,
+        "endAngle": 0.7853981633974483,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 14.142135623730951,
+          "y": -4.142135623730949
+        },
+        "end": {
+          "type": "point",
+          "x": 14.142135623730951,
+          "y": 24.14213562373095
+        }
+      },
+      "arguments": [
+        {
+          "type": "matrix",
+          "a": -1,
+          "b": 0,
+          "c": 0,
+          "d": 1,
+          "tx": 0,
+          "ty": 0
+        }
+      ],
+      "result": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 10
+        },
+        "radius": 20,
+        "startAngle": 3.9269908169872414,
+        "endAngle": 2.356194490192345,
+        "ccw": false,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": -14.142135623730955,
+          "y": -4.142135623730951
+        },
+        "end": {
+          "type": "point",
+          "x": -14.142135623730951,
+          "y": 24.14213562373095
+        }
+      },
+      "comparison": {
+        "status": "match",
+        "error": 3.972054645195637e-15
+      }
+    },
+    {
+      "call": 16,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional Case 1. No intersection with axes",
+      "testOrdinal": 36,
+      "operation": "breakToFunctional",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.5235987755982988,
+        "endAngle": 1.0471975511965976,
+        "ccw": true,
+        "sweep": 0.5235987755982988,
+        "start": {
+          "type": "point",
+          "x": 0.8660254037844387,
+          "y": 0.49999999999999994
+        },
+        "end": {
+          "type": "point",
+          "x": 0.5000000000000001,
+          "y": 0.8660254037844386
+        }
+      },
+      "arguments": [],
+      "result": [
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 0.5235987755982988,
+          "endAngle": 1.0471975511965976,
+          "ccw": true,
+          "sweep": 0.5235987755982988,
+          "start": {
+            "type": "point",
+            "x": 0.8660254037844387,
+            "y": 0.49999999999999994
+          },
+          "end": {
+            "type": "point",
+            "x": 0.5000000000000001,
+            "y": 0.8660254037844386
+          }
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "pieces": 1,
+        "referencePieces": 1,
+        "points": [],
+        "reference": []
+      }
+    },
+    {
+      "call": 17,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional Case 2. One intersection, two sub arcs",
+      "testOrdinal": 37,
+      "operation": "breakToFunctional",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.5235987755982988,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.8325957145940461,
+        "start": {
+          "type": "point",
+          "x": 0.8660254037844387,
+          "y": 0.49999999999999994
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [],
+      "result": [
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 0.5235987755982988,
+          "endAngle": 1.5707963267948966,
+          "ccw": true,
+          "sweep": 1.0471975511965979,
+          "start": {
+            "type": "point",
+            "x": 0.8660254037844387,
+            "y": 0.49999999999999994
+          },
+          "end": {
+            "type": "point",
+            "x": 6.123233995736766e-17,
+            "y": 1
+          }
+        },
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 1.5707963267948966,
+          "endAngle": 2.356194490192345,
+          "ccw": true,
+          "sweep": 0.7853981633974483,
+          "start": {
+            "type": "point",
+            "x": 6.123233995736766e-17,
+            "y": 1
+          },
+          "end": {
+            "type": "point",
+            "x": -0.7071067811865475,
+            "y": 0.7071067811865476
+          }
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "pieces": 2,
+        "referencePieces": 2,
+        "points": [
+          {
+            "x": 0,
+            "y": 1
+          }
+        ],
+        "reference": [
+          {
+            "type": "point",
+            "x": 6.123233995736766e-17,
+            "y": 1
+          }
+        ]
+      }
+    },
+    {
+      "call": 18,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional Case 3. One intersection, two sub arcs, CW",
+      "testOrdinal": 38,
+      "operation": "breakToFunctional",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.5235987755982988,
+        "endAngle": -0.5235987755982988,
+        "ccw": false,
+        "sweep": 1.0471975511965983,
+        "start": {
+          "type": "point",
+          "x": 0.8660254037844387,
+          "y": 0.49999999999999994
+        },
+        "end": {
+          "type": "point",
+          "x": 0.8660254037844387,
+          "y": -0.49999999999999994
+        }
+      },
+      "arguments": [],
+      "result": [
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 0.5235987755982988,
+          "endAngle": 0,
+          "ccw": false,
+          "sweep": 0.5235987755982988,
+          "start": {
+            "type": "point",
+            "x": 0.8660254037844387,
+            "y": 0.49999999999999994
+          },
+          "end": {
+            "type": "point",
+            "x": 1,
+            "y": 0
+          }
+        },
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 0,
+          "endAngle": 5.759586531581287,
+          "ccw": false,
+          "sweep": 0.5235987755982991,
+          "start": {
+            "type": "point",
+            "x": 1,
+            "y": 0
+          },
+          "end": {
+            "type": "point",
+            "x": 0.8660254037844384,
+            "y": -0.5000000000000004
+          }
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "pieces": 2,
+        "referencePieces": 2,
+        "points": [
+          {
+            "x": 1,
+            "y": 0
+          }
+        ],
+        "reference": [
+          {
+            "type": "point",
+            "x": 1,
+            "y": 0
+          }
+        ]
+      }
+    },
+    {
+      "call": 19,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional Case 4. One intersection, start at extreme point",
+      "testOrdinal": 39,
+      "operation": "breakToFunctional",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 1.5707963267948966,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 0.7853981633974483,
+        "start": {
+          "type": "point",
+          "x": 6.123233995736766e-17,
+          "y": 1
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [],
+      "result": [
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 1.5707963267948966,
+          "endAngle": 2.356194490192345,
+          "ccw": true,
+          "sweep": 0.7853981633974483,
+          "start": {
+            "type": "point",
+            "x": 6.123233995736766e-17,
+            "y": 1
+          },
+          "end": {
+            "type": "point",
+            "x": -0.7071067811865475,
+            "y": 0.7071067811865476
+          }
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "pieces": 1,
+        "referencePieces": 1,
+        "points": [],
+        "reference": []
+      }
+    },
+    {
+      "call": 20,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional Case 5. 2 intersections, 3 parts",
+      "testOrdinal": 40,
+      "operation": "breakToFunctional",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 3.9269908169872414,
+        "ccw": true,
+        "sweep": 3.141592653589793,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865477,
+          "y": -0.7071067811865475
+        }
+      },
+      "arguments": [],
+      "result": [
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 0.7853981633974483,
+          "endAngle": 1.5707963267948966,
+          "ccw": true,
+          "sweep": 0.7853981633974483,
+          "start": {
+            "type": "point",
+            "x": 0.7071067811865476,
+            "y": 0.7071067811865475
+          },
+          "end": {
+            "type": "point",
+            "x": 6.123233995736766e-17,
+            "y": 1
+          }
+        },
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 1.5707963267948966,
+          "endAngle": 3.141592653589793,
+          "ccw": true,
+          "sweep": 1.5707963267948966,
+          "start": {
+            "type": "point",
+            "x": 6.123233995736766e-17,
+            "y": 1
+          },
+          "end": {
+            "type": "point",
+            "x": -1,
+            "y": 1.2246467991473532e-16
+          }
+        },
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 3.141592653589793,
+          "endAngle": 3.9269908169872414,
+          "ccw": true,
+          "sweep": 0.7853981633974483,
+          "start": {
+            "type": "point",
+            "x": -1,
+            "y": 1.2246467991473532e-16
+          },
+          "end": {
+            "type": "point",
+            "x": -0.7071067811865477,
+            "y": -0.7071067811865475
+          }
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "pieces": 3,
+        "referencePieces": 3,
+        "points": [
+          {
+            "x": 0,
+            "y": 1
+          },
+          {
+            "x": -1,
+            "y": 0
+          }
+        ],
+        "reference": [
+          {
+            "type": "point",
+            "x": 6.123233995736766e-17,
+            "y": 1
+          },
+          {
+            "type": "point",
+            "x": -1,
+            "y": 1.2246467991473532e-16
+          }
+        ]
+      }
+    },
+    {
+      "call": 21,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional Case 6. 2 intersections, 3 parts, CW",
+      "testOrdinal": 41,
+      "operation": "breakToFunctional",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 2.356194490192345,
+        "endAngle": -0.7853981633974483,
+        "ccw": false,
+        "sweep": 3.141592653589793,
+        "start": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        },
+        "end": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": -0.7071067811865475
+        }
+      },
+      "arguments": [],
+      "result": [
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 2.356194490192345,
+          "endAngle": 1.5707963267948966,
+          "ccw": false,
+          "sweep": 0.7853981633974483,
+          "start": {
+            "type": "point",
+            "x": -0.7071067811865475,
+            "y": 0.7071067811865476
+          },
+          "end": {
+            "type": "point",
+            "x": 6.123233995736766e-17,
+            "y": 1
+          }
+        },
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 1.5707963267948966,
+          "endAngle": 0,
+          "ccw": false,
+          "sweep": 1.5707963267948966,
+          "start": {
+            "type": "point",
+            "x": 6.123233995736766e-17,
+            "y": 1
+          },
+          "end": {
+            "type": "point",
+            "x": 1,
+            "y": 0
+          }
+        },
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 0,
+          "endAngle": 5.497787143782138,
+          "ccw": false,
+          "sweep": 0.7853981633974483,
+          "start": {
+            "type": "point",
+            "x": 1,
+            "y": 0
+          },
+          "end": {
+            "type": "point",
+            "x": 0.7071067811865474,
+            "y": -0.7071067811865477
+          }
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "pieces": 3,
+        "referencePieces": 3,
+        "points": [
+          {
+            "x": 0,
+            "y": 1
+          },
+          {
+            "x": 1,
+            "y": 0
+          }
+        ],
+        "reference": [
+          {
+            "type": "point",
+            "x": 6.123233995736766e-17,
+            "y": 1
+          },
+          {
+            "type": "point",
+            "x": 1,
+            "y": 0
+          }
+        ]
+      }
+    },
+    {
+      "call": 22,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional Case 7. 2 intersections on extreme points, 1 parts, CW",
+      "testOrdinal": 42,
+      "operation": "breakToFunctional",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 1.5707963267948966,
+        "endAngle": 0,
+        "ccw": false,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 6.123233995736766e-17,
+          "y": 1
+        },
+        "end": {
+          "type": "point",
+          "x": 1,
+          "y": 0
+        }
+      },
+      "arguments": [],
+      "result": [
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 1.5707963267948966,
+          "endAngle": 0,
+          "ccw": false,
+          "sweep": 1.5707963267948966,
+          "start": {
+            "type": "point",
+            "x": 6.123233995736766e-17,
+            "y": 1
+          },
+          "end": {
+            "type": "point",
+            "x": 1,
+            "y": 0
+          }
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "pieces": 1,
+        "referencePieces": 1,
+        "points": [],
+        "reference": []
+      }
+    },
+    {
+      "call": 23,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional Case 7. 4 intersections on extreme points, 5 parts",
+      "testOrdinal": 43,
+      "operation": "breakToFunctional",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 1.0471975511965976,
+        "endAngle": 0.5235987755982988,
+        "ccw": true,
+        "sweep": 5.759586531581287,
+        "start": {
+          "type": "point",
+          "x": 0.5000000000000001,
+          "y": 0.8660254037844386
+        },
+        "end": {
+          "type": "point",
+          "x": 0.8660254037844387,
+          "y": 0.49999999999999994
+        }
+      },
+      "arguments": [],
+      "result": [
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 1.0471975511965976,
+          "endAngle": 1.5707963267948966,
+          "ccw": true,
+          "sweep": 0.5235987755982989,
+          "start": {
+            "type": "point",
+            "x": 0.5000000000000001,
+            "y": 0.8660254037844386
+          },
+          "end": {
+            "type": "point",
+            "x": 6.123233995736766e-17,
+            "y": 1
+          }
+        },
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 1.5707963267948966,
+          "endAngle": 3.141592653589793,
+          "ccw": true,
+          "sweep": 1.5707963267948966,
+          "start": {
+            "type": "point",
+            "x": 6.123233995736766e-17,
+            "y": 1
+          },
+          "end": {
+            "type": "point",
+            "x": -1,
+            "y": 1.2246467991473532e-16
+          }
+        },
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 3.141592653589793,
+          "endAngle": 4.71238898038469,
+          "ccw": true,
+          "sweep": 1.5707963267948966,
+          "start": {
+            "type": "point",
+            "x": -1,
+            "y": 1.2246467991473532e-16
+          },
+          "end": {
+            "type": "point",
+            "x": -1.8369701987210297e-16,
+            "y": -1
+          }
+        },
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 4.71238898038469,
+          "endAngle": 0,
+          "ccw": true,
+          "sweep": 1.5707963267948966,
+          "start": {
+            "type": "point",
+            "x": -1.8369701987210297e-16,
+            "y": -1
+          },
+          "end": {
+            "type": "point",
+            "x": 1,
+            "y": 0
+          }
+        },
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 0,
+          "endAngle": 0.5235987755982988,
+          "ccw": true,
+          "sweep": 0.5235987755982988,
+          "start": {
+            "type": "point",
+            "x": 1,
+            "y": 0
+          },
+          "end": {
+            "type": "point",
+            "x": 0.8660254037844387,
+            "y": 0.49999999999999994
+          }
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "pieces": 5,
+        "referencePieces": 5,
+        "points": [
+          {
+            "x": 0,
+            "y": 1
+          },
+          {
+            "x": -1,
+            "y": 0
+          },
+          {
+            "x": 0,
+            "y": -1
+          },
+          {
+            "x": 1,
+            "y": 0
+          }
+        ],
+        "reference": [
+          {
+            "type": "point",
+            "x": 6.123233995736766e-17,
+            "y": 1
+          },
+          {
+            "type": "point",
+            "x": -1,
+            "y": 1.2246467991473532e-16
+          },
+          {
+            "type": "point",
+            "x": -1.8369701987210297e-16,
+            "y": -1
+          },
+          {
+            "type": "point",
+            "x": 1,
+            "y": 0
+          }
+        ]
+      }
+    },
+    {
+      "call": 24,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional Case 8. Full circle, 4 intersections on extreme points, 4 parts",
+      "testOrdinal": 44,
+      "operation": "breakToFunctional",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 1.5707963267948966,
+        "endAngle": 7.853981633974483,
+        "ccw": true,
+        "sweep": 6.283185307179586,
+        "start": {
+          "type": "point",
+          "x": 6.123233995736766e-17,
+          "y": 1
+        },
+        "end": {
+          "type": "point",
+          "x": 3.061616997868383e-16,
+          "y": 1
+        }
+      },
+      "arguments": [],
+      "result": [
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 1.5707963267948966,
+          "endAngle": 3.141592653589793,
+          "ccw": true,
+          "sweep": 1.5707963267948966,
+          "start": {
+            "type": "point",
+            "x": 6.123233995736766e-17,
+            "y": 1
+          },
+          "end": {
+            "type": "point",
+            "x": -1,
+            "y": 1.2246467991473532e-16
+          }
+        },
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 3.141592653589793,
+          "endAngle": 4.71238898038469,
+          "ccw": true,
+          "sweep": 1.5707963267948966,
+          "start": {
+            "type": "point",
+            "x": -1,
+            "y": 1.2246467991473532e-16
+          },
+          "end": {
+            "type": "point",
+            "x": -1.8369701987210297e-16,
+            "y": -1
+          }
+        },
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 4.71238898038469,
+          "endAngle": 0,
+          "ccw": true,
+          "sweep": 1.5707963267948966,
+          "start": {
+            "type": "point",
+            "x": -1.8369701987210297e-16,
+            "y": -1
+          },
+          "end": {
+            "type": "point",
+            "x": 1,
+            "y": 0
+          }
+        },
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 0,
+          "endAngle": 1.5707963267948966,
+          "ccw": true,
+          "sweep": 1.5707963267948966,
+          "start": {
+            "type": "point",
+            "x": 1,
+            "y": 0
+          },
+          "end": {
+            "type": "point",
+            "x": 6.123233995736766e-17,
+            "y": 1
+          }
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "pieces": 4,
+        "referencePieces": 4,
+        "points": [
+          {
+            "x": -1,
+            "y": 0
+          },
+          {
+            "x": 0,
+            "y": -1
+          },
+          {
+            "x": 1,
+            "y": 0
+          }
+        ],
+        "reference": [
+          {
+            "type": "point",
+            "x": -1,
+            "y": 1.2246467991473532e-16
+          },
+          {
+            "type": "point",
+            "x": -1.8369701987210297e-16,
+            "y": -1
+          },
+          {
+            "type": "point",
+            "x": 1,
+            "y": 0
+          }
+        ]
+      }
+    },
+    {
+      "call": 25,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional #220 case 1. Start/end very close to extreme points",
+      "testOrdinal": 45,
+      "operation": "breakToFunctional",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 6.283184678861056,
+        "endAngle": 0.000001,
+        "ccw": true,
+        "sweep": 0.000001628318530677575,
+        "start": {
+          "type": "point",
+          "x": 0.9999999999998026,
+          "y": -6.28318530782685e-7
+        },
+        "end": {
+          "type": "point",
+          "x": 0.9999999999995,
+          "y": 9.999999999998333e-7
+        }
+      },
+      "arguments": [],
+      "result": [
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 6.283184678861056,
+          "endAngle": 0,
+          "ccw": true,
+          "sweep": 6.283185307179586,
+          "start": {
+            "type": "point",
+            "x": 0.9999999999998026,
+            "y": -6.28318530782685e-7
+          },
+          "end": {
+            "type": "point",
+            "x": 1,
+            "y": 0
+          }
+        },
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 0,
+          "endAngle": 0.000001,
+          "ccw": true,
+          "sweep": 0.000001,
+          "start": {
+            "type": "point",
+            "x": 1,
+            "y": 0
+          },
+          "end": {
+            "type": "point",
+            "x": 0.9999999999995,
+            "y": 9.999999999998333e-7
+          }
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "pieces": 2,
+        "referencePieces": 2,
+        "points": [
+          {
+            "x": 1,
+            "y": 0
+          }
+        ],
+        "reference": [
+          {
+            "type": "point",
+            "x": 1,
+            "y": 0
+          }
+        ]
+      }
+    },
+    {
+      "call": 26,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional #220 case 2. Start/end very close to extreme points",
+      "testOrdinal": 46,
+      "operation": "breakToFunctional",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 6.283184678861056,
+        "endAngle": 1.570795227237468,
+        "ccw": true,
+        "sweep": 1.570795855555998,
+        "start": {
+          "type": "point",
+          "x": 0.9999999999998026,
+          "y": -6.28318530782685e-7
+        },
+        "end": {
+          "type": "point",
+          "x": 0.0000010995574287242,
+          "y": 0.9999999999993955
+        }
+      },
+      "arguments": [],
+      "result": [
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 6.283184678861056,
+          "endAngle": 0,
+          "ccw": true,
+          "sweep": 6.283185307179586,
+          "start": {
+            "type": "point",
+            "x": 0.9999999999998026,
+            "y": -6.28318530782685e-7
+          },
+          "end": {
+            "type": "point",
+            "x": 1,
+            "y": 0
+          }
+        },
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 0,
+          "endAngle": 1.570795227237468,
+          "ccw": true,
+          "sweep": 1.570795227237468,
+          "start": {
+            "type": "point",
+            "x": 1,
+            "y": 0
+          },
+          "end": {
+            "type": "point",
+            "x": 0.0000010995574287242,
+            "y": 0.9999999999993955
+          }
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "pieces": 2,
+        "referencePieces": 2,
+        "points": [
+          {
+            "x": 1,
+            "y": 0
+          }
+        ],
+        "reference": [
+          {
+            "type": "point",
+            "x": 1,
+            "y": 0
+          }
+        ]
+      }
+    },
+    {
+      "call": 27,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional #220 case 3. Start/end very close to extreme points",
+      "testOrdinal": 47,
+      "operation": "breakToFunctional",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 9.424776704132318,
+        "endAngle": 0.000001,
+        "ccw": true,
+        "sweep": 3.1415949102268543,
+        "start": {
+          "type": "point",
+          "x": -0.9999999999992104,
+          "y": 0.0000012566370614426571
+        },
+        "end": {
+          "type": "point",
+          "x": 0.9999999999995,
+          "y": 9.999999999998333e-7
+        }
+      },
+      "arguments": [],
+      "result": [
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 3.141591396952732,
+          "endAngle": 3.141592653589793,
+          "ccw": true,
+          "sweep": 0.000001256637061075594,
+          "start": {
+            "type": "point",
+            "x": -0.9999999999992104,
+            "y": 0.0000012566370611977278
+          },
+          "end": {
+            "type": "point",
+            "x": -1,
+            "y": 1.2246467991473532e-16
+          }
+        },
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 3.141592653589793,
+          "endAngle": 4.71238898038469,
+          "ccw": true,
+          "sweep": 1.5707963267948966,
+          "start": {
+            "type": "point",
+            "x": -1,
+            "y": 1.2246467991473532e-16
+          },
+          "end": {
+            "type": "point",
+            "x": -1.8369701987210297e-16,
+            "y": -1
+          }
+        },
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 4.71238898038469,
+          "endAngle": 0,
+          "ccw": true,
+          "sweep": 1.5707963267948966,
+          "start": {
+            "type": "point",
+            "x": -1.8369701987210297e-16,
+            "y": -1
+          },
+          "end": {
+            "type": "point",
+            "x": 1,
+            "y": 0
+          }
+        },
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 0,
+          "endAngle": 0.000001,
+          "ccw": true,
+          "sweep": 0.000001,
+          "start": {
+            "type": "point",
+            "x": 1,
+            "y": 0
+          },
+          "end": {
+            "type": "point",
+            "x": 0.9999999999995,
+            "y": 9.999999999998333e-7
+          }
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "pieces": 4,
+        "referencePieces": 4,
+        "points": [
+          {
+            "x": -1,
+            "y": 0
+          },
+          {
+            "x": 0,
+            "y": -1
+          },
+          {
+            "x": 1,
+            "y": 0
+          }
+        ],
+        "reference": [
+          {
+            "type": "point",
+            "x": -1,
+            "y": 1.2246467991473532e-16
+          },
+          {
+            "type": "point",
+            "x": -1.8369701987210297e-16,
+            "y": -1
+          },
+          {
+            "type": "point",
+            "x": 1,
+            "y": 0
+          }
+        ]
+      }
+    },
+    {
+      "call": 28,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.intersect Intersect arc with line",
+      "testOrdinal": 49,
+      "operation": "breakToFunctional",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 1,
+          "y": 0
+        },
+        "radius": 3,
+        "startAngle": -1.0471975511965976,
+        "endAngle": 1.0471975511965976,
+        "ccw": false,
+        "sweep": 4.188790204786391,
+        "start": {
+          "type": "point",
+          "x": 2.5000000000000004,
+          "y": -2.598076211353316
+        },
+        "end": {
+          "type": "point",
+          "x": 2.5000000000000004,
+          "y": 2.598076211353316
+        }
+      },
+      "arguments": [],
+      "result": [
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 1,
+            "y": 0
+          },
+          "radius": 3,
+          "startAngle": 5.235987755982989,
+          "endAngle": 4.71238898038469,
+          "ccw": false,
+          "sweep": 0.5235987755982991,
+          "start": {
+            "type": "point",
+            "x": 2.5000000000000004,
+            "y": -2.598076211353316
+          },
+          "end": {
+            "type": "point",
+            "x": 0.9999999999999994,
+            "y": -3
+          }
+        },
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 1,
+            "y": 0
+          },
+          "radius": 3,
+          "startAngle": 4.71238898038469,
+          "endAngle": 3.141592653589793,
+          "ccw": false,
+          "sweep": 1.5707963267948966,
+          "start": {
+            "type": "point",
+            "x": 0.9999999999999994,
+            "y": -3
+          },
+          "end": {
+            "type": "point",
+            "x": -2,
+            "y": 3.6739403974420594e-16
+          }
+        },
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 1,
+            "y": 0
+          },
+          "radius": 3,
+          "startAngle": 3.141592653589793,
+          "endAngle": 1.5707963267948966,
+          "ccw": false,
+          "sweep": 1.5707963267948966,
+          "start": {
+            "type": "point",
+            "x": -2,
+            "y": 3.6739403974420594e-16
+          },
+          "end": {
+            "type": "point",
+            "x": 1.0000000000000002,
+            "y": 3
+          }
+        },
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 1,
+            "y": 0
+          },
+          "radius": 3,
+          "startAngle": 1.5707963267948966,
+          "endAngle": 1.0471975511965976,
+          "ccw": false,
+          "sweep": 0.5235987755982989,
+          "start": {
+            "type": "point",
+            "x": 1.0000000000000002,
+            "y": 3
+          },
+          "end": {
+            "type": "point",
+            "x": 2.5000000000000004,
+            "y": 2.598076211353316
+          }
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "pieces": 4,
+        "referencePieces": 4,
+        "points": [
+          {
+            "x": 1,
+            "y": -3
+          },
+          {
+            "x": -2,
+            "y": 0
+          },
+          {
+            "x": 1,
+            "y": 3
+          }
+        ],
+        "reference": [
+          {
+            "type": "point",
+            "x": 0.9999999999999994,
+            "y": -3
+          },
+          {
+            "type": "point",
+            "x": -2,
+            "y": 3.6739403974420594e-16
+          },
+          {
+            "type": "point",
+            "x": 1.0000000000000002,
+            "y": 3
+          }
+        ]
+      }
+    },
+    {
+      "call": 29,
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle #Flatten.Circle.DistanceTo Can measure distance between circle and polygon",
+      "testOrdinal": 29,
+      "operation": "breakToFunctional",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 175,
+          "y": 150
+        },
+        "radius": 30,
+        "startAngle": 3.141592653589793,
+        "endAngle": -3.141592653589793,
+        "ccw": true,
+        "sweep": 6.283185307179586,
+        "start": {
+          "type": "point",
+          "x": 144.99999999999997,
+          "y": 150.00000000000003
+        },
+        "end": {
+          "type": "point",
+          "x": 145.00000000000003,
+          "y": 149.99999999999997
+        }
+      },
+      "arguments": [],
+      "result": [
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 175,
+            "y": 150
+          },
+          "radius": 30,
+          "startAngle": 3.141592653589793,
+          "endAngle": 4.71238898038469,
+          "ccw": true,
+          "sweep": 1.5707963267948966,
+          "start": {
+            "type": "point",
+            "x": 144.99999999999997,
+            "y": 150.00000000000003
+          },
+          "end": {
+            "type": "point",
+            "x": 175,
+            "y": 119.99999999999997
+          }
+        },
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 175,
+            "y": 150
+          },
+          "radius": 30,
+          "startAngle": 4.71238898038469,
+          "endAngle": 0,
+          "ccw": true,
+          "sweep": 1.5707963267948966,
+          "start": {
+            "type": "point",
+            "x": 175,
+            "y": 119.99999999999997
+          },
+          "end": {
+            "type": "point",
+            "x": 205,
+            "y": 150
+          }
+        },
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 175,
+            "y": 150
+          },
+          "radius": 30,
+          "startAngle": 0,
+          "endAngle": 1.5707963267948966,
+          "ccw": true,
+          "sweep": 1.5707963267948966,
+          "start": {
+            "type": "point",
+            "x": 205,
+            "y": 150
+          },
+          "end": {
+            "type": "point",
+            "x": 175,
+            "y": 180
+          }
+        },
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 175,
+            "y": 150
+          },
+          "radius": 30,
+          "startAngle": 1.5707963267948966,
+          "endAngle": 3.141592653589793,
+          "ccw": true,
+          "sweep": 1.5707963267948966,
+          "start": {
+            "type": "point",
+            "x": 175,
+            "y": 180
+          },
+          "end": {
+            "type": "point",
+            "x": 144.99999999999997,
+            "y": 150.00000000000003
+          }
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "pieces": 4,
+        "referencePieces": 4,
+        "points": [
+          {
+            "x": 175,
+            "y": 120
+          },
+          {
+            "x": 205,
+            "y": 150
+          },
+          {
+            "x": 175,
+            "y": 180
+          }
+        ],
+        "reference": [
+          {
+            "type": "point",
+            "x": 175,
+            "y": 119.99999999999997
+          },
+          {
+            "type": "point",
+            "x": 205,
+            "y": 150
+          },
+          {
+            "type": "point",
+            "x": 175,
+            "y": 180
+          }
+        ]
+      }
+    },
+    {
+      "call": 30,
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle #Flatten.Circle.DistanceTo Can measure distance between circle and polygon",
+      "testOrdinal": 29,
+      "operation": "breakToFunctional",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 175,
+          "y": 150
+        },
+        "radius": 30,
+        "startAngle": 3.141592653589793,
+        "endAngle": -3.141592653589793,
+        "ccw": true,
+        "sweep": 6.283185307179586,
+        "start": {
+          "type": "point",
+          "x": 144.99999999999997,
+          "y": 150.00000000000003
+        },
+        "end": {
+          "type": "point",
+          "x": 145.00000000000003,
+          "y": 149.99999999999997
+        }
+      },
+      "arguments": [],
+      "result": [
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 175,
+            "y": 150
+          },
+          "radius": 30,
+          "startAngle": 3.141592653589793,
+          "endAngle": 4.71238898038469,
+          "ccw": true,
+          "sweep": 1.5707963267948966,
+          "start": {
+            "type": "point",
+            "x": 144.99999999999997,
+            "y": 150.00000000000003
+          },
+          "end": {
+            "type": "point",
+            "x": 175,
+            "y": 119.99999999999997
+          }
+        },
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 175,
+            "y": 150
+          },
+          "radius": 30,
+          "startAngle": 4.71238898038469,
+          "endAngle": 0,
+          "ccw": true,
+          "sweep": 1.5707963267948966,
+          "start": {
+            "type": "point",
+            "x": 175,
+            "y": 119.99999999999997
+          },
+          "end": {
+            "type": "point",
+            "x": 205,
+            "y": 150
+          }
+        },
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 175,
+            "y": 150
+          },
+          "radius": 30,
+          "startAngle": 0,
+          "endAngle": 1.5707963267948966,
+          "ccw": true,
+          "sweep": 1.5707963267948966,
+          "start": {
+            "type": "point",
+            "x": 205,
+            "y": 150
+          },
+          "end": {
+            "type": "point",
+            "x": 175,
+            "y": 180
+          }
+        },
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 175,
+            "y": 150
+          },
+          "radius": 30,
+          "startAngle": 1.5707963267948966,
+          "endAngle": 3.141592653589793,
+          "ccw": true,
+          "sweep": 1.5707963267948966,
+          "start": {
+            "type": "point",
+            "x": 175,
+            "y": 180
+          },
+          "end": {
+            "type": "point",
+            "x": 144.99999999999997,
+            "y": 150.00000000000003
+          }
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "pieces": 4,
+        "referencePieces": 4,
+        "points": [
+          {
+            "x": 175,
+            "y": 120
+          },
+          {
+            "x": 205,
+            "y": 150
+          },
+          {
+            "x": 175,
+            "y": 180
+          }
+        ],
+        "reference": [
+          {
+            "type": "point",
+            "x": 175,
+            "y": 119.99999999999997
+          },
+          {
+            "type": "point",
+            "x": 205,
+            "y": 150
+          },
+          {
+            "type": "point",
+            "x": 175,
+            "y": 180
+          }
+        ]
+      }
+    }
+  ]
+}

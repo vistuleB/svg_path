@@ -1,0 +1,3303 @@
+{
+  "stats": {
+    "suites": 49,
+    "tests": 544,
+    "passes": 544,
+    "pending": 0,
+    "failures": 0,
+    "start": "2026-10-15T12:13:41.796Z",
+    "end": "2026-10-15T12:13:42.110Z",
+    "duration": 314
+  },
+  "files": [
+    "test/algorithms/boolean_op.js",
+    "test/algorithms/ray_shooting.js",
+    "test/algorithms/relation.js",
+    "test/classes/arc.js",
+    "test/classes/box.js",
+    "test/classes/circle.js",
+    "test/classes/face.js",
+    "test/classes/inversion.js",
+    "test/classes/line.js",
+    "test/classes/matrix.js",
+    "test/classes/multiline.js",
+    "test/classes/point.js",
+    "test/classes/polygon.js",
+    "test/classes/ray.js",
+    "test/classes/segment.js",
+    "test/classes/vector.js",
+    "test/data_structures/de9im.js",
+    "test/data_structures/linked_list.js",
+    "test/data_structures/planar_set.js",
+    "test/flatten.js",
+    "test/tolerance.js",
+    "test/utils/attributes.js",
+    "test/utils/parseWKT.js"
+  ],
+  "tests": [
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Function unify defined",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. 2 polygons, intersect",
+      "state": "passed",
+      "duration": 5
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. 2 polygons, disjoint",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. 2 polygons, 1 in 2",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. 2 polygons, 2 in 1",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. 2 polygons, 2 in 1 touching from inside, overlapping same",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. 2 polygons, 2 in 1 touching from outside, overlapping opposite",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. 2 polygons form cross-shape",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. 2 disjoint polygons",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. 1st polygon with one round hole, 2nd polygon partially intersect hole ",
+      "state": "passed",
+      "duration": 2
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. 1st polygon with one round hole, 2nd polygon fully cover hole ",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. 2 polygons create one triangular hole after unify",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. Fixed: Infinite loop for boolean union over (valid) polygons. Issue #53",
+      "state": "passed",
+      "duration": 46
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. Fixed: Infinite loop for boolean union over (valid) polygons. Issue #55 case 0",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. Not fixed: Infinite loop for boolean union over (valid) polygons. Issue #55 case 1",
+      "state": "passed",
+      "duration": 4
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. Fixed: Infinite loop for boolean union over (valid) polygons. Issue #55 case 2",
+      "state": "passed",
+      "duration": 2
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. Fixed: Infinite loop for boolean union over (valid) polygons. Issue #55 case 3",
+      "state": "passed",
+      "duration": 4
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Fixed: Infinity Loop When unifying polygon Issue #82",
+      "state": "passed",
+      "duration": 2
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Fixed: Infinite Loop when calling unify on polygons #94",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Fixed: Infinite Loop when calling unify for multipolygon with touching faces #171",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Union Fixed: Infinite Loop when calling unify for multipolygon with touching faces #171: case 2 - self-touching face",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Can perform subtract. 2 intersecting polygons",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Can perform subtract. 1-face polygon split with 2nd to 2-faced polygon and vice a verse",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Can perform subtract. 2 intersecting polygons produce 2-island result",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Can perform (boolean) subtraction. First polygon inside the second",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Can perform subtract big polygon from smaller polygon and get empty result (Issue #4)",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Can subtract one polygon from another and create a hole (Issue #7)",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Can perform subtract. Fixed: Issue #55 case 0",
+      "state": "passed",
+      "duration": 2
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Can perform subtract. Fixed: Issue #55 case 1",
+      "state": "passed",
+      "duration": 4
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Can perform subtract. Fixed: Infinite loop for boolean union over (valid) polygons. Issue #55 case 2",
+      "state": "passed",
+      "duration": 2
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Can perform subtract. Fixed: Infinite loop for boolean union over (valid) polygons. Issue #55 case 3",
+      "state": "passed",
+      "duration": 3
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Fixed: Infinite loop when subtracting polygons (v1.2.20) Issue #81",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Subtraction Can perform subtract. Fixed issue #76",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Can perform (boolean) intersection. 2 intersecting polygons",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Can perform (boolean) intersection. Other 2 intersecting polygons",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Can perform (boolean) intersection. First polygon inside the second",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection issue #42 Intersect does not seem to work when a second is inside first",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Issue #2 with intersection of circle and box",
+      "state": "passed",
+      "duration": 3
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Issue #3",
+      "state": "passed",
+      "duration": 3
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Fixed: Issue #8",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Subtract bug from flatten-js/core 1.2 onwards #15",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Can perform subtract without creating a degenerate sliver for partially overlapped polygon (#243)",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Can perform intersection. Fixed: Issue #55 case 0",
+      "state": "passed",
+      "duration": 2
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Can perform intersection. Fixed: Issue #55 case 1",
+      "state": "passed",
+      "duration": 4
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Can perform intersect. Fixed: Infinite loop for boolean union over (valid) polygons. Issue #55 case 2",
+      "state": "passed",
+      "duration": 3
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Can perform intersect. Fixed: Infinite loop for boolean union over (valid) polygons. Issue #55 case 3",
+      "state": "passed",
+      "duration": 3
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Fixed: Infinite Loop when intersecting Polygons (v1.3.4) #139",
+      "state": "passed",
+      "duration": 3
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations #Algorithms.Boolean Intersection Infinite Loop when intersecting Polygons (v1.3.4) #139 case 2",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/boolean_op.js",
+      "test": "#Algorithms.Boolean Operations Boolean operations with empty polygon Can operate with empty polygon",
+      "state": "passed",
+      "duration": 2
+    },
+    {
+      "file": "test/algorithms/ray_shooting.js",
+      "test": "#Algorithms.Ray_Shooting Function defined",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/ray_shooting.js",
+      "test": "#Algorithms.Ray_Shooting Can check point in contour. Rectangle Case 1 Inside",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/ray_shooting.js",
+      "test": "#Algorithms.Ray_Shooting Can check point in contour. Rectangle Case 2 Quick reject - outside",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/ray_shooting.js",
+      "test": "#Algorithms.Ray_Shooting Can check point in contour. Rectangle Case 3. Boundary overlapping",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/ray_shooting.js",
+      "test": "#Algorithms.Ray_Shooting Can check point in contour. Circle Case 1 Boundary top",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/ray_shooting.js",
+      "test": "#Algorithms.Ray_Shooting Can check point in contour. Donut Case 1 Boundary top",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/ray_shooting.js",
+      "test": "#Algorithms.Ray_Shooting Can check point in contour. Donut Case 2 Center",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/ray_shooting.js",
+      "test": "#Algorithms.Ray_Shooting Can check point in contour. Donut Case 3 Inside",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/ray_shooting.js",
+      "test": "#Algorithms.Ray_Shooting Can check point in contour. Donut Case 4 Boundary inner circle start",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/ray_shooting.js",
+      "test": "#Algorithms.Ray_Shooting Can check point in contour. Donut Case 5 Another island inside",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/ray_shooting.js",
+      "test": "#Algorithms.Ray_Shooting Can check point in contour. Donut Case 6 Another island inside",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/ray_shooting.js",
+      "test": "#Algorithms.Ray_Shooting Can check point in contour. Multipolygon with touching faces - outside",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/ray_shooting.js",
+      "test": "#Algorithms.Ray_Shooting Can check point in contour. Multipolygon with touching faces - boundary",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/ray_shooting.js",
+      "test": "#Algorithms.Ray_Shooting Can check point in contour. Polygon with self-touching face - outside",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation Function relate defined",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation Namespace Relations exist on Flatten",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation Relations may be consumed from Flatten.Relations namespace",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation Functions disjoint,equals,intersects,touches exist",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation v1.4 Relations.intersect() doesnt allow Polygon argument #149",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Line2Line Parallel case (disjoint)",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Line2Line Equal case",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Line2Line Intersection case",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Line2Circle Disjoint case",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Line2Circle Touching case",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Line2Circle Intersection case",
+      "state": "passed",
+      "duration": 2
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Line2Box Intersection case",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Line2Polygon Disjoint case",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Line2Polygon Touching case - touch in one point",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Line2Polygon Intersection case - 2 intersection point",
+      "state": "passed",
+      "duration": 2
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Line2Polygon Can properly detect contains / covered relation. Issue #65",
+      "state": "passed",
+      "duration": 2
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Line2Polygon Can properly detect touch relation. Issue #65",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Circle2Circle Intersection case",
+      "state": "passed",
+      "duration": 3
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Circle2Circle Disjoint case",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Circle2Circle Touching case",
+      "state": "passed",
+      "duration": 4
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Circle2Circle Contain case",
+      "state": "passed",
+      "duration": 3
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Circle2Circle Inside case",
+      "state": "passed",
+      "duration": 3
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Polygon2Polygon May calculate relations. Disjoint case",
+      "state": "passed",
+      "duration": 3
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Polygon2Polygon May calculate relations. Touching from outside case",
+      "state": "passed",
+      "duration": 7
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Polygon2Polygon May calculate relations. Case of inclusion",
+      "state": "passed",
+      "duration": 3
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Polygon2Polygon May calculate relations. Case of covered",
+      "state": "passed",
+      "duration": 10
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Polygon2Polygon May calculate relations. Case of intersected polygons",
+      "state": "passed",
+      "duration": 9
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Polygon2Polygon Infinite loop error in Relations.relate()  issue #63",
+      "state": "passed",
+      "duration": 4
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Polygon2Polygon Calculate contains relation for multipolygon. Issue #81",
+      "state": "passed",
+      "duration": 3
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc May create new instance of Arc",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Default constructor constructs full circle unit arc with zero center and sweep 2PI CCW",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Constructor creates CCW arc if parameter counterClockwise is omitted",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Constructor can create different CCW arcs if counterClockwise=true 1",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Constructor can create different CCW arcs if counterClockwise=true 2",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Constructor can create different CCW arcs if counterClockwise=true 3",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Constructor can create different CCW arcs if counterClockwise=true 4",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Constructor can create different CW arcs if counterClockwise=false 1",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Constructor can create different CW arcs if counterClockwise=false 2",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Constructor can create different CW arcs if counterClockwise=false 3",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Constructor can create different CW arcs if counterClockwise=false 4",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc In order to construct full circle, set end_angle = start_angle + 2pi",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Constructor creates zero arc when end_angle = start_angle",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc New arc may be constructed by function call",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Getter arc.start returns start point",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Getter arc.end returns end point",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Getter arc.length returns arc length",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Getter arc.length returns arc length",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Getter arc.box returns arc bounding box, CCW case",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Getter arc.box returns arc bounding box, CW case",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Getter arc.box returns arc bounding box, circle case",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Calculate signed area under circular arc, full circle case, CCW",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Calculate signed area under circular arc, full circle case, CW",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc It can calculate tangent vector in start point, CCW case",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc It can calculate tangent vector in start point, CW case",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc It can calculate tangent vector in end point, CCW case",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc It can calculate tangent vector in end point, CW case",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc It can calculate middle point case 1 full circle",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc It can calculate middle point case 2 ccw",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc It can calculate middle point case 3 cw",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc It can calculate middle point case 4 cw, startAngle > endAngle",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Can reverse arc",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Can mirror arc by Y axis using transformation matrix",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Method svg() without parameters creates svg string with default attributes",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Method svg() with extra parameters may add additional attributes",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional Case 1. No intersection with axes",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional Case 2. One intersection, two sub arcs",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional Case 3. One intersection, two sub arcs, CW",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional Case 4. One intersection, start at extreme point",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional Case 5. 2 intersections, 3 parts",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional Case 6. 2 intersections, 3 parts, CW",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional Case 7. 2 intersections on extreme points, 1 parts, CW",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional Case 7. 4 intersections on extreme points, 5 parts",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional Case 8. Full circle, 4 intersections on extreme points, 4 parts",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional #220 case 1. Start/end very close to extreme points",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional #220 case 2. Start/end very close to extreme points",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional #220 case 3. Start/end very close to extreme points",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.intersect Intersect arc with segment",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.intersect Intersect arc with line",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.intersect Intersect arc with circle, same center and radius - return two end points",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.intersect Intersect arc with arc",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.intersect Intersect arc with arc, case of touching",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.intersect Intersect arc with arc, overlapping case",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.intersect Intersect arc with arc, overlapping case, 4 points",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.intersect Intersect arc with polygon",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.intersect Intersect arc with box",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength gets the point at specific length",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.distanceTo distance to point on arc",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.distanceTo distance to point outside arc",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.distanceTo distance to point inside arc",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.distanceTo distance to point inside 3rd quadrant of the arc",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.distanceTo distance to box",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/box.js",
+      "test": "#Flatten.Box May create new instance of Box",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/box.js",
+      "test": "#Flatten.Box Method intersect returns true if two boxes intersected",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/box.js",
+      "test": "#Flatten.Box Method expand expands current box with other",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/box.js",
+      "test": "#Flatten.Box Method contains correctly marks arc as contained in box",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/box.js",
+      "test": "#Flatten.Box Method contains correctly marks arc as not contained in box (fully outside)",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/box.js",
+      "test": "#Flatten.Box Method contains correctly marks arc as not contained in box (middle of arc partly outside)",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/box.js",
+      "test": "#Flatten.Box Method contains correctly marks arc as not contained in box (endpoint of arc outside)",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/box.js",
+      "test": "#Flatten.Box Method svg() without parameters creates svg string with default attributes",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/box.js",
+      "test": "#Flatten.Box Method svg() with extra parameters may add additional attributes",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/box.js",
+      "test": "#Flatten.Box Can measure distance to box",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/box.js",
+      "test": "#Flatten.Box distanceTo(Box) (issue #210) returns zero for boxes with intersecting boundaries",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/box.js",
+      "test": "#Flatten.Box distanceTo(Box) (issue #210) returns the boundary gap for disjoint boxes",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/box.js",
+      "test": "#Flatten.Box distanceTo(Box) (issue #210) returns a shortest segment from the calling box to the other box",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/box.js",
+      "test": "#Flatten.Box distanceTo(Box) (issue #210) supports Segment.distanceTo(Box)",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle May create new instance of Circle",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Constructor Circle(pt, r) creates new circle",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle New circle may be constructed by function call",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle May create new instance by clone",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Method contains returns true if point belongs to the circle",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can return circle bounding box",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can transform circle into closed CCW arc",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can transform circle into closed CW arc",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can intersect circle with line. Case 1 no intersection",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can intersect circle with line. Case 2 Touching",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can intersect circle with line. Case 3 Two points",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can intersect circle with segment. One point",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can intersect circle with segment.2 points",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can intersect circle with arc",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can intersect circle with circle - quick reject",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can intersect circle with circle - no intersection r1 + r2 < dist",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can intersect circle with circle - no intersection: one inside another",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can intersect circle with circle - same circle, one intersection, leftmost point",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can intersect circle with circle - degenerated circle",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Intersect circle with polygon",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Intersect circle with box",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Method svg() without parameters creates svg string with default attributes",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Method svg() with extra parameters may add additional attributes",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle #Flatten.Circle.DistanceTo Can measure distance between circle and point",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle #Flatten.Circle.DistanceTo Can measure distance between circle and circle",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle #Flatten.Circle.DistanceTo Can measure distance between circle and line",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle #Flatten.Circle.DistanceTo Can measure distance between circle and segment",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle #Flatten.Circle.DistanceTo Can measure distance between circle and arc",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle #Flatten.Circle.DistanceTo Can measure distance between circle and polygon",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle #Flatten.Circle.DistanceTo Can measure distance between circle and box",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/face.js",
+      "test": "#Flatten.Face Can iterate edges as iterable",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/face.js",
+      "test": "#Flatten.Face Can create iterator of edges and iterate them one by one",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/face.js",
+      "test": "#Flatten.Face Can get array of edges for the given face",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/face.js",
+      "test": "#Flatten.Face Can count edges in face",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/face.js",
+      "test": "#Flatten.Face Can set orientation of face to CCW",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/face.js",
+      "test": "#Flatten.Face Can set orientation of face to CW",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/face.js",
+      "test": "#Flatten.Face Can set orientation of degenerated face to not-orientable",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/face.js",
+      "test": "#Flatten.Face Can remove edge from face",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/face.js",
+      "test": "#Flatten.Face Can remove all edges from face",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/face.js",
+      "test": "#Flatten.Face Can reverse face",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/face.js",
+      "test": "#Flatten.Face Method svg can return string to be used to generate svg path",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/face.js",
+      "test": "#Flatten.Face Can find points at specific lengths",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/face.js",
+      "test": "#Flatten.Face Can calculate signed area of ccw polygon with cw arc",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/face.js",
+      "test": "#Flatten.Face Can calculate signed area of cw polygon with ccw arc",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/inversion.js",
+      "test": "#Flatten.Inversion May create new instance of Inversion object",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/inversion.js",
+      "test": "#Flatten.Inversion May construct inversion operator with given circle",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/inversion.js",
+      "test": "#Flatten.Inversion May invert point around circle",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/inversion.js",
+      "test": "#Flatten.Inversion May invert line in circle, line does not pass through inversion center",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/inversion.js",
+      "test": "#Flatten.Inversion May invert line in circle, line pass through inversion center",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/inversion.js",
+      "test": "#Flatten.Inversion May invert circle in circle, circle does not pass through inversion center",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/inversion.js",
+      "test": "#Flatten.Inversion May invert circle in circle, circle passes through inversion center",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line May create new instance of Line",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line Default constructor creates new line that is equal to axe x",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line Constructor Line(pt1, pt2) creates line that passes through two points",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line Constructor Line(pt, norm) creates same line as Line(norm,pt)",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line Constructor with illegal parameters throws error. Case 1",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line Constructor with illegal parameters throws error. Case 2",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line Constructor with illegal parameters throws error. Case 3",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line Constructor with zero vector throws error",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line New line may be constructed by function call",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line May create new instance by clone",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line Get slope - angle in radians between line and axe x",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line Method contains returns true if point belongs to the line",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line May split line by point into array of two rays",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line May return 1-dim coordinate of point on line",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line May check if two lines are parallel",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line May check if two lines are not parallel",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line Can measure distance from line to box",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line Method svg() creates same svg string as segment with same points",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line Method svg() without parameters creates svg string with default attributes",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line Method svg() with extra parameters may add additional attributes",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line May stringify and parse line",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line #Flatten.Line.intersect methods return array of intersection points if intersection exist Line to line intersection ",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line #Flatten.Line.intersect methods return array of intersection points if intersection exist Method intersect returns zero length array if intersection does not exist",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line #Flatten.Line.intersect methods return array of intersection points if intersection exist Line to circle intersection - horizontal line, line constricted with 2 points",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line #Flatten.Line.intersect methods return array of intersection points if intersection exist Line to circle intersection - horizontal line, line constructed with point and vector ",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line #Flatten.Line.intersect methods return array of intersection points if intersection exist Line to circle intersection - diagonal line, line constructed with point and vector ",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line #Flatten.Line.intersect methods return array of intersection points if intersection exist Line to arc intersection - quick reject ",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line #Flatten.Line.intersect methods return array of intersection points if intersection exist Line to polygon intersection",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/line.js",
+      "test": "#Flatten.Line #Flatten.Line.intersect methods return array of intersection points if intersection exist Line to box intersection",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/matrix.js",
+      "test": "#Flatten.Matrix May create new instance of Matrix",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/matrix.js",
+      "test": "#Flatten.Matrix Default constructor creates identity matrix",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/matrix.js",
+      "test": "#Flatten.Matrix Matrix can translate vector",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/matrix.js",
+      "test": "#Flatten.Matrix Method translate returns translation matrix",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/matrix.js",
+      "test": "#Flatten.Matrix Matrix can rotate vector counterclockwise",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/matrix.js",
+      "test": "#Flatten.Matrix Method rotate returns rotation matrix to rotate around (0,0)",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/matrix.js",
+      "test": "#Flatten.Matrix Method rotate and translate may compose rotation matrix to rotate around point other than (0,0)",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/matrix.js",
+      "test": "#Flatten.Matrix Composition of methods rotate and translate return same matrix as formula",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/matrix.js",
+      "test": "#Flatten.Matrix Matrix can scale vector",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/matrix.js",
+      "test": "#Flatten.Matrix Method scale returns matrix that may scale vector",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May create new instance of Multiline",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline Default constructor creates new empty multiline",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May construct multiline from sequence of segments",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May construct multiline from two ray",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May throw exception when trying to construct multiline with ray in the middle",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May get array of edges of multiline",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May get array of vertices of multiline",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May get box of multiline",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May get length of multiline",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May create infinite multiline",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May get length of infinite multiline",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May calculate pointAtLength in multiline",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May calculate distance between a point and a multiline",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May transform multiline to an array of shapes",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May delete first edge from multiline",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May delete middle edge from multiline",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May delete last edge from multiline",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May delete all edges from multiline",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May add vertex to polyline",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May split polyline with intersections",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May split polyline with array of points",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May stringify using toJSON transformation",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline Can measure distance between multiline and box",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline Can measure distance between multiline and point",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May create svg path",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May create dpath string to be inserted into \"d\" atrtibute",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May create points string to be inserted into \"points\" atrtibute",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point May create new Point",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point Default constructor creates new (0,0) point",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point New point may be constructed by function call",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point New point may be constructed with array of two numbers",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point Constructor with illegal parameters throw error",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point Method clone creates new instance of Point",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point Method equalTo return true if points are equal",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point Method equalTo return true if points are equal up to DP_TOL tolerance",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point Method translate returns new point translated by (dx, dy)",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point Method rotates returns new point rotated by default around (0.0), counterclockwise",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point Method rotate returns new point rotated around center, counterclockwise",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point Method translate returns new point translated by vector",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point Can scale point with scale factor",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point Method translate with illegal parameters throws error",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point Method returns projection point on given line",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point Method transform returns new point transformed by affine transformation matrix",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point Method leftTo returns true if point is on the \"left\" semi plane, which is the side of the normal vector",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point Can measure distance from point to box",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point Method svg() without parameters creates svg string with default attributes",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point Method svg() with extra parameters may add additional attributes",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point May stringify and parse point",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point May stringify and parse array of points",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point #Flatten.Point.Distance methods Method distanceTo return distance to other point ",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point #Flatten.Point.Distance methods Method distanceTo calculates distance to given line",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point #Flatten.Point.Distance methods Method distanceTo returns distance to segment",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point #Flatten.Point.Distance methods Method distanceTo returns distance to circle",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point #Flatten.Point.Distance methods Method distanceTo returns distance to arc",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point #Flatten.Point.Distance methods Method distanceTo returns distance to polygon",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point #Flatten.Point.On inclusion queries Method \"on\" returns true if point checked with same points",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point #Flatten.Point.On inclusion queries Method \"on\" returns true if point belongs to line",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point #Flatten.Point.On inclusion queries Method \"on\" returns true if point belongs to circle",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point #Flatten.Point.On inclusion queries Method \"on\" returns true if point belongs to segment",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point #Flatten.Point.On inclusion queries Method \"on\" returns true if point belongs to arc",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/point.js",
+      "test": "#Flatten.Point #Flatten.Point.On inclusion queries Method \"on\" returns true if point belong to polygon",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon May create new instance of Polygon",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Default construct creates instance of Polygon faces edges as instances of PlanarSet",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Default construct creates instance of Polygon with 0 faces and 0 edges",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can construct Polygon from array of 3 points",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can construct Polygon from array of 3 segments",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can construct Polygon with multiple faces",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can construct polygon from Circle in CCW orientation",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can construct polygon from a box in CCW orientation",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can construct polygon from a box and circle as a hole",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can construct polygon using class constructor",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can construct polygon using array of pairs of numbers",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Allow creation of Polygon from a Nested Array of Points #23",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Uncaught ReferenceError: Illegal Parameters for Nested Multipolygon #79",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can parse GeoJSON one-loop polygon",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can parse GeoJSON polygon with hole",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can parse GeoJSON multi-polygon",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can remove faces from polygon",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can construct multi polygon using constructor",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can create new instance of the polygon",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can return bounding box of the polygon",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can return array of vertices",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can calculate area of the one-face polygon",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon \"Illegal parameters\" when computing area of a valid polygon #220 case 3",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon \"Illegal parameters\" when computing area of a valid polygon #220 case #1",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon \"Illegal parameters\" when computing area of a valid polygon #220 case #2",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can check point in contour. Donut Case 1 Boundary top",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can check point in contour. Donut Case 2 Center",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can check point in contour. Donut Case 3 Inside",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can check point in contour. Donut Case 4 Boundary inner circle start",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can check if contour contains segment (issue #31)",
+      "state": "passed",
+      "duration": 2
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can measure distance between circle and polygon",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can measure distance between two polygons",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon distanceTo between Polygons: First point of segment is not always on the this polygon #57",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can add new vertex to face and split edge of polygon (segment)",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can add new vertex to face and split edge of polygon (arc)",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can remove vertex and merge edges",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can calculate inclusion flag of the edge",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can remove chain of edges from face",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can stringify and parse polygon with segments",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can stringify and parse polygon with segments and arcs",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can check if polygon is valid",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can check if polygon is invalid if one of faces is not simple",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can translate polygon",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can rotate polygon",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can transform polygon",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Issue #18 Division by zero error when checking if polygon contains a point",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can split polygon into islands (issue #9 in @flatten-js/boolean-op)",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon splitToIslands should not fail if the polygon is empty",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can cut polygon with holes by line. Case 1. Line cuts edge not in vertex",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can cut polygon with holes by line. Case 2. Line is touching hole in vertex",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can cut polygon without holes by line. Line is touching concave vertex",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can cut polygon with MultiLine #159",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Polygon.cut error #175",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Polygon cut error #176",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Self-intersecting output when cutting a multipolygon with a multiline #205",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon Can measure distance between polygon and box",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon #Flatten.Polygon.intersect(shape) methods Intersect arc with polygon",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon #Flatten.Polygon.intersect(shape) methods Intersect circle with polygon",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon #Flatten.Polygon.intersect(shape) methods Line to polygon intersection",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon #Flatten.Polygon.intersect(shape) methods Intersection with Polygon",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon #Flatten.Polygon.cut(multiline) methods Can cut polygon with line. Case of non-intersection",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon #Flatten.Polygon.cut(multiline) methods Can cut polygon with multiline line. Case of touching in one point",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon #Flatten.Polygon.cut(multiline) methods Can cut polygon with line into 2 polygons",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon #Flatten.Polygon.cut(multiline) methods Can cut polygon with line into 3 polygons",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon #Intersections Can perform intersection between polygons",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon #Intersections Can perform intersection between multiline and polygon",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon #SVG output Can create path element",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/polygon.js",
+      "test": "#Flatten.Polygon #SVG output Can create dpath string",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May create new instance of Ray",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May return bounding box of ray",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May find intersection between ray and segment. Case 1. Quick reject",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May find intersection between ray and segment. Case 2. No intersection",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May find intersection between ray and segment. Case 3. Start intersection",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May find intersection between ray and segment. Case 4. One not start intersection",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May find intersection between ray and segment. Case 5. Two intersections",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May find intersection between ray and arc. Case 1. Quick reject",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May find intersection between ray and arc. Case 2. No interection",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May find intersection between ray and arc. Case 3. One touching interection",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May find intersection between ray and arc. Case 4. One regular interection",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May find intersection between ray and arc. Case 5. Two interections",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May construct and treat ray by pi/4 slope",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May construct and treat ray by pi/2 slope",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May construct and treat ray by 3*pi/4 slope",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May construct and treat ray by pi slope",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May construct and treat ray by 5*pi/4 slope",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May construct and treat ray by 3*pi/2 slope",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/ray.js",
+      "test": "#Flatten.Ray May construct and treat ray by 7*pi/4 slope",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment May create new instance of Segment",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment Constructor Segment(ps, pe) creates new instance of Segment",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment May construct segment when second point is omitted",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment May constructor by array [4] ",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment New segment may be constructed by function call",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment Constructor with illegal parameters throw error",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment Method clone copy to a new instance of Segment",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment Method length returns length of segment",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment Method box returns bounding box of segment",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment Method slope returns slope of segment",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment Method contains returns true if point belongs to segment",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment Method tangentInStart and tangentInEnd returns vector [ps pe] and [pe, ps]",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment Calculates middle point",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment Can translate segment by given vector",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment Can rotate by angle around center of bounding box",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment Can rotate by angle around given point",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment Method svg() without parameters creates svg string with default attributes",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment Method svg() with extra parameters may add additional attributes",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.Intersect Intersection with Segment - not parallel segments case (one point)",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.Intersect Intersection with Segment - overlapping segments case (two points)",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.Intersect Intersection with Segment - boxes intersecting, segments not intersecting",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.Intersect Intersection with Segment - boxes not intersecting, quick reject",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.Intersect Intersection with Line - not parallel segments case (one point)",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.Intersect Intersection with Line - segment lays on line case (two points)",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.Intersect intersectSegment2Segment does not report touching segments #85",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.Intersect Intersection with Circle",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.Intersect Intersection with Circle - case of tangent",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.Intersect Intersection with Polygon",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.Intersect Intersection with Box",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.Intersect Intersection between two very close lines returns zero intersections (#99)",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.Intersect Intersection with Segment - near parallel segments still report crossing point",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.DistanceTo Distance to Segment Case 1 Intersected Segments",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.DistanceTo Distance to Segment Case 2 Not Intersected Segments",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.DistanceTo Distance to Line",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.DistanceTo Distance to Circle Case 1 Intersection - touching",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.DistanceTo Distance to Circle Case 1 Intersection - two points",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.DistanceTo Distance to Circle Case 1 Intersection - one points",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.DistanceTo Distance to Circle Case 2 Projection",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.DistanceTo Distance to Circle Case 3 End point out of the circle",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.DistanceTo Distance to Circle Case 3 End point inside the circle",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.pointAtLength gets the point at specific length",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.pointAtLength points at specific length is on segment",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector May create new instance of Vector",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Default constructor creates new Vector(0, 0)",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Constructor Vector(x, y) creates vector [x, y]",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Constructor Vector(ps, pe) creates vector [ps, pe]",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Constructor Vector([x, y]) creates vector [x, y]",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Constructor Vector with illegal parameters throw error",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector New vector may be constructed by function call",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Method clone creates new instance of Vector",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Method mutliply vector by scalar",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Method dot calculates dot product",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Method cross calculates cross product",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Method length calculates vector length",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Get slope - angle in radians between vector and axe x",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Method normalize returns unit vector",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Method normalize throw error on zero length vector",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Method rotate returns new vector rotated by given angle, positive angle defines rotation in counterclockwise direction",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Method rotate rotates clockwise when angle is negative",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Method add return sum of two vectors",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Method subtract returns difference between two vectors",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Method invert returns inverted vector",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Method angle returns angle between two vectors",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Method projection returns new vector case 1",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Method projection returns new vector case 2",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/vector.js",
+      "test": "#Flatten.Vector Method projection returns new vector case 3",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/de9im.js",
+      "test": "#data_structures.DE9IM Class DE9IM",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/de9im.js",
+      "test": "#data_structures.DE9IM May construct new instance of DE9IM",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/de9im.js",
+      "test": "#data_structures.DE9IM May get access to any element of the matrix using getter function",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/de9im.js",
+      "test": "#data_structures.DE9IM May set any element of the matrix using setter function",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/de9im.js",
+      "test": "#data_structures.DE9IM May output empty intersection matrix to relation string",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/de9im.js",
+      "test": "#data_structures.DE9IM May transform DISJOINT intersection matrix to proper string",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/linked_list.js",
+      "test": "#LinkedList May create new instance of LinkedList",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/linked_list.js",
+      "test": "#LinkedList May return size of empty linked list",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/linked_list.js",
+      "test": "#LinkedList May append element to empty linked list",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/linked_list.js",
+      "test": "#LinkedList May append 5 elements to linked list",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/linked_list.js",
+      "test": "#LinkedList May insert element to the middle of linked list",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/linked_list.js",
+      "test": "#LinkedList May insert element to the end of linked list",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/linked_list.js",
+      "test": "#LinkedList May insert element to the beginning of linked list if elementBefore is null",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/linked_list.js",
+      "test": "#LinkedList May insert element to the empty list",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/linked_list.js",
+      "test": "#LinkedList May remove element from the linked list",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/linked_list.js",
+      "test": "#LinkedList May remove all elements",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/linked_list.js",
+      "test": "#LinkedList May return array of all elements",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/linked_list.js",
+      "test": "#LinkedList May construct linked list by first and last",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/linked_list.js",
+      "test": "#LinkedList May throw error when infinite loop detected",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/planar_set.js",
+      "test": "#Data_structures.PlanarSet Class PlanarSet defined",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/planar_set.js",
+      "test": "#Data_structures.PlanarSet May construct new instance of PlanarSet",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/planar_set.js",
+      "test": "#Data_structures.PlanarSet May add planar objects",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/data_structures/planar_set.js",
+      "test": "#Data_structures.PlanarSet May add planar objects using {key, value} interface",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/planar_set.js",
+      "test": "#Data_structures.PlanarSet May delete planar objects",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/planar_set.js",
+      "test": "#Data_structures.PlanarSet May delete planar objects using {key,value} interface",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/planar_set.js",
+      "test": "#Data_structures.PlanarSet May not add same object twice (without error ?) ",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/planar_set.js",
+      "test": "#Data_structures.PlanarSet May update planar objects",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/data_structures/planar_set.js",
+      "test": "#Data_structures.PlanarSet May find planar objects in given box 1",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/planar_set.js",
+      "test": "#Data_structures.PlanarSet May find planar objects in given box 2",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/planar_set.js",
+      "test": "#Data_structures.PlanarSet May keep same black height after add many items",
+      "state": "passed",
+      "duration": 10
+    },
+    {
+      "file": "test/data_structures/planar_set.js",
+      "test": "#Data_structures.PlanarSet May calculate distance between shape and planar set",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/planar_set.js",
+      "test": "#Data_structures.PlanarSet May clean planar set",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/planar_set.js",
+      "test": "#Data_structures.PlanarSet May perform hit test and return shapes under given point",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/planar_set.js",
+      "test": "#Data_structures.PlanarSet May create svg content string",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/flatten.js",
+      "test": "#Flatten-JS Namespace Flatten defined",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/flatten.js",
+      "test": "#Flatten-JS Constant DP_TOL is defined",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/flatten.js",
+      "test": "#Flatten-JS Class Matrix defined",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/flatten.js",
+      "test": "#Flatten-JS Class Point defined",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/flatten.js",
+      "test": "#Flatten-JS Class Vector defined",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/flatten.js",
+      "test": "#Flatten-JS Class Box defined",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/flatten.js",
+      "test": "#Flatten-JS Class Line defined",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/flatten.js",
+      "test": "#Flatten-JS Class Circle defined",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/flatten.js",
+      "test": "#Flatten-JS Class Segment defined",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/flatten.js",
+      "test": "#Flatten-JS Class Arc defined",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/flatten.js",
+      "test": "#Flatten-JS Class Polygon defined",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/flatten.js",
+      "test": "#Flatten-JS Class Face defined",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/flatten.js",
+      "test": "#Flatten-JS Class Edge defined",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/flatten.js",
+      "test": "#Flatten-JS Class Ray defined",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/flatten.js",
+      "test": "#Flatten-JS Namespace Distance defined",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/flatten.js",
+      "test": "#Flatten-JS Class Inverse defined",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/tolerance.js",
+      "test": "#Flatten.DP_TOL Default tolerace of 0.000001",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/tolerance.js",
+      "test": "#Flatten.DP_TOL Change tolerance with Flatten.Utils.setTolerance",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/tolerance.js",
+      "test": "#Flatten.DP_TOL Change tolerance with Flatten.DP_TOL",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/tolerance.js",
+      "test": "#Flatten.DP_TOL Change tolerance with Flatten.Utils.DP_TOL",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/tolerance.js",
+      "test": "#Flatten.DP_TOL Line.incidentTo with default tolerance value",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/tolerance.js",
+      "test": "#Flatten.DP_TOL Line.incidentTo with new tolerance value",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/utils/attributes.js",
+      "test": "#SVGAttributes May create new instance of SVGAttributes",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/utils/attributes.js",
+      "test": "#SVGAttributes May create new attributes with default values",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/utils/attributes.js",
+      "test": "#SVGAttributes May create attributes with parameters",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/utils/attributes.js",
+      "test": "#SVGAttributes May create attributes with arbitrary parameters",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/utils/attributes.js",
+      "test": "#SVGAttributes May transform attributes into svg string",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/utils/attributes.js",
+      "test": "#SVGAttributes May support valueless attributes in svg string",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/utils/parseWKT.js",
+      "test": "#SVGAttributes May check if string starts with one of keywords",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/utils/parseWKT.js",
+      "test": "#SVGAttributes May parse wkt point",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/utils/parseWKT.js",
+      "test": "#SVGAttributes May parse wkt multipoint",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/utils/parseWKT.js",
+      "test": "#SVGAttributes May parse wkt linestring",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/utils/parseWKT.js",
+      "test": "#SVGAttributes May parse wkt multilinestring",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/utils/parseWKT.js",
+      "test": "#SVGAttributes May parse wkt polygon",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/utils/parseWKT.js",
+      "test": "#SVGAttributes May parse wkt multipolygon",
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/utils/parseWKT.js",
+      "test": "#SVGAttributes May parse wkt geometry collection",
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/utils/parseWKT.js",
+      "test": "#SVGAttributes May parse wkt multipolygon with many faces ",
+      "state": "passed",
+      "duration": 3
+    }
+  ]
+}

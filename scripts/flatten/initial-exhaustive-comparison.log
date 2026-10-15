@@ -1,0 +1,7 @@
+{
+  match: 109,
+  'continuous-overlap-contract-difference': 4,
+  'scope-difference': 2,
+  'needs-investigation': 1
+}
+115 #Flatten.Circle #Flatten.Circle.DistanceTo Can measure distance between circle and polygon {"status":"needs-investigation","timeout":true}

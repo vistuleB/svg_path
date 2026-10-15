@@ -1,0 +1,6018 @@
+{
+  "distanceAdapter": "public-path-query",
+  "timeoutMs": 30000,
+  "implementation": "ba6988cc036dc340e69bde411fb6ffab11ce98fa",
+  "diagnosticTolerance": 0.000001,
+  "counts": {
+    "match": 110,
+    "continuous-overlap-contract-difference": 4,
+    "scope-difference": 2
+  },
+  "rows": [
+    {
+      "call": 1,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Getter arc.length returns arc length",
+      "testOrdinal": 17,
+      "operation": "length",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": -0.7853981633974483,
+        "endAngle": 0.7853981633974483,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": -0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        }
+      },
+      "arguments": [],
+      "result": 1.5707963267948966,
+      "comparison": {
+        "status": "match",
+        "value": 1.5707963267948966,
+        "error": 0
+      }
+    },
+    {
+      "call": 2,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Getter arc.length returns arc length",
+      "testOrdinal": 18,
+      "operation": "length",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 5,
+        "startAngle": -0.7853981633974483,
+        "endAngle": 0.7853981633974483,
+        "ccw": false,
+        "sweep": 4.71238898038469,
+        "start": {
+          "type": "point",
+          "x": 3.5355339059327378,
+          "y": -3.5355339059327373
+        },
+        "end": {
+          "type": "point",
+          "x": 3.5355339059327378,
+          "y": 3.5355339059327373
+        }
+      },
+      "arguments": [],
+      "result": 23.561944901923447,
+      "comparison": {
+        "status": "match",
+        "value": 23.561944901923454,
+        "error": 7.105427357601002e-15
+      }
+    },
+    {
+      "call": 3,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Getter arc.box returns arc bounding box, CCW case",
+      "testOrdinal": 19,
+      "operation": "box",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": -0.7853981633974483,
+        "endAngle": 0.7853981633974483,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": -0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        }
+      },
+      "arguments": [],
+      "result": {
+        "type": "box",
+        "xmin": 0.7071067811865474,
+        "ymin": -0.7071067811865477,
+        "xmax": 1,
+        "ymax": 0.7071067811865475
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "xmin": 0.7071067811865476,
+          "ymin": -0.7071067811865475,
+          "xmax": 1,
+          "ymax": 0.7071067811865474
+        },
+        "error": 2.220446049250313e-16
+      }
+    },
+    {
+      "call": 4,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Getter arc.box returns arc bounding box, CW case",
+      "testOrdinal": 20,
+      "operation": "box",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": -0.7853981633974483,
+        "endAngle": 0.7853981633974483,
+        "ccw": false,
+        "sweep": 4.71238898038469,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": -0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        }
+      },
+      "arguments": [],
+      "result": {
+        "type": "box",
+        "xmin": -1,
+        "ymin": -1,
+        "xmax": 0.7071067811865476,
+        "ymax": 1
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "xmin": -1,
+          "ymin": -0.9999999999999999,
+          "xmax": 0.7071067811865477,
+          "ymax": 1
+        },
+        "error": 1.1102230246251565e-16
+      }
+    },
+    {
+      "call": 5,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Getter arc.box returns arc bounding box, circle case",
+      "testOrdinal": 21,
+      "operation": "box",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 200,
+          "y": 200
+        },
+        "radius": 75,
+        "startAngle": 3.141592653589793,
+        "endAngle": -3.141592653589793,
+        "ccw": false,
+        "sweep": 6.283185307179586,
+        "start": {
+          "type": "point",
+          "x": 125,
+          "y": 200.00000000000003
+        },
+        "end": {
+          "type": "point",
+          "x": 125,
+          "y": 199.99999999999997
+        }
+      },
+      "arguments": [],
+      "result": {
+        "type": "box",
+        "xmin": 125,
+        "ymin": 124.99999999999994,
+        "xmax": 275,
+        "ymax": 275
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "xmin": 125,
+          "ymin": 125,
+          "xmax": 275,
+          "ymax": 275
+        },
+        "error": 5.684341886080802e-14
+      }
+    },
+    {
+      "call": 6,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.intersect Intersect arc with segment",
+      "testOrdinal": 48,
+      "operation": "intersect",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0,
+        "endAngle": 3.141592653589793,
+        "ccw": true,
+        "sweep": 3.141592653589793,
+        "start": {
+          "type": "point",
+          "x": 1,
+          "y": 0
+        },
+        "end": {
+          "type": "point",
+          "x": -1,
+          "y": 1.2246467991473532e-16
+        }
+      },
+      "arguments": [
+        {
+          "type": "segment",
+          "start": {
+            "type": "point",
+            "x": -1,
+            "y": 0.5
+          },
+          "end": {
+            "type": "point",
+            "x": 1,
+            "y": 0.5
+          }
+        }
+      ],
+      "result": [
+        {
+          "type": "point",
+          "x": -0.8660254037844386,
+          "y": 0.5
+        },
+        {
+          "type": "point",
+          "x": 0.8660254037844386,
+          "y": 0.5
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "points": [
+          {
+            "x": 0.8660254037844388,
+            "y": 0.49999999999999983
+          },
+          {
+            "x": -0.8660254037844387,
+            "y": 0.5
+          }
+        ],
+        "reference": [
+          {
+            "type": "point",
+            "x": -0.8660254037844386,
+            "y": 0.5
+          },
+          {
+            "type": "point",
+            "x": 0.8660254037844386,
+            "y": 0.5
+          }
+        ]
+      }
+    },
+    {
+      "call": 7,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.intersect Intersect arc with line",
+      "testOrdinal": 49,
+      "operation": "intersect",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 1,
+          "y": 0
+        },
+        "radius": 3,
+        "startAngle": -1.0471975511965976,
+        "endAngle": 1.0471975511965976,
+        "ccw": false,
+        "sweep": 4.188790204786391,
+        "start": {
+          "type": "point",
+          "x": 2.5000000000000004,
+          "y": -2.598076211353316
+        },
+        "end": {
+          "type": "point",
+          "x": 2.5000000000000004,
+          "y": 2.598076211353316
+        }
+      },
+      "arguments": [
+        {
+          "type": "line",
+          "point": {
+            "type": "point",
+            "x": 1,
+            "y": 0
+          },
+          "normal": {
+            "type": "vector",
+            "x": 1,
+            "y": 0
+          }
+        }
+      ],
+      "result": [
+        {
+          "type": "point",
+          "x": 1,
+          "y": 3
+        },
+        {
+          "type": "point",
+          "x": 1,
+          "y": -3
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "points": [
+          {
+            "x": 1.0000000000000002,
+            "y": -3
+          },
+          {
+            "x": 1,
+            "y": 3
+          }
+        ],
+        "reference": [
+          {
+            "type": "point",
+            "x": 1,
+            "y": 3
+          },
+          {
+            "type": "point",
+            "x": 1,
+            "y": -3
+          }
+        ]
+      }
+    },
+    {
+      "call": 8,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.intersect Intersect arc with circle, same center and radius - return two end points",
+      "testOrdinal": 50,
+      "operation": "intersect",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 1,
+          "y": 0
+        },
+        "radius": 3,
+        "startAngle": -1.0471975511965976,
+        "endAngle": 1.0471975511965976,
+        "ccw": false,
+        "sweep": 4.188790204786391,
+        "start": {
+          "type": "point",
+          "x": 2.5000000000000004,
+          "y": -2.598076211353316
+        },
+        "end": {
+          "type": "point",
+          "x": 2.5000000000000004,
+          "y": 2.598076211353316
+        }
+      },
+      "arguments": [
+        {
+          "type": "circle",
+          "center": {
+            "type": "point",
+            "x": 1,
+            "y": 0
+          },
+          "radius": 3
+        }
+      ],
+      "result": [
+        {
+          "type": "point",
+          "x": 2.5000000000000004,
+          "y": -2.598076211353316
+        },
+        {
+          "type": "point",
+          "x": 2.5000000000000004,
+          "y": 2.598076211353316
+        }
+      ],
+      "comparison": {
+        "status": "continuous-overlap-contract-difference",
+        "points": [],
+        "errors": [
+          "OverlappingSegments",
+          "OverlappingSegments",
+          "OverlappingSegments",
+          "OverlappingSegments",
+          "OverlappingSegments",
+          "OverlappingSegments"
+        ]
+      }
+    },
+    {
+      "call": 9,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.intersect Intersect arc with arc",
+      "testOrdinal": 51,
+      "operation": "intersect",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0,
+        "endAngle": 3.141592653589793,
+        "ccw": true,
+        "sweep": 3.141592653589793,
+        "start": {
+          "type": "point",
+          "x": 1,
+          "y": 0
+        },
+        "end": {
+          "type": "point",
+          "x": -1,
+          "y": 1.2246467991473532e-16
+        }
+      },
+      "arguments": [
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 1
+          },
+          "radius": 1,
+          "startAngle": 3.141592653589793,
+          "endAngle": 6.283185307179586,
+          "ccw": true,
+          "sweep": 3.141592653589793,
+          "start": {
+            "type": "point",
+            "x": -1,
+            "y": 1
+          },
+          "end": {
+            "type": "point",
+            "x": 1,
+            "y": 0.9999999999999998
+          }
+        }
+      ],
+      "result": [
+        {
+          "type": "point",
+          "x": 0.8660254037844386,
+          "y": 0.5
+        },
+        {
+          "type": "point",
+          "x": -0.8660254037844386,
+          "y": 0.5
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "points": [
+          {
+            "x": 0.8660254037844387,
+            "y": 0.5
+          },
+          {
+            "x": -0.8660254037844386,
+            "y": 0.49999999999999994
+          }
+        ],
+        "reference": [
+          {
+            "type": "point",
+            "x": 0.8660254037844386,
+            "y": 0.5
+          },
+          {
+            "type": "point",
+            "x": -0.8660254037844386,
+            "y": 0.5
+          }
+        ]
+      }
+    },
+    {
+      "call": 10,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.intersect Intersect arc with arc, case of touching",
+      "testOrdinal": 52,
+      "operation": "intersect",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0,
+        "endAngle": 3.141592653589793,
+        "ccw": true,
+        "sweep": 3.141592653589793,
+        "start": {
+          "type": "point",
+          "x": 1,
+          "y": 0
+        },
+        "end": {
+          "type": "point",
+          "x": -1,
+          "y": 1.2246467991473532e-16
+        }
+      },
+      "arguments": [
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 2
+          },
+          "radius": 1,
+          "startAngle": -0.7853981633974483,
+          "endAngle": -37.69911184307752,
+          "ccw": false,
+          "sweep": 5.497787143782138,
+          "start": {
+            "type": "point",
+            "x": 0.7071067811865475,
+            "y": 1.2928932188134525
+          },
+          "end": {
+            "type": "point",
+            "x": 1,
+            "y": 2.0000000000000013
+          }
+        }
+      ],
+      "result": [
+        {
+          "type": "point",
+          "x": 0,
+          "y": 1
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "points": [
+          {
+            "x": 2.2046343089182805e-7,
+            "y": 1
+          }
+        ],
+        "reference": [
+          {
+            "type": "point",
+            "x": 0,
+            "y": 1
+          }
+        ]
+      }
+    },
+    {
+      "call": 11,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.intersect Intersect arc with arc, overlapping case",
+      "testOrdinal": 53,
+      "operation": "intersect",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0,
+        "endAngle": 3.141592653589793,
+        "ccw": true,
+        "sweep": 3.141592653589793,
+        "start": {
+          "type": "point",
+          "x": 1,
+          "y": 0
+        },
+        "end": {
+          "type": "point",
+          "x": -1,
+          "y": 1.2246467991473532e-16
+        }
+      },
+      "arguments": [
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": -1.5707963267948966,
+          "endAngle": 1.5707963267948966,
+          "ccw": true,
+          "sweep": 3.141592653589793,
+          "start": {
+            "type": "point",
+            "x": 6.123233995736766e-17,
+            "y": -1
+          },
+          "end": {
+            "type": "point",
+            "x": 6.123233995736766e-17,
+            "y": 1
+          }
+        }
+      ],
+      "result": [
+        {
+          "type": "point",
+          "x": 1,
+          "y": 0
+        },
+        {
+          "type": "point",
+          "x": 6.123233995736766e-17,
+          "y": 1
+        }
+      ],
+      "comparison": {
+        "status": "continuous-overlap-contract-difference",
+        "points": [
+          {
+            "x": 1,
+            "y": 0
+          },
+          {
+            "x": 6.123233995736766e-17,
+            "y": 1
+          }
+        ],
+        "errors": [
+          "OverlappingSegments"
+        ]
+      }
+    },
+    {
+      "call": 12,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.intersect Intersect arc with arc, overlapping case, 4 points",
+      "testOrdinal": 54,
+      "operation": "intersect",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": -0.7853981633974483,
+        "endAngle": 3.9269908169872414,
+        "ccw": true,
+        "sweep": 4.71238898038469,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": -0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865477,
+          "y": -0.7071067811865475
+        }
+      },
+      "arguments": [
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 1,
+          "startAngle": 0.7853981633974483,
+          "endAngle": 2.356194490192345,
+          "ccw": false,
+          "sweep": 4.71238898038469,
+          "start": {
+            "type": "point",
+            "x": 0.7071067811865476,
+            "y": 0.7071067811865475
+          },
+          "end": {
+            "type": "point",
+            "x": -0.7071067811865475,
+            "y": 0.7071067811865476
+          }
+        }
+      ],
+      "result": [
+        {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": -0.7071067811865475
+        },
+        {
+          "type": "point",
+          "x": -0.7071067811865477,
+          "y": -0.7071067811865475
+        },
+        {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      ],
+      "comparison": {
+        "status": "continuous-overlap-contract-difference",
+        "points": [
+          {
+            "x": 0.7071067811865476,
+            "y": -0.7071067811865475
+          },
+          {
+            "x": 0.7071067811865476,
+            "y": 0.7071067811865475
+          },
+          {
+            "x": -0.7071067811865475,
+            "y": 0.7071067811865476
+          },
+          {
+            "x": -0.7071067811865476,
+            "y": -0.7071067811865475
+          }
+        ],
+        "errors": [
+          "OverlappingSegments",
+          "OverlappingSegments"
+        ]
+      }
+    },
+    {
+      "call": 13,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.intersect Intersect arc with polygon",
+      "testOrdinal": 55,
+      "operation": "intersect",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 150,
+          "y": 50
+        },
+        "radius": 50,
+        "startAngle": 1.0471975511965976,
+        "endAngle": 5.235987755982989,
+        "ccw": true,
+        "sweep": 4.188790204786391,
+        "start": {
+          "type": "point",
+          "x": 175.00000000000003,
+          "y": 93.30127018922192
+        },
+        "end": {
+          "type": "point",
+          "x": 175,
+          "y": 6.698729810778076
+        }
+      },
+      "arguments": [
+        {
+          "type": "polygon",
+          "edges": [
+            {
+              "type": "segment",
+              "start": {
+                "type": "point",
+                "x": 100,
+                "y": 20
+              },
+              "end": {
+                "type": "point",
+                "x": 250,
+                "y": 75
+              }
+            },
+            {
+              "type": "segment",
+              "start": {
+                "type": "point",
+                "x": 250,
+                "y": 75
+              },
+              "end": {
+                "type": "point",
+                "x": 350,
+                "y": 75
+              }
+            },
+            {
+              "type": "segment",
+              "start": {
+                "type": "point",
+                "x": 350,
+                "y": 75
+              },
+              "end": {
+                "type": "point",
+                "x": 300,
+                "y": 200
+              }
+            },
+            {
+              "type": "segment",
+              "start": {
+                "type": "point",
+                "x": 300,
+                "y": 200
+              },
+              "end": {
+                "type": "point",
+                "x": 170,
+                "y": 200
+              }
+            },
+            {
+              "type": "segment",
+              "start": {
+                "type": "point",
+                "x": 170,
+                "y": 200
+              },
+              "end": {
+                "type": "point",
+                "x": 120,
+                "y": 350
+              }
+            },
+            {
+              "type": "segment",
+              "start": {
+                "type": "point",
+                "x": 120,
+                "y": 350
+              },
+              "end": {
+                "type": "point",
+                "x": 70,
+                "y": 120
+              }
+            },
+            {
+              "type": "segment",
+              "start": {
+                "type": "point",
+                "x": 70,
+                "y": 120
+              },
+              "end": {
+                "type": "point",
+                "x": 100,
+                "y": 20
+              }
+            }
+          ]
+        }
+      ],
+      "result": [
+        {
+          "type": "point",
+          "x": 107.96731458926574,
+          "y": 22.92134868273077
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "points": [
+          {
+            "x": 107.96731458926573,
+            "y": 22.92134868273079
+          }
+        ],
+        "reference": [
+          {
+            "type": "point",
+            "x": 107.96731458926574,
+            "y": 22.92134868273077
+          }
+        ]
+      }
+    },
+    {
+      "call": 14,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.intersect Intersect arc with box",
+      "testOrdinal": 56,
+      "operation": "intersect",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 150,
+          "y": 50
+        },
+        "radius": 50,
+        "startAngle": 1.0471975511965976,
+        "endAngle": 5.235987755982989,
+        "ccw": true,
+        "sweep": 4.188790204786391,
+        "start": {
+          "type": "point",
+          "x": 175.00000000000003,
+          "y": 93.30127018922192
+        },
+        "end": {
+          "type": "point",
+          "x": 175,
+          "y": 6.698729810778076
+        }
+      },
+      "arguments": [
+        {
+          "type": "box",
+          "xmin": 70,
+          "ymin": 20,
+          "xmax": 350,
+          "ymax": 350
+        }
+      ],
+      "result": [
+        {
+          "type": "point",
+          "x": 110,
+          "y": 20
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "points": [
+          {
+            "x": 110,
+            "y": 19.999999999999996
+          }
+        ],
+        "reference": [
+          {
+            "type": "point",
+            "x": 110,
+            "y": 20
+          }
+        ]
+      }
+    },
+    {
+      "call": 15,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength gets the point at specific length",
+      "testOrdinal": 57,
+      "operation": "length",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [],
+      "result": 1.5707963267948966,
+      "comparison": {
+        "status": "match",
+        "value": 1.5707963267948966,
+        "error": 0
+      }
+    },
+    {
+      "call": 16,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength gets the point at specific length",
+      "testOrdinal": 57,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        0
+      ],
+      "result": {
+        "type": "point",
+        "x": 0.7071067811865476,
+        "y": 0.7071067811865475
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "error": 0
+      }
+    },
+    {
+      "call": 17,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength gets the point at specific length",
+      "testOrdinal": 57,
+      "operation": "length",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [],
+      "result": 1.5707963267948966,
+      "comparison": {
+        "status": "match",
+        "value": 1.5707963267948966,
+        "error": 0
+      }
+    },
+    {
+      "call": 18,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength gets the point at specific length",
+      "testOrdinal": 57,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        1.5707963267948966
+      ],
+      "result": {
+        "type": "point",
+        "x": -0.7071067811865475,
+        "y": 0.7071067811865476
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        },
+        "error": 0
+      }
+    },
+    {
+      "call": 19,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "length",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [],
+      "result": 1.5707963267948966,
+      "comparison": {
+        "status": "match",
+        "value": 1.5707963267948966,
+        "error": 0
+      }
+    },
+    {
+      "call": 20,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        0
+      ],
+      "result": {
+        "type": "point",
+        "x": 0.7071067811865476,
+        "y": 0.7071067811865475
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "error": 0
+      }
+    },
+    {
+      "call": 21,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "contains",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        }
+      ],
+      "result": true,
+      "comparison": {
+        "status": "match",
+        "value": true
+      }
+    },
+    {
+      "call": 22,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        0.04759988869075444
+      ],
+      "result": {
+        "type": "point",
+        "x": 0.6726603737012525,
+        "y": 0.7399513643828839
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": 0.6726603737340552,
+          "y": 0.7399513643530641
+        },
+        "error": 4.4330971990748213e-11
+      }
+    },
+    {
+      "call": 23,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "contains",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": 0.6726603737012525,
+          "y": 0.7399513643828839
+        }
+      ],
+      "result": true,
+      "comparison": {
+        "status": "match",
+        "value": true
+      }
+    },
+    {
+      "call": 24,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        0.09519977738150888
+      ],
+      "result": {
+        "type": "point",
+        "x": 0.6366901741190882,
+        "y": 0.7711197197453876
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": 0.636690174187457,
+          "y": 0.7711197196889374
+        },
+        "error": 8.866176884772409e-11
+      }
+    },
+    {
+      "call": 25,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "contains",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": 0.6366901741190882,
+          "y": 0.7711197197453876
+        }
+      ],
+      "result": true,
+      "comparison": {
+        "status": "match",
+        "value": true
+      }
+    },
+    {
+      "call": 26,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        0.14279966607226333
+      ],
+      "result": {
+        "type": "point",
+        "x": 0.599277666511347,
+        "y": 0.8005412409243604
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": 0.599277666617813,
+          "y": 0.8005412408446608
+        },
+        "error": 1.3299264882657225e-10
+      }
+    },
+    {
+      "call": 27,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "contains",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": 0.599277666511347,
+          "y": 0.8005412409243604
+        }
+      ],
+      "result": true,
+      "comparison": {
+        "status": "match",
+        "value": true
+      }
+    },
+    {
+      "call": 28,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        0.19039955476301776
+      ],
+      "result": {
+        "type": "point",
+        "x": 0.560507602240894,
+        "y": 0.8281492787113708
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": 0.5605076023877443,
+          "y": 0.8281492786119796
+        },
+        "error": 1.7732347992672165e-10
+      }
+    },
+    {
+      "call": 29,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "contains",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": 0.560507602240894,
+          "y": 0.8281492787113708
+        }
+      ],
+      "result": true,
+      "comparison": {
+        "status": "match",
+        "value": true
+      }
+    },
+    {
+      "call": 30,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        0.23799944345377222
+      ],
+      "result": {
+        "type": "point",
+        "x": 0.5204678079730722,
+        "y": 0.853881292021148
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": 0.5204678081623387,
+          "y": 0.8538812919057841
+        },
+        "error": 2.2165433348086205e-10
+      }
+    },
+    {
+      "call": 31,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "contains",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": 0.5204678079730722,
+          "y": 0.853881292021148
+        }
+      ],
+      "result": true,
+      "comparison": {
+        "status": "match",
+        "value": true
+      }
+    },
+    {
+      "call": 32,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        0.28559933214452665
+      ],
+      "result": {
+        "type": "point",
+        "x": 0.47924898672005684,
+        "y": 0.8776789895672557
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": 0.4792489869535065,
+          "y": 0.8776789894397824
+        },
+        "error": 2.659852795084618e-10
+      }
+    },
+    {
+      "call": 33,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "contains",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": 0.47924898672005684,
+          "y": 0.8776789895672557
+        }
+      ],
+      "result": true,
+      "comparison": {
+        "status": "match",
+        "value": true
+      }
+    },
+    {
+      "call": 34,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        0.3331992208352811
+      ],
+      "result": {
+        "type": "point",
+        "x": 0.4369445123693595,
+        "y": 0.8994884619106032
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": 0.43694451264848516,
+          "y": 0.8994884617750122
+        },
+        "error": 3.1031605281022516e-10
+      }
+    },
+    {
+      "call": 35,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "contains",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": 0.4369445123693595,
+          "y": 0.8994884619106032
+        }
+      ],
+      "result": true,
+      "comparison": {
+        "status": "match",
+        "value": true
+      }
+    },
+    {
+      "call": 36,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        0.3807991095260355
+      ],
+      "result": {
+        "type": "point",
+        "x": 0.39365021816194146,
+        "y": 0.9192603035816655
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": 0.3936502184879541,
+          "y": 0.9192603034420587
+        },
+        "error": 3.546467774115175e-10
+      }
+    },
+    {
+      "call": 37,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "contains",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": 0.39365021816194146,
+          "y": 0.9192603035816655
+        }
+      ],
+      "result": true,
+      "comparison": {
+        "status": "match",
+        "value": true
+      }
+    },
+    {
+      "call": 38,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        0.42839899821678995
+      ],
+      "result": {
+        "type": "point",
+        "x": 0.3494641795990984,
+        "y": 0.9369497249997617
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": 0.3494641799729203,
+          "y": 0.9369497248603332
+        },
+        "error": 3.9897754658307586e-10
+      }
+    },
+    {
+      "call": 39,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "contains",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": 0.3494641795990984,
+          "y": 0.9369497249997617
+        }
+      ],
+      "result": true,
+      "comparison": {
+        "status": "match",
+        "value": true
+      }
+    },
+    {
+      "call": 40,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        0.47599888690754444
+      ],
+      "result": {
+        "type": "point",
+        "x": 0.30448649226990704,
+        "y": 0.9525166539358605
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": 0.30448649269216577,
+          "y": 0.9525166538008789
+        },
+        "error": 4.433085389361401e-10
+      }
+    },
+    {
+      "call": 41,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "contains",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": 0.30448649226990704,
+          "y": 0.9525166539358605
+        }
+      ],
+      "result": true,
+      "comparison": {
+        "status": "match",
+        "value": true
+      }
+    },
+    {
+      "call": 42,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        0.5235987755982988
+      ],
+      "result": {
+        "type": "point",
+        "x": 0.25881904510252096,
+        "y": 0.9659258262890682
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": 0.2588190441604738,
+          "y": 0.9659258265414888
+        },
+        "error": 9.752789528359096e-10
+      }
+    },
+    {
+      "call": 43,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "contains",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": 0.25881904510252096,
+          "y": 0.9659258262890682
+        }
+      ],
+      "result": true,
+      "comparison": {
+        "status": "match",
+        "value": true
+      }
+    },
+    {
+      "call": 44,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        0.5711986642890533
+      ],
+      "result": {
+        "type": "point",
+        "x": 0.2125652895529766,
+        "y": 0.9771468659711595
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": 0.21256529007278965,
+          "y": 0.977146865858081
+        },
+        "error": 5.319702703102838e-10
+      }
+    },
+    {
+      "call": 45,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "contains",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": 0.2125652895529766,
+          "y": 0.9771468659711595
+        }
+      ],
+      "result": true,
+      "comparison": {
+        "status": "match",
+        "value": true
+      }
+    },
+    {
+      "call": 46,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        0.6187985529798077
+      ],
+      "result": {
+        "type": "point",
+        "x": 0.16583000525437425,
+        "y": 0.9861543537181866
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": 0.16583000438003304,
+          "y": 0.9861543538652141
+        },
+        "error": 8.866169627236964e-10
+      }
+    },
+    {
+      "call": 47,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "contains",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": 0.16583000525437425,
+          "y": 0.9861543537181866
+        }
+      ],
+      "result": true,
+      "comparison": {
+        "status": "match",
+        "value": true
+      }
+    },
+    {
+      "call": 48,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        0.6663984416705622
+      ],
+      "result": {
+        "type": "point",
+        "x": 0.11871906265730525,
+        "y": 0.9929278846732883
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": 0.11871906327354785,
+          "y": 0.9929278845996073
+        },
+        "error": 6.206317932370655e-10
+      }
+    },
+    {
+      "call": 49,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "contains",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": 0.11871906265730525,
+          "y": 0.9929278846732883
+        }
+      ],
+      "result": true,
+      "comparison": {
+        "status": "match",
+        "value": true
+      }
+    },
+    {
+      "call": 50,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        0.7139983303613165
+      ],
+      "result": {
+        "type": "point",
+        "x": 0.07133918319923235,
+        "y": 0.9974521146102535
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": 0.0713391824033102,
+          "y": 0.9974521146671789
+        },
+        "error": 7.979552374317652e-10
+      }
+    },
+    {
+      "call": 51,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "contains",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": 0.07133918319923235,
+          "y": 0.9974521146102535
+        }
+      ],
+      "result": true,
+      "comparison": {
+        "status": "match",
+        "value": true
+      }
+    },
+    {
+      "call": 52,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        0.761598219052071
+      ],
+      "result": {
+        "type": "point",
+        "x": 0.02379769754610771,
+        "y": 0.999716794693129
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": 0.023797698255200346,
+          "y": 0.9997167946762494
+        },
+        "error": 7.092935123317796e-10
+      }
+    },
+    {
+      "call": 53,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "contains",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": 0.02379769754610771,
+          "y": 0.999716794693129
+        }
+      ],
+      "result": true,
+      "comparison": {
+        "status": "match",
+        "value": true
+      }
+    },
+    {
+      "call": 54,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        0.8091981077428255
+      ],
+      "result": {
+        "type": "point",
+        "x": -0.02379769754610759,
+        "y": 0.999716794693129
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": -0.023797698255200225,
+          "y": 0.9997167946762494
+        },
+        "error": 7.092935123317796e-10
+      }
+    },
+    {
+      "call": 55,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "contains",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": -0.02379769754610759,
+          "y": 0.999716794693129
+        }
+      ],
+      "result": true,
+      "comparison": {
+        "status": "match",
+        "value": true
+      }
+    },
+    {
+      "call": 56,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        0.8567979964335799
+      ],
+      "result": {
+        "type": "point",
+        "x": -0.07133918319923224,
+        "y": 0.9974521146102535
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": -0.07133918240331008,
+          "y": 0.9974521146671789
+        },
+        "error": 7.979552512741941e-10
+      }
+    },
+    {
+      "call": 57,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "contains",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": -0.07133918319923224,
+          "y": 0.9974521146102535
+        }
+      ],
+      "result": true,
+      "comparison": {
+        "status": "match",
+        "value": true
+      }
+    },
+    {
+      "call": 58,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        0.9043978851243345
+      ],
+      "result": {
+        "type": "point",
+        "x": -0.11871906265730535,
+        "y": 0.9929278846732883
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": -0.11871906327354795,
+          "y": 0.9929278845996073
+        },
+        "error": 6.206317932370655e-10
+      }
+    },
+    {
+      "call": 59,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "contains",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": -0.11871906265730535,
+          "y": 0.9929278846732883
+        }
+      ],
+      "result": true,
+      "comparison": {
+        "status": "match",
+        "value": true
+      }
+    },
+    {
+      "call": 60,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        0.9519977738150889
+      ],
+      "result": {
+        "type": "point",
+        "x": -0.16583000525437414,
+        "y": 0.9861543537181866
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": -0.16583000438003292,
+          "y": 0.9861543538652142
+        },
+        "error": 8.866169811345078e-10
+      }
+    },
+    {
+      "call": 61,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "contains",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": -0.16583000525437414,
+          "y": 0.9861543537181866
+        }
+      ],
+      "result": true,
+      "comparison": {
+        "status": "match",
+        "value": true
+      }
+    },
+    {
+      "call": 62,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        0.9995976625058433
+      ],
+      "result": {
+        "type": "point",
+        "x": -0.2125652895529765,
+        "y": 0.9771468659711595
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": -0.21256529007278976,
+          "y": 0.977146865858081
+        },
+        "error": 5.319704872804637e-10
+      }
+    },
+    {
+      "call": 63,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "contains",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": -0.2125652895529765,
+          "y": 0.9771468659711595
+        }
+      ],
+      "result": true,
+      "comparison": {
+        "status": "match",
+        "value": true
+      }
+    },
+    {
+      "call": 64,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        1.0471975511965976
+      ],
+      "result": {
+        "type": "point",
+        "x": -0.25881904510252063,
+        "y": 0.9659258262890683
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": -0.2588190441604739,
+          "y": 0.9659258265414888
+        },
+        "error": 9.752784951439852e-10
+      }
+    },
+    {
+      "call": 65,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "contains",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": -0.25881904510252063,
+          "y": 0.9659258262890683
+        }
+      ],
+      "result": true,
+      "comparison": {
+        "status": "match",
+        "value": true
+      }
+    },
+    {
+      "call": 66,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        1.0947974398873521
+      ],
+      "result": {
+        "type": "point",
+        "x": -0.3044864922699069,
+        "y": 0.9525166539358605
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": -0.30448649269216566,
+          "y": 0.952516653800879
+        },
+        "error": 4.4330850513133136e-10
+      }
+    },
+    {
+      "call": 67,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "contains",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": -0.3044864922699069,
+          "y": 0.9525166539358605
+        }
+      ],
+      "result": true,
+      "comparison": {
+        "status": "match",
+        "value": true
+      }
+    },
+    {
+      "call": 68,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        1.1423973285781066
+      ],
+      "result": {
+        "type": "point",
+        "x": -0.34946417959909826,
+        "y": 0.9369497249997618
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": -0.3494641799729202,
+          "y": 0.9369497248603332
+        },
+        "error": 3.9897763739258504e-10
+      }
+    },
+    {
+      "call": 69,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "contains",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": -0.34946417959909826,
+          "y": 0.9369497249997618
+        }
+      ],
+      "result": true,
+      "comparison": {
+        "status": "match",
+        "value": true
+      }
+    },
+    {
+      "call": 70,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        1.189997217268861
+      ],
+      "result": {
+        "type": "point",
+        "x": -0.39365021816194135,
+        "y": 0.9192603035816655
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": -0.3936502184879538,
+          "y": 0.9192603034420588
+        },
+        "error": 3.546465295907687e-10
+      }
+    },
+    {
+      "call": 71,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "contains",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": -0.39365021816194135,
+          "y": 0.9192603035816655
+        }
+      ],
+      "result": true,
+      "comparison": {
+        "status": "match",
+        "value": true
+      }
+    },
+    {
+      "call": 72,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        1.2375971059596154
+      ],
+      "result": {
+        "type": "point",
+        "x": -0.4369445123693594,
+        "y": 0.8994884619106033
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": -0.43694451264848483,
+          "y": 0.8994884617750124
+        },
+        "error": 3.103158045730783e-10
+      }
+    },
+    {
+      "call": 73,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "contains",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": -0.4369445123693594,
+          "y": 0.8994884619106033
+        }
+      ],
+      "result": true,
+      "comparison": {
+        "status": "match",
+        "value": true
+      }
+    },
+    {
+      "call": 74,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        1.28519699465037
+      ],
+      "result": {
+        "type": "point",
+        "x": -0.4792489867200569,
+        "y": 0.8776789895672555
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": -0.479248986953506,
+          "y": 0.8776789894397826
+        },
+        "error": 2.659846326767652e-10
+      }
+    },
+    {
+      "call": 75,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "contains",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": -0.4792489867200569,
+          "y": 0.8776789895672555
+        }
+      ],
+      "result": true,
+      "comparison": {
+        "status": "match",
+        "value": true
+      }
+    },
+    {
+      "call": 76,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        1.3327968833411243
+      ],
+      "result": {
+        "type": "point",
+        "x": -0.5204678079730721,
+        "y": 0.8538812920211482
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": -0.5204678081623386,
+          "y": 0.8538812919057841
+        },
+        "error": 2.2165439126441453e-10
+      }
+    },
+    {
+      "call": 77,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "contains",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": -0.5204678079730721,
+          "y": 0.8538812920211482
+        }
+      ],
+      "result": true,
+      "comparison": {
+        "status": "match",
+        "value": true
+      }
+    },
+    {
+      "call": 78,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        1.3803967720318788
+      ],
+      "result": {
+        "type": "point",
+        "x": -0.5605076022408938,
+        "y": 0.828149278711371
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": -0.5605076023877441,
+          "y": 0.8281492786119797
+        },
+        "error": 1.773235421555922e-10
+      }
+    },
+    {
+      "call": 79,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "contains",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": -0.5605076022408938,
+          "y": 0.828149278711371
+        }
+      ],
+      "result": true,
+      "comparison": {
+        "status": "match",
+        "value": true
+      }
+    },
+    {
+      "call": 80,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        1.427996660722633
+      ],
+      "result": {
+        "type": "point",
+        "x": -0.599277666511347,
+        "y": 0.8005412409243604
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": -0.5992776666178128,
+          "y": 0.8005412408446609
+        },
+        "error": 1.329924045375529e-10
+      }
+    },
+    {
+      "call": 81,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "contains",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": -0.599277666511347,
+          "y": 0.8005412409243604
+        }
+      ],
+      "result": true,
+      "comparison": {
+        "status": "match",
+        "value": true
+      }
+    },
+    {
+      "call": 82,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        1.4755965494133878
+      ],
+      "result": {
+        "type": "point",
+        "x": -0.6366901741190885,
+        "y": 0.7711197197453874
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": -0.6366901741874571,
+          "y": 0.7711197196889374
+        },
+        "error": 8.86615418625279e-11
+      }
+    },
+    {
+      "call": 83,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "contains",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": -0.6366901741190885,
+          "y": 0.7711197197453874
+        }
+      ],
+      "result": true,
+      "comparison": {
+        "status": "match",
+        "value": true
+      }
+    },
+    {
+      "call": 84,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        1.523196438104142
+      ],
+      "result": {
+        "type": "point",
+        "x": -0.6726603737012522,
+        "y": 0.7399513643828841
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": -0.6726603737340552,
+          "y": 0.7399513643530641
+        },
+        "error": 4.433136780448012e-11
+      }
+    },
+    {
+      "call": 85,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "operation": "contains",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": -0.6726603737012522,
+          "y": 0.7399513643828841
+        }
+      ],
+      "result": true,
+      "comparison": {
+        "status": "match",
+        "value": true
+      }
+    },
+    {
+      "call": 86,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.distanceTo distance to point on arc",
+      "testOrdinal": 59,
+      "operation": "length",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [],
+      "result": 1.5707963267948966,
+      "comparison": {
+        "status": "match",
+        "value": 1.5707963267948966,
+        "error": 0
+      }
+    },
+    {
+      "call": 87,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.distanceTo distance to point on arc",
+      "testOrdinal": 59,
+      "operation": "pointAtLength",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        0.7853981633974483
+      ],
+      "result": {
+        "type": "point",
+        "x": 6.123233995736766e-17,
+        "y": 1
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "x": -1.232595164407831e-32,
+          "y": 0.9999999999999999
+        },
+        "error": 1.267886079296281e-16
+      }
+    },
+    {
+      "call": 88,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.distanceTo distance to point on arc",
+      "testOrdinal": 59,
+      "operation": "distanceTo",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": 6.123233995736766e-17,
+          "y": 1
+        }
+      ],
+      "result": [
+        0,
+        {
+          "type": "segment",
+          "start": {
+            "type": "point",
+            "x": 6.123233995736766e-17,
+            "y": 1
+          },
+          "end": {
+            "type": "point",
+            "x": 6.123233995736766e-17,
+            "y": 1
+          }
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 1.267886079296281e-16,
+          "left": {
+            "x": -1.232595164407831e-32,
+            "y": 0.9999999999999999
+          },
+          "right": {
+            "x": 6.123233995736766e-17,
+            "y": 1
+          }
+        },
+        "referenceDistance": 0,
+        "error": 1.267886079296281e-16
+      }
+    },
+    {
+      "call": 89,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.distanceTo distance to point outside arc",
+      "testOrdinal": 60,
+      "operation": "distanceTo",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": 2,
+          "y": 2
+        }
+      ],
+      "result": [
+        1.8284271247461903,
+        {
+          "type": "segment",
+          "start": {
+            "type": "point",
+            "x": 0.7071067811865475,
+            "y": 0.7071067811865475
+          },
+          "end": {
+            "type": "point",
+            "x": 2,
+            "y": 2
+          }
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 1.8284271247461903,
+          "left": {
+            "x": 0.7071067811865476,
+            "y": 0.7071067811865475
+          },
+          "right": {
+            "x": 2,
+            "y": 2
+          }
+        },
+        "referenceDistance": 1.8284271247461903,
+        "error": 0
+      }
+    },
+    {
+      "call": 90,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.distanceTo distance to point inside arc",
+      "testOrdinal": 61,
+      "operation": "distanceTo",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0.7853981633974483,
+        "endAngle": 2.356194490192345,
+        "ccw": true,
+        "sweep": 1.5707963267948966,
+        "start": {
+          "type": "point",
+          "x": 0.7071067811865476,
+          "y": 0.7071067811865475
+        },
+        "end": {
+          "type": "point",
+          "x": -0.7071067811865475,
+          "y": 0.7071067811865476
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": 0.5,
+          "y": 0.5
+        }
+      ],
+      "result": [
+        0.2928932188134524,
+        {
+          "type": "segment",
+          "start": {
+            "type": "point",
+            "x": 0.7071067811865475,
+            "y": 0.7071067811865475
+          },
+          "end": {
+            "type": "point",
+            "x": 0.5,
+            "y": 0.5
+          }
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 0.2928932188134525,
+          "left": {
+            "x": 0.7071067811865476,
+            "y": 0.7071067811865475
+          },
+          "right": {
+            "x": 0.5,
+            "y": 0.5
+          }
+        },
+        "referenceDistance": 0.2928932188134524,
+        "error": 5.551115123125783e-17
+      }
+    },
+    {
+      "call": 91,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.distanceTo distance to point inside 3rd quadrant of the arc",
+      "testOrdinal": 62,
+      "operation": "distanceTo",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 1,
+        "startAngle": 0,
+        "endAngle": 4.71238898038469,
+        "ccw": true,
+        "sweep": 4.71238898038469,
+        "start": {
+          "type": "point",
+          "x": 1,
+          "y": 0
+        },
+        "end": {
+          "type": "point",
+          "x": -1.8369701987210297e-16,
+          "y": -1
+        }
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": -0.5,
+          "y": -0.5
+        }
+      ],
+      "result": [
+        0.2928932188134524,
+        {
+          "type": "segment",
+          "start": {
+            "type": "point",
+            "x": -0.7071067811865475,
+            "y": -0.7071067811865475
+          },
+          "end": {
+            "type": "point",
+            "x": -0.5,
+            "y": -0.5
+          }
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 0.29289321881345254,
+          "left": {
+            "x": -0.7071067811865477,
+            "y": -0.7071067811865475
+          },
+          "right": {
+            "x": -0.5,
+            "y": -0.5
+          }
+        },
+        "referenceDistance": 0.2928932188134524,
+        "error": 1.1102230246251565e-16
+      }
+    },
+    {
+      "call": 92,
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.distanceTo distance to box",
+      "testOrdinal": 63,
+      "operation": "distanceTo",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 3,
+          "y": 0.5
+        },
+        "radius": 1,
+        "startAngle": 1.5707963267948966,
+        "endAngle": 4.71238898038469,
+        "ccw": true,
+        "sweep": 3.141592653589793,
+        "start": {
+          "type": "point",
+          "x": 3,
+          "y": 1.5
+        },
+        "end": {
+          "type": "point",
+          "x": 2.9999999999999996,
+          "y": -0.5
+        }
+      },
+      "arguments": [
+        {
+          "type": "box",
+          "xmin": 0,
+          "ymin": 0,
+          "xmax": 1,
+          "ymax": 1
+        }
+      ],
+      "result": [
+        1,
+        {
+          "type": "segment",
+          "start": {
+            "type": "point",
+            "x": 2,
+            "y": 0.5
+          },
+          "end": {
+            "type": "point",
+            "x": 1,
+            "y": 0.5
+          }
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 1,
+          "left": {
+            "x": 2,
+            "y": 0.5000000000000001
+          },
+          "right": {
+            "x": 1,
+            "y": 0.5000000000000001
+          }
+        },
+        "referenceDistance": 1,
+        "error": 0
+      }
+    },
+    {
+      "call": 93,
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Method contains returns true if point belongs to the circle",
+      "testOrdinal": 5,
+      "operation": "contains",
+      "input": {
+        "type": "circle",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 2
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": 0,
+          "y": 1
+        }
+      ],
+      "result": true,
+      "comparison": {
+        "status": "match",
+        "value": true
+      }
+    },
+    {
+      "call": 94,
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can return circle bounding box",
+      "testOrdinal": 6,
+      "operation": "box",
+      "input": {
+        "type": "circle",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 2
+      },
+      "arguments": [],
+      "result": {
+        "type": "box",
+        "xmin": -2,
+        "ymin": -2,
+        "xmax": 2,
+        "ymax": 2
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "xmin": -2,
+          "ymin": -2,
+          "xmax": 2,
+          "ymax": 2
+        },
+        "error": 0
+      }
+    },
+    {
+      "call": 95,
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can intersect circle with line. Case 1 no intersection",
+      "testOrdinal": 9,
+      "operation": "intersect",
+      "input": {
+        "type": "circle",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 2
+      },
+      "arguments": [
+        {
+          "type": "line",
+          "point": {
+            "type": "point",
+            "x": 3,
+            "y": 3
+          },
+          "normal": {
+            "type": "vector",
+            "x": 0,
+            "y": 1
+          }
+        }
+      ],
+      "result": [],
+      "comparison": {
+        "status": "match",
+        "points": [],
+        "reference": []
+      }
+    },
+    {
+      "call": 96,
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can intersect circle with line. Case 2 Touching",
+      "testOrdinal": 10,
+      "operation": "intersect",
+      "input": {
+        "type": "circle",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 2
+      },
+      "arguments": [
+        {
+          "type": "line",
+          "point": {
+            "type": "point",
+            "x": 3,
+            "y": 2
+          },
+          "normal": {
+            "type": "vector",
+            "x": 0,
+            "y": 1
+          }
+        }
+      ],
+      "result": [
+        {
+          "type": "point",
+          "x": 0,
+          "y": 2
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "points": [
+          {
+            "x": 1.2246467991473532e-16,
+            "y": 2
+          }
+        ],
+        "reference": [
+          {
+            "type": "point",
+            "x": 0,
+            "y": 2
+          }
+        ]
+      }
+    },
+    {
+      "call": 97,
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can intersect circle with line. Case 3 Two points",
+      "testOrdinal": 11,
+      "operation": "intersect",
+      "input": {
+        "type": "circle",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 2
+      },
+      "arguments": [
+        {
+          "type": "line",
+          "point": {
+            "type": "point",
+            "x": 1,
+            "y": 1
+          },
+          "normal": {
+            "type": "vector",
+            "x": 0,
+            "y": 1
+          }
+        }
+      ],
+      "result": [
+        {
+          "type": "point",
+          "x": -1.7320508075688772,
+          "y": 1
+        },
+        {
+          "type": "point",
+          "x": 1.7320508075688772,
+          "y": 1
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "points": [
+          {
+            "x": 1.7320508075688776,
+            "y": 0.9999999999999997
+          },
+          {
+            "x": -1.7320508075688774,
+            "y": 1
+          }
+        ],
+        "reference": [
+          {
+            "type": "point",
+            "x": -1.7320508075688772,
+            "y": 1
+          },
+          {
+            "type": "point",
+            "x": 1.7320508075688772,
+            "y": 1
+          }
+        ]
+      }
+    },
+    {
+      "call": 98,
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can intersect circle with segment. One point",
+      "testOrdinal": 12,
+      "operation": "intersect",
+      "input": {
+        "type": "circle",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 2
+      },
+      "arguments": [
+        {
+          "type": "segment",
+          "start": {
+            "type": "point",
+            "x": 1,
+            "y": 1
+          },
+          "end": {
+            "type": "point",
+            "x": 3,
+            "y": 3
+          }
+        }
+      ],
+      "result": [
+        {
+          "type": "point",
+          "x": 1.414213562373095,
+          "y": 1.414213562373095
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "points": [
+          {
+            "x": 1.4142135623730951,
+            "y": 1.414213562373095
+          }
+        ],
+        "reference": [
+          {
+            "type": "point",
+            "x": 1.414213562373095,
+            "y": 1.414213562373095
+          }
+        ]
+      }
+    },
+    {
+      "call": 99,
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can intersect circle with segment.2 points",
+      "testOrdinal": 13,
+      "operation": "intersect",
+      "input": {
+        "type": "circle",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 2
+      },
+      "arguments": [
+        {
+          "type": "segment",
+          "start": {
+            "type": "point",
+            "x": -3,
+            "y": -3
+          },
+          "end": {
+            "type": "point",
+            "x": 3,
+            "y": 3
+          }
+        }
+      ],
+      "result": [
+        {
+          "type": "point",
+          "x": -1.4142135623730951,
+          "y": -1.4142135623730951
+        },
+        {
+          "type": "point",
+          "x": 1.4142135623730951,
+          "y": 1.4142135623730951
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "points": [
+          {
+            "x": 1.4142135623730951,
+            "y": 1.414213562373095
+          },
+          {
+            "x": -1.4142135623730954,
+            "y": -1.414213562373095
+          }
+        ],
+        "reference": [
+          {
+            "type": "point",
+            "x": -1.4142135623730951,
+            "y": -1.4142135623730951
+          },
+          {
+            "type": "point",
+            "x": 1.4142135623730951,
+            "y": 1.4142135623730951
+          }
+        ]
+      }
+    },
+    {
+      "call": 100,
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can intersect circle with arc",
+      "testOrdinal": 14,
+      "operation": "intersect",
+      "input": {
+        "type": "circle",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 2
+      },
+      "arguments": [
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 1
+          },
+          "radius": 2,
+          "startAngle": 3.141592653589793,
+          "endAngle": -3.141592653589793,
+          "ccw": true,
+          "sweep": 6.283185307179586,
+          "start": {
+            "type": "point",
+            "x": -1.9999999999999998,
+            "y": 1.0000000000000002
+          },
+          "end": {
+            "type": "point",
+            "x": -2,
+            "y": 0.9999999999999998
+          }
+        }
+      ],
+      "result": [
+        {
+          "type": "point",
+          "x": -1.9364916731037085,
+          "y": 0.5
+        },
+        {
+          "type": "point",
+          "x": 1.9364916731037085,
+          "y": 0.5
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "points": [
+          {
+            "x": 1.9364916731037085,
+            "y": 0.5
+          },
+          {
+            "x": -1.9364916731037083,
+            "y": 0.5000000000000008
+          }
+        ],
+        "reference": [
+          {
+            "type": "point",
+            "x": -1.9364916731037085,
+            "y": 0.5
+          },
+          {
+            "type": "point",
+            "x": 1.9364916731037085,
+            "y": 0.5
+          }
+        ]
+      }
+    },
+    {
+      "call": 101,
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can intersect circle with circle - quick reject",
+      "testOrdinal": 15,
+      "operation": "intersect",
+      "input": {
+        "type": "circle",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 2
+      },
+      "arguments": [
+        {
+          "type": "circle",
+          "center": {
+            "type": "point",
+            "x": 5,
+            "y": 4
+          },
+          "radius": 2
+        }
+      ],
+      "result": [],
+      "comparison": {
+        "status": "match",
+        "points": [],
+        "reference": []
+      }
+    },
+    {
+      "call": 102,
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can intersect circle with circle - no intersection r1 + r2 < dist",
+      "testOrdinal": 16,
+      "operation": "intersect",
+      "input": {
+        "type": "circle",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 2
+      },
+      "arguments": [
+        {
+          "type": "circle",
+          "center": {
+            "type": "point",
+            "x": 2,
+            "y": 2
+          },
+          "radius": 0.5
+        }
+      ],
+      "result": [],
+      "comparison": {
+        "status": "match",
+        "points": [],
+        "reference": []
+      }
+    },
+    {
+      "call": 103,
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can intersect circle with circle - no intersection: one inside another",
+      "testOrdinal": 17,
+      "operation": "intersect",
+      "input": {
+        "type": "circle",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 4
+      },
+      "arguments": [
+        {
+          "type": "circle",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 3
+        }
+      ],
+      "result": [],
+      "comparison": {
+        "status": "match",
+        "points": [],
+        "reference": []
+      }
+    },
+    {
+      "call": 104,
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can intersect circle with circle - same circle, one intersection, leftmost point",
+      "testOrdinal": 18,
+      "operation": "intersect",
+      "input": {
+        "type": "circle",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 4
+      },
+      "arguments": [
+        {
+          "type": "circle",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 4
+        }
+      ],
+      "result": [
+        {
+          "type": "point",
+          "x": -4,
+          "y": 0
+        }
+      ],
+      "comparison": {
+        "status": "continuous-overlap-contract-difference",
+        "points": [
+          {
+            "x": 2.4492935982947064e-16,
+            "y": 4
+          },
+          {
+            "x": 4,
+            "y": 0
+          },
+          {
+            "x": -4,
+            "y": 4.898587196589413e-16
+          },
+          {
+            "x": -7.347880794884119e-16,
+            "y": -4
+          }
+        ],
+        "errors": [
+          "OverlappingSegments",
+          "OverlappingSegments",
+          "OverlappingSegments",
+          "OverlappingSegments"
+        ]
+      }
+    },
+    {
+      "call": 105,
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can intersect circle with circle - degenerated circle",
+      "testOrdinal": 19,
+      "operation": "intersect",
+      "input": {
+        "type": "circle",
+        "center": {
+          "type": "point",
+          "x": 0,
+          "y": 0
+        },
+        "radius": 2
+      },
+      "arguments": [
+        {
+          "type": "circle",
+          "center": {
+            "type": "point",
+            "x": 2,
+            "y": 0
+          },
+          "radius": 0
+        }
+      ],
+      "result": [],
+      "comparison": {
+        "status": "scope-difference",
+        "reason": "zero-radius-circle-contract",
+        "details": {
+          "scope": "zero-radius-circle-contract",
+          "radius": 0
+        }
+      }
+    },
+    {
+      "call": 106,
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Intersect circle with polygon",
+      "testOrdinal": 20,
+      "operation": "intersect",
+      "input": {
+        "type": "circle",
+        "center": {
+          "type": "point",
+          "x": 150,
+          "y": 50
+        },
+        "radius": 50
+      },
+      "arguments": [
+        {
+          "type": "polygon",
+          "edges": [
+            {
+              "type": "segment",
+              "start": {
+                "type": "point",
+                "x": 100,
+                "y": 20
+              },
+              "end": {
+                "type": "point",
+                "x": 250,
+                "y": 75
+              }
+            },
+            {
+              "type": "segment",
+              "start": {
+                "type": "point",
+                "x": 250,
+                "y": 75
+              },
+              "end": {
+                "type": "point",
+                "x": 350,
+                "y": 75
+              }
+            },
+            {
+              "type": "segment",
+              "start": {
+                "type": "point",
+                "x": 350,
+                "y": 75
+              },
+              "end": {
+                "type": "point",
+                "x": 300,
+                "y": 200
+              }
+            },
+            {
+              "type": "segment",
+              "start": {
+                "type": "point",
+                "x": 300,
+                "y": 200
+              },
+              "end": {
+                "type": "point",
+                "x": 170,
+                "y": 200
+              }
+            },
+            {
+              "type": "segment",
+              "start": {
+                "type": "point",
+                "x": 170,
+                "y": 200
+              },
+              "end": {
+                "type": "point",
+                "x": 120,
+                "y": 350
+              }
+            },
+            {
+              "type": "segment",
+              "start": {
+                "type": "point",
+                "x": 120,
+                "y": 350
+              },
+              "end": {
+                "type": "point",
+                "x": 70,
+                "y": 120
+              }
+            },
+            {
+              "type": "segment",
+              "start": {
+                "type": "point",
+                "x": 70,
+                "y": 120
+              },
+              "end": {
+                "type": "point",
+                "x": 100,
+                "y": 20
+              }
+            }
+          ]
+        }
+      ],
+      "result": [
+        {
+          "type": "point",
+          "x": 107.96731458926574,
+          "y": 22.92134868273077
+        },
+        {
+          "type": "point",
+          "x": 199.5743112677372,
+          "y": 56.51058079817031
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "points": [
+          {
+            "x": 199.57431126773722,
+            "y": 56.510580798170295
+          },
+          {
+            "x": 107.96731458926573,
+            "y": 22.921348682730784
+          }
+        ],
+        "reference": [
+          {
+            "type": "point",
+            "x": 107.96731458926574,
+            "y": 22.92134868273077
+          },
+          {
+            "type": "point",
+            "x": 199.5743112677372,
+            "y": 56.51058079817031
+          }
+        ]
+      }
+    },
+    {
+      "call": 107,
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Intersect circle with box",
+      "testOrdinal": 21,
+      "operation": "intersect",
+      "input": {
+        "type": "circle",
+        "center": {
+          "type": "point",
+          "x": 150,
+          "y": 50
+        },
+        "radius": 50
+      },
+      "arguments": [
+        {
+          "type": "box",
+          "xmin": 70,
+          "ymin": 20,
+          "xmax": 350,
+          "ymax": 350
+        }
+      ],
+      "result": [
+        {
+          "type": "point",
+          "x": 110,
+          "y": 20
+        },
+        {
+          "type": "point",
+          "x": 190,
+          "y": 20
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "points": [
+          {
+            "x": 110,
+            "y": 19.99999999999999
+          },
+          {
+            "x": 190,
+            "y": 20.000000000000007
+          }
+        ],
+        "reference": [
+          {
+            "type": "point",
+            "x": 110,
+            "y": 20
+          },
+          {
+            "type": "point",
+            "x": 190,
+            "y": 20
+          }
+        ]
+      }
+    },
+    {
+      "call": 108,
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle #Flatten.Circle.DistanceTo Can measure distance between circle and point",
+      "testOrdinal": 24,
+      "operation": "distanceTo",
+      "input": {
+        "type": "circle",
+        "center": {
+          "type": "point",
+          "x": 200,
+          "y": 200
+        },
+        "radius": 50
+      },
+      "arguments": [
+        {
+          "type": "point",
+          "x": 200,
+          "y": 100
+        }
+      ],
+      "result": [
+        50,
+        {
+          "type": "segment",
+          "start": {
+            "type": "point",
+            "x": 200,
+            "y": 150
+          },
+          "end": {
+            "type": "point",
+            "x": 200,
+            "y": 100
+          }
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 50,
+          "left": {
+            "x": 200,
+            "y": 150
+          },
+          "right": {
+            "x": 200,
+            "y": 100
+          }
+        },
+        "referenceDistance": 50,
+        "error": 0
+      }
+    },
+    {
+      "call": 109,
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle #Flatten.Circle.DistanceTo Can measure distance between circle and circle",
+      "testOrdinal": 25,
+      "operation": "distanceTo",
+      "input": {
+        "type": "circle",
+        "center": {
+          "type": "point",
+          "x": 200,
+          "y": 200
+        },
+        "radius": 50
+      },
+      "arguments": [
+        {
+          "type": "circle",
+          "center": {
+            "type": "point",
+            "x": 200,
+            "y": 230
+          },
+          "radius": 100
+        }
+      ],
+      "result": [
+        20,
+        {
+          "type": "segment",
+          "start": {
+            "type": "point",
+            "x": 200,
+            "y": 150
+          },
+          "end": {
+            "type": "point",
+            "x": 200,
+            "y": 130
+          }
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 20,
+          "left": {
+            "x": 200,
+            "y": 150
+          },
+          "right": {
+            "x": 199.99999999999997,
+            "y": 130
+          }
+        },
+        "referenceDistance": 20,
+        "error": 0
+      }
+    },
+    {
+      "call": 110,
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle #Flatten.Circle.DistanceTo Can measure distance between circle and line",
+      "testOrdinal": 26,
+      "operation": "distanceTo",
+      "input": {
+        "type": "circle",
+        "center": {
+          "type": "point",
+          "x": 200,
+          "y": 200
+        },
+        "radius": 50
+      },
+      "arguments": [
+        {
+          "type": "line",
+          "point": {
+            "type": "point",
+            "x": 200,
+            "y": 130
+          },
+          "normal": {
+            "type": "vector",
+            "x": 0,
+            "y": 1
+          }
+        }
+      ],
+      "result": [
+        20,
+        {
+          "type": "segment",
+          "start": {
+            "type": "point",
+            "x": 200,
+            "y": 150
+          },
+          "end": {
+            "type": "point",
+            "x": 200,
+            "y": 130
+          }
+        }
+      ],
+      "comparison": {
+        "status": "scope-difference",
+        "reason": "No direct public distance-to-infinite-line query; do not silently clip the line."
+      }
+    },
+    {
+      "call": 111,
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle #Flatten.Circle.DistanceTo Can measure distance between circle and segment",
+      "testOrdinal": 27,
+      "operation": "distanceTo",
+      "input": {
+        "type": "circle",
+        "center": {
+          "type": "point",
+          "x": 200,
+          "y": 200
+        },
+        "radius": 50
+      },
+      "arguments": [
+        {
+          "type": "segment",
+          "start": {
+            "type": "point",
+            "x": 200,
+            "y": 130
+          },
+          "end": {
+            "type": "point",
+            "x": 220,
+            "y": 130
+          }
+        }
+      ],
+      "result": [
+        20,
+        {
+          "type": "segment",
+          "start": {
+            "type": "point",
+            "x": 200,
+            "y": 150
+          },
+          "end": {
+            "type": "point",
+            "x": 200,
+            "y": 130
+          }
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 20,
+          "left": {
+            "x": 200,
+            "y": 150
+          },
+          "right": {
+            "x": 200,
+            "y": 130
+          }
+        },
+        "referenceDistance": 20,
+        "error": 0
+      }
+    },
+    {
+      "call": 112,
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle #Flatten.Circle.DistanceTo Can measure distance between circle and arc",
+      "testOrdinal": 28,
+      "operation": "distanceTo",
+      "input": {
+        "type": "circle",
+        "center": {
+          "type": "point",
+          "x": 200,
+          "y": 200
+        },
+        "radius": 50
+      },
+      "arguments": [
+        {
+          "type": "arc",
+          "center": {
+            "type": "point",
+            "x": 200,
+            "y": 100
+          },
+          "radius": 20,
+          "startAngle": 3.141592653589793,
+          "endAngle": -3.141592653589793,
+          "ccw": true,
+          "sweep": 6.283185307179586,
+          "start": {
+            "type": "point",
+            "x": 180,
+            "y": 100
+          },
+          "end": {
+            "type": "point",
+            "x": 180,
+            "y": 100
+          }
+        }
+      ],
+      "result": [
+        30,
+        {
+          "type": "segment",
+          "start": {
+            "type": "point",
+            "x": 200,
+            "y": 150
+          },
+          "end": {
+            "type": "point",
+            "x": 200,
+            "y": 120
+          }
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 30,
+          "left": {
+            "x": 200,
+            "y": 150
+          },
+          "right": {
+            "x": 200,
+            "y": 120
+          }
+        },
+        "referenceDistance": 30,
+        "error": 0
+      }
+    },
+    {
+      "call": 113,
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle #Flatten.Circle.DistanceTo Can measure distance between circle and polygon",
+      "testOrdinal": 29,
+      "operation": "box",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 175,
+          "y": 150
+        },
+        "radius": 30,
+        "startAngle": 3.141592653589793,
+        "endAngle": -3.141592653589793,
+        "ccw": true,
+        "sweep": 6.283185307179586,
+        "start": {
+          "type": "point",
+          "x": 144.99999999999997,
+          "y": 150.00000000000003
+        },
+        "end": {
+          "type": "point",
+          "x": 145.00000000000003,
+          "y": 149.99999999999997
+        }
+      },
+      "arguments": [],
+      "result": {
+        "type": "box",
+        "xmin": 144.99999999999997,
+        "ymin": 119.99999999999997,
+        "xmax": 205,
+        "ymax": 180
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "xmin": 145,
+          "ymin": 120,
+          "xmax": 205,
+          "ymax": 180.00000000000003
+        },
+        "error": 2.842170943040401e-14
+      }
+    },
+    {
+      "call": 114,
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle #Flatten.Circle.DistanceTo Can measure distance between circle and polygon",
+      "testOrdinal": 29,
+      "operation": "box",
+      "input": {
+        "type": "arc",
+        "center": {
+          "type": "point",
+          "x": 175,
+          "y": 150
+        },
+        "radius": 30,
+        "startAngle": 3.141592653589793,
+        "endAngle": -3.141592653589793,
+        "ccw": true,
+        "sweep": 6.283185307179586,
+        "start": {
+          "type": "point",
+          "x": 144.99999999999997,
+          "y": 150.00000000000003
+        },
+        "end": {
+          "type": "point",
+          "x": 145.00000000000003,
+          "y": 149.99999999999997
+        }
+      },
+      "arguments": [],
+      "result": {
+        "type": "box",
+        "xmin": 144.99999999999997,
+        "ymin": 119.99999999999997,
+        "xmax": 205,
+        "ymax": 180
+      },
+      "comparison": {
+        "status": "match",
+        "value": {
+          "xmin": 145,
+          "ymin": 120,
+          "xmax": 205,
+          "ymax": 180.00000000000003
+        },
+        "error": 2.842170943040401e-14
+      }
+    },
+    {
+      "call": 115,
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle #Flatten.Circle.DistanceTo Can measure distance between circle and polygon",
+      "testOrdinal": 29,
+      "operation": "distanceTo",
+      "input": {
+        "type": "circle",
+        "center": {
+          "type": "point",
+          "x": 300,
+          "y": 25
+        },
+        "radius": 25
+      },
+      "arguments": [
+        {
+          "type": "polygon",
+          "edges": [
+            {
+              "type": "segment",
+              "start": {
+                "type": "point",
+                "x": 100,
+                "y": 20
+              },
+              "end": {
+                "type": "point",
+                "x": 250,
+                "y": 75
+              }
+            },
+            {
+              "type": "segment",
+              "start": {
+                "type": "point",
+                "x": 250,
+                "y": 75
+              },
+              "end": {
+                "type": "point",
+                "x": 350,
+                "y": 75
+              }
+            },
+            {
+              "type": "segment",
+              "start": {
+                "type": "point",
+                "x": 350,
+                "y": 75
+              },
+              "end": {
+                "type": "point",
+                "x": 300,
+                "y": 270
+              }
+            },
+            {
+              "type": "segment",
+              "start": {
+                "type": "point",
+                "x": 300,
+                "y": 270
+              },
+              "end": {
+                "type": "point",
+                "x": 170,
+                "y": 200
+              }
+            },
+            {
+              "type": "segment",
+              "start": {
+                "type": "point",
+                "x": 170,
+                "y": 200
+              },
+              "end": {
+                "type": "point",
+                "x": 120,
+                "y": 350
+              }
+            },
+            {
+              "type": "segment",
+              "start": {
+                "type": "point",
+                "x": 120,
+                "y": 350
+              },
+              "end": {
+                "type": "point",
+                "x": 70,
+                "y": 120
+              }
+            },
+            {
+              "type": "segment",
+              "start": {
+                "type": "point",
+                "x": 70,
+                "y": 120
+              },
+              "end": {
+                "type": "point",
+                "x": 100,
+                "y": 20
+              }
+            },
+            {
+              "type": "arc",
+              "center": {
+                "type": "point",
+                "x": 175,
+                "y": 150
+              },
+              "radius": 30,
+              "startAngle": 3.141592653589793,
+              "endAngle": -3.141592653589793,
+              "ccw": true,
+              "sweep": 6.283185307179586,
+              "start": {
+                "type": "point",
+                "x": 144.99999999999997,
+                "y": 150.00000000000003
+              },
+              "end": {
+                "type": "point",
+                "x": 145.00000000000003,
+                "y": 149.99999999999997
+              }
+            }
+          ]
+        }
+      ],
+      "result": [
+        25,
+        {
+          "type": "segment",
+          "start": {
+            "type": "point",
+            "x": 300,
+            "y": 50
+          },
+          "end": {
+            "type": "point",
+            "x": 300,
+            "y": 75
+          }
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 25,
+          "left": {
+            "x": 300,
+            "y": 50
+          },
+          "right": {
+            "x": 300,
+            "y": 75
+          }
+        },
+        "referenceDistance": 25,
+        "error": 0
+      }
+    },
+    {
+      "call": 116,
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle #Flatten.Circle.DistanceTo Can measure distance between circle and box",
+      "testOrdinal": 30,
+      "operation": "distanceTo",
+      "input": {
+        "type": "circle",
+        "center": {
+          "type": "point",
+          "x": 3,
+          "y": 0.5
+        },
+        "radius": 1
+      },
+      "arguments": [
+        {
+          "type": "box",
+          "xmin": 0,
+          "ymin": 0,
+          "xmax": 1,
+          "ymax": 1
+        }
+      ],
+      "result": [
+        1,
+        {
+          "type": "segment",
+          "start": {
+            "type": "point",
+            "x": 2,
+            "y": 0.5
+          },
+          "end": {
+            "type": "point",
+            "x": 1,
+            "y": 0.5
+          }
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 1,
+          "left": {
+            "x": 2,
+            "y": 0.5000000000000001
+          },
+          "right": {
+            "x": 1,
+            "y": 0.5000000000000001
+          }
+        },
+        "referenceDistance": 1,
+        "error": 0
+      }
+    }
+  ]
+}

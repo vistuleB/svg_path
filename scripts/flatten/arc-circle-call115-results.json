@@ -1,0 +1,166 @@
+{
+  "timeoutMs": 120000,
+  "implementation": "ba6988cc036dc340e69bde411fb6ffab11ce98fa",
+  "diagnosticTolerance": 0.000001,
+  "counts": {
+    "needs-investigation": 1
+  },
+  "rows": [
+    {
+      "call": 115,
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle #Flatten.Circle.DistanceTo Can measure distance between circle and polygon",
+      "operation": "distanceTo",
+      "input": {
+        "type": "circle",
+        "center": {
+          "type": "point",
+          "x": 300,
+          "y": 25
+        },
+        "radius": 25
+      },
+      "arguments": [
+        {
+          "type": "polygon",
+          "edges": [
+            {
+              "type": "segment",
+              "start": {
+                "type": "point",
+                "x": 100,
+                "y": 20
+              },
+              "end": {
+                "type": "point",
+                "x": 250,
+                "y": 75
+              }
+            },
+            {
+              "type": "segment",
+              "start": {
+                "type": "point",
+                "x": 250,
+                "y": 75
+              },
+              "end": {
+                "type": "point",
+                "x": 350,
+                "y": 75
+              }
+            },
+            {
+              "type": "segment",
+              "start": {
+                "type": "point",
+                "x": 350,
+                "y": 75
+              },
+              "end": {
+                "type": "point",
+                "x": 300,
+                "y": 270
+              }
+            },
+            {
+              "type": "segment",
+              "start": {
+                "type": "point",
+                "x": 300,
+                "y": 270
+              },
+              "end": {
+                "type": "point",
+                "x": 170,
+                "y": 200
+              }
+            },
+            {
+              "type": "segment",
+              "start": {
+                "type": "point",
+                "x": 170,
+                "y": 200
+              },
+              "end": {
+                "type": "point",
+                "x": 120,
+                "y": 350
+              }
+            },
+            {
+              "type": "segment",
+              "start": {
+                "type": "point",
+                "x": 120,
+                "y": 350
+              },
+              "end": {
+                "type": "point",
+                "x": 70,
+                "y": 120
+              }
+            },
+            {
+              "type": "segment",
+              "start": {
+                "type": "point",
+                "x": 70,
+                "y": 120
+              },
+              "end": {
+                "type": "point",
+                "x": 100,
+                "y": 20
+              }
+            },
+            {
+              "type": "arc",
+              "center": {
+                "type": "point",
+                "x": 175,
+                "y": 150
+              },
+              "radius": 30,
+              "startAngle": 3.141592653589793,
+              "endAngle": -3.141592653589793,
+              "ccw": true,
+              "sweep": 6.283185307179586,
+              "start": {
+                "type": "point",
+                "x": 144.99999999999997,
+                "y": 150.00000000000003
+              },
+              "end": {
+                "type": "point",
+                "x": 145.00000000000003,
+                "y": 149.99999999999997
+              }
+            }
+          ]
+        }
+      ],
+      "result": [
+        25,
+        {
+          "type": "segment",
+          "start": {
+            "type": "point",
+            "x": 300,
+            "y": 50
+          },
+          "end": {
+            "type": "point",
+            "x": 300,
+            "y": 75
+          }
+        }
+      ],
+      "comparison": {
+        "status": "needs-investigation",
+        "timeout": true
+      }
+    }
+  ]
+}

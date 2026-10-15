@@ -1,0 +1,418 @@
+{
+  "stats": {
+    "suites": 9,
+    "tests": 57,
+    "passes": 57,
+    "pending": 0,
+    "failures": 0,
+    "start": "2026-10-15T12:43:29.196Z",
+    "end": "2026-10-15T12:43:29.308Z",
+    "duration": 112
+  },
+  "files": [
+    "test/algorithms/relation.js",
+    "test/data_structures/planar_set.js",
+    "test/data_structures/linked_list.js"
+  ],
+  "tests": [
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation Function relate defined",
+      "testOrdinal": 1,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation Namespace Relations exist on Flatten",
+      "testOrdinal": 2,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation Relations may be consumed from Flatten.Relations namespace",
+      "testOrdinal": 3,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation Functions disjoint,equals,intersects,touches exist",
+      "testOrdinal": 4,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation v1.4 Relations.intersect() doesnt allow Polygon argument #149",
+      "testOrdinal": 5,
+      "state": "passed",
+      "duration": 7
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Line2Line Parallel case (disjoint)",
+      "testOrdinal": 6,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Line2Line Equal case",
+      "testOrdinal": 7,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Line2Line Intersection case",
+      "testOrdinal": 8,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Line2Circle Disjoint case",
+      "testOrdinal": 9,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Line2Circle Touching case",
+      "testOrdinal": 10,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Line2Circle Intersection case",
+      "testOrdinal": 11,
+      "state": "passed",
+      "duration": 5
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Line2Box Intersection case",
+      "testOrdinal": 12,
+      "state": "passed",
+      "duration": 2
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Line2Polygon Disjoint case",
+      "testOrdinal": 13,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Line2Polygon Touching case - touch in one point",
+      "testOrdinal": 14,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Line2Polygon Intersection case - 2 intersection point",
+      "testOrdinal": 15,
+      "state": "passed",
+      "duration": 3
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Line2Polygon Can properly detect contains / covered relation. Issue #65",
+      "testOrdinal": 16,
+      "state": "passed",
+      "duration": 2
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Line2Polygon Can properly detect touch relation. Issue #65",
+      "testOrdinal": 17,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Circle2Circle Intersection case",
+      "testOrdinal": 18,
+      "state": "passed",
+      "duration": 4
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Circle2Circle Disjoint case",
+      "testOrdinal": 19,
+      "state": "passed",
+      "duration": 2
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Circle2Circle Touching case",
+      "testOrdinal": 20,
+      "state": "passed",
+      "duration": 3
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Circle2Circle Contain case",
+      "testOrdinal": 21,
+      "state": "passed",
+      "duration": 3
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Circle2Circle Inside case",
+      "testOrdinal": 22,
+      "state": "passed",
+      "duration": 4
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Polygon2Polygon May calculate relations. Disjoint case",
+      "testOrdinal": 23,
+      "state": "passed",
+      "duration": 4
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Polygon2Polygon May calculate relations. Touching from outside case",
+      "testOrdinal": 24,
+      "state": "passed",
+      "duration": 9
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Polygon2Polygon May calculate relations. Case of inclusion",
+      "testOrdinal": 25,
+      "state": "passed",
+      "duration": 4
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Polygon2Polygon May calculate relations. Case of covered",
+      "testOrdinal": 26,
+      "state": "passed",
+      "duration": 10
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Polygon2Polygon May calculate relations. Case of intersected polygons",
+      "testOrdinal": 27,
+      "state": "passed",
+      "duration": 10
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Polygon2Polygon Infinite loop error in Relations.relate()  issue #63",
+      "testOrdinal": 28,
+      "state": "passed",
+      "duration": 5
+    },
+    {
+      "file": "test/algorithms/relation.js",
+      "test": "#Algorithms.Relation #Algorithms.Relation.Polygon2Polygon Calculate contains relation for multipolygon. Issue #81",
+      "testOrdinal": 29,
+      "state": "passed",
+      "duration": 4
+    },
+    {
+      "file": "test/data_structures/planar_set.js",
+      "test": "#Data_structures.PlanarSet Class PlanarSet defined",
+      "testOrdinal": 1,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/planar_set.js",
+      "test": "#Data_structures.PlanarSet May construct new instance of PlanarSet",
+      "testOrdinal": 2,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/planar_set.js",
+      "test": "#Data_structures.PlanarSet May add planar objects",
+      "testOrdinal": 3,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/planar_set.js",
+      "test": "#Data_structures.PlanarSet May add planar objects using {key, value} interface",
+      "testOrdinal": 4,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/planar_set.js",
+      "test": "#Data_structures.PlanarSet May delete planar objects",
+      "testOrdinal": 5,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/planar_set.js",
+      "test": "#Data_structures.PlanarSet May delete planar objects using {key,value} interface",
+      "testOrdinal": 6,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/planar_set.js",
+      "test": "#Data_structures.PlanarSet May not add same object twice (without error ?) ",
+      "testOrdinal": 7,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/planar_set.js",
+      "test": "#Data_structures.PlanarSet May update planar objects",
+      "testOrdinal": 8,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/planar_set.js",
+      "test": "#Data_structures.PlanarSet May find planar objects in given box 1",
+      "testOrdinal": 9,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/planar_set.js",
+      "test": "#Data_structures.PlanarSet May find planar objects in given box 2",
+      "testOrdinal": 10,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/planar_set.js",
+      "test": "#Data_structures.PlanarSet May keep same black height after add many items",
+      "testOrdinal": 11,
+      "state": "passed",
+      "duration": 9
+    },
+    {
+      "file": "test/data_structures/planar_set.js",
+      "test": "#Data_structures.PlanarSet May calculate distance between shape and planar set",
+      "testOrdinal": 12,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/data_structures/planar_set.js",
+      "test": "#Data_structures.PlanarSet May clean planar set",
+      "testOrdinal": 13,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/planar_set.js",
+      "test": "#Data_structures.PlanarSet May perform hit test and return shapes under given point",
+      "testOrdinal": 14,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/planar_set.js",
+      "test": "#Data_structures.PlanarSet May create svg content string",
+      "testOrdinal": 15,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/linked_list.js",
+      "test": "#LinkedList May create new instance of LinkedList",
+      "testOrdinal": 1,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/linked_list.js",
+      "test": "#LinkedList May return size of empty linked list",
+      "testOrdinal": 2,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/linked_list.js",
+      "test": "#LinkedList May append element to empty linked list",
+      "testOrdinal": 3,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/linked_list.js",
+      "test": "#LinkedList May append 5 elements to linked list",
+      "testOrdinal": 4,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/linked_list.js",
+      "test": "#LinkedList May insert element to the middle of linked list",
+      "testOrdinal": 5,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/linked_list.js",
+      "test": "#LinkedList May insert element to the end of linked list",
+      "testOrdinal": 6,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/linked_list.js",
+      "test": "#LinkedList May insert element to the beginning of linked list if elementBefore is null",
+      "testOrdinal": 7,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/linked_list.js",
+      "test": "#LinkedList May insert element to the empty list",
+      "testOrdinal": 8,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/linked_list.js",
+      "test": "#LinkedList May remove element from the linked list",
+      "testOrdinal": 9,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/linked_list.js",
+      "test": "#LinkedList May remove all elements",
+      "testOrdinal": 10,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/linked_list.js",
+      "test": "#LinkedList May return array of all elements",
+      "testOrdinal": 11,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/linked_list.js",
+      "test": "#LinkedList May construct linked list by first and last",
+      "testOrdinal": 12,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/data_structures/linked_list.js",
+      "test": "#LinkedList May throw error when infinite loop detected",
+      "testOrdinal": 13,
+      "state": "passed",
+      "duration": 0
+    }
+  ]
+}

@@ -1,0 +1,305 @@
+{
+  "stats": {
+    "suites": 2,
+    "tests": 41,
+    "passes": 41,
+    "pending": 0,
+    "failures": 0,
+    "start": "2026-10-15T12:35:48.194Z",
+    "end": "2026-10-15T12:35:48.213Z",
+    "duration": 19
+  },
+  "files": [
+    "test/classes/face.js",
+    "test/classes/multiline.js"
+  ],
+  "tests": [
+    {
+      "file": "test/classes/face.js",
+      "test": "#Flatten.Face Can iterate edges as iterable",
+      "testOrdinal": 1,
+      "state": "passed",
+      "duration": 2
+    },
+    {
+      "file": "test/classes/face.js",
+      "test": "#Flatten.Face Can create iterator of edges and iterate them one by one",
+      "testOrdinal": 2,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/face.js",
+      "test": "#Flatten.Face Can get array of edges for the given face",
+      "testOrdinal": 3,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/face.js",
+      "test": "#Flatten.Face Can count edges in face",
+      "testOrdinal": 4,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/face.js",
+      "test": "#Flatten.Face Can set orientation of face to CCW",
+      "testOrdinal": 5,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/face.js",
+      "test": "#Flatten.Face Can set orientation of face to CW",
+      "testOrdinal": 6,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/face.js",
+      "test": "#Flatten.Face Can set orientation of degenerated face to not-orientable",
+      "testOrdinal": 7,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/face.js",
+      "test": "#Flatten.Face Can remove edge from face",
+      "testOrdinal": 8,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/face.js",
+      "test": "#Flatten.Face Can remove all edges from face",
+      "testOrdinal": 9,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/face.js",
+      "test": "#Flatten.Face Can reverse face",
+      "testOrdinal": 10,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/face.js",
+      "test": "#Flatten.Face Method svg can return string to be used to generate svg path",
+      "testOrdinal": 11,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/face.js",
+      "test": "#Flatten.Face Can find points at specific lengths",
+      "testOrdinal": 12,
+      "state": "passed",
+      "duration": 2
+    },
+    {
+      "file": "test/classes/face.js",
+      "test": "#Flatten.Face Can calculate signed area of ccw polygon with cw arc",
+      "testOrdinal": 13,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/face.js",
+      "test": "#Flatten.Face Can calculate signed area of cw polygon with ccw arc",
+      "testOrdinal": 14,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May create new instance of Multiline",
+      "testOrdinal": 1,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline Default constructor creates new empty multiline",
+      "testOrdinal": 2,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May construct multiline from sequence of segments",
+      "testOrdinal": 3,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May construct multiline from two ray",
+      "testOrdinal": 4,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May throw exception when trying to construct multiline with ray in the middle",
+      "testOrdinal": 5,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May get array of edges of multiline",
+      "testOrdinal": 6,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May get array of vertices of multiline",
+      "testOrdinal": 7,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May get box of multiline",
+      "testOrdinal": 8,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May get length of multiline",
+      "testOrdinal": 9,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May create infinite multiline",
+      "testOrdinal": 10,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May get length of infinite multiline",
+      "testOrdinal": 11,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May calculate pointAtLength in multiline",
+      "testOrdinal": 12,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May calculate distance between a point and a multiline",
+      "testOrdinal": 13,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May transform multiline to an array of shapes",
+      "testOrdinal": 14,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May delete first edge from multiline",
+      "testOrdinal": 15,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May delete middle edge from multiline",
+      "testOrdinal": 16,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May delete last edge from multiline",
+      "testOrdinal": 17,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May delete all edges from multiline",
+      "testOrdinal": 18,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May add vertex to polyline",
+      "testOrdinal": 19,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May split polyline with intersections",
+      "testOrdinal": 20,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May split polyline with array of points",
+      "testOrdinal": 21,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May stringify using toJSON transformation",
+      "testOrdinal": 22,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline Can measure distance between multiline and box",
+      "testOrdinal": 23,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline Can measure distance between multiline and point",
+      "testOrdinal": 24,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May create svg path",
+      "testOrdinal": 25,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May create dpath string to be inserted into \"d\" atrtibute",
+      "testOrdinal": 26,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/multiline.js",
+      "test": "#Flatten.Multiline May create points string to be inserted into \"points\" atrtibute",
+      "testOrdinal": 27,
+      "state": "passed",
+      "duration": 0
+    }
+  ]
+}

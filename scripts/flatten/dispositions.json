@@ -1,0 +1,12 @@
+{
+  "linear:66": {
+    "status": "confirmed-library-bug",
+    "finding": "FL001",
+    "reason": "Native segment and path closest-pair APIs overflow on JavaScript; reproduced independently in probe-distance-stack.mjs."
+  },
+  "linear:67": {
+    "status": "confirmed-library-bug",
+    "finding": "FL001",
+    "reason": "Same JavaScript recursion failure as linear:66; standalone native reproducer uses this positive-x quarter-circle crossing."
+  }
+}

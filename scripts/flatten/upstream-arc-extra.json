@@ -1,0 +1,669 @@
+{
+  "stats": {
+    "suites": 7,
+    "tests": 93,
+    "passes": 93,
+    "pending": 0,
+    "failures": 0,
+    "start": "2026-10-15T12:28:28.186Z",
+    "end": "2026-10-15T12:28:28.209Z",
+    "duration": 23
+  },
+  "files": [
+    "test/classes/arc.js",
+    "test/classes/circle.js"
+  ],
+  "tests": [
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc May create new instance of Arc",
+      "testOrdinal": 1,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Default constructor constructs full circle unit arc with zero center and sweep 2PI CCW",
+      "testOrdinal": 2,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Constructor creates CCW arc if parameter counterClockwise is omitted",
+      "testOrdinal": 3,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Constructor can create different CCW arcs if counterClockwise=true 1",
+      "testOrdinal": 4,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Constructor can create different CCW arcs if counterClockwise=true 2",
+      "testOrdinal": 5,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Constructor can create different CCW arcs if counterClockwise=true 3",
+      "testOrdinal": 6,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Constructor can create different CCW arcs if counterClockwise=true 4",
+      "testOrdinal": 7,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Constructor can create different CW arcs if counterClockwise=false 1",
+      "testOrdinal": 8,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Constructor can create different CW arcs if counterClockwise=false 2",
+      "testOrdinal": 9,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Constructor can create different CW arcs if counterClockwise=false 3",
+      "testOrdinal": 10,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Constructor can create different CW arcs if counterClockwise=false 4",
+      "testOrdinal": 11,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc In order to construct full circle, set end_angle = start_angle + 2pi",
+      "testOrdinal": 12,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Constructor creates zero arc when end_angle = start_angle",
+      "testOrdinal": 13,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc New arc may be constructed by function call",
+      "testOrdinal": 14,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Getter arc.start returns start point",
+      "testOrdinal": 15,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Getter arc.end returns end point",
+      "testOrdinal": 16,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Getter arc.length returns arc length",
+      "testOrdinal": 17,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Getter arc.length returns arc length",
+      "testOrdinal": 18,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Getter arc.box returns arc bounding box, CCW case",
+      "testOrdinal": 19,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Getter arc.box returns arc bounding box, CW case",
+      "testOrdinal": 20,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Getter arc.box returns arc bounding box, circle case",
+      "testOrdinal": 21,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Calculate signed area under circular arc, full circle case, CCW",
+      "testOrdinal": 22,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Calculate signed area under circular arc, full circle case, CW",
+      "testOrdinal": 23,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc It can calculate tangent vector in start point, CCW case",
+      "testOrdinal": 24,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc It can calculate tangent vector in start point, CW case",
+      "testOrdinal": 25,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc It can calculate tangent vector in end point, CCW case",
+      "testOrdinal": 26,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc It can calculate tangent vector in end point, CW case",
+      "testOrdinal": 27,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc It can calculate middle point case 1 full circle",
+      "testOrdinal": 28,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc It can calculate middle point case 2 ccw",
+      "testOrdinal": 29,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc It can calculate middle point case 3 cw",
+      "testOrdinal": 30,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc It can calculate middle point case 4 cw, startAngle > endAngle",
+      "testOrdinal": 31,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Can reverse arc",
+      "testOrdinal": 32,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Can mirror arc by Y axis using transformation matrix",
+      "testOrdinal": 33,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Method svg() without parameters creates svg string with default attributes",
+      "testOrdinal": 34,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc Method svg() with extra parameters may add additional attributes",
+      "testOrdinal": 35,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional Case 1. No intersection with axes",
+      "testOrdinal": 36,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional Case 2. One intersection, two sub arcs",
+      "testOrdinal": 37,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional Case 3. One intersection, two sub arcs, CW",
+      "testOrdinal": 38,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional Case 4. One intersection, start at extreme point",
+      "testOrdinal": 39,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional Case 5. 2 intersections, 3 parts",
+      "testOrdinal": 40,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional Case 6. 2 intersections, 3 parts, CW",
+      "testOrdinal": 41,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional Case 7. 2 intersections on extreme points, 1 parts, CW",
+      "testOrdinal": 42,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional Case 7. 4 intersections on extreme points, 5 parts",
+      "testOrdinal": 43,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional Case 8. Full circle, 4 intersections on extreme points, 4 parts",
+      "testOrdinal": 44,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional #220 case 1. Start/end very close to extreme points",
+      "testOrdinal": 45,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional #220 case 2. Start/end very close to extreme points",
+      "testOrdinal": 46,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.breakToFunctional #220 case 3. Start/end very close to extreme points",
+      "testOrdinal": 47,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.intersect Intersect arc with segment",
+      "testOrdinal": 48,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.intersect Intersect arc with line",
+      "testOrdinal": 49,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.intersect Intersect arc with circle, same center and radius - return two end points",
+      "testOrdinal": 50,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.intersect Intersect arc with arc",
+      "testOrdinal": 51,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.intersect Intersect arc with arc, case of touching",
+      "testOrdinal": 52,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.intersect Intersect arc with arc, overlapping case",
+      "testOrdinal": 53,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.intersect Intersect arc with arc, overlapping case, 4 points",
+      "testOrdinal": 54,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.intersect Intersect arc with polygon",
+      "testOrdinal": 55,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.intersect Intersect arc with box",
+      "testOrdinal": 56,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength gets the point at specific length",
+      "testOrdinal": 57,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.pointAtLength points at specific length is on arc",
+      "testOrdinal": 58,
+      "state": "passed",
+      "duration": 1
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.distanceTo distance to point on arc",
+      "testOrdinal": 59,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.distanceTo distance to point outside arc",
+      "testOrdinal": 60,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.distanceTo distance to point inside arc",
+      "testOrdinal": 61,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.distanceTo distance to point inside 3rd quadrant of the arc",
+      "testOrdinal": 62,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/arc.js",
+      "test": "#Flatten.Arc #Flatten.Arc.distanceTo distance to box",
+      "testOrdinal": 63,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle May create new instance of Circle",
+      "testOrdinal": 1,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Constructor Circle(pt, r) creates new circle",
+      "testOrdinal": 2,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle New circle may be constructed by function call",
+      "testOrdinal": 3,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle May create new instance by clone",
+      "testOrdinal": 4,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Method contains returns true if point belongs to the circle",
+      "testOrdinal": 5,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can return circle bounding box",
+      "testOrdinal": 6,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can transform circle into closed CCW arc",
+      "testOrdinal": 7,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can transform circle into closed CW arc",
+      "testOrdinal": 8,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can intersect circle with line. Case 1 no intersection",
+      "testOrdinal": 9,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can intersect circle with line. Case 2 Touching",
+      "testOrdinal": 10,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can intersect circle with line. Case 3 Two points",
+      "testOrdinal": 11,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can intersect circle with segment. One point",
+      "testOrdinal": 12,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can intersect circle with segment.2 points",
+      "testOrdinal": 13,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can intersect circle with arc",
+      "testOrdinal": 14,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can intersect circle with circle - quick reject",
+      "testOrdinal": 15,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can intersect circle with circle - no intersection r1 + r2 < dist",
+      "testOrdinal": 16,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can intersect circle with circle - no intersection: one inside another",
+      "testOrdinal": 17,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can intersect circle with circle - same circle, one intersection, leftmost point",
+      "testOrdinal": 18,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Can intersect circle with circle - degenerated circle",
+      "testOrdinal": 19,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Intersect circle with polygon",
+      "testOrdinal": 20,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Intersect circle with box",
+      "testOrdinal": 21,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Method svg() without parameters creates svg string with default attributes",
+      "testOrdinal": 22,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle Method svg() with extra parameters may add additional attributes",
+      "testOrdinal": 23,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle #Flatten.Circle.DistanceTo Can measure distance between circle and point",
+      "testOrdinal": 24,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle #Flatten.Circle.DistanceTo Can measure distance between circle and circle",
+      "testOrdinal": 25,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle #Flatten.Circle.DistanceTo Can measure distance between circle and line",
+      "testOrdinal": 26,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle #Flatten.Circle.DistanceTo Can measure distance between circle and segment",
+      "testOrdinal": 27,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle #Flatten.Circle.DistanceTo Can measure distance between circle and arc",
+      "testOrdinal": 28,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle #Flatten.Circle.DistanceTo Can measure distance between circle and polygon",
+      "testOrdinal": 29,
+      "state": "passed",
+      "duration": 0
+    },
+    {
+      "file": "test/classes/circle.js",
+      "test": "#Flatten.Circle #Flatten.Circle.DistanceTo Can measure distance between circle and box",
+      "testOrdinal": 30,
+      "state": "passed",
+      "duration": 1
+    }
+  ]
+}
