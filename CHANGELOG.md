@@ -9,12 +9,22 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
-## Unreleased
+## 3.1.2 - 2026-10-15
 
-- Replace supplementary curve-intersection searches with one centered, axis-scaled
-  search for eligible polynomial pairs. Preserve original-coordinate endpoint
-  matching, overlap decisions and certification errors; reduce redundant
-  numerical candidates around several flat and tangential contacts.
+- Search eligible polynomial curve pairs once in centered `[-100,100]`
+  coordinates. Preserve original-coordinate endpoint matching, overlap decisions
+  and final certification. Numerical candidate counts can change.
+- Fix the JavaScript stack overflow in broad closest-pair window searches.
+- Include collinear polynomial turning points when detecting folded overlaps;
+  report unsupported non-affine traversal correspondence explicitly.
+- Partition Bézier length integration at coordinate extrema, sharing the total
+  absolute error budget across initial intervals.
+- Define exactly constant polynomial contacts at canonical parameter zero,
+  preserving distinct addresses on the other segment and arc validation.
+- Close the scoped FloBezier audit with archived source, comparison results,
+  classified discrepancies and regression tests. Document numerical limitations;
+  this is not a claim of certified root isolation or complete upstream parity.
+- Public signatures and options are unchanged.
 
 ## 3.1.1 - 2026-10-14
 
