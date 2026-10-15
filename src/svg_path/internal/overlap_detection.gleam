@@ -278,7 +278,8 @@ fn insert_overlap_loop(
 /// the closest projection. Interior
 /// samples on the proposed left interval must remain within `tolerance` of the
 /// proposed right interval. Compatible proposals are merged into maximal
-/// intervals.
+/// intervals. For two lines, the affine endpoint-distance bound replaces
+/// interior sampling.
 @internal
 pub fn detect_with_samples(
   left: svg_path.Segment,
@@ -1075,20 +1076,43 @@ fn sampled_overlap_valid(
   samples: Int,
 ) -> Result(Bool, svg_path.Error) {
   let #(left_from, left_to, right_from, right_to, _, _) = overlap
-  use right_piece <- result.try(svg_path.segment_between_inside(
-    right,
-    from: min_float(right_from, right_to),
-    to: max_float(right_from, right_to),
-  ))
-  sampled_overlap_valid_loop(
-    left,
-    right_piece,
-    left_from,
-    left_to,
-    tolerance,
-    samples,
-    1,
-  )
+  case left, right {
+    svg_path.Line(..), svg_path.Line(..) ->
+      line_correspondence_valid(overlap, left, right, tolerance)
+    _, _ -> {
+      use right_piece <- result.try(svg_path.segment_between_inside(
+        right,
+        from: min_float(right_from, right_to),
+        to: max_float(right_from, right_to),
+      ))
+      sampled_overlap_valid_loop(
+        left,
+        right_piece,
+        left_from,
+        left_to,
+        tolerance,
+        samples,
+        1,
+      )
+    }
+  }
+}
+
+// The difference between two affinely paired lines is itself affine. Endpoint
+// distances therefore bound the entire correspondence; independently rounded
+// interior evaluations can only weaken this certificate at large coordinates.
+fn line_correspondence_valid(
+  overlap: RawOverlap,
+  left: svg_path.Segment,
+  right: svg_path.Segment,
+  tolerance: Float,
+) -> Result(Bool, svg_path.Error) {
+  let #(lf, lt, rf, rt, _, _) = overlap
+  use a <- result.try(svg_path.segment_point(left, lf))
+  use b <- result.try(svg_path.segment_point(left, lt))
+  use c <- result.try(svg_path.segment_point(right, rf))
+  use d <- result.try(svg_path.segment_point(right, rt))
+  Ok(points_near(a, c, tolerance) && points_near(b, d, tolerance))
 }
 
 fn sampled_overlap_valid_loop(
@@ -1132,17 +1156,23 @@ fn affine_correspondence_valid(
   samples: Int,
 ) -> Result(Bool, svg_path.Error) {
   let #(left_from, left_to, right_from, right_to, _, _) = overlap
-  affine_correspondence_valid_loop(
-    left,
-    right,
-    left_from,
-    left_to,
-    right_from,
-    right_to,
-    tolerance,
-    samples,
-    1,
-  )
+  case left, right {
+    svg_path.Line(..), svg_path.Line(..) ->
+      line_correspondence_valid(overlap, left, right, tolerance)
+    _, _ -> {
+      affine_correspondence_valid_loop(
+        left,
+        right,
+        left_from,
+        left_to,
+        right_from,
+        right_to,
+        tolerance,
+        samples,
+        1,
+      )
+    }
+  }
 }
 
 fn affine_correspondence_valid_loop(
