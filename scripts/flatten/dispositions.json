@@ -12,55 +12,55 @@
     "verification": "linear-call67-public-results.json"
   },
   "polygons:3380": {
-    "status": "confirmed-native-failure",
+    "status": "fixed",
     "finding": "FL002",
-    "fixStatus": "partial",
-    "reason": "Line-overlap classifier fixed separately. Remaining winding failure localized to reversed cyclic order at vertex 12. Diagnostic vertex-local resampling restores 13 faces and successful Boolean operations; production topology fix pending.",
-    "verification": "remaining-fl002-endpoint-original.json",
+    "fixStatus": "fixed-in-gleam-fsharp-port-pending",
+    "reason": "Vertex-local circle sampling corrects incident-edge order. Original Boolean calls succeed on Erlang and JavaScript; sampled containment and area comparisons pass. F# port pending.",
+    "verification": "remaining-local-sampling-comparison.json",
     "reducedVerification": "remaining-fl002-endpoint-reduced.json",
-    "topologyVerification": "remaining-topology-replay.json"
+    "topologyVerification": "remaining-local-sampling-arrangement.json"
   },
   "polygons:4033": {
-    "status": "confirmed-native-failure",
+    "status": "fixed",
     "finding": "FL002",
-    "fixStatus": "partial",
-    "reason": "Line-overlap classifier fixed separately. Remaining winding failure localized to reversed cyclic order at vertex 12. Diagnostic vertex-local resampling restores 13 faces and successful Boolean operations; production topology fix pending.",
-    "verification": "remaining-fl002-endpoint-original.json",
+    "fixStatus": "fixed-in-gleam-fsharp-port-pending",
+    "reason": "Vertex-local circle sampling corrects incident-edge order. Original Boolean calls succeed on Erlang and JavaScript; sampled containment and area comparisons pass. F# port pending.",
+    "verification": "remaining-local-sampling-comparison.json",
     "reducedVerification": "remaining-fl002-endpoint-reduced.json",
-    "topologyVerification": "remaining-topology-replay.json"
+    "topologyVerification": "remaining-local-sampling-arrangement.json"
   },
   "polygons:4682": {
-    "status": "confirmed-native-failure",
+    "status": "fixed",
     "finding": "FL002",
-    "fixStatus": "partial",
-    "reason": "Line-overlap classifier fixed separately. Remaining winding failure localized to reversed cyclic order at vertex 12. Diagnostic vertex-local resampling restores 13 faces and successful Boolean operations; production topology fix pending.",
-    "verification": "remaining-fl002-endpoint-original.json",
+    "fixStatus": "fixed-in-gleam-fsharp-port-pending",
+    "reason": "Vertex-local circle sampling corrects incident-edge order. Original Boolean calls succeed on Erlang and JavaScript; sampled containment and area comparisons pass. F# port pending.",
+    "verification": "remaining-local-sampling-comparison.json",
     "reducedVerification": "remaining-fl002-endpoint-reduced.json",
-    "topologyVerification": "remaining-topology-replay.json"
+    "topologyVerification": "remaining-local-sampling-arrangement.json"
   },
   "polygons:3497": {
-    "status": "confirmed-native-failure",
+    "status": "fixed",
     "finding": "FL003",
-    "fixStatus": "open",
-    "reason": "Winding failure localized to reversed cyclic orders at vertices 8 and 50. Diagnostic vertex-local resampling restores 11 faces and successful Boolean operations; production fix pending.",
-    "verification": "remaining-arrangement.json",
-    "topologyVerification": "remaining-topology-replay.json"
+    "fixStatus": "fixed-in-gleam-fsharp-port-pending",
+    "reason": "Vertex-local circle sampling corrects incident-edge order. Original Boolean calls succeed on Erlang and JavaScript; sampled containment and area comparisons pass. F# port pending.",
+    "verification": "remaining-local-sampling-comparison.json",
+    "topologyVerification": "remaining-local-sampling-arrangement.json"
   },
   "polygons:4150": {
-    "status": "confirmed-native-failure",
+    "status": "fixed",
     "finding": "FL003",
-    "fixStatus": "open",
-    "reason": "Winding failure localized to reversed cyclic orders at vertices 8 and 50. Diagnostic vertex-local resampling restores 11 faces and successful Boolean operations; production fix pending.",
-    "verification": "remaining-arrangement.json",
-    "topologyVerification": "remaining-topology-replay.json"
+    "fixStatus": "fixed-in-gleam-fsharp-port-pending",
+    "reason": "Vertex-local circle sampling corrects incident-edge order. Original Boolean calls succeed on Erlang and JavaScript; sampled containment and area comparisons pass. F# port pending.",
+    "verification": "remaining-local-sampling-comparison.json",
+    "topologyVerification": "remaining-local-sampling-arrangement.json"
   },
   "polygons:4799": {
-    "status": "confirmed-native-failure",
+    "status": "fixed",
     "finding": "FL003",
-    "fixStatus": "open",
-    "reason": "Winding failure localized to reversed cyclic orders at vertices 8 and 50. Diagnostic vertex-local resampling restores 11 faces and successful Boolean operations; production fix pending.",
-    "verification": "remaining-arrangement.json",
-    "topologyVerification": "remaining-topology-replay.json"
+    "fixStatus": "fixed-in-gleam-fsharp-port-pending",
+    "reason": "Vertex-local circle sampling corrects incident-edge order. Original Boolean calls succeed on Erlang and JavaScript; sampled containment and area comparisons pass. F# port pending.",
+    "verification": "remaining-local-sampling-comparison.json",
+    "topologyVerification": "remaining-local-sampling-arrangement.json"
   },
   "polygons:4920": {
     "status": "confirmed-native-failure",

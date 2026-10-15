@@ -1,0 +1,69 @@
+{
+  "implementation": "4d8ff63845bf8e41107909a3b737f67b7e850372",
+  "probeSettings": {
+    "timeoutMs": 60000,
+    "minimumLength": 0.00001,
+    "distanceMaxDepth": 48,
+    "distanceTolerance": 1e-9,
+    "diagnosticRuntime": false
+  },
+  "rows": [
+    {
+      "id": 3380,
+      "mode": "arrangement",
+      "tolerance": 0.000001,
+      "scale": 1,
+      "result": {
+        "stage": "windings",
+        "winds": [
+          {
+            "ok": true
+          },
+          {
+            "ok": true
+          }
+        ],
+        "vertices": 37,
+        "edges": 48,
+        "faces": 13
+      },
+      "ms": 87.658417
+    },
+    {
+      "id": 3497,
+      "mode": "arrangement",
+      "tolerance": 0.000001,
+      "scale": 1,
+      "result": {
+        "stage": "windings",
+        "winds": [
+          {
+            "ok": true
+          },
+          {
+            "ok": true
+          }
+        ],
+        "vertices": 54,
+        "edges": 63,
+        "faces": 11
+      },
+      "ms": 99.436208
+    },
+    {
+      "id": 4920,
+      "mode": "arrangement",
+      "tolerance": 0.000001,
+      "scale": 1,
+      "result": {
+        "stage": "dual",
+        "error": {
+          "type": "ConstructionFailed"
+        },
+        "vertices": 65,
+        "edges": 69
+      },
+      "ms": 90.83345899999999
+    }
+  ]
+}

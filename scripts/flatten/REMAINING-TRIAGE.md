@@ -1,6 +1,6 @@
 # Remaining Flatten.js observations: triage on 3.1.3
 
-**Triage complete; FL005 is fixed in Gleam; three native failure groups (FL002–FL004) remain open.** All 21 polygon
+**Triage complete; FL002, FL003 and FL005 have Gleam fixes; FL004 remains open.** All 21 polygon
 observations have a disposition. This does not mean the audit's fixes are
 complete, nor that every upstream assertion has been adapted. Do not infer
 release readiness from the passing release suite while these findings remain
@@ -14,7 +14,8 @@ is in `remaining-*.json`, with executable probes alongside it.
 
 | Classification | Observations | Detail |
 | --- | ---: | --- |
-| Native numerical failures | 7 | Three distinct input pairs / failing stages, FL002–FL004 |
+| Native numerical failures, fixed in Gleam | 6 | FL002 and FL003; F# port pending |
+| Native numerical failure, open | 1 | FL004 dual construction |
 | Native performance failure, fixed in Gleam | 1 | FL005; all recorded distance cases now pass; F# port pending |
 | Adapter contract mismatches | 12 | Strict path construction rejects discontinuous upstream coordinates |
 | Upstream orientation-contract mismatch | 1 | Oppositely oriented operands in the rectangle subtraction fixture |
@@ -49,7 +50,7 @@ is not a semantics-preserving fix. Scaling tolerance proportionally produces a
 winding contradiction instead. This is a native numerical robustness failure;
 loosening tolerance is diagnostic evidence, not an adopted workaround.
 
-### FL002 implementation follow-up (working tree)
+### FL002 endpoint-bound follow-up (historical intermediate result)
 
 The reduced lines have endpoint separations below 3e-7, but their independently
 rounded midpoint evaluations differ by about 5.012e-7 at x≈1.336 billion. That
@@ -66,7 +67,7 @@ The reduced case now gives one full overlap and `OverlappingSegments`, including
 all eight operand-order / traversal-direction combinations. New native tests
 also verify rejection with a tighter tolerance and ordinary isolated crossings.
 
-**FL002 is only partially resolved:** original calls 3380, 4033, and 4682 now
+**At this intermediate stage FL002 was only partially resolved:** original calls 3380, 4033, and 4682 now
 reach arrangement/dual construction, then fail winding propagation with
 `ConstructionFailed`. The left operand has
 `ContradictoryWinding(edge_id:25, face_id:10, assigned:0, required:1)` and the right
@@ -383,8 +384,48 @@ production source or normal generated runtime. `remaining-internal.json` and
 `remaining-distance-window-count.json` record those diagnostics. The option
 sweeps record their settings in each report. Raw observations remain untouched.
 
-The standalone Erlang probe reproduces all seven native Boolean errors. The
+The initial standalone Erlang probe reproduced all seven native Boolean errors. The
 JavaScript probes cover all 21 observations; timed-out workers are terminated.
 No production changes, full test-suite rerun, figure regeneration, or fixes were
 performed for the initial triage; see the subsequent FL005 follow-up above. `COVERAGE-GAPS.md` remains the separate inventory of
 unimplemented assertion adaptations.
+
+## Vertex-local cyclic sampling implementation
+
+The sampler now translates a temporary oriented segment by the arrangement
+vertex before solving its circle crossings and evaluating the sample. Angles
+and sample separation use these local points. Stored vertices, edges, source
+images, tolerances, sampling radii and iteration limits remain unchanged.
+Arc translation preserves radii, rotation and flags.
+
+Three reduced fans in `svg_path_flatten_cyclic_order_test.gleam` cover both
+traversal directions and world/local coordinate versions. They include the
+short-radius majority-vote reversal and the incorrectly separated singleton
+groups, so the fix does not depend on treating every close pair as ambiguous.
+
+The original six FL002/FL003 Boolean calls now succeed on Erlang and JavaScript.
+The JavaScript replay has 13 faces for FL002 and 11 for FL003, with both operand
+windings consistent. Each Boolean output matches all 169 sampled containment
+points and the existing relative-area comparison against Flatten. These checks
+are sampled geometry comparisons, not proof of exact boundary equivalence.
+FL004 remains a dual-construction error and is not resolved by this change.
+
+Evidence: `remaining-local-sampling-original.json`,
+`remaining-local-sampling-arrangement.json`,
+`remaining-local-sampling-comparison.json`, and
+`remaining-local-sampling-erlang.log`. These records describe the working tree
+based on the recorded commit, including the pending FL005 change.
+
+All three reduced JavaScript regressions fail when a temporary runtime copy
+restores the previous world-coordinate sampler, and pass with the local sampler.
+See `remaining-local-sampling-regressions.log`. No production/generated build
+files were modified by that negative control.
+
+Validation of this working tree: `scripts/test-release` passed 2,029 main tests,
+31 slow tests, and 775 portable tests on each of Erlang and JavaScript.
+`scripts/generate-published-figures` completed all 13 README and 33 Gallery
+figures; all 46 are byte-for-byte identical to their pre-change baselines.
+Counts and figure hashes are retained in `remaining-local-sampling-validation.txt`
+and `remaining-local-sampling-figures.json`. This validates the combined worktree,
+including the still-pending FL005 change; it does not close FL004 or the adapter
+and assertion-coverage gaps.

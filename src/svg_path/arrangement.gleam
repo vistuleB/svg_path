@@ -880,15 +880,17 @@ fn circle_sample_for_oriented_edge(
   tolerance: Float,
 ) -> Result(CyclicOrderSample, InternalError) {
   use edge <- result.try(edge_for_oriented_edge(edges, oriented_edge))
-  let segment = outward_oriented_edge_segment(edge, oriented_edge)
+  // Evaluate in vertex-local coordinates: rounding a world-space sample before
+  // subtracting the vertex can reverse nearly coincident incident directions.
+  let segment =
+    outward_oriented_edge_segment(edge, oriented_edge)
+    |> segment_relative_to(vertex)
   let radius_squared = radius *. radius
   let residual_tolerance = tolerance *. { 2.0 *. radius +. tolerance }
   use roots <- result.try(
     containment.segment_crossings_with(
       segment,
-      where: fn(candidate) {
-        point.distance_squared(candidate, vertex) -. radius_squared
-      },
+      where: fn(candidate) { point.dot(candidate, candidate) -. radius_squared },
       options: svg_path.CrossingOptions(
         samples: 100,
         signed_line_distance_tolerance: residual_tolerance,
@@ -910,8 +912,36 @@ fn circle_sample_for_oriented_edge(
   Ok(CyclicOrderSample(
     oriented_edge:,
     point: sample,
-    angle: point.heading(point.subtract(sample, vertex)),
+    angle: point.heading(sample),
   ))
+}
+
+fn segment_relative_to(
+  segment: svg_path.Segment,
+  origin: svg_path.Point,
+) -> svg_path.Segment {
+  let local = fn(p) { point.subtract(p, origin) }
+  case segment {
+    svg_path.Line(start:, end:) -> svg_path.Line(local(start), local(end))
+    svg_path.QuadraticBezier(start:, control:, end:) ->
+      svg_path.QuadraticBezier(local(start), local(control), local(end))
+    svg_path.CubicBezier(start:, control1:, control2:, end:) ->
+      svg_path.CubicBezier(
+        local(start),
+        local(control1),
+        local(control2),
+        local(end),
+      )
+    svg_path.Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:) ->
+      svg_path.Arc(
+        local(start),
+        radius,
+        x_axis_rotation,
+        large_arc,
+        sweep,
+        local(end),
+      )
+  }
 }
 
 fn edge_for_oriented_edge(

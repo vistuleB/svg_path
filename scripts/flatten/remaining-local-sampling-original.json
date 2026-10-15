@@ -1,0 +1,97 @@
+{
+  "implementation": "4d8ff63845bf8e41107909a3b737f67b7e850372",
+  "probeSettings": {
+    "timeoutMs": 60000,
+    "minimumLength": 0.00001,
+    "distanceMaxDepth": 48,
+    "distanceTolerance": 1e-9,
+    "diagnosticRuntime": false
+  },
+  "rows": [
+    {
+      "id": 3380,
+      "mode": "boolean",
+      "tolerance": 0.000001,
+      "scale": 1,
+      "result": {
+        "ok": true,
+        "area": 3850923260959683.5,
+        "segments": 32
+      },
+      "ms": 121.001834
+    },
+    {
+      "id": 3497,
+      "mode": "boolean",
+      "tolerance": 0.000001,
+      "scale": 1,
+      "result": {
+        "ok": true,
+        "area": 1556053202065645.5,
+        "segments": 31
+      },
+      "ms": 149.697292
+    },
+    {
+      "id": 4033,
+      "mode": "boolean",
+      "tolerance": 0.000001,
+      "scale": 1,
+      "result": {
+        "ok": true,
+        "area": 216330110959663.7,
+        "segments": 13
+      },
+      "ms": 95.58262500000001
+    },
+    {
+      "id": 4150,
+      "mode": "boolean",
+      "tolerance": 0.000001,
+      "scale": 1,
+      "result": {
+        "ok": true,
+        "area": 10704102065675.133,
+        "segments": 10
+      },
+      "ms": 125.87783400000001
+    },
+    {
+      "id": 4682,
+      "mode": "boolean",
+      "tolerance": 0.000001,
+      "scale": 1,
+      "result": {
+        "ok": true,
+        "area": 3577492351034988.5,
+        "segments": 27
+      },
+      "ms": 105.862709
+    },
+    {
+      "id": 4799,
+      "mode": "boolean",
+      "tolerance": 0.000001,
+      "scale": 1,
+      "result": {
+        "ok": true,
+        "area": 1146910082740329,
+        "segments": 47
+      },
+      "ms": 100.41608400000001
+    },
+    {
+      "id": 4920,
+      "mode": "boolean",
+      "tolerance": 0.000001,
+      "scale": 1,
+      "result": {
+        "type": "ArrangementGraphError",
+        "error": {
+          "type": "ConstructionFailed"
+        }
+      },
+      "ms": 86.86325
+    }
+  ]
+}

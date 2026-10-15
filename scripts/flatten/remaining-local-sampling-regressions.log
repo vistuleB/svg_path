@@ -1,0 +1,3 @@
+fl002_large_coordinate_fan_test: fails with old sampler
+fl003_separate_groups_fan_test: fails with old sampler
+fl003_short_radius_fan_test: fails with old sampler

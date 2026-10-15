@@ -9520,7 +9520,7 @@
               "call": 3380,
               "operation": "algorithm:unify",
               "observedStatus": "needs-investigation",
-              "status": "confirmed-native-failure"
+              "status": "fixed"
             }
           ],
           "auditStatus": "selected-operations-compared",
@@ -10352,7 +10352,7 @@
               "call": 3497,
               "operation": "algorithm:unify",
               "observedStatus": "needs-investigation",
-              "status": "confirmed-native-failure"
+              "status": "fixed"
             }
           ],
           "auditStatus": "selected-operations-compared",
@@ -14273,7 +14273,7 @@
               "call": 4033,
               "operation": "algorithm:subtract",
               "observedStatus": "needs-investigation",
-              "status": "confirmed-native-failure"
+              "status": "fixed"
             }
           ],
           "auditStatus": "selected-operations-compared",
@@ -15105,7 +15105,7 @@
               "call": 4150,
               "operation": "algorithm:subtract",
               "observedStatus": "needs-investigation",
-              "status": "confirmed-native-failure"
+              "status": "fixed"
             }
           ],
           "auditStatus": "selected-operations-compared",
@@ -19011,7 +19011,7 @@
               "call": 4682,
               "operation": "algorithm:intersect",
               "observedStatus": "needs-investigation",
-              "status": "confirmed-native-failure"
+              "status": "fixed"
             }
           ],
           "auditStatus": "selected-operations-compared",
@@ -19843,7 +19843,7 @@
               "call": 4799,
               "operation": "algorithm:intersect",
               "observedStatus": "needs-investigation",
-              "status": "confirmed-native-failure"
+              "status": "fixed"
             }
           ],
           "auditStatus": "selected-operations-compared",

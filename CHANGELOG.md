@@ -11,6 +11,10 @@ rather than only the tag object.
 
 ## Unreleased
 
+- Sample arrangement incident edges in vertex-local coordinates, preventing
+  rounded world-space samples from reversing nearly parallel edges and causing
+  Boolean winding contradictions at large coordinates.
+
 - Certify line/line overlap correspondences from endpoint distances, avoiding
   rejection caused by rounded interior samples at large coordinates.
 

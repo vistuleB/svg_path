@@ -1,0 +1,15 @@
+Working-tree validation based on 4d8ff63; includes pending FL005 changes.
+Command: scripts/test-release
+Running canonical pre-release test suite.
+2029 passed, no failures
+31 passed, no failures
+Portable numerical tests (all, all): Erlang
+775 passed, no failures
+Portable numerical tests (all, all): JavaScript
+775 passed, no failures
+Command: scripts/generate-published-figures
+Completed 13 README and 33 Gallery figures; all 46 byte-for-byte unchanged.
+Command: gleam format --check src/svg_path/arrangement.gleam test/svg_path_flatten_cyclic_order_test.gleam
+Passed.
+Command: git diff --check
+Passed.

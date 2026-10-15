@@ -1,0 +1,114 @@
+{
+  "implementation": "4d8ff63845bf8e41107909a3b737f67b7e850372",
+  "probeSettings": {
+    "timeoutMs": 60000,
+    "minimumLength": 0.00001,
+    "distanceMaxDepth": 48,
+    "distanceTolerance": 1e-9,
+    "diagnosticRuntime": false
+  },
+  "rows": [
+    {
+      "id": 3380,
+      "mode": "replay",
+      "tolerance": 0.000001,
+      "scale": 1,
+      "result": {
+        "status": "sampled-geometry-match",
+        "actualArea": 3850923260959683.5,
+        "expectedArea": 3850923260959685,
+        "areaError": 1.5,
+        "areaTolerance": 3850923260.959685,
+        "checked": 169,
+        "boundary": 0,
+        "mismatches": []
+      },
+      "ms": 113.650292
+    },
+    {
+      "id": 3497,
+      "mode": "replay",
+      "tolerance": 0.000001,
+      "scale": 1,
+      "result": {
+        "status": "sampled-geometry-match",
+        "actualArea": 1556053202065645.5,
+        "expectedArea": 1556053202065613.2,
+        "areaError": 32.25,
+        "areaTolerance": 1556053202.0656133,
+        "checked": 169,
+        "boundary": 0,
+        "mismatches": []
+      },
+      "ms": 166.70704199999997
+    },
+    {
+      "id": 4033,
+      "mode": "replay",
+      "tolerance": 0.000001,
+      "scale": 1,
+      "result": {
+        "status": "sampled-geometry-match",
+        "actualArea": 216330110959663.7,
+        "expectedArea": 216330110959812.4,
+        "areaError": 148.71875,
+        "areaTolerance": 216330110.9598124,
+        "checked": 169,
+        "boundary": 0,
+        "mismatches": []
+      },
+      "ms": 114.923125
+    },
+    {
+      "id": 4150,
+      "mode": "replay",
+      "tolerance": 0.000001,
+      "scale": 1,
+      "result": {
+        "status": "sampled-geometry-match",
+        "actualArea": 10704102065675.133,
+        "expectedArea": 10704102065673.607,
+        "areaError": 1.525390625,
+        "areaTolerance": 10704102.065673606,
+        "checked": 169,
+        "boundary": 0,
+        "mismatches": []
+      },
+      "ms": 138.403666
+    },
+    {
+      "id": 4682,
+      "mode": "replay",
+      "tolerance": 0.000001,
+      "scale": 1,
+      "result": {
+        "status": "sampled-geometry-match",
+        "actualArea": 3577492351034988.5,
+        "expectedArea": 3577492351034763.5,
+        "areaError": 225,
+        "areaTolerance": 3577492351.0347633,
+        "checked": 169,
+        "boundary": 0,
+        "mismatches": []
+      },
+      "ms": 140.18154099999998
+    },
+    {
+      "id": 4799,
+      "mode": "replay",
+      "tolerance": 0.000001,
+      "scale": 1,
+      "result": {
+        "status": "sampled-geometry-match",
+        "actualArea": 1146910082740329,
+        "expectedArea": 1146910082740318.2,
+        "areaError": 10.75,
+        "areaTolerance": 1146910082.7403183,
+        "checked": 169,
+        "boundary": 0,
+        "mismatches": []
+      },
+      "ms": 111.68104199999999
+    }
+  ]
+}

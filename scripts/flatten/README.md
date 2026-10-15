@@ -2,11 +2,12 @@
 
 ## Current status after 3.1.3 triage
 
-All 21 previously deferred polygon observations are classified. **Three native
-failure groups remain open:** FL002 (overlap classifier fixed, later winding failure unresolved), winding contradiction
-(FL003), and dual sweep contradiction (FL004). The seven Boolean errors reproduce
-on Erlang as well as JavaScript. The excessive closest-pair search (FL005) is
-fixed and validated in the Gleam working tree; its F# port is pending. Twelve
+All 21 previously deferred polygon observations are classified. **FL004 remains
+open:** its dual sweep contradiction still reproduces on both targets. FL002
+and FL003 now have a vertex-local cyclic-sampling fix: all six original Boolean
+calls succeed on Erlang and JavaScript, and their sampled geometry comparisons
+pass. The excessive closest-pair search (FL005) also has a Gleam fix. F# ports
+of these recent fixes are pending. Twelve
 observations are adapter continuity-contract differences; one is an upstream
 orientation-contract mismatch. See [the full triage and reproductions](REMAINING-TRIAGE.md).
 
@@ -130,7 +131,7 @@ logs are stored beside their machine-readable reports.
 
 ## Remaining scope after triage
 
-FL002–FL004 in REMAINING-TRIAGE.md need fixes and validation; FL005 needs its F# port.
+FL004 in REMAINING-TRIAGE.md still needs a fix; FL002, FL003 and FL005 need F# ports.
 The twelve conversion cases need an explicit audit-adapter continuity policy
 before their geometry comparisons can run; they are not passing comparisons.
 Stronger boundary
