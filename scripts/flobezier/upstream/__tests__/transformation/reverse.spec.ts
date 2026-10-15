@@ -1,0 +1,36 @@
+
+import { describe, expect, it } from '@jest/globals';
+import { reverse } from '../../src/transformation/reverse.js';
+import { getRandomCubic, getRandomLine, getRandomPoint, getRandomQuad } from '../helpers/get-random-bezier.js';
+import { randomRotateAndTranslate } from '../helpers/random-rotate-and-translate.js';
+
+
+describe('reverse', function() {
+    it('it should reverse some bezier curves',
+    function() {
+        {
+            let ps = getRandomCubic(0);
+            ps = randomRotateAndTranslate(0)(ps);
+            const r = reverse(ps);
+            expect(r).toEqual(ps.slice().reverse());
+        }
+        {
+            let ps = getRandomQuad(0);
+            ps = randomRotateAndTranslate(0)(ps);
+            const r = reverse(ps);
+            expect(r).toEqual(ps.slice().reverse());
+        }
+        {
+            let ps = getRandomLine(0);
+            ps = randomRotateAndTranslate(0)(ps);
+            const r = reverse(ps);
+            expect(r).toEqual(ps.slice().reverse());
+        }
+        {
+            let ps = getRandomPoint(0);
+            ps = randomRotateAndTranslate(0)(ps);
+            const r = reverse(ps);
+            expect(r).toEqual(ps);
+        }
+    });
+});

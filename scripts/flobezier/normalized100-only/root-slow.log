@@ -1,0 +1,17 @@
+Running slow test profile (stress tests and expensive regressions).
+Downloading packages
+ Downloaded 2 packages in 0.01s
+  Compiling gleam_stdlib
+  Compiling gleeunit
+  Compiling svg_path
+   Compiled in 1.98s
+    Running svg_path_test.main
+.............................
+assert test/svg_path_paper_intersection_addresses_slow_test.gleam:77
+ test: svg_path_paper_intersection_addresses_slow_test.paper_address_12_test
+ code: assert class != intersections.Indeterminate
+ left: Indeterminate
+right: Indeterminate
+ info: Assertion failed.
+.
+30 passed, 1 failures

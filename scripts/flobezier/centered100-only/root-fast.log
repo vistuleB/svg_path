@@ -1,0 +1,83 @@
+Running fast test profile.
+Downloading packages
+ Downloaded 2 packages in 0.02s
+  Compiling gleam_stdlib
+  Compiling gleeunit
+  Compiling svg_path
+   Compiled in 3.45s
+    Running svg_path_test.main
+...............................................................................................................................................................................................................................................
+assert test/svg_path_conditioned_intersections_test.gleam:53
+ test: svg_path_conditioned_intersections_test.conditioned_search_preserves_original_candidates_test
+ code: assert list.any(found, fn(hit) {
+      hit.left_t == candidate.left_t && hit.right_t == candidate.right_t
+    })
+    0: [SegmentIntersection(0.4962432835063433, 0.18393974411322178, Point(0.5609921393610562, 1.6895258233783162e-14))]
+    1: //fn(a) { ... }
+ info: Assertion failed.
+
+let assert test/svg_path_conditioned_intersections_test.gleam:76
+ test: svg_path_conditioned_intersections_test.conditioned_search_does_not_override_overlap_or_certification_test
+ code: let assert Error(svg_path.InternalUncertifiedSegmentIntersection(..)) =
+    intersections.segment_with(a, b, options:)
+value: Ok([])
+ info: Pattern match failed, no pattern matched the value.
+........................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................
+assert test/svg_path_geometry_test.gleam:2563
+ test: svg_path_geometry_test.segment_intersections_prefers_shared_endpoint_over_near_endpoint_minimum_test
+ code: assert list.length(raw) == 4
+ left: 2
+right: 4
+ info: Assertion failed.
+.......................................................................
+let assert test/svg_path_intersection_scale_test.gleam:82
+ test: svg_path_intersection_scale_test.unrepresentable_tolerance_reports_error_instead_of_empty_result_test
+ code: let assert Error(svg_path.InternalUncertifiedSegmentIntersection(..)) =
+    ix.segment_with(
+      left,
+      right,
+      options: ix.IntersectionOptions(
+        ..ix.default_options(),
+        tolerance: 0.00000000000001,
+      ),
+    )
+value: Ok([])
+ info: Pattern match failed, no pattern matched the value.
+.............
+assert test/svg_path_intersections_test.gleam:338
+ test: svg_path_intersections_test.production_off_center_kissing_quadratics_test
+ code: assert list.length(found) == 4
+ left: 1
+right: 4
+ info: Assertion failed.
+.
+assert test/svg_path_intersections_test.gleam:379
+ test: svg_path_intersections_test.flat_cubic_crossing_regression_test
+ code: assert list.length(found) == 9
+ left: 6
+right: 9
+ info: Assertion failed.
+...........................................................................................................................................................................................................................................................................................................................................
+assert test/svg_path_paper_intersection_addresses_test.gleam:91
+ test: svg_path_paper_intersection_addresses_test.paper_address_21_test
+ code: assert !list.is_empty(candidates)
+ info: Assertion failed.
+
+assert test/svg_path_paper_intersection_addresses_test.gleam:91
+ test: svg_path_paper_intersection_addresses_test.paper_address_22_test
+ code: assert !list.is_empty(candidates)
+ info: Assertion failed.
+.......................
+let assert test/svg_path_paper_intersection_support.gleam:14
+ test: svg_path_paper_intersections_test.paper_21_test
+ code: let assert Ok(remaining) = remove_match(found, p)
+value: Error(Nil)
+ info: Pattern match failed, no pattern matched the value.
+
+let assert test/svg_path_paper_intersection_support.gleam:14
+ test: svg_path_paper_intersections_test.paper_22_test
+ code: let assert Ok(remaining) = remove_match(found, p)
+value: Error(Nil)
+ info: Pattern match failed, no pattern matched the value.
+....................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................
+2002 passed, 10 failures

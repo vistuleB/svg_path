@@ -1,0 +1,247 @@
+import { describe, expect, it } from '@jest/globals';
+import { ddAddDouble } from 'double-double';
+import { getIntervalBox } from '../../../../src/global-properties/bounds/get-interval-box/get-interval-box.js';
+import { getIntervalBoxDd } from '../../../../src/global-properties/bounds/get-interval-box/get-interval-box-dd.js';
+import { toPowerBasisExact } from '../../../../src/to-power-basis/to-power-basis/exact/to-power-basis-exact.js';
+import { eCompress, eDiff, eEstimate, eSign } from 'big-float-ts';
+import { eeHorner } from 'flo-poly';
+
+
+const eps = Number.EPSILON;
+
+//console.log(ddDivDouble([0,1],10));
+// closer to 0.1 than [0,0.1]
+let one_over_10 = [-5.551115123125783e-18,0.1]; 
+
+//console.log(ddDivDouble([0,1],3));
+// closer to 1/3 than [0,0.3333333333333333]
+let one_over_3  = [ 1.850371707708594e-17, 0.3333333333333333 ] 
+
+
+describe('getIntervalBoxDd', function() {
+    it('it should get a reasonable interval box in double-double precision for some lines',
+    function() {
+        {
+            const ps = [[3.3,-1.3],[2.3,-1.3]];
+            const delta = eps*2**-20;
+            const tS = one_over_3;
+            const tE = ddAddDouble(one_over_3,delta);
+            const i = [tS, tE];
+            const box = getIntervalBox(ps, i.map(eEstimate));
+            const boxDd = getIntervalBoxDd(ps, i);
+            
+            const pS = evaluateExactE(ps, tS);
+            const pE = evaluateExactE(ps, tE);
+            expect(isPointInBoxE(pS, boxDd)).toEqual(true);
+            expect(isPointInBoxE(pE, boxDd)).toEqual(true);
+            const pS_ = pS.slice();
+            pS_[0] = eDiff(pS[0], [2**-40]);
+            expect(isPointInBoxE(pS_, boxDd)).toEqual(false);
+
+            const box_ = boxDd.map(p => p.map(eEstimate));
+            expect(box).toBeNearly(2**2,box_);
+
+            expect(boxDd).toBeNearly(2**6, [
+                [
+                    [1.4802952485844998e-16, 2.9666666666666663],
+                    [-3.4266143219549e-31, -1.3]
+                ],
+                [
+                    [1.4802973661668788e-16, 2.9666666666666663],
+                    [3.303355275711857e-31, -1.3]
+                ]
+            ]);
+
+            const boxDd2 = getIntervalBoxDd(ps, [tS,tS]);
+            expect(boxDd2).toBeNearly(2**2, [
+                [
+                    [1.480297366166864e-16, 2.9666666666666663],
+                    [-4.807121141190542e-31, -1.3]
+                ],
+                [
+                    [1.4802973661668866e-16, 2.9666666666666663],
+                    [4.807121141190542e-31, -1.3]
+                ]
+            ]);
+            expect(isPointInBoxE(pS, boxDd2)).toEqual(true);
+        }
+    });
+    it('it should get a reasonable interval box in double-double precision for some quadratic beziers',
+    function() {
+        {
+            const ps = [[3.3,-1.3],[2.3,-1.3],[1.3,1.3]];
+            const delta = eps*2**-20;
+            const tS = one_over_3;
+            const tE = ddAddDouble(one_over_3,delta);
+            const i = [tS, tE];
+            const box = getIntervalBox(ps, i.map(eEstimate));
+            const boxDd = getIntervalBoxDd(ps, i);
+            
+            const pS = evaluateExactE(ps, tS);
+            const pE = evaluateExactE(ps, tE);
+            expect(isPointInBoxE(pS, boxDd)).toEqual(true);
+            expect(isPointInBoxE(pE, boxDd)).toEqual(true);
+            const pS_ = pS.slice();
+            pS_[0] = eDiff(pS[0], [2**-40]);
+            expect(isPointInBoxE(pS_, boxDd)).toEqual(false);
+
+            const box_ = boxDd.map(p => p.map(eEstimate));
+            expect(box).toBeNearly(2**4,box_);
+
+            expect(boxDd).toBeNearly(2**6, [
+                [
+                    [ -1.233585373637137e-16, 2.6333333333333333 ],
+                    [ -7.401486830834389e-17, -1.011111111111111 ]
+                ],
+                [
+                    [ -1.233581138472394e-16, 2.6333333333333333 ],
+                    [ -7.401450126073308e-17, -1.011111111111111 ]
+                ]
+            ]);
+
+            const boxDd2 = getIntervalBoxDd(ps, [tS,tS]);
+            expect(boxDd2).toBeNearly(2**2, [
+                [
+                    [-1.233581138472432e-16, 2.6333333333333333],
+                    [-7.401486830834538e-17, -1.011111111111111]
+                ],
+                [
+                    [-1.2335811384723605e-16, 2.6333333333333333],
+                    [-7.401486830834218e-17, -1.011111111111111]
+                ]
+            ]);
+            expect(isPointInBoxE(pS, boxDd2)).toEqual(true);
+        }
+    });
+
+    it('it should get a reasonable interval box in double-double precision for some cubic beziers',
+    function() {
+        {
+            const ps = [[3.3,-1.3],[2.3,-1.3],[1.3,1.3],[0.1,0.1]];
+            const delta = eps*2**-20;
+            const tS = one_over_3;
+            const tE = ddAddDouble(one_over_3,delta);
+            const i = [tS, tE];
+            const box = getIntervalBox(ps, i.map(eEstimate));
+            const boxDd = getIntervalBoxDd(ps, i);
+            
+            const pS = evaluateExactE(ps, tS);
+            const pE = evaluateExactE(ps, tE);
+            expect(isPointInBoxE(pS, boxDd)).toEqual(true);
+            expect(isPointInBoxE(pE, boxDd)).toEqual(true);
+            const pS_ = pS.slice();
+            pS_[0] = eDiff(pS[0], [2**-40]);
+            expect(isPointInBoxE(pS_, boxDd)).toEqual(false);
+
+            const box_ = boxDd.map(p => p.map(eEstimate));
+            expect(box).toBeNearly(2**6,box_);
+
+            expect(boxDd).toBeNearly(2**6, [
+                [
+                    [1.7784063140450904e-16, 2.2925925925925923],
+                    [1.0279842820598178e-18, -0.6703703703703704]
+                ],
+                  [
+                    [1.7784128079643807e-16, 2.2925925925925923],
+                    [1.0286336739875781e-18, -0.6703703703703704]
+                ]
+            ]);
+
+            const boxDd2 = getIntervalBoxDd(ps, [tS,tS]);
+            expect(boxDd2).toBeNearly(2**2, [
+                [
+                    [1.7784128079642883e-16, 2.2925925925925923],
+                    [1.0279842820563584e-18, -0.6703703703703704]
+                ],
+                  [
+                    [1.7784128079644545e-16, 2.2925925925925923],
+                    [1.027984282064311e-18, -0.6703703703703704]
+                ]
+            ]);
+            expect(isPointInBoxE(pS, boxDd2)).toEqual(true);
+        }
+    });
+
+    it('it should get a reasonable interval box in double-double precision for special cases',
+    function() {
+        {
+            // ts = [0,0]
+            const ps = [[3.3,-1.3],[2.3,-1.3],[1.3,1.3],[0.1,0.1]];
+            const tS = [0,0];
+            const tE = [0,0];
+            const i = [tS, tE];
+            const boxDd = getIntervalBoxDd(ps, i);
+            
+            expect(boxDd).toBeNearly([2**0], [
+                [[0,ps[0][0]],[0,ps[0][1]]],
+                  [[0,ps[0][0]],[0,ps[0][1]]]
+            ]);
+        }
+
+        {
+            // ts = [1,1]
+            const ps = [[3.3,-1.3],[2.3,-1.3],[1.3,1.3],[0.1,0.1]];
+            const tS = [0,1];
+            const tE = [0,1];
+            const i = [tS, tE];
+            const boxDd = getIntervalBoxDd(ps, i);
+            
+            expect(boxDd).toBeNearly([2**0], [
+                [[0,ps[3][0]],[0,ps[3][1]]],
+                  [[0,ps[3][0]],[0,ps[3][1]]]
+            ]);
+        }
+
+        {
+            // point
+            const ps = [[3.3,-1.3]];
+            const tS = [0,0.125];
+            const tE = [0,0.125];
+            const i = [tS, tE];
+            const boxDd = getIntervalBoxDd(ps, i);
+            
+            expect(boxDd).toEqual([
+                [[0,3.3],[0,-1.3]], 
+                [[0,3.3],[0,-1.3]]
+            ]);            
+        }
+
+        {
+            // error
+            const ps: number[][] = [];
+            const tS = [0,0.125];
+            const tE = [0,0.125];
+            const i = [tS, tE];
+            expect(() => getIntervalBoxDd(ps, i)).toThrow();
+        }
+    });
+});
+
+
+/**
+ * Returns `true` if the given point is within the given closed axis-aligned box,
+ * `false` otherwise.
+ * 
+ * @param p 
+ * @param box 
+ */
+ function isPointInBoxE(p: number[][], box: number[][][]) {
+    return (
+        eSign(eDiff(p[0], box[0][0])) >= 0 &&
+        eSign(eDiff(box[1][0], p[0])) >= 0 &&
+        eSign(eDiff(p[1], box[0][1])) >= 0 &&
+        eSign(eDiff(box[1][1], p[1])) >= 0
+    );
+}
+
+
+function evaluateExactE(
+        ps: number[][], t: number[]): number[][] {
+
+    const [X,Y] = toPowerBasisExact(ps);
+
+    return [
+        eeHorner(X,t),
+        eeHorner(Y,t)
+    ];
+}

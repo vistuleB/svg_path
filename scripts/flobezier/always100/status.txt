@@ -1,0 +1,5 @@
+root-fast exit=1 elapsed_seconds=58
+root-slow exit=137 elapsed_seconds=53
+root-slow exit=0 elapsed_seconds=67
+portable-erlang exit=1 elapsed_seconds=64
+portable-javascript exit=1 elapsed_seconds=87

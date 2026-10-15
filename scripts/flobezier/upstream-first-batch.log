@@ -1,0 +1,6 @@
+Test Suites: 1 passed, 1 total
+Tests:       12 passed, 12 total
+Snapshots:   0 total
+Time:        1.439 s
+Ran all test suites within paths "__tests__/intersection/bezier-bezier-intersection/bezier-bezier-intersection-specific-cases.spec.ts".
+Test results written to: ../../../Users/jpsteinb/github.com/vistuleB/svg_path/scripts/flobezier/upstream-first-batch.json

@@ -1,0 +1,12 @@
+Portable numerical tests (all, all): Erlang
+  Compiling svg_path
+  Compiling svg_path_portable_tests
+   Compiled in 1.44s
+    Running svg_path_portable_tests_test.main
+assert test/svg_path_intersections_test.gleam:379
+ test: svg_path_intersections_test.flat_cubic_crossing_regression_test
+ code: assert list.length(found) == 9
+ left: 14
+right: 9
+ info: Assertion failed.
+757 passed, 1 failures

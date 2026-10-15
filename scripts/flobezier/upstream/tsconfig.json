@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "strict": true,
+        "module": "esnext",
+        "target": "esnext",
+        "declaration": true,
+        "noEmitOnError": true,
+        "sourceMap": true,
+        "rootDir": "./src",
+        "outDir": "./node",
+        "moduleResolution": "bundler"
+    },
+    "include": [
+        "src/index.ts"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}

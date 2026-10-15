@@ -1,0 +1,42 @@
+{
+  "reviewedRevision": "a7d8cc7",
+  "upstreamRevision": "8ad65ac79cb69989cd40b0d375a51392eb477f16",
+  "verifiedArchivedFiles": 611,
+  "rawCounts": {
+    "intersections": {
+      "needs-investigation": 24,
+      "matches-at-diagnostic-tolerance": 3507,
+      "overlap-api-difference": 53,
+      "point-input-api-difference": 25
+    },
+    "numeric": {
+      "matches-at-diagnostic-tolerance": 14440,
+      "point-input-api-difference": 63,
+      "upstream-rejected-input": 4,
+      "exclude-endpoints-policy-difference": 7,
+      "rotated-box-policy-difference": 6,
+      "extended-length-domain-difference": 3,
+      "needs-investigation": 1,
+      "degenerate-curvature-error-vs-NaN": 1,
+      "cusp-is-not-two-visits-contract-difference": 1
+    },
+    "remaining": {
+      "matches-adapted-contract": 873,
+      "point-input-api-difference": 37,
+      "upstream-rejected-input": 5,
+      "needs-investigation": 1,
+      "zero-tolerance-contract-difference": 1,
+      "constant-curve-parameter-convention": 2,
+      "infinite-signed-line-vs-clamped-segment-contract": 9
+    }
+  },
+  "reviewedFlagCounts": {
+    "non-affine-overlap-contract-difference": 9,
+    "default-tolerance-thin-geometry-policy": 3,
+    "canonical-constant-parameter-convention": 3,
+    "documented-tangent-candidate-cluster": 9,
+    "independently-rounded-total-length-boundary": 1,
+    "different-default-closest-pair-accuracy": 1
+  },
+  "unclassifiedFlags": 0
+}

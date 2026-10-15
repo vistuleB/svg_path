@@ -1,0 +1,44 @@
+import { describe, expect, it } from '@jest/globals';
+import { getRandomCubic, getRandomLine, getRandomPoint, getRandomQuad } from '../../../helpers/get-random-bezier.js';
+import { toPowerBasis_2ndDerivative } from '../../../../src/to-power-basis/to-power-basis-2nd-derivative/double/to-power-basis-2nd-derivative.js';
+
+
+describe('toPowerBasis_2ndDerivative', function() {
+    it('it should get the 2nd derivative of the power basis representation of some bezier curves (in double precision)',
+    function() {
+        {
+            const ps = getRandomCubic(0);
+            const r = toPowerBasis_2ndDerivative(ps);
+            const expected = [
+                [1518.5815863227895, -612.6722365722974],
+                  [-1662.8818047630489, 319.81037852787296]
+            ];
+            expect(r).toBeNearly(2**8, expected);
+        }
+        {
+            const ps = getRandomQuad(0);
+            const r = toPowerBasis_2ndDerivative(ps);
+            const expected = [[-204.22407885743246],[106.60345950929099]];
+            expect(r).toBeNearly(2**8, expected);
+        }
+        {
+            const ps = getRandomLine(0);
+            const r = toPowerBasis_2ndDerivative(ps);
+            const expected = [[0],[0]];
+            expect(r).toEqual(expected);
+        }
+        {
+            const ps = getRandomPoint(0);
+            const r = toPowerBasis_2ndDerivative(ps);
+            const expected = [[0],[0]];
+            expect(r).toEqual(expected);
+        }
+
+        // some edge cases
+        {
+            const p = [1,1];
+            const ps = [p,p,p,p,p];
+            expect(() => toPowerBasis_2ndDerivative(ps)).toThrow();
+        }
+    });
+});

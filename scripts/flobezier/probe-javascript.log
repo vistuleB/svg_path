@@ -1,0 +1,13 @@
+  Compiling gleam_stdlib
+  Compiling svg_path
+  Compiling flobezier_audit_probe
+   Compiled in 0.47s
+    Running flobezier_audit_probe.main
+line then quadratic: overlaps, intersections, encounters
+Ok([])
+Error(InternalOverlapClassificationInconsistency)
+Error(OverlappingSegments)
+quadratic then line: overlaps, intersections, encounters
+Ok([])
+Error(InternalOverlapClassificationInconsistency)
+Error(OverlappingSegments)

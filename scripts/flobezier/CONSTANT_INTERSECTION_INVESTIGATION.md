@@ -1,5 +1,8 @@
 # FI008 and FI005: constant-segment intersections
 
+> Closure status (2026-10-15): Implemented and committed in `e09bef8`; canonical t=0 is the adopted convention.
+> The dated investigation below preserves the observations and intermediate status at that time.
+
 Investigated 2026-10-14 against `0d96855`. The convention below is now
 implemented in the working tree and validated with targeted tests.
 

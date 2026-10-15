@@ -1,0 +1,32 @@
+import { describe, expect, it } from '@jest/globals';
+
+
+function checkResults(
+        ds: number[],
+        total: number) {
+
+    let sum = 0;
+    let max = 0;
+    for (const d of ds) {
+        sum += d;
+        if (d > max) { max = d; }
+    }
+    const mean = sum / total;
+    let sumSquaredDiffs = 0;
+    for (const d of ds) {
+        sumSquaredDiffs += (mean - d)**2;
+    }
+    const stdDev = Math.sqrt(sumSquaredDiffs / total);
+
+    // accuracy to be to within one billionth of the max coordinate
+    expect(max).toBeLessThan(1e-9);  
+
+    //'xs: ' + total;//?
+    //'max: ' + max;//?
+    //'max/eps: ' + max/eps;//?
+    //'mean: ' + mean;//?
+    //'stdDev: ' + stdDev;//?
+}
+
+
+export { checkResults }

@@ -1,0 +1,58 @@
+warning: Redundant record update
+   ┌─ /Users/jpsteinb/github.com/vistuleB/svg_path/scripts/flobezier/probe/src/length_probe.gleam:88:18
+   │  
+88 │           options: svg_path.LengthOptions(
+   │ ╭──────────────────^
+89 │ │           ..options,
+90 │ │           tolerance: options.tolerance /. { count |> int.to_float },
+91 │ │           max_depth: depth,
+92 │ │         ),
+   │ ╰─────────^ This record update specifies all fields
+
+Hint: It is better style to use the record creation syntax.
+
+  Compiling flobezier_audit_probe
+   Compiled in 0.04s
+    Running almost_collinear_probe.main
+Y SCALE 1
+TOL 1.0e-9
+overlap Error(NonAffineOverlapCorrespondence)
+points Error(NonAffineOverlapCorrespondence)
+overlap Error(NonAffineOverlapCorrespondence)
+points Error(NonAffineOverlapCorrespondence)
+TOL 1.0e-12
+overlap Ok([])
+points Ok([SegmentIntersection(left_t: 0.07924775017513336, right_t: 0.9999992927671335, point: Point(x: 0.8957057204078805, y: 1.4926907170767034e-14)), SegmentIntersection(left_t: 0.35640363583093815, right_t: 0.8905154761631453, point: Point(x: 0.6615838654490149, y: 1.3938211915418585e-14)), SegmentIntersection(left_t: 0.48601586866511853, right_t: 0.8236485711489162, point: Point(x: 0.5676995740390807, y: 1.3048596552746336e-14)), SegmentIntersection(left_t: 0.4959705075395845, right_t: 0.17699962365697183, point: Point(x: 0.5611695269118151, y: 1.698459358828098e-14)), SegmentIntersection(left_t: 0.5090877810406353, right_t: 0.24725651480709376, point: Point(x: 0.5527346039718326, y: 1.6052818601428932e-14)), SegmentIntersection(left_t: 0.5588981147794949, right_t: 0.34786364060884756, point: Point(x: 0.522568998087776, y: 1.4673030703021434e-14)), SegmentIntersection(left_t: 0.6089752746725361, right_t: 0, point: Point(x: 0.49548010542429927, y: 1.8755974807070452e-14)), SegmentIntersection(left_t: 0.6647139129850748, right_t: 0.5010426316791934, point: Point(x: 0.4695741079228041, y: 1.277852110283618e-14)), SegmentIntersection(left_t: 0.6736947252033436, right_t: 0.6796939712326914, point: Point(x: 0.46584946107162045, y: 1.1937828316683082e-14))])
+overlap Ok([])
+points Ok([SegmentIntersection(left_t: 0, right_t: 0.6089752746725361, point: Point(x: 0.49548010542429927, y: 1.8755974807070452e-14)), SegmentIntersection(left_t: 0.1819962237464421, right_t: 0.49614197530790416, point: Point(x: 0.5610580108585929, y: 1.6920351114432566e-14)), SegmentIntersection(left_t: 0.34786364060884756, right_t: 0.5588981147794949, point: Point(x: 0.522568998087776, y: 1.4673030703021434e-14)), SegmentIntersection(left_t: 0.5089438558320544, right_t: 0.6696672477466442, point: Point(x: 0.46750380360547733, y: 1.2699038586148402e-14)), SegmentIntersection(left_t: 0.6536333017095542, right_t: 0.6905017806391073, point: Point(x: 0.45923057583402405, y: 1.190904564257808e-14)), SegmentIntersection(left_t: 0.7869523605409715, right_t: 0.5464378876074363, point: Point(x: 0.5298272810230971, y: 1.2630865618405472e-14)), SegmentIntersection(left_t: 0.8650327338521325, right_t: 0.4088234210449366, point: Point(x: 0.6217956658793149, y: 1.358961374479343e-14)), SegmentIntersection(left_t: 0.9351594641010326, right_t: 0.2547067927924119, point: Point(x: 0.7441299333324115, y: 1.4511006045363826e-14)), SegmentIntersection(left_t: 0.9999992930869387, right_t: 0.07924774920719281, point: Point(x: 0.895705721254147, y: 1.4926907170343482e-14))])
+TOL 1.0e-14
+overlap Ok([])
+points Ok([SegmentIntersection(left_t: 0.07924775017513336, right_t: 0.9999992927671335, point: Point(x: 0.8957057204078805, y: 1.4926907170767034e-14)), SegmentIntersection(left_t: 0.35640363583093815, right_t: 0.8905154761631453, point: Point(x: 0.6615838654490149, y: 1.3938211915418585e-14)), SegmentIntersection(left_t: 0.48601586866511853, right_t: 0.8236485711489162, point: Point(x: 0.5676995740390807, y: 1.3048596552746336e-14)), SegmentIntersection(left_t: 0.4959705075395845, right_t: 0.17699962365697183, point: Point(x: 0.5611695269118151, y: 1.698459358828098e-14)), SegmentIntersection(left_t: 0.5090877810406353, right_t: 0.24725651480709376, point: Point(x: 0.5527346039718326, y: 1.6052818601428932e-14)), SegmentIntersection(left_t: 0.5588981147794949, right_t: 0.34786364060884756, point: Point(x: 0.522568998087776, y: 1.4673030703021434e-14)), SegmentIntersection(left_t: 0.5740637103346384, right_t: 0.024176796133743173, point: Point(x: 0.5140065023931719, y: 1.8609929952809598e-14)), SegmentIntersection(left_t: 0.6647139129850748, right_t: 0.5010426316791934, point: Point(x: 0.4695741079228041, y: 1.277852110283618e-14)), SegmentIntersection(left_t: 0.6736947252033436, right_t: 0.6796939712326914, point: Point(x: 0.46584946107162045, y: 1.1937828316683082e-14))])
+overlap Ok([])
+points Ok([SegmentIntersection(left_t: 0.01748931895029434, right_t: 0.5827602843970996, point: Point(x: 0.5092345053074845, y: 1.8655290976442842e-14)), SegmentIntersection(left_t: 0.1819962237464421, right_t: 0.49614197530790416, point: Point(x: 0.5610580108585929, y: 1.6920351114432566e-14)), SegmentIntersection(left_t: 0.24725651480709376, right_t: 0.5090877810406353, point: Point(x: 0.5527346039718326, y: 1.6052818601428932e-14)), SegmentIntersection(left_t: 0.44444976327774954, right_t: 0.6256276836060898, point: Point(x: 0.48725174412717165, y: 1.3415299170454447e-14)), SegmentIntersection(left_t: 0.5729541136245894, right_t: 0.6994057031169046, point: Point(x: 0.4559134619713248, y: 1.2172781840611207e-14)), SegmentIntersection(left_t: 0.7189678609124877, right_t: 0.6368277357650931, point: Point(x: 0.481947706032856, y: 1.2088318254996888e-14)), SegmentIntersection(left_t: 0.8650327338521325, right_t: 0.4088234210449366, point: Point(x: 0.6217956658793149, y: 1.358961374479343e-14)), SegmentIntersection(left_t: 0.9351594641010326, right_t: 0.2547067927924119, point: Point(x: 0.7441299333324115, y: 1.4511006045363826e-14)), SegmentIntersection(left_t: 0.9999992930869387, right_t: 0.07924774920719281, point: Point(x: 0.895705721254147, y: 1.4926907170343482e-14))])
+TOL 1.0e-16
+overlap Ok([])
+points Error(InternalUncertifiedSegmentIntersection(left_distance: 7.160826066729309e-16, right_distance: 7.160826066729294e-16, tolerance: 1.0e-16))
+overlap Ok([])
+points Error(InternalUncertifiedSegmentIntersection(left_distance: 1.1899549953681979e-15, right_distance: 1.189954995368201e-15, tolerance: 1.0e-16))
+Y SCALE 70368744177664
+TOL 1.0e-9
+overlap Ok([])
+points Ok([SegmentIntersection(left_t: 0.49624328350634334, right_t: 0.18393974411322173, point: Point(x: 0.5609921393610561, y: 1.1888981044686586))])
+overlap Ok([])
+points Ok([SegmentIntersection(left_t: 0.18393974411322173, right_t: 0.49624328350634334, point: Point(x: 0.5609921393610561, y: 1.1888981044686586))])
+TOL 1.0e-12
+overlap Ok([])
+points Ok([SegmentIntersection(left_t: 0.49624328350634334, right_t: 0.18393974411322173, point: Point(x: 0.5609921393610561, y: 1.1888981044686586))])
+overlap Ok([])
+points Ok([SegmentIntersection(left_t: 0.18393974411322173, right_t: 0.49624328350634334, point: Point(x: 0.5609921393610561, y: 1.1888981044686586))])
+TOL 1.0e-14
+overlap Ok([])
+points Ok([SegmentIntersection(left_t: 0.49624328350634334, right_t: 0.18393974411322173, point: Point(x: 0.5609921393610561, y: 1.1888981044686586))])
+overlap Ok([])
+points Ok([SegmentIntersection(left_t: 0.18393974411322173, right_t: 0.49624328350634334, point: Point(x: 0.5609921393610561, y: 1.1888981044686586))])
+TOL 1.0e-16
+overlap Ok([])
+points Ok([SegmentIntersection(left_t: 0.49624328350634334, right_t: 0.18393974411322173, point: Point(x: 0.5609921393610561, y: 1.1888981044686586))])
+overlap Ok([])
+points Ok([SegmentIntersection(left_t: 0.18393974411322173, right_t: 0.49624328350634334, point: Point(x: 0.5609921393610561, y: 1.1888981044686586))])

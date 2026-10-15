@@ -1,0 +1,47 @@
+[
+  {
+    "profile": "root-fast",
+    "command": [
+      "scripts/test-fast"
+    ],
+    "exit": 1,
+    "seconds": 40.69
+  },
+  {
+    "profile": "root-slow",
+    "command": [
+      "scripts/test-slow"
+    ],
+    "exit": 0,
+    "seconds": 59.36
+  },
+  {
+    "profile": "portable-erlang",
+    "command": [
+      "scripts/test-portable",
+      "erlang",
+      "all"
+    ],
+    "exit": 1,
+    "seconds": 47.6
+  },
+  {
+    "profile": "portable-javascript",
+    "command": [
+      "scripts/test-portable",
+      "javascript",
+      "all"
+    ],
+    "exit": 1,
+    "seconds": 66.4
+  },
+  {
+    "profile": "figures",
+    "command": [
+      "bash",
+      "/tmp/svg-path-centered-final/generate-figures"
+    ],
+    "exit": 0,
+    "seconds": 50.09
+  }
+]

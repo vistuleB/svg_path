@@ -1,0 +1,41 @@
+RangeError: Maximum call stack size exceeded
+    at isEqual (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/prelude.mjs:1481:24)
+    at assert_split_segment_preserves_endpoints (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5235:9)
+    at split_segment (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5441:3)
+    at segment_split (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5457:12)
+    at forward_segment_between (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5782:14)
+    at Module.segment_between (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5840:14)
+    at intersection_piece_bounding_box (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:4937:15)
+    at inspect_projection_window (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:4950:11)
+    at collect_projection_terminal_windows_generation (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5048:9)
+    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5060:18
+    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)
+    at collect_projection_terminal_windows_generation (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5047:22)
+    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5060:18
+    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)
+    at collect_projection_terminal_windows_generation (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5047:22)
+    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5060:18
+    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)
+    at collect_projection_terminal_windows_generation (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5047:22)
+    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5060:18
+    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)
+    at collect_projection_terminal_windows_generation (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5047:22)
+    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5060:18
+    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)
+    at collect_projection_terminal_windows_generation (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5047:22)
+    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5060:18
+    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)
+    at collect_projection_terminal_windows_generation (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5047:22)
+    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5060:18
+    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)
+    at collect_projection_terminal_windows_generation (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5047:22)
+    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5060:18
+    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)
+    at collect_projection_terminal_windows_generation (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5047:22)
+    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5060:18
+    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)
+    at collect_projection_terminal_windows_generation (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5047:22)
+    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5060:18
+    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)
+    at collect_projection_terminal_windows_generation (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5047:22)
+    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5060:18

@@ -1,5 +1,8 @@
 # FI006: length integration across folds
 
+> Closure status (2026-10-15): Fixed and committed in `0d96855`; all four captured length failures now match. The inverse-length boundary distinction is documented in FINDINGS.md.
+> The dated investigation below preserves the observations and intermediate status at that time.
+
 Investigated 2026-10-14 against production commit `dd381a2` (subsequent commit
 `36d812f` changes audit documentation only). Production fix implemented and validated with targeted tests.
 

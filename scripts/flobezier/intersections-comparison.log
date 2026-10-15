@@ -1,0 +1,39 @@
+{
+  'needs-investigation': 32,
+  'matches-at-diagnostic-tolerance': 3496,
+  'overlap-api-difference': 53,
+  'point-input-api-difference': 25,
+  'confirmed-overlap-classification-bug': 3
+}
+1 bezierBezierIntersection it should ensure accuracy of calculated intersections 2 6
+12 bezierBezierIntersection it should ensure accuracy of calculated intersections 1 9
+13 bezierBezierIntersection it should ensure accuracy of calculated intersections 1 9
+16 bezierBezierIntersection it should ensure accuracy of calculated intersections 2 4
+1265 bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact) 2 3
+1268 bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact) 1 3
+1269 bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact) 1 2
+1271 bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact) 1 2
+1276 bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact) 1 2
+1283 bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact) 1 3
+1288 bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact) 1 2
+1294 bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact) 1 2
+1297 bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact) 1 2
+1326 bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact) 1 2
+1331 bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact) 4 5
+1335 bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact) 2 3
+1357 bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact) 1 2
+1622 bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact) 2 3
+1629 bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact) 2 3
+1632 bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact) 2 3
+1683 bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact) 1 2
+1690 bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact) 1 2
+1705 bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact) 2 3
+1714 bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact) 1 3
+1994 bezier3Intersection it should accurately find intersections between pairs of bezier curves using fast geo clipping 2 6
+2005 bezier3Intersection it should accurately find intersections between pairs of bezier curves using fast geo clipping 1 9
+2006 bezier3Intersection it should accurately find intersections between pairs of bezier curves using fast geo clipping 1 9
+2009 bezier3Intersection it should accurately find intersections between pairs of bezier curves using fast geo clipping 2 4
+2994 bezier3Intersection it should accurately find intersections between pairs of bezier curves using fast geo clipping 2 6
+2997 bezier3Intersection it should accurately find intersections between pairs of bezier curves using fast geo clipping 1 9
+2998 bezier3Intersection it should accurately find intersections between pairs of bezier curves using fast geo clipping 1 9
+2999 bezier3Intersection it should accurately find intersections between pairs of bezier curves using fast geo clipping 2 4

@@ -1,0 +1,184 @@
+# FloBezier audit file index
+
+Pinned revision: `8ad65ac79cb69989cd40b0d375a51392eb477f16`.
+
+All 164 ordinary specification files passed upstream (326 tests). This is
+separate from shared-contract comparison coverage. Two excluded experiments
+were screened by source only. Counts below describe files, not assertions.
+
+- 42 reviewed-contract-difference.
+- 54 screened-no-direct-public-contract.
+- 68 selected-operations-compared.
+
+Selected-operations-compared is deliberately partial: see the operation list
+and call dispositions in `inventory.json`. Test names are recorded there; no
+line-number links are used. See [findings](FINDINGS.md). Raw comparator flags have reviewed dispositions in `closure/summary.json`; they are not all unresolved findings.
+
+| Upstream file | Status | Compared calls |
+| --- | --- | --- |
+| [__tests__/bezier-piece/is-bezier-piece-zero-length.spec.ts](upstream/__tests__/bezier-piece/is-bezier-piece-zero-length.spec.ts) | selected-operations-compared | 89 |
+| [__tests__/boxes/are-boxes-intersecting.spec.ts](upstream/__tests__/boxes/are-boxes-intersecting.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/boxes/intersect-boxes.spec.ts](upstream/__tests__/boxes/intersect-boxes.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/create/cubic-through-point-given013.spec.ts](upstream/__tests__/create/cubic-through-point-given013.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/create/generate-arc.spec.ts](upstream/__tests__/create/generate-arc.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/create/generate-cusp-at-half-t.spec.ts](upstream/__tests__/create/generate-cusp-at-half-t.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/create/generate-self-intersecting.spec.ts](upstream/__tests__/create/generate-self-intersecting.spec.ts) | selected-operations-compared | 1 |
+| [__tests__/fit/fit-quads-to-cubic.spec.ts](upstream/__tests__/fit/fit-quads-to-cubic.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/fit/quadratic-to-polyline.spec.ts](upstream/__tests__/fit/quadratic-to-polyline.spec.ts) | selected-operations-compared | 2 |
+| [__tests__/from-power-basis/from-power-basis.spec.ts](upstream/__tests__/from-power-basis/from-power-basis.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/get-curvature-extrema/curvature-extrema-precision.spec.ts](upstream/__tests__/get-curvature-extrema/curvature-extrema-precision.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/get-curvature-extrema/get-curvature-extrema.spec.ts](upstream/__tests__/get-curvature-extrema/get-curvature-extrema.spec.ts) | selected-operations-compared | 7792 |
+| [__tests__/get-curvature-extrema/inflection-poly.spec.ts](upstream/__tests__/get-curvature-extrema/inflection-poly.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/get-medial-points/dd-get-medial-point-coeffs.spec.ts](upstream/__tests__/get-medial-points/dd-get-medial-point-coeffs.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/get-medial-points/get-medial-point-coeffs-bez0.spec.ts](upstream/__tests__/get-medial-points/get-medial-point-coeffs-bez0.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/get-medial-points/get-medial-point-coeffs-bez1.spec.ts](upstream/__tests__/get-medial-points/get-medial-point-coeffs-bez1.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/get-medial-points/get-medial-point-coeffs-bez2-same-curve.spec.ts](upstream/__tests__/get-medial-points/get-medial-point-coeffs-bez2-same-curve.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/get-medial-points/get-medial-point-coeffs-bez2.spec.ts](upstream/__tests__/get-medial-points/get-medial-point-coeffs-bez2.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/get-medial-points/get-medial-point-coeffs-bez3-same-curve.spec.ts](upstream/__tests__/get-medial-points/get-medial-point-coeffs-bez3-same-curve.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/get-medial-points/get-medial-point-coeffs-bez3.spec.ts](upstream/__tests__/get-medial-points/get-medial-point-coeffs-bez3.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/get-medial-points/get-medial-point-coeffs-dispatch.spec.ts](upstream/__tests__/get-medial-points/get-medial-point-coeffs-dispatch.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/get-medial-points/get-medial-points-point.spec.ts](upstream/__tests__/get-medial-points/get-medial-points-point.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/get-medial-points/get-medial-points.spec.ts](upstream/__tests__/get-medial-points/get-medial-points.spec.ts) | selected-operations-compared | 7 |
+| [__tests__/global-properties/area.spec.ts](upstream/__tests__/global-properties/area.spec.ts) | selected-operations-compared | 2 |
+| [__tests__/global-properties/bounds/get-bounding-box-tight.spec.ts](upstream/__tests__/global-properties/bounds/get-bounding-box-tight.spec.ts) | selected-operations-compared | 6 |
+| [__tests__/global-properties/bounds/get-bounding-box.spec.ts](upstream/__tests__/global-properties/bounds/get-bounding-box.spec.ts) | selected-operations-compared | 2 |
+| [__tests__/global-properties/bounds/get-bounds.spec.ts](upstream/__tests__/global-properties/bounds/get-bounds.spec.ts) | selected-operations-compared | 3 |
+| [__tests__/global-properties/bounds/get-control-point-box.spec.ts](upstream/__tests__/global-properties/bounds/get-control-point-box.spec.ts) | selected-operations-compared | 1 |
+| [__tests__/global-properties/bounds/get-interval-box/get-interval-box-dd.spec.ts](upstream/__tests__/global-properties/bounds/get-interval-box/get-interval-box-dd.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/global-properties/bounds/get-interval-box/get-interval-box.spec.ts](upstream/__tests__/global-properties/bounds/get-interval-box/get-interval-box.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/global-properties/bounds/get-x-bounds-tight.spec.ts](upstream/__tests__/global-properties/bounds/get-x-bounds-tight.spec.ts) | selected-operations-compared | 7 |
+| [__tests__/global-properties/bounds/get-y-bounds-tight.spec.ts](upstream/__tests__/global-properties/bounds/get-y-bounds-tight.spec.ts) | selected-operations-compared | 6 |
+| [__tests__/global-properties/bounds/interval-box-containment.spec.ts](upstream/__tests__/global-properties/bounds/interval-box-containment.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/global-properties/classification/classify.spec.ts](upstream/__tests__/global-properties/classification/classify.spec.ts) | selected-operations-compared | 1 |
+| [__tests__/global-properties/classification/is-collinear.spec.ts](upstream/__tests__/global-properties/classification/is-collinear.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/global-properties/classification/is-cubic-really-line.spec.ts](upstream/__tests__/global-properties/classification/is-cubic-really-line.spec.ts) | selected-operations-compared | 1 |
+| [__tests__/global-properties/classification/is-cubic-really-quad.spec.ts](upstream/__tests__/global-properties/classification/is-cubic-really-quad.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/global-properties/classification/is-quad-flat.spec.ts](upstream/__tests__/global-properties/classification/is-quad-flat.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/global-properties/classification/is-quad-obtuse.spec.ts](upstream/__tests__/global-properties/classification/is-quad-obtuse.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/global-properties/classification/is-quad-really-line.spec.ts](upstream/__tests__/global-properties/classification/is-quad-really-line.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/global-properties/classification/is-really-point.spec.ts](upstream/__tests__/global-properties/classification/is-really-point.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/global-properties/classification/is-self-overlapping.spec.ts](upstream/__tests__/global-properties/classification/is-self-overlapping.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/global-properties/curviness.spec.ts](upstream/__tests__/global-properties/curviness.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/global-properties/get-bending-energy.spec.ts](upstream/__tests__/global-properties/get-bending-energy.spec.ts) | selected-operations-compared | 1 |
+| [__tests__/global-properties/get-inflections.spec.ts](upstream/__tests__/global-properties/get-inflections.spec.ts) | selected-operations-compared | 2 |
+| [__tests__/global-properties/length/control-point-lines-length.spec.ts](upstream/__tests__/global-properties/length/control-point-lines-length.spec.ts) | selected-operations-compared | 43 |
+| [__tests__/global-properties/length/length-accuracy.spec.ts](upstream/__tests__/global-properties/length/length-accuracy.spec.ts) | selected-operations-compared | 157 |
+| [__tests__/global-properties/length/length.spec.ts](upstream/__tests__/global-properties/length/length.spec.ts) | selected-operations-compared | 124 |
+| [__tests__/global-properties/total-curvature.spec.ts](upstream/__tests__/global-properties/total-curvature.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/implicit-form/double-running-error-bound.spec.ts](upstream/__tests__/implicit-form/double-running-error-bound.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/implicit-form/evaluate/double/evaluate-implicit123.spec.ts](upstream/__tests__/implicit-form/evaluate/double/evaluate-implicit123.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/implicit-form/implicit-form.spec.ts](upstream/__tests__/implicit-form/implicit-form.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/implicit-form/implicit-form2-dd-error-bound.spec.ts](upstream/__tests__/implicit-form/implicit-form2-dd-error-bound.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/implicit-form/implicit-form3-dd-error-bound.spec.ts](upstream/__tests__/implicit-form/implicit-form3-dd-error-bound.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/intersection/bezier-bezier-intersection/b-cbrt.spec.ts](upstream/__tests__/intersection/bezier-bezier-intersection/b-cbrt.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/intersection/bezier-bezier-intersection/b-sign.spec.ts](upstream/__tests__/intersection/bezier-bezier-intersection/b-sign.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/intersection/bezier-bezier-intersection/b-sqrt.spec.ts](upstream/__tests__/intersection/bezier-bezier-intersection/b-sqrt.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/intersection/bezier-bezier-intersection/bezier-bezier-intersection-specific-cases.spec.ts](upstream/__tests__/intersection/bezier-bezier-intersection/bezier-bezier-intersection-specific-cases.spec.ts) | selected-operations-compared | 59 |
+| [__tests__/intersection/bezier-bezier-intersection/bezier-bezier-intersection.spec.ts](upstream/__tests__/intersection/bezier-bezier-intersection/bezier-bezier-intersection.spec.ts) | selected-operations-compared | 1000 |
+| [__tests__/intersection/bezier-bezier-intersection/bigint-to-expansion.spec.ts](upstream/__tests__/intersection/bezier-bezier-intersection/bigint-to-expansion.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/intersection/bezier-bezier-intersection/coeffs-bez3-bez3-dd-error-bound.spec.ts](upstream/__tests__/intersection/bezier-bezier-intersection/coeffs-bez3-bez3-dd-error-bound.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/intersection/bezier-bezier-intersection/coeffs-dd-error-bound.spec.ts](upstream/__tests__/intersection/bezier-bezier-intersection/coeffs-dd-error-bound.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/intersection/bezier-bezier-intersection/coeffs-double-error-bound.spec.ts](upstream/__tests__/intersection/bezier-bezier-intersection/coeffs-double-error-bound.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/intersection/bezier-bezier-intersection/coeffs.spec.ts](upstream/__tests__/intersection/bezier-bezier-intersection/coeffs.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/intersection/bezier-bezier-intersection/ensure-range.spec.ts](upstream/__tests__/intersection/bezier-bezier-intersection/ensure-range.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/intersection/bezier-bezier-intersection/get-endpoint-intersections.spec.ts](upstream/__tests__/intersection/bezier-bezier-intersection/get-endpoint-intersections.spec.ts) | selected-operations-compared | 722 |
+| [__tests__/intersection/bezier-bezier-intersection-fast/bezier-bezier-intersection-fast.spec.ts](upstream/__tests__/intersection/bezier-bezier-intersection-fast/bezier-bezier-intersection-fast.spec.ts) | selected-operations-compared | 1551 |
+| [__tests__/intersection/bezier-bezier-intersection-fast/specific-cases.spec.ts](upstream/__tests__/intersection/bezier-bezier-intersection-fast/specific-cases.spec.ts) | selected-operations-compared | 6 |
+| [__tests__/intersection/bezier-bezier-intersection-shared-endpoint/coeffs-shared-start.spec.ts](upstream/__tests__/intersection/bezier-bezier-intersection-shared-endpoint/coeffs-shared-start.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/intersection/bezier-bezier-intersection-shared-endpoint/shared-endpoint-intersection.spec.ts](upstream/__tests__/intersection/bezier-bezier-intersection-shared-endpoint/shared-endpoint-intersection.spec.ts) | selected-operations-compared | 993 |
+| [__tests__/intersection/circle-bezier-intersection-error-bound.spec.ts](upstream/__tests__/intersection/circle-bezier-intersection-error-bound.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/intersection/circle-bezier-intersection.spec.ts](upstream/__tests__/intersection/circle-bezier-intersection.spec.ts) | selected-operations-compared | 7 |
+| [__tests__/intersection/get-endpoint-intersections/get-endpoint-ts.spec.ts](upstream/__tests__/intersection/get-endpoint-intersections/get-endpoint-ts.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/intersection/self-intersection/self-intersection.spec.ts](upstream/__tests__/intersection/self-intersection/self-intersection.spec.ts) | selected-operations-compared | 8 |
+| [__tests__/local-properties-at-t/curried-forms.spec.ts](upstream/__tests__/local-properties-at-t/curried-forms.spec.ts) | selected-operations-compared | 1050 |
+| [__tests__/local-properties-at-t/curvature.spec.ts](upstream/__tests__/local-properties-at-t/curvature.spec.ts) | selected-operations-compared | 4 |
+| [__tests__/local-properties-at-t/evaluate/double/eval-de-casteljau-with-err.spec.ts](upstream/__tests__/local-properties-at-t/evaluate/double/eval-de-casteljau-with-err.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/local-properties-at-t/evaluate/double/evaluate.spec.ts](upstream/__tests__/local-properties-at-t/evaluate/double/evaluate.spec.ts) | selected-operations-compared | 70 |
+| [__tests__/local-properties-at-t/evaluate/double-double/eval-de-casteljau-dd.spec.ts](upstream/__tests__/local-properties-at-t/evaluate/double-double/eval-de-casteljau-dd.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/local-properties-at-t/evaluate/double-double/eval-de-casteljau-with-err-dd.spec.ts](upstream/__tests__/local-properties-at-t/evaluate/double-double/eval-de-casteljau-with-err-dd.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/local-properties-at-t/evaluate/exact/evaluate-exact.spec.ts](upstream/__tests__/local-properties-at-t/evaluate/exact/evaluate-exact.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/local-properties-at-t/evaluate-1st-derivative/double/evaluate-1st-derivative.spec.ts](upstream/__tests__/local-properties-at-t/evaluate-1st-derivative/double/evaluate-1st-derivative.spec.ts) | selected-operations-compared | 420 |
+| [__tests__/local-properties-at-t/evaluate-1st-derivative/exact/evaluate-1st-derivative-exact.spec.ts](upstream/__tests__/local-properties-at-t/evaluate-1st-derivative/exact/evaluate-1st-derivative-exact.spec.ts) | selected-operations-compared | 120 |
+| [__tests__/local-properties-at-t/evaluate-2nd-derivative/double/evaluate-2nd-derivative.spec.ts](upstream/__tests__/local-properties-at-t/evaluate-2nd-derivative/double/evaluate-2nd-derivative.spec.ts) | selected-operations-compared | 8 |
+| [__tests__/local-properties-at-t/evaluate-2nd-derivative/exact/evaluate-2nd-derivative-exact.spec.ts](upstream/__tests__/local-properties-at-t/evaluate-2nd-derivative/exact/evaluate-2nd-derivative-exact.spec.ts) | selected-operations-compared | 5 |
+| [__tests__/local-properties-at-t/normal/normal.spec.ts](upstream/__tests__/local-properties-at-t/normal/normal.spec.ts) | selected-operations-compared | 120 |
+| [__tests__/local-properties-at-t/normal/normal2.spec.ts](upstream/__tests__/local-properties-at-t/normal/normal2.spec.ts) | selected-operations-compared | 1 |
+| [__tests__/local-properties-at-t/normal/unit-normal.spec.ts](upstream/__tests__/local-properties-at-t/normal/unit-normal.spec.ts) | selected-operations-compared | 121 |
+| [__tests__/local-properties-at-t/tangent/tangent.spec.ts](upstream/__tests__/local-properties-at-t/tangent/tangent.spec.ts) | selected-operations-compared | 10 |
+| [__tests__/local-properties-at-t/tangent/unit-tangent.spec.ts](upstream/__tests__/local-properties-at-t/tangent/unit-tangent.spec.ts) | selected-operations-compared | 121 |
+| [__tests__/local-properties-to-t/get-t-at-length.spec.ts](upstream/__tests__/local-properties-to-t/get-t-at-length.spec.ts) | selected-operations-compared | 18 |
+| [__tests__/local-properties-to-t/t-from-xy-combine.spec.ts](upstream/__tests__/local-properties-to-t/t-from-xy-combine.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/local-properties-to-t/t-from-xy.spec.ts](upstream/__tests__/local-properties-to-t/t-from-xy.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/next-down.spec.ts](upstream/__tests__/next-down.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/next-up.spec.ts](upstream/__tests__/next-up.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/simultaneous-properties/closest-and-furthest-point-on-bezier/closest-point-on-bezier-certified.spec.ts](upstream/__tests__/simultaneous-properties/closest-and-furthest-point-on-bezier/closest-point-on-bezier-certified.spec.ts) | selected-operations-compared | 69 |
+| [__tests__/simultaneous-properties/closest-and-furthest-point-on-bezier/closest-point-on-bezier.spec.ts](upstream/__tests__/simultaneous-properties/closest-and-furthest-point-on-bezier/closest-point-on-bezier.spec.ts) | selected-operations-compared | 5 |
+| [__tests__/simultaneous-properties/closest-and-furthest-point-on-bezier/distance-squared-interval.spec.ts](upstream/__tests__/simultaneous-properties/closest-and-furthest-point-on-bezier/distance-squared-interval.spec.ts) | selected-operations-compared | 601 |
+| [__tests__/simultaneous-properties/closest-and-furthest-point-on-bezier/furthest-point-on-bezier.spec.ts](upstream/__tests__/simultaneous-properties/closest-and-furthest-point-on-bezier/furthest-point-on-bezier.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/simultaneous-properties/closest-and-furthest-point-on-bezier/get-coeffs/double/get-footpoint-poly.spec.ts](upstream/__tests__/simultaneous-properties/closest-and-furthest-point-on-bezier/get-coeffs/double/get-footpoint-poly.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/simultaneous-properties/closest-and-furthest-point-on-bezier/get-coeffs/double-double/get-footpoint-poly-dd.spec.ts](upstream/__tests__/simultaneous-properties/closest-and-furthest-point-on-bezier/get-coeffs/double-double/get-footpoint-poly-dd.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/simultaneous-properties/closest-and-furthest-point-on-bezier/get-coeffs/exact/get-footpoint-poly-exact.spec.ts](upstream/__tests__/simultaneous-properties/closest-and-furthest-point-on-bezier/get-coeffs/exact/get-footpoint-poly-exact.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/simultaneous-properties/closest-distance-between-beziers/closest-points-between-lines.spec.ts](upstream/__tests__/simultaneous-properties/closest-distance-between-beziers/closest-points-between-lines.spec.ts) | selected-operations-compared | 4 |
+| [__tests__/simultaneous-properties/equal.spec.ts](upstream/__tests__/simultaneous-properties/equal.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/simultaneous-properties/get-interface-rotation.spec.ts](upstream/__tests__/simultaneous-properties/get-interface-rotation.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/simultaneous-properties/hausdorff-distance-direct/hausdorff-distance-direct.spec.ts](upstream/__tests__/simultaneous-properties/hausdorff-distance-direct/hausdorff-distance-direct.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/simultaneous-properties/hausdorff-distance-direct/regression-cases.spec.ts](upstream/__tests__/simultaneous-properties/hausdorff-distance-direct/regression-cases.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/simultaneous-properties/hausdorff-distance.spec.ts](upstream/__tests__/simultaneous-properties/hausdorff-distance.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/simultaneous-properties/heap.spec.ts](upstream/__tests__/simultaneous-properties/heap.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/simultaneous-properties/is-point-on-bezier-extension/is-point-on-bezier-extension.spec.ts](upstream/__tests__/simultaneous-properties/is-point-on-bezier-extension/is-point-on-bezier-extension.spec.ts) | selected-operations-compared | 100 |
+| [__tests__/simultaneous-properties/tolerance-zero.spec.ts](upstream/__tests__/simultaneous-properties/tolerance-zero.spec.ts) | selected-operations-compared | 2 |
+| [__tests__/stewart-error-counters.ts/stewart-error-counters.spec.ts](upstream/__tests__/stewart-error-counters.ts/stewart-error-counters.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/test-helpers.spec.ts](upstream/__tests__/test-helpers.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/to-power-basis/to-power-basis/double/to-power-basis-with-running-error.spec.ts](upstream/__tests__/to-power-basis/to-power-basis/double/to-power-basis-with-running-error.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/to-power-basis/to-power-basis/double/to-power-basis.spec.ts](upstream/__tests__/to-power-basis/to-power-basis/double/to-power-basis.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/to-power-basis/to-power-basis/double-double/to-power-basis-dd-with-running-error.spec.ts](upstream/__tests__/to-power-basis/to-power-basis/double-double/to-power-basis-dd-with-running-error.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/to-power-basis/to-power-basis/double-double/to-power-basis-dd.spec.ts](upstream/__tests__/to-power-basis/to-power-basis/double-double/to-power-basis-dd.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/to-power-basis/to-power-basis/exact/to-power-basis-exact.spec.ts](upstream/__tests__/to-power-basis/to-power-basis/exact/to-power-basis-exact.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/to-power-basis/to-power-basis/to-power-basis-error-counters.spec.ts](upstream/__tests__/to-power-basis/to-power-basis/to-power-basis-error-counters.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/to-power-basis/to-power-basis-1st-derivative/double/to-power-basis-1st-derivative.spec.ts](upstream/__tests__/to-power-basis/to-power-basis-1st-derivative/double/to-power-basis-1st-derivative.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/to-power-basis/to-power-basis-1st-derivative/double-double/to-power-basis-1st-derivative-dd.spec.ts](upstream/__tests__/to-power-basis/to-power-basis-1st-derivative/double-double/to-power-basis-1st-derivative-dd.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/to-power-basis/to-power-basis-1st-derivative/exact/to-power-basis-1st-derivative-exact.spec.ts](upstream/__tests__/to-power-basis/to-power-basis-1st-derivative/exact/to-power-basis-1st-derivative-exact.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/to-power-basis/to-power-basis-1st-derivative/to-power-basis-1st-derivative-error-counters.spec.ts](upstream/__tests__/to-power-basis/to-power-basis-1st-derivative/to-power-basis-1st-derivative-error-counters.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/to-power-basis/to-power-basis-2nd-derivative/double/to-power-basis-2nd-derivative.spec.ts](upstream/__tests__/to-power-basis/to-power-basis-2nd-derivative/double/to-power-basis-2nd-derivative.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/to-power-basis/to-power-basis-2nd-derivative/double-double/to-power-basis-2nd-derivative-dd.spec.ts](upstream/__tests__/to-power-basis/to-power-basis-2nd-derivative/double-double/to-power-basis-2nd-derivative-dd.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/to-power-basis/to-power-basis-2nd-derivative/exact/to-power-basis-2nd-derivative-exact.spec.ts](upstream/__tests__/to-power-basis/to-power-basis-2nd-derivative/exact/to-power-basis-2nd-derivative-exact.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/to-power-basis/to-power-basis-3rd-derivative/double/to-power-basis-3rd-derivative.spec.ts](upstream/__tests__/to-power-basis/to-power-basis-3rd-derivative/double/to-power-basis-3rd-derivative.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/to-power-basis/to-power-basis-3rd-derivative/double-double/to-power-basis-3rd-derivative-dd.spec.ts](upstream/__tests__/to-power-basis/to-power-basis-3rd-derivative/double-double/to-power-basis-3rd-derivative-dd.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/to-power-basis/to-power-basis-3rd-derivative/exact/to-power-basis-3rd-derivative-exact.spec.ts](upstream/__tests__/to-power-basis/to-power-basis-3rd-derivative/exact/to-power-basis-3rd-derivative-exact.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/transformation/affine/flip-about.spec.ts](upstream/__tests__/transformation/affine/flip-about.spec.ts) | selected-operations-compared | 65 |
+| [__tests__/transformation/affine/flip-horizontally.spec.ts](upstream/__tests__/transformation/affine/flip-horizontally.spec.ts) | selected-operations-compared | 63 |
+| [__tests__/transformation/affine/flip-vertically.spec.ts](upstream/__tests__/transformation/affine/flip-vertically.spec.ts) | selected-operations-compared | 63 |
+| [__tests__/transformation/affine/rotate-90-about.spec.ts](upstream/__tests__/transformation/affine/rotate-90-about.spec.ts) | selected-operations-compared | 69 |
+| [__tests__/transformation/affine/rotate-90.spec.ts](upstream/__tests__/transformation/affine/rotate-90.spec.ts) | selected-operations-compared | 69 |
+| [__tests__/transformation/affine/rotate-about.spec.ts](upstream/__tests__/transformation/affine/rotate-about.spec.ts) | selected-operations-compared | 122 |
+| [__tests__/transformation/affine/rotate-neg-90-about.spec.ts](upstream/__tests__/transformation/affine/rotate-neg-90-about.spec.ts) | selected-operations-compared | 65 |
+| [__tests__/transformation/affine/rotate-neg-90.spec.ts](upstream/__tests__/transformation/affine/rotate-neg-90.spec.ts) | selected-operations-compared | 65 |
+| [__tests__/transformation/affine/rotate.spec.ts](upstream/__tests__/transformation/affine/rotate.spec.ts) | selected-operations-compared | 32 |
+| [__tests__/transformation/affine/scale.spec.ts](upstream/__tests__/transformation/affine/scale.spec.ts) | selected-operations-compared | 33 |
+| [__tests__/transformation/affine/transform.spec.ts](upstream/__tests__/transformation/affine/transform.spec.ts) | selected-operations-compared | 7 |
+| [__tests__/transformation/affine/translate.spec.ts](upstream/__tests__/transformation/affine/translate.spec.ts) | selected-operations-compared | 33 |
+| [__tests__/transformation/clone.spec.ts](upstream/__tests__/transformation/clone.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/transformation/degree-or-type/cubic-to-hybrid-quadratic.spec.ts](upstream/__tests__/transformation/degree-or-type/cubic-to-hybrid-quadratic.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/transformation/degree-or-type/cubic-to-quadratic.spec.ts](upstream/__tests__/transformation/degree-or-type/cubic-to-quadratic.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/transformation/degree-or-type/elevate-degree.spec.ts](upstream/__tests__/transformation/degree-or-type/elevate-degree.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/transformation/degree-or-type/line-to-quadratic.spec.ts](upstream/__tests__/transformation/degree-or-type/line-to-quadratic.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/transformation/degree-or-type/to-cubic.spec.ts](upstream/__tests__/transformation/degree-or-type/to-cubic.spec.ts) | selected-operations-compared | 11 |
+| [__tests__/transformation/get-hodograph.spec.ts](upstream/__tests__/transformation/get-hodograph.spec.ts) | selected-operations-compared | 8 |
+| [__tests__/transformation/reverse.spec.ts](upstream/__tests__/transformation/reverse.spec.ts) | selected-operations-compared | 4 |
+| [__tests__/transformation/split/from-to-incl-error-bound.spec.ts](upstream/__tests__/transformation/split/from-to-incl-error-bound.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/transformation/split/from-to.spec.ts](upstream/__tests__/transformation/split/from-to.spec.ts) | selected-operations-compared | 23 |
+| [__tests__/transformation/split/split-by-curvature-and-length.spec.ts](upstream/__tests__/transformation/split/split-by-curvature-and-length.spec.ts) | selected-operations-compared | 1 |
+| [__tests__/transformation/split/split-by-curvature.spec.ts](upstream/__tests__/transformation/split/split-by-curvature.spec.ts) | selected-operations-compared | 3 |
+| [__tests__/transformation/split/split-by-deviation-from-straight-line-cubic.spec.ts](upstream/__tests__/transformation/split/split-by-deviation-from-straight-line-cubic.spec.ts) | selected-operations-compared | 2866 |
+| [__tests__/transformation/split/split-by-deviation-from-straight-line.spec.ts](upstream/__tests__/transformation/split/split-by-deviation-from-straight-line.spec.ts) | selected-operations-compared | 5 |
+| [__tests__/transformation/split/split-by-length.spec.ts](upstream/__tests__/transformation/split/split-by-length.spec.ts) | selected-operations-compared | 5 |
+| [__tests__/transformation/to-estimation.spec.ts](upstream/__tests__/transformation/to-estimation.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/transformation/to-expansion.spec.ts](upstream/__tests__/transformation/to-expansion.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/transformation/to-string.spec.ts](upstream/__tests__/transformation/to-string.spec.ts) | reviewed-contract-difference | 0 |
+| [__tests__/utils/get-distance-to-line-function.spec.ts](upstream/__tests__/utils/get-distance-to-line-function.spec.ts) | selected-operations-compared | 9 |
+| [__tests__/x-from-y/double/get-coeffs-x-from-y-with-running-err.spec.ts](upstream/__tests__/x-from-y/double/get-coeffs-x-from-y-with-running-err.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/x-from-y/double-double/dd-get-coeffs-x-from-y-with-running-err.spec.ts](upstream/__tests__/x-from-y/double-double/dd-get-coeffs-x-from-y-with-running-err.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/y-from-x/double/get-coeffs-y-from-x-with-running-err.spec.ts](upstream/__tests__/y-from-x/double/get-coeffs-y-from-x-with-running-err.spec.ts) | screened-no-direct-public-contract | 0 |
+| [__tests__/y-from-x/double-double/dd-get-coeffs-y-from-x-with-running-err.spec.ts](upstream/__tests__/y-from-x/double-double/dd-get-coeffs-y-from-x-with-running-err.spec.ts) | screened-no-direct-public-contract | 0 |
+| [experiments/hausdorff/__tests__/accuracy.spec.ts](upstream/experiments/hausdorff/__tests__/accuracy.spec.ts) | screened-no-direct-public-contract | 0 |
+| [experiments/hausdorff/__tests__/benchmark-2-2.spec.ts](upstream/experiments/hausdorff/__tests__/benchmark-2-2.spec.ts) | screened-no-direct-public-contract | 0 |

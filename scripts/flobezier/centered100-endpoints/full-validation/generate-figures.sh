@@ -1,0 +1,108 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+root="/Users/jpsteinb/github.com/vistuleB/svg_path"
+readme_output="$root/test/generated/readme"
+gallery_output="$root/test/generated/gallery"
+gallery_destination="$root/docs/gallery"
+
+mkdir -p "$readme_output" "$gallery_output" "$gallery_destination"
+
+# Fast suite run separately; preserve its known snapshot failures.
+(cd "$root" && gleam build)
+(
+  cd "$root/examples/readme_arrangement_figures"
+  gleam build
+)
+(
+  cd "$root"
+  escript scripts/gallery/run.escript
+)
+(
+  cd "$root/examples/readme_arrangement_figures"
+  gleam run
+  gleam run -m arrangement_csg_readme_figures
+)
+(
+  cd "$root"
+  gleam run -m svg_path_side_umbrella_offset_fixture
+  gleam run -m svg_path_offside_trimming_fixture
+  gleam run -m svg_path_two_corner_square_bands_fixture
+  gleam run -m svg_path_band_trimming_fixture
+)
+
+(
+  cd "$root/examples/public_api_smoke"
+  gleam build --target javascript
+)
+node "$root/examples/debug/miter_clip_demos.mjs"
+node "$root/examples/debug/arcs_join_demos.mjs"
+node "$root/scripts/gallery/w3c_join_comparison.mjs" "$gallery_output"
+for figure in miter_clip_comparison.svg miter_clip_limits.svg arcs_join_self_intersection.svg arcs_join_comparison_2.svg; do
+  cp "$root/examples/debug/$figure" "$readme_output/$figure"
+done
+
+readme_figures=(
+  miter_clip_comparison.svg
+  miter_clip_limits.svg
+  arcs_join_self_intersection.svg
+  arcs_join_comparison_2.svg
+  zero_length_closepath_probe.svg
+  arrangement_graph_overlapping_squares.svg
+  arrangement_graph_semantic_circle_overlap.svg
+  arrangement_csg_nonzero.svg
+  arrangement_csg_evenodd.svg
+  single_offset_final_trimming.svg
+  single_offset_offside_trimming.svg
+  band_cusp_trimming.svg
+  band_in_band_trimming.svg
+)
+
+gallery_figures=(
+  w3c-miter-limit.svg
+  w3c-linejoin-construction-fallback.svg
+  w3c-linejoin-construction-fallback2.svg
+  w3c-linejoin-construction-fallback3.svg
+  gallery-rounded-rectangle-union.svg
+  gallery-intersection-rectangles.svg
+  gallery-intersection-circle-rectangle.svg
+  gallery-intersection-edge-tangent.svg
+  gallery-intersection-nested-nonzero.svg
+  gallery-intersection-nested-evenodd.svg
+  gallery-intersection-bowtie-rectangle.svg
+  gallery-difference-rectangles.svg
+  gallery-difference-circle-rectangle.svg
+  gallery-difference-hole.svg
+  gallery-difference-nested-nonzero.svg
+  gallery-difference-nested-evenodd.svg
+  gallery-difference-bowtie-rectangle.svg
+  gallery-stroke-caps.svg
+  gallery-dashed-strokes.svg
+  gallery-recursive-dashes.svg
+  gallery-figure-eight-band.svg
+  gallery-symmetric-figure-eight-bands.svg
+  gallery-figure-eight-correspondence-blocks.svg
+  gallery-figure-eight-convex-hulls.svg
+  gallery-stroke-offset-tracks.svg
+  gallery-package-title-first-offset.svg
+  gallery-package-title-second-offset-arrangement.svg
+  gallery-earth-tone-offsets.svg
+  gallery-lazy-dog-offset-coil.svg
+  gallery-lazy-dog-offset-decaying-spiral.svg
+  gallery-crescent-hull.svg
+  gallery-package-title-nine-offsets.svg
+  gallery-cut-radiator.svg
+)
+
+for figure in "${readme_figures[@]}"; do
+  test -s "$readme_output/$figure"
+done
+
+for figure in "${gallery_figures[@]}"; do
+  test -s "$gallery_output/$figure"
+  cp "$gallery_output/$figure" "$gallery_destination/$figure"
+done
+
+echo "Generated ${#readme_figures[@]} README figures in test/generated/readme."
+echo "Generated and promoted ${#gallery_figures[@]} Gallery figures."
+echo "Gallery verification: all ${#gallery_figures[@]} figures recomputed, including the production-traced second-offset arrangement and four W3C join comparisons."

@@ -1,0 +1,60 @@
+{
+  "isBezierPieceZeroLength": [
+    "__tests__/bezier-piece/is-bezier-piece-zero-length.spec.ts"
+  ],
+  "getControlPointBox": [
+    "__tests__/global-properties/bounds/get-control-point-box.spec.ts"
+  ],
+  "getXBoundsTight": [
+    "__tests__/global-properties/bounds/get-x-bounds-tight.spec.ts"
+  ],
+  "getYBoundsTight": [
+    "__tests__/global-properties/bounds/get-y-bounds-tight.spec.ts"
+  ],
+  "controlPointLinesLength": [
+    "__tests__/global-properties/length/control-point-lines-length.spec.ts",
+    "__tests__/simultaneous-properties/hausdorff-distance.spec.ts"
+  ],
+  "circleBezierIntersection": [
+    "__tests__/intersection/circle-bezier-intersection.spec.ts"
+  ],
+  "closestPointsBetweenBeziers": [
+    "__tests__/simultaneous-properties/closest-distance-between-beziers/closest-points-between-lines.spec.ts",
+    "__tests__/simultaneous-properties/tolerance-zero.spec.ts"
+  ],
+  "reverse": [
+    "__tests__/transformation/reverse.spec.ts"
+  ],
+  "toCubic": [
+    "__tests__/global-properties/classification/classify.spec.ts",
+    "__tests__/global-properties/classification/is-cubic-really-line.spec.ts",
+    "__tests__/simultaneous-properties/hausdorff-distance.spec.ts",
+    "__tests__/transformation/degree-or-type/cubic-to-quadratic.spec.ts",
+    "__tests__/transformation/degree-or-type/to-cubic.spec.ts"
+  ],
+  "lineToCubic": [
+    "__tests__/transformation/degree-or-type/to-cubic.spec.ts"
+  ],
+  "quadraticToCubic": [
+    "__tests__/global-properties/get-bending-energy.spec.ts",
+    "__tests__/transformation/degree-or-type/to-cubic.spec.ts"
+  ],
+  "getHodograph": [
+    "__tests__/transformation/get-hodograph.spec.ts"
+  ],
+  "splitByLength": [
+    "__tests__/transformation/split/split-by-length.spec.ts"
+  ],
+  "quadraticToPolyline": [
+    "__tests__/fit/quadratic-to-polyline.spec.ts"
+  ],
+  "getDistanceToLineFunction": [
+    "__tests__/utils/get-distance-to-line-function.spec.ts"
+  ],
+  "getEndpointIntersections": [
+    "__tests__/intersection/bezier-bezier-intersection/get-endpoint-intersections.spec.ts"
+  ],
+  "splitByDeviationFromStraightLine": [
+    "__tests__/transformation/split/split-by-deviation-from-straight-line.spec.ts"
+  ]
+}

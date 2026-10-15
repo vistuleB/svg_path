@@ -1,0 +1,9 @@
+{
+  'matches-adapted-contract': 873,
+  'point-input-api-difference': 37,
+  'upstream-rejected-input': 5,
+  'confirmed-closest-pair-stack-overflow': 1,
+  'zero-tolerance-contract-difference': 1,
+  'needs-investigation': 2,
+  'infinite-signed-line-vs-clamped-segment-contract': 9
+}

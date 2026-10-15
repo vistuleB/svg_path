@@ -1,0 +1,73 @@
+import { describe, expect, it } from '@jest/globals';
+import { getBoundingBoxTight } from '../../../src/global-properties/bounds/get-bounding-box-tight.js';
+import { getRandomLine, getRandomQuad, getRandomCubic } from '../../helpers/get-random-bezier.js';
+
+
+describe('getBoundingBoxTight', function() {
+    it('it should find a correct tight bounding box for some quadratic beziers', 
+    function() {
+        {
+            const ps = [ 
+                [0, 0],
+                [1, 1],
+                [2, 0]
+            ];
+            expect(getBoundingBoxTight(ps)).toBeNearly(2**4, [ 
+                [0, 0],
+                [2, 0],
+                [2, 0.5],
+                [0, 0.5]
+            ]);
+        }
+    });
+
+    it('it should find a correct tight bounding box for some cubic beziers', 
+    function() {
+        {
+            const ps = getRandomCubic(0);
+            const r = getBoundingBoxTight(ps);
+            expect(r).toBeNearly(2**6, [ 
+                [-108.49686506776892, -13.011161175008596],
+                [124.76385737178957, -112.1975403532909],
+                [145.66307345575342, -63.04798693120908],
+                [-87.59764898380507, 36.13839224707323]
+            ]);
+        }
+
+
+        {
+            const ps = [
+                [-94.81526242914038, -85.23564826446488],
+                [-99.10150372309181, 6.600052566872932],
+                [80.17857884247292, -101.65036486965846],
+                [-95.539309056601269, -84.89133452900955] 
+            ];
+            expect(getBoundingBoxTight(ps)).toBeNearly(2**8, [
+                [-85.35872924595627, -107.86648402656408],
+                [-15.361552595332611, -76.84984827029443],
+                [-35.31172088253128, -31.827059055431313],
+                [-105.30889753315493, -62.84369481170097]
+            ]);
+        }
+    });
+
+    it('it should handle degenerate beziers (e.g. all control points coincident)', 
+    function() {
+        {
+            // all control points coincide - previously threw
+            const ps = [[1,1],[1,1],[1,1],[1,1]];
+            expect(getBoundingBoxTight(ps)).toEqual([[1,1],[1,1],[1,1],[1,1]]);
+        }
+        {
+            const ps = [[5,5],[5,5]];
+            expect(getBoundingBoxTight(ps)).toEqual([[5,5],[5,5],[5,5],[5,5]]);
+        }
+        {
+            // the curve returns to its start point at `t === 0.5` - 
+            // previously gave `NaN`s
+            const ps = [[0,0],[1,0],[-1,0],[0,0]];
+            const box = getBoundingBoxTight(ps);
+            expect(box.every(p => p.every(c => !isNaN(c)))).toBe(true);
+        }
+    });
+});

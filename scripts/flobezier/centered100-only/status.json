@@ -1,0 +1,38 @@
+[
+  {
+    "profile": "root-fast",
+    "command": [
+      "scripts/test-fast"
+    ],
+    "exit": 1,
+    "seconds": 51.87
+  },
+  {
+    "profile": "root-slow",
+    "command": [
+      "scripts/test-slow"
+    ],
+    "exit": 0,
+    "seconds": 58.61
+  },
+  {
+    "profile": "portable-erlang",
+    "command": [
+      "scripts/test-portable",
+      "erlang",
+      "all"
+    ],
+    "exit": 1,
+    "seconds": 58.81
+  },
+  {
+    "profile": "portable-javascript",
+    "command": [
+      "scripts/test-portable",
+      "javascript",
+      "all"
+    ],
+    "exit": 1,
+    "seconds": 74.51
+  }
+]

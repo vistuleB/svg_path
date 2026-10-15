@@ -1,5 +1,8 @@
 # FI002: shared-endpoint candidate clusters
 
+> Closure status (2026-10-15): The limitation remains documented. Final rerun at `a7d8cc7` has nine flagged calls rather than the historical twenty; all reference roots are retained and all residual checks pass.
+> The dated investigation below preserves the observations and intermediate status at that time.
+
 Investigated 2026-10-14 against production commit `dd381a2`. No production
 source or tests changed during this investigation.
 

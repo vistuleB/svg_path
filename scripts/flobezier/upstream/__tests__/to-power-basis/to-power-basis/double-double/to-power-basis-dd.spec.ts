@@ -1,0 +1,75 @@
+import { describe, expect, it } from '@jest/globals';
+import { getRandomCubic, getRandomLine, getRandomPoint, getRandomQuad } from '../../../helpers/get-random-bezier.js';
+import { toPowerBasis } from '../../../../src/to-power-basis/to-power-basis/double/to-power-basis.js';
+import { toPowerBasisDd } from '../../../../src/to-power-basis/to-power-basis/double-double/to-power-basis-dd.js';
+import { eEstimate } from 'big-float-ts';
+
+
+describe('toPowerBasisDd', function() {
+    it('it should get the power basis representation of some bezier curves (in double-double precision)',
+    function() {
+        {
+            const ps = getRandomCubic(0);
+            const r = toPowerBasisDd(ps);
+            const rd = toPowerBasis(ps);
+            const expected = [
+                [     
+                    [0, 253.09693105379824],
+                    [0, -306.3361182861487],
+                    [-1.4210854715202004e-14, 286.49990967190894],
+                    [0, -108.49686506776892]
+                ],
+                [
+                    [0, -277.14696746050817],
+                    [0, 159.90518926393648],
+                    [0, 18.05539901828938],
+                    [0, -13.011161175008596] 
+                ]
+            ];
+            expect(r).toBeNearly(2**8, expected);
+            expect(r.map(v => v.map(eEstimate))).toBeNearly(2**8, rd);
+
+            for (let i=0; i<10; i++) {
+                const ps = getRandomCubic(i);
+                const r = toPowerBasisDd(ps);
+                const rd = toPowerBasis(ps);
+
+                expect(r.map(v => v.map(eEstimate))).toBeNearly(2**6, rd);
+            }
+        }
+        {
+            for (let i=0; i<10; i++) {
+                const ps = getRandomQuad(i);
+                const r = toPowerBasisDd(ps);
+                const rd = toPowerBasis(ps);
+
+                expect(r.map(v => v.map(eEstimate))).toBeNearly(2**6, rd);
+            }
+        }
+        {
+            for (let i=0; i<10; i++) {
+                const ps = getRandomLine(i);
+                const r = toPowerBasisDd(ps);
+                const rd = toPowerBasis(ps);
+
+                expect(r.map(v => v.map(eEstimate))).toBeNearly(2**0, rd);
+            }
+        }
+        {
+            for (let i=0; i<10; i++) {
+                const ps = getRandomPoint(i);
+                const r = toPowerBasisDd(ps);
+                const rd = toPowerBasis(ps);
+
+                expect(r.map(v => v.map(eEstimate))).toBeNearly(2**0, rd);
+            }
+        }
+
+        // some edge cases
+        {
+            const p = [1,1];
+            const ps = [p,p,p,p,p];
+            expect(() => toPowerBasisDd(ps)).toThrow();
+        }
+    });
+});

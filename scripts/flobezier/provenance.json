@@ -1,0 +1,2454 @@
+{
+  "repository": "https://github.com/FlorisSteenkamp/FloBezier",
+  "revision": "8ad65ac79cb69989cd40b0d375a51392eb477f16",
+  "packageVersion": "9.0.1",
+  "downloadedAt": "2026-10-14T20:02:07.499434+00:00",
+  "archiveSha256": "6e63c555fa3f70c8bee8e4b03e87d69f28ea3eecf04579d9e0dd9d1215bd9fab",
+  "files": [
+    {
+      "path": "LICENSE",
+      "sha256": "56df085688353ccd95a5e676024f695cb0a797eef980639afac7f918a3410a2d"
+    },
+    {
+      "path": "README.md",
+      "sha256": "3e8dad05f367555a85b31891cb5d42662c1c37a13a712f3fcdb6bd174d37d4d2"
+    },
+    {
+      "path": "__tests__/bezier-bezier-intersection-fast/bezier-bezier-intersection-fast.ts",
+      "sha256": "b07767c4970e56cff81759780d52fc1e3397a3396e86b583a5630b045868aa10"
+    },
+    {
+      "path": "__tests__/bezier-bezier-intersection-fast/check-intersection-in-ranges.ts",
+      "sha256": "e0a600ec47b4c242f147c7454e623bbd92adeb7247e5b701e84123c1b69c52fb"
+    },
+    {
+      "path": "__tests__/bezier-bezier-intersection-fast/clip/geo-clip.ts",
+      "sha256": "a8e2a534d0f7f44bbd3cbb187068f350e8e913a7a7dc4c4fbdd44730452af3c8"
+    },
+    {
+      "path": "__tests__/bezier-bezier-intersection-fast/clip/to-hybrid-quadratic.ts",
+      "sha256": "e9ad620863ad9d8b93500f2d657a3b2e7a4c11303f9cc6194854786466925352"
+    },
+    {
+      "path": "__tests__/bezier-bezier-intersection-fast/debug.ts",
+      "sha256": "9b264afad61fedf107803e09a961478c497a6bdb26fe849c3cfa34c605216988"
+    },
+    {
+      "path": "__tests__/bezier-bezier-intersection-fast/get-distance-to-line-function.ts",
+      "sha256": "4118bae1153a8cd8ab2d6c0756a578f65817c3f4a4cfadbc3ba0c672b4736663"
+    },
+    {
+      "path": "__tests__/bezier-bezier-intersection-fast/iteration.ts",
+      "sha256": "5ee09d017aa5e08d47c6a006750d4979971fe92d184de66453b84e36592931cd"
+    },
+    {
+      "path": "__tests__/bezier-piece/is-bezier-piece-zero-length.spec.ts",
+      "sha256": "a3edf209db0f780b5ac6f33b0dae165d1458344cf9d95f9b8bbe0a09951bfbb0"
+    },
+    {
+      "path": "__tests__/boxes/are-boxes-intersecting.spec.ts",
+      "sha256": "d9a2c68062e116fbd875d93c1038efa72d0d37001e027613a9045927ac65c320"
+    },
+    {
+      "path": "__tests__/boxes/intersect-boxes.spec.ts",
+      "sha256": "7e074ea195f515b49d95905b528b5237bd79d5df49f1a5986f1bb452a4c87e12"
+    },
+    {
+      "path": "__tests__/create/cubic-through-point-given013.spec.ts",
+      "sha256": "8cfa5b1831f6dc9f97cf44bc4c7d62586d7ce5e508065e7320d0311bae531e72"
+    },
+    {
+      "path": "__tests__/create/generate-arc.spec.ts",
+      "sha256": "d3c8a3c64f3a2a3e63fb4501b028b33938d31309ab7da0b5cbb0b4f8d9218a72"
+    },
+    {
+      "path": "__tests__/create/generate-cusp-at-half-t.spec.ts",
+      "sha256": "eb6bca3f27642dd8b1d8d77b6b5f7717176ab636e4fb2eb42aa2d27e50b26a3f"
+    },
+    {
+      "path": "__tests__/create/generate-self-intersecting.spec.ts",
+      "sha256": "9723e1bc978ce0ed48141e76565796ef834c2d5c2751a7231d087d82e05de463"
+    },
+    {
+      "path": "__tests__/fit/fit-quads-to-cubic.spec.ts",
+      "sha256": "c93010999c6587b42a148522467bbf1c10fa4d671a973f4865b647a1f2f6890f"
+    },
+    {
+      "path": "__tests__/fit/quadratic-to-polyline.spec.ts",
+      "sha256": "02a117b6029aff4e5510286f9f4a37d82419c87142c286250b56a24aca3d8afa"
+    },
+    {
+      "path": "__tests__/from-power-basis/from-power-basis.spec.ts",
+      "sha256": "4ec0d58f9da60658c43145be552a01b094b58a61cc7aef21d54470b0764bcdf1"
+    },
+    {
+      "path": "__tests__/get-curvature-extrema/curvature-extrema-precision.spec.ts",
+      "sha256": "93ad2fafd94adde9b3a9f4dcd65b3f8109b3a8c8b45aea1f1b6be9b64bd90e80"
+    },
+    {
+      "path": "__tests__/get-curvature-extrema/get-curvature-extrema.spec.ts",
+      "sha256": "c4c505f107b91a511978338958204433c7b95946e3b4974688823c896b3e8da0"
+    },
+    {
+      "path": "__tests__/get-curvature-extrema/inflection-poly.spec.ts",
+      "sha256": "b95db1b8451e9f546dcd65e70dbfb10aa9f7b490a355b6f8d2a3b669b10544d3"
+    },
+    {
+      "path": "__tests__/get-medial-points/dd-get-medial-point-coeffs.spec.ts",
+      "sha256": "8dcd327c1a1293244b249b52df66a7f4aeec05a7402b8a49a202d755e138a6d2"
+    },
+    {
+      "path": "__tests__/get-medial-points/get-medial-point-coeffs-bez0.spec.ts",
+      "sha256": "0e5d4fc6d21945d68867795c44442dca56161129f54b0ec1afb19b7b7debcc1f"
+    },
+    {
+      "path": "__tests__/get-medial-points/get-medial-point-coeffs-bez1.spec.ts",
+      "sha256": "952f14052c444062944af58492ed89e6423942e5028dfdad0e21fbc81215f3ef"
+    },
+    {
+      "path": "__tests__/get-medial-points/get-medial-point-coeffs-bez2-same-curve.spec.ts",
+      "sha256": "916111269f1f7e4d875e2e6128faaf2a792660e62bfcd667c01c5ae063f8ae10"
+    },
+    {
+      "path": "__tests__/get-medial-points/get-medial-point-coeffs-bez2.spec.ts",
+      "sha256": "f9e8b30d740c59fea863b5ccc5159ad09be77e2916710934439d39614fa6203f"
+    },
+    {
+      "path": "__tests__/get-medial-points/get-medial-point-coeffs-bez3-same-curve.spec.ts",
+      "sha256": "9813d096ed4afbd4223091d8e22c6ce954c792e1fe612f4a48a1ce30d2a44427"
+    },
+    {
+      "path": "__tests__/get-medial-points/get-medial-point-coeffs-bez3.spec.ts",
+      "sha256": "7030b34cd542150c2e69859df29a071ae899dd1423100d7904543cff54e700b2"
+    },
+    {
+      "path": "__tests__/get-medial-points/get-medial-point-coeffs-dispatch.spec.ts",
+      "sha256": "6fe01c94cf5a84d0cc19c0e16705e058ac41aa52ff5269d61dbf86fb2820146f"
+    },
+    {
+      "path": "__tests__/get-medial-points/get-medial-point-coeffs.helpers.ts",
+      "sha256": "1d4fb8b8c16b4c9745a8989a85d0d2084cc371d238a87c86cc758c569eb05722"
+    },
+    {
+      "path": "__tests__/get-medial-points/get-medial-points-point.spec.ts",
+      "sha256": "640b9a283a9f70134dea69e0f83725f5c767e75da203652cc3b884cf2d1291d0"
+    },
+    {
+      "path": "__tests__/get-medial-points/get-medial-points.spec.ts",
+      "sha256": "dbbb426e50591cf6509e16fa46178cbaecedd4a0879ba6e9eac737e54666740a"
+    },
+    {
+      "path": "__tests__/global-properties/area.spec.ts",
+      "sha256": "241def441129740f8d0f5867f99f0d0efbb22f6e8d2f04689f216bb6df071d23"
+    },
+    {
+      "path": "__tests__/global-properties/bounds/get-bounding-box-tight.spec.ts",
+      "sha256": "c19bf132c629eaedf85541fc6ceab1612ad75717e657c6253be3d0f6aea0ff2a"
+    },
+    {
+      "path": "__tests__/global-properties/bounds/get-bounding-box.spec.ts",
+      "sha256": "8165d2542fcdd45ae8eda3e927d7c7130d934a2dc636cde761d073867de3907f"
+    },
+    {
+      "path": "__tests__/global-properties/bounds/get-bounds.spec.ts",
+      "sha256": "a49e868bd383b871e77fa67bd5d884bc112170ae3892f5d01481a2c91a0fc607"
+    },
+    {
+      "path": "__tests__/global-properties/bounds/get-control-point-box.spec.ts",
+      "sha256": "1c42a8bb7b90fd02f529d5fd2da01dd2b87a1bb39f9980908a5c02c638a14e66"
+    },
+    {
+      "path": "__tests__/global-properties/bounds/get-interval-box/get-interval-box-dd.spec.ts",
+      "sha256": "8538344fe78948c8485705d2629205bc28c47c4b29ac020652b630682d2498bb"
+    },
+    {
+      "path": "__tests__/global-properties/bounds/get-interval-box/get-interval-box.spec.ts",
+      "sha256": "44b00d2630f3522ccf8220db928e84100db452be26f8fc88bc879d4866b2f281"
+    },
+    {
+      "path": "__tests__/global-properties/bounds/get-x-bounds-tight.spec.ts",
+      "sha256": "c468341c942f024a1ce33d81738443b731ea4dc3035b9d5daebba0202a31dd71"
+    },
+    {
+      "path": "__tests__/global-properties/bounds/get-y-bounds-tight.spec.ts",
+      "sha256": "73c3a3ff32599d26df7b2f5717f11f0644f8420e0f41bd48f2a00840a93e0006"
+    },
+    {
+      "path": "__tests__/global-properties/bounds/interval-box-containment.spec.ts",
+      "sha256": "734baa680eec5cf2e980a8b22ea1803931ac5c10fcd58b592b22bda96451dd79"
+    },
+    {
+      "path": "__tests__/global-properties/classification/classify.spec.ts",
+      "sha256": "87b66c7da4ac534a1b84c10741649e94ffe2e84af73a64ca296b4a005188e630"
+    },
+    {
+      "path": "__tests__/global-properties/classification/is-collinear.spec.ts",
+      "sha256": "12506de0749ec36e271a8253eb8c1fa1e15bbfc6c4334014a5a111fd26a659dd"
+    },
+    {
+      "path": "__tests__/global-properties/classification/is-cubic-really-line.spec.ts",
+      "sha256": "c89f333d883d7893ab90765d62ece4f66fe41456aa565d467afd042a3436be00"
+    },
+    {
+      "path": "__tests__/global-properties/classification/is-cubic-really-quad.spec.ts",
+      "sha256": "5d9124a32b65a47acf60c259924a138c370dd48af8484ccc9a5b800f8954bc8c"
+    },
+    {
+      "path": "__tests__/global-properties/classification/is-quad-flat.spec.ts",
+      "sha256": "7e91ce3f167847a1148f0ca975b0e7aa3eea3e12423c32f6909fa8f9cd754ff7"
+    },
+    {
+      "path": "__tests__/global-properties/classification/is-quad-obtuse.spec.ts",
+      "sha256": "5e0911527b4f4fcacbfd203b0a4084799ec44bb01c6cefc33c6ef3975b7fb73f"
+    },
+    {
+      "path": "__tests__/global-properties/classification/is-quad-really-line.spec.ts",
+      "sha256": "374dfaf90d2e021ceb45cf1f3c9956de940ec5f34be5323127c4893d9a533d3c"
+    },
+    {
+      "path": "__tests__/global-properties/classification/is-really-point.spec.ts",
+      "sha256": "e21961347fa7a5579465d3305096c2750fe55eab9c843d66c7453a1a79b85f44"
+    },
+    {
+      "path": "__tests__/global-properties/classification/is-self-overlapping.spec.ts",
+      "sha256": "4ca84d79a8f44c9dec11a76c13fceca0a79564e9e90b86b33db680a7aa1ffd7b"
+    },
+    {
+      "path": "__tests__/global-properties/curviness.spec.ts",
+      "sha256": "8579eeaed93f8d923867167b7fbe850b939ab2e2ca3db4bafdec51d10477dce1"
+    },
+    {
+      "path": "__tests__/global-properties/get-bending-energy.spec.ts",
+      "sha256": "6948902fba0a45985cd7f3a979124f6dcd5f793817ffacbe3066d9534dd90edc"
+    },
+    {
+      "path": "__tests__/global-properties/get-inflections.spec.ts",
+      "sha256": "2e5845ab463bad29080217eb0b4d5c6e5b7a71c3022a4c470d365d17e5bcbad5"
+    },
+    {
+      "path": "__tests__/global-properties/length/control-point-lines-length.spec.ts",
+      "sha256": "dfa3883bce08e65e9ddd12eea1cd83b0b750d93e3d30577ce80ea22873741b47"
+    },
+    {
+      "path": "__tests__/global-properties/length/length-accuracy.spec.ts",
+      "sha256": "dc8eb9a74cc83647f1a44898c08e75020572173b7ea79dea2a2408eba80375be"
+    },
+    {
+      "path": "__tests__/global-properties/length/length-approx.note.ts",
+      "sha256": "222ec696c5441ae13294c87538f4d9a97ca23ff68c3810cb19ceadbd8e9f15f6"
+    },
+    {
+      "path": "__tests__/global-properties/length/length.spec.ts",
+      "sha256": "2f29a51b81880a4b9dc4d13490bea77b39beb65489dcb5fe8055e6d7b472f30c"
+    },
+    {
+      "path": "__tests__/global-properties/length/total-length.note.ts",
+      "sha256": "3e8bc1ccf8fba70128c40f42e690dfeb6f775fe8088f48fde3b7060ba9ad0a72"
+    },
+    {
+      "path": "__tests__/global-properties/total-curvature.spec.ts",
+      "sha256": "091dec9970d0a69ee47208334724bbe6d1f9119718a55cbcf9a04c7ad0360a1d"
+    },
+    {
+      "path": "__tests__/globals.d.ts",
+      "sha256": "387a450f01c91a9e2c67aed31382cea89f788eea669c47a3fbf3ee10f8bae2e2"
+    },
+    {
+      "path": "__tests__/helpers/close-to.ts",
+      "sha256": "100a4a161d679f52455a12881fdd64d96e362037b43ec168f259ef99c0cfe6cd"
+    },
+    {
+      "path": "__tests__/helpers/create-cubic-thats-really-quad.ts",
+      "sha256": "52d594cbba4e85036ab999d9c364487bcaedb830c18d88cb10730d89d99534bf"
+    },
+    {
+      "path": "__tests__/helpers/get-random-bezier.ts",
+      "sha256": "8aa9e54faa2b2b8cbc486da43d8a78d8f4b9f18d0a6b330176b8e765b38a10b9"
+    },
+    {
+      "path": "__tests__/helpers/hausdorff-distance-naive.ts",
+      "sha256": "e72b1b9bdeb22ee5988b4f41e5d43ce18b044d3e4cd19cdd3b9f77247c8fdd36"
+    },
+    {
+      "path": "__tests__/helpers/heap-to-str.ts",
+      "sha256": "c308fbb21cc789071fb6f6d75300a86e7cce5cacbcc3e6cc2df216c3be29d69f"
+    },
+    {
+      "path": "__tests__/helpers/intersection/are-intersections-infinite.ts",
+      "sha256": "1d68859f860ffa1a05349c607a98fe61e310f9164d92c0b9aa047d0b9bf9f449"
+    },
+    {
+      "path": "__tests__/helpers/intersection/are-intersections-ordered.ts",
+      "sha256": "e088e3c1c25d92ee85a669c04b4496d15244d0494043af51713c3c0a31e42cf2"
+    },
+    {
+      "path": "__tests__/helpers/intersection/general/bezier-bezier-intersection-boundless-both.ts",
+      "sha256": "34ee0465637f19c367275fbf0b83b712c9c446eaef6d9e45bc5f6cc0ac90feb2"
+    },
+    {
+      "path": "__tests__/helpers/intersection/general/bezier-bezier-intersection-boundless.ts",
+      "sha256": "f0d564f218ff91a15a055018a8f80ceb8ae841dfeb1a0b1dcb50d9b0a48ec1e7"
+    },
+    {
+      "path": "__tests__/helpers/intersection/general/bezier-bezier-intersection.ts",
+      "sha256": "ab70bf18ec6adba919601eddb4a85231a81e654ae62a06ac1b17644f40b7fcdc"
+    },
+    {
+      "path": "__tests__/helpers/intersection/get-pss-with-infinite-xs.ts",
+      "sha256": "0f000b99f51eb29c06dd9654b4968115d800a0de20ddcc2cff81ba9e2f44ed71"
+    },
+    {
+      "path": "__tests__/helpers/intersection/get-pss.ts",
+      "sha256": "b3d8420a70a02f7119dd878ad6562ee5d45e3d7b34191e66c8dfac087cbb2060"
+    },
+    {
+      "path": "__tests__/helpers/intersection/get-special-pss.ts",
+      "sha256": "989e8a1afb1689a4ded0e53acefbe28eff2dbb30253a8b81223cdf0ff2f9a767"
+    },
+    {
+      "path": "__tests__/helpers/intersection/swap-intersections.ts",
+      "sha256": "7cf2835d6c3054bdb83081d08446db6c40b2cd6f2bbc7d70a133a0af9c0db059"
+    },
+    {
+      "path": "__tests__/helpers/intersection-fast/check-results.ts",
+      "sha256": "f07ca600721011c9c275b6a28875afe72db1a1fe16bca1f5efe007d8b3b184e5"
+    },
+    {
+      "path": "__tests__/helpers/intersection-fast/geo.ts",
+      "sha256": "1352e3f6f94335cba3a7a64d9c6cfd98150ab8f7df6c4f26c7b6f4e0ba7891d6"
+    },
+    {
+      "path": "__tests__/helpers/intersection-fast/native.ts",
+      "sha256": "9c54a473fd03d299106b190e90d4686b6af51218f6472011ddf6f1bd6c0bdf1d"
+    },
+    {
+      "path": "__tests__/helpers/intersection-fast/upd-ds.ts",
+      "sha256": "5603e1804d4234a1474203fc8a1b66bb68cbc82b69ccbec97630c93de774bf21"
+    },
+    {
+      "path": "__tests__/helpers/jest-extend-nearly.ts",
+      "sha256": "e68410ffdb9cec633c62016fbb099ad4068ca8c3630bfd4b64c7f8749f8e7975"
+    },
+    {
+      "path": "__tests__/helpers/jest.setup.ts",
+      "sha256": "41918545fa1410d231eab2076dd80b9b5f0481548af81de61783253042be1c23"
+    },
+    {
+      "path": "__tests__/helpers/map.ts",
+      "sha256": "c62ce318365c65c45e98350edcb2dee3f7fce2e912e9bcbc822b4d5a7cc8cdbf"
+    },
+    {
+      "path": "__tests__/helpers/obj-or-array.ts",
+      "sha256": "27749e801056db9f1fb912ca52380f2262ca85e6a6379fcd0c9937e5dfa47664"
+    },
+    {
+      "path": "__tests__/helpers/rad-to-deg.ts",
+      "sha256": "11713060cbd538e5019a2bea406bb81c600cdc78231e96fe76ea16e1fdf1f91e"
+    },
+    {
+      "path": "__tests__/helpers/random-on-grid.ts",
+      "sha256": "3d0fd7f324b394cdd7b01a38f8252b94762b51bddff75d2c6eb6052326c0bc41"
+    },
+    {
+      "path": "__tests__/helpers/random-rotate-and-translate.ts",
+      "sha256": "4ae9358021e6d501d4a808cf052e4ca674b8c7c89391925a5c2d2cc2a93b74be"
+    },
+    {
+      "path": "__tests__/helpers/random-translate.ts",
+      "sha256": "b821fd14bf299199e66dddaee9fe2a8b3fb16c9552a2882d17cbe6b91e2c3558"
+    },
+    {
+      "path": "__tests__/helpers/reference-length.ts",
+      "sha256": "be94f7df6c2eb39113d3cca15cdde8a0e3158fdab134c8ceca004dd3aa6a1718"
+    },
+    {
+      "path": "__tests__/helpers/reverse-bound-ts.ts",
+      "sha256": "eee2aae40cca173d7fffb653f461b2bd16e62b4361834f7c299e78d19dfc0644"
+    },
+    {
+      "path": "__tests__/helpers/to-grid.ts",
+      "sha256": "16a2efcd02524b3c070e3612bad7bc6b8e95cc3d43a615be82e73c04bed14905"
+    },
+    {
+      "path": "__tests__/implicit-form/double-running-error-bound.spec.ts",
+      "sha256": "6c5434b2cda48b23b48f6e4ddaf968248bf00b1282afe530ea5400fd7c0738ff"
+    },
+    {
+      "path": "__tests__/implicit-form/evaluate/double/evaluate-implicit123.spec.ts",
+      "sha256": "27402c99450b419bf5016cb5284f32696442ecb23e9645aa835e488716e4c51f"
+    },
+    {
+      "path": "__tests__/implicit-form/implicit-form.spec.ts",
+      "sha256": "47bbf146f219949647ab30fd3ef774f872a7569357b92fa697673f9dc919e86c"
+    },
+    {
+      "path": "__tests__/implicit-form/implicit-form2-dd-error-bound.spec.ts",
+      "sha256": "84fed75bdd417ba1748328bfde4798bcd5c0f3983293e1167d378f4ec8780f09"
+    },
+    {
+      "path": "__tests__/implicit-form/implicit-form3-dd-error-bound.spec.ts",
+      "sha256": "44a6236e20078da3b8df259c6122aca757ba9863d9e0a521622cc91f44003f07"
+    },
+    {
+      "path": "__tests__/intersection/bezier-bezier-intersection/b-cbrt.spec.ts",
+      "sha256": "e956056a9da42285958e80f74bc57b0948cb4598152493119c1451f19c6f7a23"
+    },
+    {
+      "path": "__tests__/intersection/bezier-bezier-intersection/b-sign.spec.ts",
+      "sha256": "38a277d6a07888c7f2b1b940627b6f6b44437744cb9b47b443f52943aa1edd09"
+    },
+    {
+      "path": "__tests__/intersection/bezier-bezier-intersection/b-sqrt.spec.ts",
+      "sha256": "b6f5c0fe39a553d064d5e44fffd1575e8d0db639816d116bceaff582fe1938ab"
+    },
+    {
+      "path": "__tests__/intersection/bezier-bezier-intersection/bezier-bezier-intersection-specific-cases.spec.ts",
+      "sha256": "b6771aebc49ae5df65e6e645d80178740db8db40bafc575b6c83456190218181"
+    },
+    {
+      "path": "__tests__/intersection/bezier-bezier-intersection/bezier-bezier-intersection.spec.ts",
+      "sha256": "c480abc9911373d109e851f0f13f617f2736497eb1d8f12924a515135fcfaf85"
+    },
+    {
+      "path": "__tests__/intersection/bezier-bezier-intersection/bigint-to-expansion.spec.ts",
+      "sha256": "25ec02cb3e147f97b5a203d6ec5d021f53c83fecfe57d240ead0313bf7a4710d"
+    },
+    {
+      "path": "__tests__/intersection/bezier-bezier-intersection/coeffs-bez3-bez3-dd-error-bound.spec.ts",
+      "sha256": "a091edf9379e2388758794e63e3681a2ed6e49011cfea71a39c25ff56c7478c3"
+    },
+    {
+      "path": "__tests__/intersection/bezier-bezier-intersection/coeffs-dd-error-bound.spec.ts",
+      "sha256": "75ba69ee455cbd6c5b003efb70ef56f152d89c606e8ec4ac79826c0daca89f86"
+    },
+    {
+      "path": "__tests__/intersection/bezier-bezier-intersection/coeffs-double-error-bound.spec.ts",
+      "sha256": "6b251c53684ab5fa9ad7527e8dac1c5cc708aefecd1f5031385f899ceec28c18"
+    },
+    {
+      "path": "__tests__/intersection/bezier-bezier-intersection/coeffs.spec.ts",
+      "sha256": "d2ae6b5d158ac33a50c8e16e9d60a84c9ca867896d3e6ea6210c22076c94a493"
+    },
+    {
+      "path": "__tests__/intersection/bezier-bezier-intersection/ensure-range.spec.ts",
+      "sha256": "e900dda15c9299f614b11486e70686f68efaf1398cc777594595f4ca54d3f592"
+    },
+    {
+      "path": "__tests__/intersection/bezier-bezier-intersection/get-endpoint-intersections.spec.ts",
+      "sha256": "ebfc3894e56516d616e09b39010267a8eaa606f581cb95198d830e4c35c3f5bf"
+    },
+    {
+      "path": "__tests__/intersection/bezier-bezier-intersection-fast/bezier-bezier-intersection-fast.spec.ts",
+      "sha256": "5c09d3deb7817c93292cbaf82f7a405c82a33cd4cc8a629f26c9f8745070f65c"
+    },
+    {
+      "path": "__tests__/intersection/bezier-bezier-intersection-fast/specific-cases.spec.ts",
+      "sha256": "3433f8e24fe1ecb85f682ae8111eaea7787fec4696c9cafb6f0b45e0f303bdad"
+    },
+    {
+      "path": "__tests__/intersection/bezier-bezier-intersection-shared-endpoint/coeffs-shared-start.spec.ts",
+      "sha256": "a06b226f2adf0c9c6df3db97a4631d02a9fb3d5e1c04b3c8672ec77fce2504c5"
+    },
+    {
+      "path": "__tests__/intersection/bezier-bezier-intersection-shared-endpoint/shared-endpoint-intersection.spec.ts",
+      "sha256": "91fd469cfc117f32faf202550437cd3038eeadac7c487f93b3a3741364c7878d"
+    },
+    {
+      "path": "__tests__/intersection/circle-bezier-intersection-error-bound.spec.ts",
+      "sha256": "fb8551c244e5c2670b62a1bcf00c93892a7de8822357b60094f480741d489d72"
+    },
+    {
+      "path": "__tests__/intersection/circle-bezier-intersection.spec.ts",
+      "sha256": "1999c75c5fcf9e6d2e98542038556471e3c0d8312235643797631bb6eb4f66e2"
+    },
+    {
+      "path": "__tests__/intersection/get-endpoint-intersections/get-endpoint-ts.spec.ts",
+      "sha256": "f4d94fa3a1768470059a17eb7ce17695dcd2a075c01e6b011a65c225b4183336"
+    },
+    {
+      "path": "__tests__/intersection/self-intersection/self-intersection.spec.ts",
+      "sha256": "c14e0b6dc7f1690ace839dd3ac9c303c21daed825804ae9de7341beca04a0ec2"
+    },
+    {
+      "path": "__tests__/jest-extensions.d.ts",
+      "sha256": "07fcb669114b16eb0bce746574cd30e63207231d678e02e8872db4faf990c7aa"
+    },
+    {
+      "path": "__tests__/local-properties-at-t/curried-forms.spec.ts",
+      "sha256": "4f06dc9acd2248b6aa8810d6ad426984ab74416922564a2ef212bbba354da833"
+    },
+    {
+      "path": "__tests__/local-properties-at-t/curvature.spec.ts",
+      "sha256": "12ec425af5d45276799169f0e8a58e2c5ecfe1a5bd62605b45192f80a294720a"
+    },
+    {
+      "path": "__tests__/local-properties-at-t/evaluate/double/eval-de-casteljau-with-err.spec.ts",
+      "sha256": "27a587c750e2967c797af37d226e750d05bafdc288e3ec71aa5b91b93bc26dc9"
+    },
+    {
+      "path": "__tests__/local-properties-at-t/evaluate/double/eval-de-casteljau.note.ts",
+      "sha256": "f0eace0ebf0436b7a8ad722cb28124d510a654ea01451b961e477cbeed582320"
+    },
+    {
+      "path": "__tests__/local-properties-at-t/evaluate/double/evaluate.spec.ts",
+      "sha256": "7b1432aefb48a64e64ff0a8318a44d4b4211db5721ba6b0962a44860c7e60c9e"
+    },
+    {
+      "path": "__tests__/local-properties-at-t/evaluate/double-double/eval-de-casteljau-dd.spec.ts",
+      "sha256": "843c33517d7522aec05f095b586296a3a7e72160669e7516f73b877d33f6794f"
+    },
+    {
+      "path": "__tests__/local-properties-at-t/evaluate/double-double/eval-de-casteljau-with-err-dd.spec.ts",
+      "sha256": "965f49de1c6d8f7a375abc5da3b7eb1691244970724e83739946be5bca4edd79"
+    },
+    {
+      "path": "__tests__/local-properties-at-t/evaluate/exact/evaluate-exact.spec.ts",
+      "sha256": "7d8a909433c0b31ad87245dea468c80005b203d4f555ea8e998a15f957b7b5ac"
+    },
+    {
+      "path": "__tests__/local-properties-at-t/evaluate-1st-derivative/double/evaluate-1st-derivative.spec.ts",
+      "sha256": "630cfd531869e6065660ad30addd8d4413a5662784b9173cf3c7261b9be15264"
+    },
+    {
+      "path": "__tests__/local-properties-at-t/evaluate-1st-derivative/exact/evaluate-1st-derivative-exact.spec.ts",
+      "sha256": "917dc2336a243b1fcaf0103f477dc0c536ce4d6306d2736d14d41080de59a26a"
+    },
+    {
+      "path": "__tests__/local-properties-at-t/evaluate-2nd-derivative/double/evaluate-2nd-derivative-at-0.note.ts",
+      "sha256": "bbf7e234bd527123c79c7e1a81fde1ff21266a945ec285ebe350e84b7c3dcc23"
+    },
+    {
+      "path": "__tests__/local-properties-at-t/evaluate-2nd-derivative/double/evaluate-2nd-derivative-at-1.note.ts",
+      "sha256": "bbf7e234bd527123c79c7e1a81fde1ff21266a945ec285ebe350e84b7c3dcc23"
+    },
+    {
+      "path": "__tests__/local-properties-at-t/evaluate-2nd-derivative/double/evaluate-2nd-derivative.spec.ts",
+      "sha256": "e242e3922af0a653bcd99944939084209eb3df78e304fc67132c226e92508ec8"
+    },
+    {
+      "path": "__tests__/local-properties-at-t/evaluate-2nd-derivative/exact/evaluate-2nd-derivative-at-0-exact.note.ts",
+      "sha256": "c149c53277f3a14775c463f361c25802a82189e3648643498aea6676b2ddf314"
+    },
+    {
+      "path": "__tests__/local-properties-at-t/evaluate-2nd-derivative/exact/evaluate-2nd-derivative-at-1-exact.note.ts",
+      "sha256": "c149c53277f3a14775c463f361c25802a82189e3648643498aea6676b2ddf314"
+    },
+    {
+      "path": "__tests__/local-properties-at-t/evaluate-2nd-derivative/exact/evaluate-2nd-derivative-exact.spec.ts",
+      "sha256": "b1c4e46c977a20939befc32d258e1ea831119d701a4e9bd4d1e8b3f396a46d3b"
+    },
+    {
+      "path": "__tests__/local-properties-at-t/normal/normal.spec.ts",
+      "sha256": "ae78969ae616f95123c6552acd4af3b2230346b4197279cbc4b8a12371c0f354"
+    },
+    {
+      "path": "__tests__/local-properties-at-t/normal/normal2.spec.ts",
+      "sha256": "f9d065799623784e2879c6f1fb9ac584db11d3eb55efb5ef5ce0d3ccf41c3765"
+    },
+    {
+      "path": "__tests__/local-properties-at-t/normal/unit-normal.spec.ts",
+      "sha256": "f6336a4c60bb7d1320efed7e1d7d998c0d4745ae776fcb656da63550a50f756c"
+    },
+    {
+      "path": "__tests__/local-properties-at-t/tangent/double/tangent-at-0.note.ts",
+      "sha256": "bbf7e234bd527123c79c7e1a81fde1ff21266a945ec285ebe350e84b7c3dcc23"
+    },
+    {
+      "path": "__tests__/local-properties-at-t/tangent/double/tangent-at-1.note.ts",
+      "sha256": "bbf7e234bd527123c79c7e1a81fde1ff21266a945ec285ebe350e84b7c3dcc23"
+    },
+    {
+      "path": "__tests__/local-properties-at-t/tangent/double/tangent.note.ts",
+      "sha256": "bbf7e234bd527123c79c7e1a81fde1ff21266a945ec285ebe350e84b7c3dcc23"
+    },
+    {
+      "path": "__tests__/local-properties-at-t/tangent/exact/tangent-at-0-exact.note.ts",
+      "sha256": "c149c53277f3a14775c463f361c25802a82189e3648643498aea6676b2ddf314"
+    },
+    {
+      "path": "__tests__/local-properties-at-t/tangent/exact/tangent-at-1-exact.note.ts",
+      "sha256": "c149c53277f3a14775c463f361c25802a82189e3648643498aea6676b2ddf314"
+    },
+    {
+      "path": "__tests__/local-properties-at-t/tangent/exact/tangent-exact.note.ts",
+      "sha256": "c149c53277f3a14775c463f361c25802a82189e3648643498aea6676b2ddf314"
+    },
+    {
+      "path": "__tests__/local-properties-at-t/tangent/tangent.spec.ts",
+      "sha256": "1755aec615032ca1f30d85e579275e11580cccd542e0a0fadd75879a0f74978d"
+    },
+    {
+      "path": "__tests__/local-properties-at-t/tangent/unit-tangent.spec.ts",
+      "sha256": "73564e16025f9b359f0cead50369c9d308653561074d1b6900a1fc7a522628c6"
+    },
+    {
+      "path": "__tests__/local-properties-to-t/get-t-at-length.spec.ts",
+      "sha256": "41553a6ed11d2be1f5f94d175e15a04a5c71742fa71f97abc49db690bb4485ab"
+    },
+    {
+      "path": "__tests__/local-properties-to-t/t-from-xy-combine.spec.ts",
+      "sha256": "4182d2e689637c71a4ba4f3fcfbab8edf5d6dedee717093fb8e7ebbfb842e84b"
+    },
+    {
+      "path": "__tests__/local-properties-to-t/t-from-xy.spec.ts",
+      "sha256": "35a03e1fac37809ac224f086485aa3a01f6178b0270405dd6c93d27649790541"
+    },
+    {
+      "path": "__tests__/next-down.spec.ts",
+      "sha256": "4c742f56d60ee78a68802eef1650ba75a885683467433d3876b5386f7390ccde"
+    },
+    {
+      "path": "__tests__/next-up.spec.ts",
+      "sha256": "b11129e08c27f416aed541993453d82d0e2ab180fdcd7b57bdcbb06e76742be1"
+    },
+    {
+      "path": "__tests__/simultaneous-properties/closest-and-furthest-point-on-bezier/closest-point-on-bezier-certified.spec.ts",
+      "sha256": "f937acd0c6b23e6de191b7de61b39f24ddc22bf27da050e5045d9387ceda0ae8"
+    },
+    {
+      "path": "__tests__/simultaneous-properties/closest-and-furthest-point-on-bezier/closest-point-on-bezier.spec.ts",
+      "sha256": "ba56f4e249255a8707628f9f2a654bb6221a28350c674f8d3088e2253ef4583c"
+    },
+    {
+      "path": "__tests__/simultaneous-properties/closest-and-furthest-point-on-bezier/distance-squared-interval.spec.ts",
+      "sha256": "ab1c3cf23e1c88c545998ad44aedfa901ae0ba1d7f11b12cd351a0bb18e1dbba"
+    },
+    {
+      "path": "__tests__/simultaneous-properties/closest-and-furthest-point-on-bezier/furthest-point-on-bezier.spec.ts",
+      "sha256": "59267ad1b2a35ec3172d46e37e9e154c66b0396362df6598fc7a4186b64aa21b"
+    },
+    {
+      "path": "__tests__/simultaneous-properties/closest-and-furthest-point-on-bezier/get-coeffs/double/get-footpoint-poly.spec.ts",
+      "sha256": "8116f777c1ed30bb490d898e3a391cd2e5a10e1abfa0fde7af00ca9038e9996b"
+    },
+    {
+      "path": "__tests__/simultaneous-properties/closest-and-furthest-point-on-bezier/get-coeffs/double-double/get-footpoint-poly-dd.spec.ts",
+      "sha256": "d007f7425b7951da5ffe8f0577b5abbd3d253a0cdfda6cb87b23aeda38a3dd25"
+    },
+    {
+      "path": "__tests__/simultaneous-properties/closest-and-furthest-point-on-bezier/get-coeffs/exact/get-footpoint-poly-exact.spec.ts",
+      "sha256": "a0e03a656272877a5e325b511c62af5e28f9f495018f7ad0cbb1bb04b9615a45"
+    },
+    {
+      "path": "__tests__/simultaneous-properties/closest-distance-between-beziers/closest-points-between-lines.spec.ts",
+      "sha256": "1185397c104f9e633e4da3bdd8991e04c3fd5b1bc4a62a3225bffe0e44496520"
+    },
+    {
+      "path": "__tests__/simultaneous-properties/equal.spec.ts",
+      "sha256": "06e8078eb5e90757aa5140fb3d1ede34f2fd812857ec2cb4a22eab06e55ab0ba"
+    },
+    {
+      "path": "__tests__/simultaneous-properties/get-interface-rotation.spec.ts",
+      "sha256": "af347224e781a7e3f8f44ca9d5e0551979a7ab9e4536a34fe47babfa9cd8d3e7"
+    },
+    {
+      "path": "__tests__/simultaneous-properties/hausdorff-distance-direct/hausdorff-distance-direct.spec.ts",
+      "sha256": "42cecc8de7a62af2e021b044f88af51410ab294a48ca0b260fd34780161539c8"
+    },
+    {
+      "path": "__tests__/simultaneous-properties/hausdorff-distance-direct/regression-cases.spec.ts",
+      "sha256": "d52ef3cf6499718910f4f47f004fcc8f6b96b18508947e24254d46a24f898598"
+    },
+    {
+      "path": "__tests__/simultaneous-properties/hausdorff-distance.spec.ts",
+      "sha256": "274cdfcb1e5b0f1e9bca4f8d46c03433bcdc107d921be50eae08acc18062363c"
+    },
+    {
+      "path": "__tests__/simultaneous-properties/heap.spec.ts",
+      "sha256": "868f68e8e18d4fd8d62241ad5e6a90b66e3c060a5a2a498f146882bee8614815"
+    },
+    {
+      "path": "__tests__/simultaneous-properties/is-point-on-bezier-extension/is-point-on-bezier-extension.spec.ts",
+      "sha256": "21e5b88fc1e81f8649562a645d77f57fda89f5b09526549caad7dc3aa64db02c"
+    },
+    {
+      "path": "__tests__/simultaneous-properties/tolerance-zero.spec.ts",
+      "sha256": "7e70e16e21e1e2eb6e9519dbcd4bd5a41709fafb9e121417afd501b1be840212"
+    },
+    {
+      "path": "__tests__/stewart-error-counters.ts/stewart-error-counters.spec.ts",
+      "sha256": "716d68f70cf49a47aa2a2838279babebaf3e93980dfb80c120dad09cd9769694"
+    },
+    {
+      "path": "__tests__/test-helpers.spec.ts",
+      "sha256": "6485fc6ecac5eae42975f5ea529760296fd2869e52cba118e7073ca5f3e61d80"
+    },
+    {
+      "path": "__tests__/to-power-basis/to-power-basis/double/to-power-basis-with-running-error.spec.ts",
+      "sha256": "94ee46b05764cd1d5f1dc7b540553a51db1043df27384e3113ea9f0a944c7681"
+    },
+    {
+      "path": "__tests__/to-power-basis/to-power-basis/double/to-power-basis.spec.ts",
+      "sha256": "73e58c83d85172ea95e9a776a5944cffdd8e4317c597423ff534b16ab9c421e2"
+    },
+    {
+      "path": "__tests__/to-power-basis/to-power-basis/double-double/to-power-basis-dd-with-running-error.spec.ts",
+      "sha256": "1b7a238cfa730dd954d33f14b0f1d5618ed5c01e432e4d7548d06952b5f05b04"
+    },
+    {
+      "path": "__tests__/to-power-basis/to-power-basis/double-double/to-power-basis-dd.spec.ts",
+      "sha256": "d57bf8dd12f9c16c806866fdee0d229304f9d40d705b6f3089d62343db99bf42"
+    },
+    {
+      "path": "__tests__/to-power-basis/to-power-basis/exact/to-power-basis-exact.spec.ts",
+      "sha256": "27c46dcdddeadad5ef571750781c3dda52bedc8715270f2a8d062da8f69029fd"
+    },
+    {
+      "path": "__tests__/to-power-basis/to-power-basis/to-power-basis-error-counters.spec.ts",
+      "sha256": "2371e9c21cd5103b82a45718305adfc2869c0bf7954a191b3fdaa273644e8a48"
+    },
+    {
+      "path": "__tests__/to-power-basis/to-power-basis-1st-derivative/double/to-power-basis-1st-derivative.spec.ts",
+      "sha256": "f288ce92c50032dc58e2586c4f0cd8c3a339453bcea6e32a18b56bd1e4af2f72"
+    },
+    {
+      "path": "__tests__/to-power-basis/to-power-basis-1st-derivative/double-double/to-power-basis-1st-derivative-dd.spec.ts",
+      "sha256": "d5d9faaa6cacd070b4165a6e02eba32836977162310db6169a20b3e480369d9d"
+    },
+    {
+      "path": "__tests__/to-power-basis/to-power-basis-1st-derivative/exact/to-power-basis-1st-derivative-exact.spec.ts",
+      "sha256": "7a9936dfea8eaa2af8e1537c0a85b373999ce0bd5ffb7dd2019458a459c7973a"
+    },
+    {
+      "path": "__tests__/to-power-basis/to-power-basis-1st-derivative/to-power-basis-1st-derivative-error-counters.spec.ts",
+      "sha256": "449c395fe93a6ff8e89b984f608f35099f4ec74f4788eddc571d902f6425c31c"
+    },
+    {
+      "path": "__tests__/to-power-basis/to-power-basis-2nd-derivative/double/to-power-basis-2nd-derivative.spec.ts",
+      "sha256": "cf1a5b3caf818c60a3861a77fc4e4c7abc58fc33230c60fab4b0b3c19f772280"
+    },
+    {
+      "path": "__tests__/to-power-basis/to-power-basis-2nd-derivative/double-double/to-power-basis-2nd-derivative-dd.spec.ts",
+      "sha256": "ae8b25544ef7d732c149bf084409c48fac28951d35cc02ff7dd861cba279c434"
+    },
+    {
+      "path": "__tests__/to-power-basis/to-power-basis-2nd-derivative/exact/to-power-basis-2nd-derivative-exact.spec.ts",
+      "sha256": "74ae8941eb5267e98dc9e43e483c9226d1598be86a179a20973b875f07176f80"
+    },
+    {
+      "path": "__tests__/to-power-basis/to-power-basis-3rd-derivative/double/to-power-basis-3rd-derivative.spec.ts",
+      "sha256": "2c6582bf6f91750e096853cdda66bfc06c2093544a76d16899f99d3cb7217b0e"
+    },
+    {
+      "path": "__tests__/to-power-basis/to-power-basis-3rd-derivative/double-double/to-power-basis-3rd-derivative-dd.spec.ts",
+      "sha256": "e6443a2772533d731ac115c781ba69062c32236b24526b3dec6cb1255ac0fed2"
+    },
+    {
+      "path": "__tests__/to-power-basis/to-power-basis-3rd-derivative/exact/to-power-basis-3rd-derivative-exact.spec.ts",
+      "sha256": "4ef4626947f677fba5ce42f98e3c9b10443b6b9a9585839d1ef40b8eb9f1afd9"
+    },
+    {
+      "path": "__tests__/transformation/affine/flip-about.spec.ts",
+      "sha256": "01276669d189a32a4370d00b3ffbf7a28f9a1c4341a06f6bf59a65e49ca9b36b"
+    },
+    {
+      "path": "__tests__/transformation/affine/flip-horizontally.spec.ts",
+      "sha256": "f91176fccc540b05592316ad942bc1203494211dd41ce18d42952f1f53139791"
+    },
+    {
+      "path": "__tests__/transformation/affine/flip-vertically.spec.ts",
+      "sha256": "e9835577073454bd8517d58abb5137878b6d620d27eb924343405d4c7aa5fdb8"
+    },
+    {
+      "path": "__tests__/transformation/affine/rotate-90-about.spec.ts",
+      "sha256": "6af5de9ba95886dd2c5a0a21eecc0bcb78020ae20bc8bea6a97a672fa30b6c5a"
+    },
+    {
+      "path": "__tests__/transformation/affine/rotate-90.spec.ts",
+      "sha256": "c7350f6809c97e1de09b8439bc83d95ae10d23129605141171cc33579bedb62c"
+    },
+    {
+      "path": "__tests__/transformation/affine/rotate-about.spec.ts",
+      "sha256": "e02765184761da87f0f68005f6dc5ffc13862243d48b7475de4ab12b4f70f09c"
+    },
+    {
+      "path": "__tests__/transformation/affine/rotate-neg-90-about.spec.ts",
+      "sha256": "b106fcfa6e33ecd3388c6088bcb57fef0fccacd200616d9c0f18c2f5227ef1a3"
+    },
+    {
+      "path": "__tests__/transformation/affine/rotate-neg-90.spec.ts",
+      "sha256": "1e4e60284388444ab9873b665dfcb2a136f7530e04aed57d13aff8fba38111bf"
+    },
+    {
+      "path": "__tests__/transformation/affine/rotate.spec.ts",
+      "sha256": "b9e31419b768177c0e55c99586e6a2cf952f0f8952903594b897ac9df6fa080d"
+    },
+    {
+      "path": "__tests__/transformation/affine/scale.spec.ts",
+      "sha256": "0cef93def7564252a6fab790b16ae780baef2358db156b99cd79d7d13ecf46ac"
+    },
+    {
+      "path": "__tests__/transformation/affine/transform.spec.ts",
+      "sha256": "e97e7257189bc4eb22a032574c60b594d24685c60768113fe354d5cacd26f053"
+    },
+    {
+      "path": "__tests__/transformation/affine/translate.spec.ts",
+      "sha256": "144a1bf926dd1242913af25fdbedb3a9c5be1a05a3a642093875df7c6341520d"
+    },
+    {
+      "path": "__tests__/transformation/clone.spec.ts",
+      "sha256": "57066eb8f8d8acd8ac2e4daaa1ac2432c4a71ff8fa3e8a296dd731b849f91726"
+    },
+    {
+      "path": "__tests__/transformation/degree-or-type/cubic-to-hybrid-quadratic.spec.ts",
+      "sha256": "350fe5e8cb649fe3c744b056123e2a1c8488f47fee15c0b51e3cf9800a5f2a94"
+    },
+    {
+      "path": "__tests__/transformation/degree-or-type/cubic-to-quadratic.spec.ts",
+      "sha256": "dfa0f360bbf49f58bc6717955d02fec56da1e889e0f4c37b926f633932fe0269"
+    },
+    {
+      "path": "__tests__/transformation/degree-or-type/elevate-degree.spec.ts",
+      "sha256": "abb63dbbe02a2a5b8cd7956071d33528945a2b8e6865b40200fb42c780f4dd43"
+    },
+    {
+      "path": "__tests__/transformation/degree-or-type/line-to-cubic.note.ts",
+      "sha256": "2b1f1548cd5a198a626829f0533471950f082a17b40da090ad72fda4542f89e1"
+    },
+    {
+      "path": "__tests__/transformation/degree-or-type/line-to-quadratic.spec.ts",
+      "sha256": "d01f19e2df0dae02f462d04ebb9a27a3b84dd6c16cc755279cc01ea99a6cbe80"
+    },
+    {
+      "path": "__tests__/transformation/degree-or-type/quadratic-to-cubic.note.ts",
+      "sha256": "2b1f1548cd5a198a626829f0533471950f082a17b40da090ad72fda4542f89e1"
+    },
+    {
+      "path": "__tests__/transformation/degree-or-type/to-cubic.spec.ts",
+      "sha256": "d3276a2e555604d674a6a504cb69a0a9d9ac8fbca8c00fb6feeccce5cfc44d27"
+    },
+    {
+      "path": "__tests__/transformation/get-hodograph.spec.ts",
+      "sha256": "ab1ebd3374a46a1b76805a86c63cb28f61308b73e43dcd724dd625b31158fa41"
+    },
+    {
+      "path": "__tests__/transformation/get-transformed-ts.note.ts",
+      "sha256": "eac0f16cad8a51114a92c477dd6a4e3224eb1eba4598a13ea3c7425f8001ae65"
+    },
+    {
+      "path": "__tests__/transformation/reverse.spec.ts",
+      "sha256": "17424b7f8aa94a81b6a8298f01b6902b966ee740e0466371189d4c80a5377b5d"
+    },
+    {
+      "path": "__tests__/transformation/split/from-to-incl-error-bound.spec.ts",
+      "sha256": "a92a8dfb6a7b87aa20595a695f77b55cfb4a5b3726620fd024cb449a74378d95"
+    },
+    {
+      "path": "__tests__/transformation/split/from-to.spec.ts",
+      "sha256": "be347e69c26dee844f8eeed263bd076a2e5dfca19a2bcca0eecb0112f3f67467"
+    },
+    {
+      "path": "__tests__/transformation/split/split-by-curvature-and-length.spec.ts",
+      "sha256": "2056c72e0481317457977f614e3c66ba49a1997090eae721a7c7c2533fe0e1b0"
+    },
+    {
+      "path": "__tests__/transformation/split/split-by-curvature.spec.ts",
+      "sha256": "9ea79f5dd378c192e2f7f06972cccb198d8b867ebec77268a51a03086a5859cb"
+    },
+    {
+      "path": "__tests__/transformation/split/split-by-deviation-from-straight-line-cubic.spec.ts",
+      "sha256": "ebf9c67e10a039c54510cad5175e0c2d21d9e395f733e66d9271cf0dd46c8b5d"
+    },
+    {
+      "path": "__tests__/transformation/split/split-by-deviation-from-straight-line.spec.ts",
+      "sha256": "f047c2bce87d3cf787aa5f21e183738fa4bc8cee284259332438c9bb90286560"
+    },
+    {
+      "path": "__tests__/transformation/split/split-by-length.spec.ts",
+      "sha256": "bd72b295e1cd28fc3795676cf37e4d939c52ef3eda72d42150bb69e23f918634"
+    },
+    {
+      "path": "__tests__/transformation/to-estimation.spec.ts",
+      "sha256": "bad73c2945e8dbbb7c2766a17628112841f2006c1fab0e188ffe9678624085ae"
+    },
+    {
+      "path": "__tests__/transformation/to-expansion.spec.ts",
+      "sha256": "e9d580d765661d534de26bd68bbc784f9c3f59343690ee143352571b59d9e7cf"
+    },
+    {
+      "path": "__tests__/transformation/to-string.spec.ts",
+      "sha256": "d9b00d910287c0fea7842a8a3ae0e47d1529fc21a99401778c3835c641f37164"
+    },
+    {
+      "path": "__tests__/tsconfig.json",
+      "sha256": "974a4c88ababa18d8197261acfdd21115b8025941ba68586b4222555fddb5988"
+    },
+    {
+      "path": "__tests__/utils/get-distance-to-line-function.spec.ts",
+      "sha256": "53cbd66ec30b093927444a3c0eff3ad27d56a9dc218636981fe1009339b50609"
+    },
+    {
+      "path": "__tests__/x-from-y/double/get-coeffs-x-from-y-with-running-err.spec.ts",
+      "sha256": "ae63072cf141e5091c4205bfdedaf6ad7de1b820ad3eee08c05344d860f3ca34"
+    },
+    {
+      "path": "__tests__/x-from-y/double-double/dd-get-coeffs-x-from-y-with-running-err.spec.ts",
+      "sha256": "99e38d44bb165faf29f43fc4604feae308161d3f285c99e69768c979fe85b15c"
+    },
+    {
+      "path": "__tests__/y-from-x/double/get-coeffs-y-from-x-with-running-err.spec.ts",
+      "sha256": "f81531d3a12a0750c3bac680cae187597977085fe5d41d56d42caec0431942e1"
+    },
+    {
+      "path": "__tests__/y-from-x/double-double/dd-get-coeffs-y-from-x-with-running-err.spec.ts",
+      "sha256": "cf2f050942394cb68ec6e18e254422515fae8bb85ab5c82ebaacd61861be5ffc"
+    },
+    {
+      "path": "experiments/hausdorff/__tests__/accuracy.spec.ts",
+      "sha256": "fbc89b1cfb69dd69e6935e3fe04f561ab40762f1fa5ac5c323ab45a269c59810"
+    },
+    {
+      "path": "experiments/hausdorff/__tests__/benchmark-2-2.spec.ts",
+      "sha256": "fcc872a5e9747fa0c72f5b81a1018a1eb312311735bd885c00b116e6984634f9"
+    },
+    {
+      "path": "experiments/hausdorff/adaptive-roots.ts",
+      "sha256": "7750ba05750e4350416768c4081e732e6d6e9c4dc4fa27165490ddd8ab105ba9"
+    },
+    {
+      "path": "experiments/hausdorff/cse.py",
+      "sha256": "bc1e24fba81cd07af2c7e455d2a8737621050dde8c3ad1a1bbca8d302b544a4f"
+    },
+    {
+      "path": "experiments/hausdorff/gen-resultants.py",
+      "sha256": "152e537c2e43117f66b4ef3a7168c964acbc17ec2243d9e661905ba5e2bb2cf7"
+    },
+    {
+      "path": "experiments/hausdorff/generated-archive/expanded/resMAI_A1B3.ts",
+      "sha256": "558889b0cf292aa9677354e34548e34e873d7f8b925fed885af86042527a8a99"
+    },
+    {
+      "path": "experiments/hausdorff/generated-archive/expanded/resMAI_A2B3.ts",
+      "sha256": "5656dd10466bff1e11b73dcc1fbafb8b5cd4f5595a1a1cd9eb4d0cadaabb348e"
+    },
+    {
+      "path": "experiments/hausdorff/generated-archive/maiAB_A1B3.ts",
+      "sha256": "2d77a5d93ed6b376895f3cd8c8ece44e19db2213d409936e6b84020ccff1203c"
+    },
+    {
+      "path": "experiments/hausdorff/generated-archive/maiAB_A2B3.ts",
+      "sha256": "34636e82b04ac1ca48f8360b3ca1c48ec260be8bf6f43ecf4be5b1790473641c"
+    },
+    {
+      "path": "experiments/hausdorff/generated-archive/maiAB_A3B3.ts",
+      "sha256": "2323c9656558b1585bb06959360f5d3613bd16c518fb53fc3009ae9fca227a31"
+    },
+    {
+      "path": "jest.config.ts",
+      "sha256": "56937a97af6fbb6dda2a6aae615d70e6401d4a57941774713e6d32409ccffcd9"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "c0e457490d49edaac9b6bff66225cfb835573def59753063a7d5032a00f36ae6"
+    },
+    {
+      "path": "package.json",
+      "sha256": "358355bd76884b3a2a37a0ba3cb569d13de820048ee559b19611a450f3254831"
+    },
+    {
+      "path": "src/angles-and-speeds/angles-and-speeds.ts",
+      "sha256": "e6c575c6e22d9ed04e1f22f4b8947e2079aee42140b054b6f2b62f63b2d5b7b5"
+    },
+    {
+      "path": "src/angles-and-speeds/bezier-by-angles-and-speeds/cubic-from-angles-and-speeds.ts",
+      "sha256": "7bcd74aeb40844a0719d056ac30191ce2f922c990c02238244ee32d346d2b10f"
+    },
+    {
+      "path": "src/angles-and-speeds/bezier-by-angles-and-speeds/cubic-to-angles-and-speeds.ts",
+      "sha256": "9f56571a019779711db3483304b49368ac387d824900d26113551f2fdb62168b"
+    },
+    {
+      "path": "src/angles-and-speeds/bezier-by-angles-and-speeds/get-cubic-speeds.ts",
+      "sha256": "d64e6d91142453162a5653e9a150c97d59a65c655b279391afc797629209b59e"
+    },
+    {
+      "path": "src/angles-and-speeds/bezier-by-angles-and-speeds/set-cubic-speeds.ts",
+      "sha256": "4fe33b5c130da666403528040fc5562e9a89437d93c27ed8244311eb48e85601"
+    },
+    {
+      "path": "src/bezier-piece/bezier-piece-to-bezier.ts",
+      "sha256": "75229875735279db352aa32ac800e123a94ef1cd015f0a1a6713bda641a52871"
+    },
+    {
+      "path": "src/bezier-piece/bezier-piece.ts",
+      "sha256": "bbc07d6ae939f9f61af8a28131603cfd210cef8915e7fd0092da716e9c0c440a"
+    },
+    {
+      "path": "src/bezier-piece/get-bezier-piece-length.ts",
+      "sha256": "3f944140bc0145dc9c1466befb3cc88f1a32ebca02781eed698760393e45fc5d"
+    },
+    {
+      "path": "src/bezier-piece/is-bezier-piece-zero-length.ts",
+      "sha256": "771b983b6d221ca42374acaa13d94e3f8e29c4c877450edb2b56be3df0509a11"
+    },
+    {
+      "path": "src/boxes/are-boxes-intersecting.ts",
+      "sha256": "66db85d1fac4505f4ea2ae968f3060fa65e835e55fd0dfcd692d35e745e84a19"
+    },
+    {
+      "path": "src/boxes/intersect-boxes.ts",
+      "sha256": "b11f12a651ed865bbc90b006a72b27ab153f2aa6497c5296babd72eba62b4347"
+    },
+    {
+      "path": "src/create/cubic-through-point-given013.ts",
+      "sha256": "1cb6aabbe4ab10bd27586f2529c9409112c8b980b0b32d848832f8d466fb8075"
+    },
+    {
+      "path": "src/create/generate-arc-from-cubics.ts",
+      "sha256": "95e3c211a43c6727d3a6cf162cbbddcd3117481620cb75f532f697deb8cd15e0"
+    },
+    {
+      "path": "src/create/generate-arc-from-quads.ts",
+      "sha256": "4bcfcc525d598fd1d969ecf1b5e4622b03025f819e355acaef598a6d964b2b05"
+    },
+    {
+      "path": "src/create/generate-arc.ts",
+      "sha256": "99f6ed5e81b13bbf75c23b71652cd94c60aab9af47355f2820705383ec54cf1e"
+    },
+    {
+      "path": "src/create/generate-cusp-at-half-t.ts",
+      "sha256": "630d1ae7e48b30866d44415b1b93a79f236a5630c42ae00531ece8cf26db8833"
+    },
+    {
+      "path": "src/create/generate-quarter-circle.ts",
+      "sha256": "e4f8de8a879aa69483ec7f50228bbdb4b9f92cf7564da6e34f5c084a03f243ea"
+    },
+    {
+      "path": "src/create/generate-self-intersecting.ts",
+      "sha256": "2e79f8039639853990e70fe15332d9dfab93fa3d32d4546e4426224cc192ffb0"
+    },
+    {
+      "path": "src/error-analysis/error-analysis.ts",
+      "sha256": "dbcbb4bafe2d18a5598e2b7e150ed69e66c559d8170dc0fae077d6fe897930b5"
+    },
+    {
+      "path": "src/error-analysis/max-abs-coordinate.ts",
+      "sha256": "b5ccb6524524957f98af9968d5f8532a4a077c64f93fbb8c1279c8779786fc18"
+    },
+    {
+      "path": "src/fit/fit-quads-to-cubic-hausdorff.ts",
+      "sha256": "f9a626fbea8d92ad0f850371d85e5da66f897e050882940f79026970860ad8aa"
+    },
+    {
+      "path": "src/fit/fit-quads-to-cubic.ts",
+      "sha256": "46a2dd0bdb1c4be12aab197d729437667fc9c0ee826474c6c99225a2122c1f61"
+    },
+    {
+      "path": "src/fit/get-abs-area-between.ts",
+      "sha256": "cc874764dbc5316ad507fc28ca4e6cedebe5f78773b286757c91a6afca12e970"
+    },
+    {
+      "path": "src/fit/quadratic-to-polyline.ts",
+      "sha256": "2832f567ef8e10b28ac089c1916cd84829eeae551b09de910190babadf6345d3"
+    },
+    {
+      "path": "src/from-power-basis/from-power-basis.ts",
+      "sha256": "74430521483dca3f153fb71f5d49fe912c2b0664a35c98836eb31bfcd3f27ad3"
+    },
+    {
+      "path": "src/get-curvature-extrema/double/get-abs-curvature-extrema-polys.ts",
+      "sha256": "e00a12c66e6c7a9e72d6c01f1a87b0175afcd903f058ce538b858d791d2ff068"
+    },
+    {
+      "path": "src/get-curvature-extrema/double/get-curvature-extrema-quadratic-poly.ts",
+      "sha256": "3dca3ab93f350cd47d6b5bc99323703fa87514c8301cd9919152e9c66ede4262"
+    },
+    {
+      "path": "src/get-curvature-extrema/double/get-curvature-extrema.ts",
+      "sha256": "29bdc259fa2c0df865acf3a1a562146998c321c009f251644702514a1532716a"
+    },
+    {
+      "path": "src/get-curvature-extrema/double-double/get-abs-curvature-extrema-polys-dd.ts",
+      "sha256": "b0e1f3dfbac69adf40babd118b765884992522788c95d46c471c1201fab1ec1f"
+    },
+    {
+      "path": "src/get-curvature-extrema/double-double/get-curvature-extrema-dd.ts",
+      "sha256": "19b1248a55d5902af75e2b540faa0a0b5556e6f4950dca7c5f17b3d7f73a7c15"
+    },
+    {
+      "path": "src/get-curvature-extrema/double-double/get-curvature-extrema-quadratic-poly-dd.ts",
+      "sha256": "afd3d32981ea145a0f9fab18f09f5874a7aa19b598286d9e753149904a1d5ea6"
+    },
+    {
+      "path": "src/get-curvature-extrema/expansion/get-abs-curvature-extrema-polys-e.ts",
+      "sha256": "fc4812ea6c5173b28a822bd28363e41ee65fd97092edc7d314e069eba2c68ff7"
+    },
+    {
+      "path": "src/get-curvature-extrema/expansion/get-curvature-extrema-e.ts",
+      "sha256": "f85637b5b74e2acd01f9113c6408f61fea8bdd65f542297ddee4c69acc54e65c"
+    },
+    {
+      "path": "src/get-curvature-extrema/expansion/get-curvature-extrema-quadratic-poly-e.ts",
+      "sha256": "fcd137be93157ff80c073662cf43df9d1fe59b55ec3ec05f4535529a318e9601"
+    },
+    {
+      "path": "src/get-curvature-extrema/extrema.ts",
+      "sha256": "3fad774925cfebd3587d01d1f78a327d6c3146b89f9cd4f525559e394412bb5c"
+    },
+    {
+      "path": "src/get-medial-points/double/get-medial-point-coeffs-bez0.ts",
+      "sha256": "8bb0d3a22e26924dfb9f16ae5aa088d01ff35d2ba37765ba7ca0af7bdc942feb"
+    },
+    {
+      "path": "src/get-medial-points/double/get-medial-point-coeffs-bez1.ts",
+      "sha256": "95f312f69bfb2a7e16ec06443df2ae0bdfe6d67e273cb15a83426d03a58451b4"
+    },
+    {
+      "path": "src/get-medial-points/double/get-medial-point-coeffs-bez2-same-curve.ts",
+      "sha256": "58ba00fcbb1955056cd5895f30520cd6c48c789ba781ef32cc9ee0459b4eac4c"
+    },
+    {
+      "path": "src/get-medial-points/double/get-medial-point-coeffs-bez2.ts",
+      "sha256": "a4e9cd99991758f2e26d64f2bae5dc9723347b6cbb9d14956772c43a1d0ebea0"
+    },
+    {
+      "path": "src/get-medial-points/double/get-medial-point-coeffs-bez3-same-curve.ts",
+      "sha256": "73d0f6e763287c230fbc308329afc9cadce3c92168c53bbea80e2dfb9eb724e9"
+    },
+    {
+      "path": "src/get-medial-points/double/get-medial-point-coeffs-bez3.ts",
+      "sha256": "ad34e546248444299fe24a553bda1ffe0346b17c26641e549fc06b1477ac26ec"
+    },
+    {
+      "path": "src/get-medial-points/double/get-medial-point-coeffs.ts",
+      "sha256": "67734e99a84d6cbc91738b2b2f59d4125d31cb1f3638cb3bea9c0e1f8089b3cc"
+    },
+    {
+      "path": "src/get-medial-points/double/get-medial-points.ts",
+      "sha256": "c0db77460253d32a6a29c03ae88095b8749f0178d5fe54640b10cf942d6f66e0"
+    },
+    {
+      "path": "src/get-medial-points/double-double/dd-get-medial-point-coeffs-bez0.ts",
+      "sha256": "79bd5a69a91bf7e6f128b97daa74b8b8b39848daa112133eeda4b142c3d34d2a"
+    },
+    {
+      "path": "src/get-medial-points/double-double/dd-get-medial-point-coeffs-bez1.ts",
+      "sha256": "878163171b6dd87a94f67e03bf138a7241611629d025517f8dc424f73e6fd22f"
+    },
+    {
+      "path": "src/get-medial-points/double-double/dd-get-medial-point-coeffs-bez2-same-curve.ts",
+      "sha256": "53432814c69870dd2713db20963f08095b213b88b37aac1f5a23ad03c85e260a"
+    },
+    {
+      "path": "src/get-medial-points/double-double/dd-get-medial-point-coeffs-bez2.ts",
+      "sha256": "3707c9533e2a5912b97d42aa091e193731392a18eb9d75b99b7f75aaccafa967"
+    },
+    {
+      "path": "src/get-medial-points/double-double/dd-get-medial-point-coeffs-bez3-same-curve.ts",
+      "sha256": "f0baca3edc27895027aa61b7f89d1a2ad67427b7e999d4eaa58c2ffe994d3aa5"
+    },
+    {
+      "path": "src/get-medial-points/double-double/dd-get-medial-point-coeffs-bez3.ts",
+      "sha256": "b94ed2e626ec2d31c1c1bf92e279c75713df7098c16ee397dc3310a0b23a89c2"
+    },
+    {
+      "path": "src/get-medial-points/double-double/dd-get-medial-point-coeffs.ts",
+      "sha256": "a4e6c8171b60e2b2416b99b0baf7d77bff7135fab0a4c4d65f978b8daa1f0d35"
+    },
+    {
+      "path": "src/get-medial-points/get-medial-points.md",
+      "sha256": "83e41f284bffed8ad57f8dbb75430d086801afea2f45f4869c4f9ae42c1128ab"
+    },
+    {
+      "path": "src/global-properties/area.ts",
+      "sha256": "a79f9176875e01f6bdffe465b502af5714454287b23e0c5074c87aa1464851da"
+    },
+    {
+      "path": "src/global-properties/bounds/bounds.ts",
+      "sha256": "3994288cefbd44032b114a882f260d4f0947f22d26919bff7b5fa9d1176ebf33"
+    },
+    {
+      "path": "src/global-properties/bounds/get-bounding-box-tight.ts",
+      "sha256": "453e16876e98b8ae197ae2e69edb4a8646891cd7ff9d98030014a5f3e687eba6"
+    },
+    {
+      "path": "src/global-properties/bounds/get-bounding-box.ts",
+      "sha256": "564bbbf744e13440d5cc82382a603d00f2b03c2f192b263de4147560609aeb15"
+    },
+    {
+      "path": "src/global-properties/bounds/get-bounding-hull.ts",
+      "sha256": "d72b045e47c1d50073d19ff29dc1f761ee366b033275251c2c2f88c227a3e437"
+    },
+    {
+      "path": "src/global-properties/bounds/get-bounds.ts",
+      "sha256": "f32d7615092fedea600ad8e7354da215fbeb238353004efe5d9af250c3eb1a38"
+    },
+    {
+      "path": "src/global-properties/bounds/get-control-point-box.ts",
+      "sha256": "908d5600fe57277db2c0bfd2b70eda603fc687f7a5ccffb5f3ac5d1f585ca29e"
+    },
+    {
+      "path": "src/global-properties/bounds/get-interval-box/get-interval-box-dd.ts",
+      "sha256": "29aef224801d5d62e63855f84aae9a81e691d453a2f8753641aac2e74764f80d"
+    },
+    {
+      "path": "src/global-properties/bounds/get-interval-box/get-interval-box.ts",
+      "sha256": "ade2bc3217773e0733b56aa9224afd120801892d6189f87e5b622deb90b1abba"
+    },
+    {
+      "path": "src/global-properties/bounds/get-x-bounds-tight.ts",
+      "sha256": "bc6252e3683be6c7f995d0e1cf1b9910e65b0ea88e4d469fc30de7f4fe6c1dd5"
+    },
+    {
+      "path": "src/global-properties/bounds/get-y-bounds-tight.ts",
+      "sha256": "15acc673da5cd86e9822ef729c44ee5b2ec7726f2d9d41ced5779634beb4f9f2"
+    },
+    {
+      "path": "src/global-properties/classification/classify.ts",
+      "sha256": "8740bbe2e1faf3ff4b714221b7a2a2c9c7bb98ea3e9a7344af4ac55f1b259ff1"
+    },
+    {
+      "path": "src/global-properties/classification/is-collinear.ts",
+      "sha256": "ccc279ee7e5288b42b4c33fa909a50b6ab35e187a314a6b3b94fea079008ad1d"
+    },
+    {
+      "path": "src/global-properties/classification/is-cubic-obtuse.ts",
+      "sha256": "f1112a95d164b9d3e10bed1c567cd2342a40fdfbd3ea0b9394422b05236f2110"
+    },
+    {
+      "path": "src/global-properties/classification/is-cubic-really-line.ts",
+      "sha256": "66b4117bff0b33e7b38619ae4a014fb22cc066fee973a8b4a97ff31de66ac29f"
+    },
+    {
+      "path": "src/global-properties/classification/is-cubic-really-quad.ts",
+      "sha256": "bd608d5c6f5f69bd7aa3d8c84dc652f485f12223d0ad003095692eab4928953a"
+    },
+    {
+      "path": "src/global-properties/classification/is-quad-flat.ts",
+      "sha256": "6fd673f745bc4baa0c77aa1d1bad31cb3dd10c4e8d4ca7dd7e495a9812d1802f"
+    },
+    {
+      "path": "src/global-properties/classification/is-quad-obtuse.ts",
+      "sha256": "a04775917650db097c2e7992dbc3fb26b0494f476ea83758a29cb637743448f4"
+    },
+    {
+      "path": "src/global-properties/classification/is-quad-really-line.ts",
+      "sha256": "d2da0883d83ef17697e26d633aa3875c8281b40ba75387ad8c0ccdbdb198fb30"
+    },
+    {
+      "path": "src/global-properties/classification/is-really-point.ts",
+      "sha256": "0e7946a16aac5cf50169b7505a85d175c8bc040e0ec9426e1ad4f5dab8b78cdd"
+    },
+    {
+      "path": "src/global-properties/classification/is-self-overlapping.ts",
+      "sha256": "b47989d1c49b557ff342c757373c3999482f3d34f65ef51cebf80c5de09f8c84"
+    },
+    {
+      "path": "src/global-properties/curviness.ts",
+      "sha256": "9f03af7433e40e8735e4192bcce76cc7ff4639659ae3e27e5e19db6df4e78dd3"
+    },
+    {
+      "path": "src/global-properties/get-bending-energy.ts",
+      "sha256": "f3412da5e2e4f770a013343b96346f82a007ad1615c333d3d1e964b3e992b8e5"
+    },
+    {
+      "path": "src/global-properties/get-inflections.ts",
+      "sha256": "03b6e73b4b25d0f833cc60298f12cb9ff5252b16476418aa42113eeea359adb1"
+    },
+    {
+      "path": "src/global-properties/length/control-point-lines-length.ts",
+      "sha256": "08a44861de78e7d0710640c978762b676029ce1a86d8eb9e6b47e41510254024"
+    },
+    {
+      "path": "src/global-properties/length/gauss-kronrod-15.ts",
+      "sha256": "e53a83b8f92ffa29a5dee46bcde4d462e96e0f8392be201f22354faeccd5535a"
+    },
+    {
+      "path": "src/global-properties/length/integrate-adaptive.ts",
+      "sha256": "058a6f04fd6dfe939a22c64c16507e71cb39ea35032ee3075cee128f0d3680d6"
+    },
+    {
+      "path": "src/global-properties/length/length-bez1.ts",
+      "sha256": "ea41b82fe8b3c91f18a3474cd7088ed785f9e08f2f18e551bdd6090e5a64c4dc"
+    },
+    {
+      "path": "src/global-properties/length/length-bez2.ts",
+      "sha256": "9a3e5f221baeb677a41c0e05a411972ebe082143ae0944d27866e887e55a9fab"
+    },
+    {
+      "path": "src/global-properties/length/length-bez3.ts",
+      "sha256": "d0c8368c8140b4b6f7a8528c59c30584799589087dfc6229070e0764f831b747"
+    },
+    {
+      "path": "src/global-properties/length/length.ts",
+      "sha256": "110d90e4be39ccf043957ae66987d952ded7f2a3693a8163f6174a4a2cf7d598"
+    },
+    {
+      "path": "src/global-properties/length/speed-stationary-points.ts",
+      "sha256": "c762bbb4bce5ce9555316d540b3ec99148d3e4fd6458fc321199929d668d1ac1"
+    },
+    {
+      "path": "src/global-properties/length/tanh-sinh.ts",
+      "sha256": "f12f152d32bb782323aa1ce8eecaa2c8f3e39efa844a5a28ad787410772efe59"
+    },
+    {
+      "path": "src/global-properties/length/total-length.ts",
+      "sha256": "96cc36070082ff7abfd6967dcaa8589363511acc7e5fcf5542339625185e1184"
+    },
+    {
+      "path": "src/global-properties/total-absolute-curvature.ts",
+      "sha256": "598cf3ab8fa73940ee97f2ac8e9b7ab0cbc8fee6125f4c165efd7f78ab3847fd"
+    },
+    {
+      "path": "src/global-properties/total-curvature.ts",
+      "sha256": "46741dc1dcc8076f149f85db569fe6112a6014582be8b039ddf96482877bb995"
+    },
+    {
+      "path": "src/implicit-form/double/get-implicit-form1-with-running-error.ts",
+      "sha256": "ac44e0cf6c1049c675912548851d911ea3fc1db70d69dbe227825cd66f06b22a"
+    },
+    {
+      "path": "src/implicit-form/double/get-implicit-form1.ts",
+      "sha256": "13bbdac27691530c7a413f0cc20003b82c86efc3a0f38a06624674d0bf9275e6"
+    },
+    {
+      "path": "src/implicit-form/double/get-implicit-form2-with-running-error.ts",
+      "sha256": "42d8f1a940e1939681c083095ee6540b8eafcffeb51c7ae6c6d4339c92c7a22c"
+    },
+    {
+      "path": "src/implicit-form/double/get-implicit-form2.ts",
+      "sha256": "683640a46ca45a7f68cf1a7c5d99c5af4336640da2e6c25ff0edcd7dbe41dbd3"
+    },
+    {
+      "path": "src/implicit-form/double/get-implicit-form3-with-running-error.ts",
+      "sha256": "b9e2c6d78055f3ef88ff14f0368b6a6bfc1afb86beddfd172bb0bb0d0ce8684b"
+    },
+    {
+      "path": "src/implicit-form/double/get-implicit-form3.ts",
+      "sha256": "ed79bc2ad73ed19e669bc9cf0272559652123ff5d01c0567acb925b81fb7ce7f"
+    },
+    {
+      "path": "src/implicit-form/double-double/get-implicit-form1-dd-with-running-error.ts",
+      "sha256": "6f04ed4da4b1fc67f50a973880747801678b8a5ea28a02d40702a33b882a7e33"
+    },
+    {
+      "path": "src/implicit-form/double-double/get-implicit-form1-dd.ts",
+      "sha256": "d8b2814c4a74fa2757f7cbe3c78f450e9a415798cd8d20f1e3e88188e585216c"
+    },
+    {
+      "path": "src/implicit-form/double-double/get-implicit-form2-dd-with-running-error.ts",
+      "sha256": "81734313e077d1bf237bc3939e9cebcdab14c21979e554a95db48e4bcd7c293f"
+    },
+    {
+      "path": "src/implicit-form/double-double/get-implicit-form2-dd.ts",
+      "sha256": "becbe3b67cd4179c27e7bc45da95337d2c6e5d7d75360d14a2cac1da40de72d1"
+    },
+    {
+      "path": "src/implicit-form/double-double/get-implicit-form3-dd-with-running-error.ts",
+      "sha256": "edfbab68ba448a1ebb9f86ff8fefaa07ae8258f6366c6598bef8912eb3c99725"
+    },
+    {
+      "path": "src/implicit-form/double-double/get-implicit-form3-dd.ts",
+      "sha256": "3861da7d289feb92c528324dd5b725fe3f2dc30d5d347be74222952e5e5ba6cd"
+    },
+    {
+      "path": "src/implicit-form/evaluate/double/evaluate-implicit1.ts",
+      "sha256": "1bc7b111c32758617dc1d46857ce5b29603be7aa4ff73b03f04c1ee609e63ccc"
+    },
+    {
+      "path": "src/implicit-form/evaluate/double/evaluate-implicit2.ts",
+      "sha256": "f5de01acbab5ba05dac27b58e2ba1e7888cbf2ca1e2b1d6f707c409bcac02be6"
+    },
+    {
+      "path": "src/implicit-form/evaluate/double/evaluate-implicit3.ts",
+      "sha256": "af4e4f67fd17b97c626f2a665f6686c52520a182daea0634daa7d42537cc3508"
+    },
+    {
+      "path": "src/implicit-form/expansion/e-get-implicit-form1.ts",
+      "sha256": "a56544143769d08e379c7a30a22f0b32f01765316872223e075f957d4f830b36"
+    },
+    {
+      "path": "src/implicit-form/expansion/e-get-implicit-form2.ts",
+      "sha256": "d5ce9ed1d1cb781c466db1a28c43eaaabf0fae6cb8a961c34d321838444d7ec7"
+    },
+    {
+      "path": "src/implicit-form/expansion/e-get-implicit-form3.ts",
+      "sha256": "c5c3a4c6f3f91eb81022e68a57d51ac2f1a8da2d947307f5581a293c08c48adc"
+    },
+    {
+      "path": "src/implicit-form/get-error-counters/get-implicit-form1-error-counters.ts",
+      "sha256": "fe0074790547312d645021b62ba58addf4bb1a9f5293b65dfbc549363ca931c3"
+    },
+    {
+      "path": "src/implicit-form/get-error-counters/get-implicit-form2-error-counters.ts",
+      "sha256": "afb8896ab352a2ba7248ffeaeaade400e5c8675d19c5f27dc53dcb959129a8eb"
+    },
+    {
+      "path": "src/implicit-form/get-error-counters/get-implicit-form3-error-counters.ts",
+      "sha256": "5ade8b5d983905c0f9231b2e937bce9613ae6112a45f034229e6d6473eb784fd"
+    },
+    {
+      "path": "src/implicit-form/implicit-form-types.ts",
+      "sha256": "0f40adc6b904c01ac859f19ca273e0ebc9c193cdc1629fd9de5ac0dd240211bd"
+    },
+    {
+      "path": "src/index.ts",
+      "sha256": "ceab57dd928f137c19a2fa00f9893234f065fdda694ae69d8aff85f06a3f4784"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection/bezier-bezier-intersection-boundless-both.ts",
+      "sha256": "32938011edbb5625ffd7487f87e1d15f7a83f7d1949df45ab600dcb50864f0f8"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection/bezier-bezier-intersection-boundless.ts",
+      "sha256": "f5ba5e3234ff4a92198ad9b459b4b31e37f3395ad6e2e290244a407935bbdea9"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection/bezier-bezier-intersection.ts",
+      "sha256": "d86160e2c41a226f7d5b5380c93eb9625debc39698887b9da5f81775fb8d2da8"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection/get-coefficients/double/get-coeffs-bez1-bez1.ts",
+      "sha256": "8ee78cb4b45be9579953e030b42460da4018e6e40b509568e19b5fcb7923b65a"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection/get-coefficients/double/get-coeffs-bez1-bez2.ts",
+      "sha256": "3b0cd2150591e9ceb3d533f262433454522f4233772356a4d5d7d2a761ba86e1"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection/get-coefficients/double/get-coeffs-bez1-bez3.ts",
+      "sha256": "5d35786f3adc40c6ed404d0469de1ef0752c354f43fa6f87d1b01d09351d8bc3"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection/get-coefficients/double/get-coeffs-bez2-bez1.ts",
+      "sha256": "ff72b0c75f9fdfb1dd5588fb6a5bafd31c27875d2917b46b964a5cd46bbc9e11"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection/get-coefficients/double/get-coeffs-bez2-bez2.ts",
+      "sha256": "a6e4a84545e7dbb06f34704e8e2855a728ffbcde3de3c843d4b18bc7ee544bbb"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection/get-coefficients/double/get-coeffs-bez2-bez3.ts",
+      "sha256": "96f358ca228b5159645e9ce1502139caa230a079db8e1ed79cea1c4a225d5785"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection/get-coefficients/double/get-coeffs-bez3-bez1.ts",
+      "sha256": "e78ee70e2de9848972d16c404bd050dafdf93535488dd1e8be3cd4685355fc5b"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection/get-coefficients/double/get-coeffs-bez3-bez2.ts",
+      "sha256": "7628f5453b0636db6a5b137ee4a21231afbab708fbf64ca2f18cf836c55713ef"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection/get-coefficients/double/get-coeffs-bez3-bez3.ts",
+      "sha256": "ecb9b996e7aff2c16204efda1e883aa305a6e839cf8403fa1a293bf4d0c6864c"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection/get-coefficients/double-double/error-bound-calc.txt",
+      "sha256": "76962d9fe2d17bd216f04f900483b2f27bc74073ea9d41eb62e6c9c8e482f516"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection/get-coefficients/double-double/get-coeffs-bez1-bez1-dd.ts",
+      "sha256": "4ffbf056afcb7d23722664c6669ab38bdc61c119850fbf2953d9bb763ec59130"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection/get-coefficients/double-double/get-coeffs-bez1-bez2-dd.ts",
+      "sha256": "3ff84d4afd957aa149f37176a240edef7152619db76f23976bbe3b37b6265aca"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection/get-coefficients/double-double/get-coeffs-bez1-bez3-dd.ts",
+      "sha256": "322d408df9743a3f0b31ff9eaa6768e6374428ca39e85b5c6870a2eeb406af78"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection/get-coefficients/double-double/get-coeffs-bez2-bez1-dd.ts",
+      "sha256": "c53fd990e583a9ddc4bbbb62fa55167197184b99bcc55e29e9bbd86662803022"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection/get-coefficients/double-double/get-coeffs-bez2-bez2-dd.ts",
+      "sha256": "c86dd4228d21f1867c78e4bcffb6d1d79eb5e7aa83437a3125a971b2e1e4e138"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection/get-coefficients/double-double/get-coeffs-bez2-bez3-dd.ts",
+      "sha256": "108cce22448cd38663ab62fd86234592c53675cc0b4986833bf7977ab338a705"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection/get-coefficients/double-double/get-coeffs-bez3-bez1-dd.ts",
+      "sha256": "af7820b998bdb33fe3566c8238ee37586f0ddd68318d27f61cca2b7302f25be8"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection/get-coefficients/double-double/get-coeffs-bez3-bez2-dd.ts",
+      "sha256": "09402af029394c07f7f35ad99df51e5d462fa52006ed73d62de5616142c49625"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection/get-coefficients/double-double/get-coeffs-bez3-bez3-dd.ts",
+      "sha256": "de968889fa7b23d63a862b581ba7be8870aa800824d7a33fe2d1ffa09acd1fd6"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection/get-coefficients/exact/get-coeffs-bez1-bez1-exact.ts",
+      "sha256": "1327c8bb84beda6f69f006d813cf0679530852936807827dad8c762944841c55"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection/get-coefficients/exact/get-coeffs-bez1-bez2-exact.ts",
+      "sha256": "1e9b1010fc3efd3f8e972cfda002df7b149ab28b203311fbe123395c096bbc24"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection/get-coefficients/exact/get-coeffs-bez1-bez3-exact.ts",
+      "sha256": "3a55c1fd35f529bd60c7876552869b6d682f8f8fc1103ddf8ac30aea263f2857"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection/get-coefficients/exact/get-coeffs-bez2-bez1-exact.ts",
+      "sha256": "973066874c8687918e42e27f43d164f14f849919e834c3cb0e07e1d87cf0c791"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection/get-coefficients/exact/get-coeffs-bez2-bez2-exact.ts",
+      "sha256": "95804b0bc9c8a93bb3254ca3a2016fcd7771c0a82084dd0e73fe8060e098eb6e"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection/get-coefficients/exact/get-coeffs-bez2-bez3-exact.ts",
+      "sha256": "631acc282da4cea57e045dbe991071b3ec7811d884a18f2c463d36d270141cc1"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection/get-coefficients/exact/get-coeffs-bez3-bez1-exact.ts",
+      "sha256": "1f4825c382d52864a4508179c0ea5908d32c220b5a36b6f2f8b7d0ad6e765a35"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection/get-coefficients/exact/get-coeffs-bez3-bez2-exact.ts",
+      "sha256": "792bb40e27b7e7551fab69e06a9cc9791abed6a96956d11d6942090ddc07adee"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection/get-coefficients/exact/get-coeffs-bez3-bez3-exact.ts",
+      "sha256": "004ce659d9a9887bffe0af0bbca630c88315d6525908d66cb4ef433838f7d308"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection/get-coefficients/get-coeffs-bez-bez.ts",
+      "sha256": "46bc1d5e1c337c4eba1e469c6a2bd6aecc3caf94bd775e19f74b7c676660cc56"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection/x.ts",
+      "sha256": "84611224b8c6f7039abc38d2276fc7015e630dc8e1e6e443d69c43aa09335cc2"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection-shared-endpoint/get-coefficients/double-double/get-coeffs-bez1-bez1-shared-start-dd.ts",
+      "sha256": "add603a52d04ede861add2bb16f6f690d1b6b7fc6a85b3581d56eb161885cb61"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection-shared-endpoint/get-coefficients/double-double/get-coeffs-bez1-bez2-shared-start-dd.ts",
+      "sha256": "fccc9cba65de7d72a2307a6bd7ce3eacda23db2d1f3707abd87c85aabb61b1ae"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection-shared-endpoint/get-coefficients/double-double/get-coeffs-bez1-bez3-shared-start-dd.ts",
+      "sha256": "3f07bb4d0f76725cdeafa25f6eaaea83b35a27e484cb4ae1ab5348e56f639956"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection-shared-endpoint/get-coefficients/double-double/get-coeffs-bez2-bez1-shared-start-dd.ts",
+      "sha256": "dce7db1a6444602b040bff4a514c9b266780e197a9a3a839a57511ed67e9477d"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection-shared-endpoint/get-coefficients/double-double/get-coeffs-bez2-bez2-shared-start-dd.ts",
+      "sha256": "9ccad2d1b1a39e3479011cc91561a1e8f3a5ced169fa9aa6c1cfde7f5dc24119"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection-shared-endpoint/get-coefficients/double-double/get-coeffs-bez2-bez3-shared-start-dd.ts",
+      "sha256": "61921b5edaf844f52b7067d1a86475862f8d703e0be60b0792f78658d2b7afed"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection-shared-endpoint/get-coefficients/double-double/get-coeffs-bez3-bez1-shared-start-dd.ts",
+      "sha256": "e73ea8ca76d9d8053d36235c2a73afd1ccf538c1c3db8a33381c2d733204fbb9"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection-shared-endpoint/get-coefficients/double-double/get-coeffs-bez3-bez2-shared-start-dd.ts",
+      "sha256": "8a3c32bedd55edcfa84e6fd1a8d757526c48f5170834fb570ad4aceb93c5d3b8"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection-shared-endpoint/get-coefficients/double-double/get-coeffs-bez3-bez3-shared-start-dd.ts",
+      "sha256": "794155336741e431f81b59e2c96608228c18531eeedc7c39cd1d72a7f4151ef2"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection-shared-endpoint/get-coefficients/double-double/get-implicit-form1-at-start-dd.ts",
+      "sha256": "243311667eab6a76e394f30a64bdc064063e0de7915e6e95499b7349ef729ddd"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection-shared-endpoint/get-coefficients/double-double/get-implicit-form2-at-start-dd.ts",
+      "sha256": "a54179c6f96f13b3013c1dc977d78bd304aa8e7a92608e675770a0e996c03316"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection-shared-endpoint/get-coefficients/double-double/get-implicit-form3-at-start-dd.ts",
+      "sha256": "f75ab547d231b4730be3851c4c13c0fb7f6ac3ac1a8480d1c765e4bf78a3a958"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection-shared-endpoint/get-coefficients/exact/get-coeffs-bez1-bez1-shared-start-exact.ts",
+      "sha256": "5eb05bbbd35d67f6e0e29994ee63840e63d2fa26b1b42bfb698553b2bd72fcdf"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection-shared-endpoint/get-coefficients/exact/get-coeffs-bez1-bez2-shared-start-exact.ts",
+      "sha256": "1c9b46c8d0ca283dfbe6803cd99a9fd70aa54721719574054e7a850c7f39b54a"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection-shared-endpoint/get-coefficients/exact/get-coeffs-bez1-bez3-shared-start-exact.ts",
+      "sha256": "5cd9278676d4cf2c07f77be1349bf1dfa143c9b67c5b5bc38d2701dc4987daeb"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection-shared-endpoint/get-coefficients/exact/get-coeffs-bez2-bez1-shared-start-exact.ts",
+      "sha256": "e73712e94bf564748145ca76594acd043d567461966459594b92c79e99a5fe85"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection-shared-endpoint/get-coefficients/exact/get-coeffs-bez2-bez2-shared-start-exact.ts",
+      "sha256": "3346cbc4f607e9766177e74fdea2abdc4f951e36a053705cf6c8cd9afb728f5a"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection-shared-endpoint/get-coefficients/exact/get-coeffs-bez2-bez3-shared-start-exact.ts",
+      "sha256": "c268c1fb46d863ba2ce403a713aa953bbfc93c2336f7efe2d70df44ff1e5aaac"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection-shared-endpoint/get-coefficients/exact/get-coeffs-bez3-bez1-shared-start-exact.ts",
+      "sha256": "c11a7e305013bc0c4a15670181f4d2d557337c4b200d64de10657abdfd754264"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection-shared-endpoint/get-coefficients/exact/get-coeffs-bez3-bez2-shared-start-exact.ts",
+      "sha256": "2df2aa4036c92732f02f26ae47cc02f81e8220e915c039d2ac461dcbcdfee0ba"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection-shared-endpoint/get-coefficients/exact/get-coeffs-bez3-bez3-shared-start-exact.ts",
+      "sha256": "06f3f7404cc7feda6356ab3a0c6c6b49248b358bce6c25e2705c2e6ee7a3652a"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection-shared-endpoint/get-coefficients/exact/get-implicit-form1-at-start-exact.ts",
+      "sha256": "41e2c2192fc60c64507db1b6b9b30f90db679a1a6fc46d64da73589c246aec39"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection-shared-endpoint/get-coefficients/exact/get-implicit-form2-at-start-exact.ts",
+      "sha256": "1fa573c7b5d0f5373e87a33e0cfd520171fb371d8c2be2accce8f889ce60cd33"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection-shared-endpoint/get-coefficients/exact/get-implicit-form3-at-start-exact.ts",
+      "sha256": "edfea6e50f39e3b1ba4e0d64a2865d2b55b7163183f5c1c50e7844475381a152"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection-shared-endpoint/get-coefficients/get-coeffs-shared-start.ts",
+      "sha256": "2a19b584129be417cc4ebb597397d98b9cc333f50ebb678ec387fd4bf56e4d29"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection-shared-endpoint/get-shared-endpoint.ts",
+      "sha256": "31d6f97e59d29367d2aee42a850a1eade4cb5790559a8ae4d92626c6b0a3a40d"
+    },
+    {
+      "path": "src/intersection/bezier-bezier-intersection-shared-endpoint/roots-with-shared-endpoint.ts",
+      "sha256": "69763ae20885bde37b2cede6063724c3480b97f8958f60c7b3b337525d016f16"
+    },
+    {
+      "path": "src/intersection/circle-bezier-intersection/circle-bezier-intersection.ts",
+      "sha256": "59b9bf25cdcae14a42184caa555f4e031caf7964454805ed60c4a078f230d34a"
+    },
+    {
+      "path": "src/intersection/circle-bezier-intersection/double-double/get-coeffs-dd.ts",
+      "sha256": "40abc76fca562eb081faee1da9f7c48d5a1b73c4961342d7b992dd344a483105"
+    },
+    {
+      "path": "src/intersection/circle-bezier-intersection/exact/get-coeffs-exact.ts",
+      "sha256": "3de4eb1bd7d0246c8aa1dc1966e6d1b4e6095936db1345d3c39234782b7531fa"
+    },
+    {
+      "path": "src/intersection/circle-bezier-intersection/get-circle-bezier-intersection-error-counters.ts",
+      "sha256": "92737b651713aad39b78143ffde7dde75fbaa2fefe6fd61ecfc70d7314a28c30"
+    },
+    {
+      "path": "src/intersection/error-analysis-double-double.txt",
+      "sha256": "0711357db616790b564828d5e15a85fc0af6a20ff049445f6ce02c9c76fc36d3"
+    },
+    {
+      "path": "src/intersection/error-analysis-double.txt",
+      "sha256": "22744d0bfe9c1ff3c691d50720f3defc084e2ca7d5260d4aee1fda5176064e0e"
+    },
+    {
+      "path": "src/intersection/get-endpoint-intersections/b-abs.ts",
+      "sha256": "71f5db1831c260feaefcb4628237bb92f2971a67c8c479976d86f9b71d202832"
+    },
+    {
+      "path": "src/intersection/get-endpoint-intersections/b-cbrt.ts",
+      "sha256": "3304088317a94af5ea55a5b66ee4f0913419aebd80786c1eaa09582d15825000"
+    },
+    {
+      "path": "src/intersection/get-endpoint-intersections/b-sign.ts",
+      "sha256": "ef76740d43f2bb9a6c3810401b0bc526d8706ad509185510ce85435fe7abe0ca"
+    },
+    {
+      "path": "src/intersection/get-endpoint-intersections/b-sqrt.ts",
+      "sha256": "cb43ca6e1a98aaf19ec5137222f6d6bca9207991b37820e12b93d975cda2e655"
+    },
+    {
+      "path": "src/intersection/get-endpoint-intersections/bigint-to-expansion.ts",
+      "sha256": "f3a171769c6a528d5a6c6bc37a67335bd25fdd539a7c7399edd797d98a3e93fc"
+    },
+    {
+      "path": "src/intersection/get-endpoint-intersections/calc-exact-cube-root.ts",
+      "sha256": "1ea4cf8ebd7e38bc23e4df6cc6e22d07396e47f896683b6012eecc91ef148213"
+    },
+    {
+      "path": "src/intersection/get-endpoint-intersections/calc-exact-square-root.ts",
+      "sha256": "66900f6f6879effb2ee3663a56431403e3c89f0fac9580faefb5af5cec920682"
+    },
+    {
+      "path": "src/intersection/get-endpoint-intersections/ensure-range.ts",
+      "sha256": "7f5ac453b07e6b0ca0a3c191da28df2c3e53513e426c2d981ca279fe128eccbd"
+    },
+    {
+      "path": "src/intersection/get-endpoint-intersections/er-compare.ts",
+      "sha256": "b19106b9e12f30920fdf2e06fff33fc8ca57f5b7402fac797a446d784f5abe5a"
+    },
+    {
+      "path": "src/intersection/get-endpoint-intersections/er-estimate.ts",
+      "sha256": "47f3c5cf64f2197021427e41caf54af202e5de2cb72c5aa4cce1fb8af136d618"
+    },
+    {
+      "path": "src/intersection/get-endpoint-intersections/get-endpoint-intersections.ts",
+      "sha256": "9f7f3af365de8e1d187a529d9db70d632b2c847ff727b5afd54d285b01812c7f"
+    },
+    {
+      "path": "src/intersection/get-endpoint-intersections/get-endpoint-ts.ts",
+      "sha256": "3481bd86f04598d3ee9e03a142a34bd5a13dd6e588b277330976507c1739f4e8"
+    },
+    {
+      "path": "src/intersection/get-endpoint-intersections/get-transform-1.ts",
+      "sha256": "7350ec2dedb03a6baab952bca666bc6f32605323fb83933273d2eebcbc2dcd9e"
+    },
+    {
+      "path": "src/intersection/get-endpoint-intersections/get-transform-2.ts",
+      "sha256": "e0fc4dc0daeed3624cffa5f69f8087f5b446d891e08b40faa07c9430a0724a41"
+    },
+    {
+      "path": "src/intersection/get-endpoint-intersections/get-transform-3.ts",
+      "sha256": "170e8db5973e8f1e1e16e02d48ffed870e32298048d3e407ca3c6aeb70e1f9b7"
+    },
+    {
+      "path": "src/intersection/get-endpoint-intersections/sum-bigints.ts",
+      "sha256": "69d0f0a8bd0d87191794c94b75b73cc45a8bad26dc543ffe412dfae1c5b92992"
+    },
+    {
+      "path": "src/intersection/self-intersection/bezier-self-intersection.ts",
+      "sha256": "9df5aecdb7e8c47093252e90edcf13bd8729ca59e66976a0225f29dde3783f74"
+    },
+    {
+      "path": "src/intersection/self-intersection/get-coefficients/double/get-coeffs-bez3-with-running-error.ts",
+      "sha256": "b0484a4752ae294c359fc10ae5d24f355ad16bae70eef08828b0223d95af44bb"
+    },
+    {
+      "path": "src/intersection/self-intersection/get-coefficients/double/get-coeffs-bez3.ts",
+      "sha256": "f9972a7cb0ba1bae8ffa2c98ab6c343a7810371ef072508b019f7ca382a9c231"
+    },
+    {
+      "path": "src/intersection/self-intersection/get-coefficients/double-double/get-coeffs-bez3-dd.ts",
+      "sha256": "ed81dcd8e41fcf664fb5208f7358d3c6625bbb584a869890c3140254f055429a"
+    },
+    {
+      "path": "src/intersection/self-intersection/get-coefficients/exact/get-coeffs-bez3-exact.ts",
+      "sha256": "b9dde978bdc52e278e252d14e147a57be840b0092fa68eb4fb08746c64469de5"
+    },
+    {
+      "path": "src/local-properties-at-t/curvature/curvature.ts",
+      "sha256": "e604aee07cc0c679fb9bdd34025cee0311bd4e9b1237d9d7ee744f9a9d412adf"
+    },
+    {
+      "path": "src/local-properties-at-t/curvature/dd-curvature.ts",
+      "sha256": "e5d12b4a7a2b7d80da0a23145a3fb1ecae4bd5f885c17cda2e5c6f732fa1d4b3"
+    },
+    {
+      "path": "src/local-properties-at-t/curvature/e-curvature.ts",
+      "sha256": "c2009c9fa8f4bd3e778d6fc7a79c9b276a66a5f1dd13ef6c3c246354a6e26cc1"
+    },
+    {
+      "path": "src/local-properties-at-t/ds.ts",
+      "sha256": "c74894af58fa2b367b5229dd1655286d640a8d25a45ba911f49370bb414467db"
+    },
+    {
+      "path": "src/local-properties-at-t/evaluate/double/eval-de-casteljau-with-err.ts",
+      "sha256": "3c6c0b5dc281b987d3026ca494d4cdd0bdd3a726cd8241e0679a152a36840827"
+    },
+    {
+      "path": "src/local-properties-at-t/evaluate/double/eval-de-casteljau.ts",
+      "sha256": "504a3b5d414111bd51e1829662c8ca3f4e04cf94cbb5db57f7c7bd5d3fb5b2dd"
+    },
+    {
+      "path": "src/local-properties-at-t/evaluate/double/evaluate.ts",
+      "sha256": "c38b47f4219d8ab7fe366b505e409f7b127d438fc8151b306561b3e77d248183"
+    },
+    {
+      "path": "src/local-properties-at-t/evaluate/double-double/eval-de-casteljau-dd.ts",
+      "sha256": "bdcb61f6aff8dcb80464ed53b5252a603f723336ac6e92ea2ff3913e8d5efa4c"
+    },
+    {
+      "path": "src/local-properties-at-t/evaluate/double-double/eval-de-casteljau-with-err-dd.ts",
+      "sha256": "aeacbd2f0e98ca01367456c18a5ff23cdd352dc3b19742c13f3007e502ab23ab"
+    },
+    {
+      "path": "src/local-properties-at-t/evaluate/eval-de-casteljau-error.ts",
+      "sha256": "27a6d15de8390a78af40141e932ca5314f62b784cceccf89624cf9347e8f18c6"
+    },
+    {
+      "path": "src/local-properties-at-t/evaluate/exact/evaluate-exact.ts",
+      "sha256": "c075f36d4ed14dbf2cba2a169b186dbb97f2f75b0f5d0ae86e20ae8e13b22887"
+    },
+    {
+      "path": "src/local-properties-at-t/evaluate-1st-derivative/double/evaluate-1st-derivative.ts",
+      "sha256": "092036dd9e852851cd997dafb50103c9447e44c81204f73c80b70dc46db47dfd"
+    },
+    {
+      "path": "src/local-properties-at-t/evaluate-1st-derivative/exact/evaluate-1st-derivative-exact.ts",
+      "sha256": "6db89774763533c579c300c3e2316b561fe64fe0fb12c8706b5c3bce3b96e36e"
+    },
+    {
+      "path": "src/local-properties-at-t/evaluate-2nd-derivative/double/evaluate-2nd-derivative-at-0.ts",
+      "sha256": "d44341ad1cf9589da60895ea249fda64416c5f1863d758f2e92f5bc3c6bce543"
+    },
+    {
+      "path": "src/local-properties-at-t/evaluate-2nd-derivative/double/evaluate-2nd-derivative-at-1.ts",
+      "sha256": "5d2a8ecbd27b24de3ac84255f3bd554acf9f470208dbfdc051214edf01bdec34"
+    },
+    {
+      "path": "src/local-properties-at-t/evaluate-2nd-derivative/double/evaluate-2nd-derivative.ts",
+      "sha256": "8c9b99142f0f9ffe131da22c68d9990ac621453324fd12f36985900fac7c7508"
+    },
+    {
+      "path": "src/local-properties-at-t/evaluate-2nd-derivative/exact/evaluate-2nd-derivative-at-0-exact.ts",
+      "sha256": "f5a173eda46c684415974b653293db43d4e8ed4ccbd5e3f35e0f5f4889842179"
+    },
+    {
+      "path": "src/local-properties-at-t/evaluate-2nd-derivative/exact/evaluate-2nd-derivative-at-1-exact.ts",
+      "sha256": "407f4949797ba49be318e971ac0ae24a94c861e33a45448ca5617eeafb9a9439"
+    },
+    {
+      "path": "src/local-properties-at-t/evaluate-2nd-derivative/exact/evaluate-2nd-derivative-exact.ts",
+      "sha256": "177c96e7c194a65178c7370be7172bbabc8376d75d0bd86f5b394112c6c47454"
+    },
+    {
+      "path": "src/local-properties-at-t/normal/double/normal.ts",
+      "sha256": "4b15ce16a8a6c155fd9c0b6381af5b98fe96a087886778ba9dd14703d8d14f74"
+    },
+    {
+      "path": "src/local-properties-at-t/normal/double/normal2.ts",
+      "sha256": "1ab58bd002a60ef2584eefe11aaa38aaee6dd1f8b08ac55bff73013b80c3aae2"
+    },
+    {
+      "path": "src/local-properties-at-t/normal/double/unit-normal.ts",
+      "sha256": "bc3c0e24b3a6ddfdc9307a8500ea9c245e52bbc886aa9b706a0b76a8bb03fc46"
+    },
+    {
+      "path": "src/local-properties-at-t/normal/double-double/dd-normal-at-0.ts",
+      "sha256": "ccdd0ddcc81b8e03995ddb704032caa3dbf539cdefb75d22039b32af088dba26"
+    },
+    {
+      "path": "src/local-properties-at-t/normal/double-double/dd-normal-at-1.ts",
+      "sha256": "5e3499454b78ad786dd8753bc45d8bf7c8eb825479930c0157d7c08b693e245f"
+    },
+    {
+      "path": "src/local-properties-at-t/normal/double-double/dd-normal.ts",
+      "sha256": "adcb39e8b108e7180ace746433c19ca97c20f09add5bf3bc0851d33b40c7a1b0"
+    },
+    {
+      "path": "src/local-properties-at-t/normal/expansion/e-normal.ts",
+      "sha256": "0ebc0fcb6691c8bb3e3602f1768735434898fa9dfd8e479ed2de50756ba5a751"
+    },
+    {
+      "path": "src/local-properties-at-t/tangent/double/tangent-at-0.ts",
+      "sha256": "159bb24404d1c6708f5aa8217bde0ad82411679111d8265dc649431e6ba86f2f"
+    },
+    {
+      "path": "src/local-properties-at-t/tangent/double/tangent-at-1.ts",
+      "sha256": "501a0829f278cf656a0739c0a9cd9d9e20a179779acd075e38c3c5b951a0951a"
+    },
+    {
+      "path": "src/local-properties-at-t/tangent/double/tangent.ts",
+      "sha256": "68f43279b4a838075782ab45e913f26b164d9435b29d95887dcd6c2851a285f5"
+    },
+    {
+      "path": "src/local-properties-at-t/tangent/double/unit-tangent.ts",
+      "sha256": "4af2492c4bcad878cc78c00823d360ecb6a1f2a9a9a37d3559cecee42b6fad3c"
+    },
+    {
+      "path": "src/local-properties-at-t/tangent/double-double/dd-tangent-at-0.ts",
+      "sha256": "ead324ec09da0a70bff8c6cc5ad614e89dfbc41f0804c9479ae7a13d22f28bb3"
+    },
+    {
+      "path": "src/local-properties-at-t/tangent/double-double/dd-tangent-at-1.ts",
+      "sha256": "e2f4eb067c2b87cad59a4472ca893e829bae3a9aec9547c5c7ff25aece25f6b2"
+    },
+    {
+      "path": "src/local-properties-at-t/tangent/double-double/dd-tangent.ts",
+      "sha256": "c1d8ec9234d743124555b0b3360bb24dd82a23c328d8fd1118680df854394cb6"
+    },
+    {
+      "path": "src/local-properties-at-t/tangent/exact/tangent-at-0-exact.ts",
+      "sha256": "9debf3fe65b538ce0b6b2f4cc4ae121fdc13caa52b997fa4e1c84d1635abd65d"
+    },
+    {
+      "path": "src/local-properties-at-t/tangent/exact/tangent-at-1-exact.ts",
+      "sha256": "892f3f22ef9e4bba4daa18f6ddb4b2fa796df77a874bd08abaa785aae19b3678"
+    },
+    {
+      "path": "src/local-properties-at-t/tangent/exact/tangent-exact.ts",
+      "sha256": "19253abe20ae4045c685558b331c6efed27320f00ebabd4f8f243f6dd13dc2ab"
+    },
+    {
+      "path": "src/local-properties-to-t/get-t-at-length.ts",
+      "sha256": "9e546576301f30616b5310342d0fe6e3c53c3a62ba9f1d7fc44d8126f52a60ca"
+    },
+    {
+      "path": "src/local-properties-to-t/t-from-xy.ts",
+      "sha256": "0b5ed11fc8b20de41eded74d8443292457b73cd6e5c80252c8c43f7e22bef637"
+    },
+    {
+      "path": "src/next-down.ts",
+      "sha256": "410c6e03719011b66a7c7f9cc57656fa9f0438269ec9be671763eca001467bdb"
+    },
+    {
+      "path": "src/next-up.ts",
+      "sha256": "aa77ff0d3ede4120a562722638c6f719e4effb529e69ab31ec4307fa6bf4836e"
+    },
+    {
+      "path": "src/offset/calc-quad-offset-x-point.ts",
+      "sha256": "58616cb99406ae92acb8452d757006fc06b9e49cae720e608768a8cc0058d2a9"
+    },
+    {
+      "path": "src/offset/get-quad-offset-curve-functions.ts",
+      "sha256": "e864c80c006e4f34d8825f50d809f18bc5df36e2d0216aa308b48a2ea5e9bfed"
+    },
+    {
+      "path": "src/simultaneous-properties/closest-and-furthest-point-on-bezier/closest-point-on-bezier-certified.ts",
+      "sha256": "7a478cc796e77bbef229fc4ec565232f4c28993b4dfa57b9de6db65cd7e982ac"
+    },
+    {
+      "path": "src/simultaneous-properties/closest-and-furthest-point-on-bezier/closest-point-on-bezier.ts",
+      "sha256": "01cd3dceab8af7ba68ceaefa963edc1eac250d7fc55bb076f3bbc085ee28601b"
+    },
+    {
+      "path": "src/simultaneous-properties/closest-and-furthest-point-on-bezier/foot-and-endpoint-info.ts",
+      "sha256": "df88c488beb4d9fcc46e510cefcb5a2238466629f01e219b82a892cba28ab207"
+    },
+    {
+      "path": "src/simultaneous-properties/closest-and-furthest-point-on-bezier/furthest-point-on-bezier.ts",
+      "sha256": "c34e83df63eaf278b024bf590e041dc914f7f8b06ef9b250ab596c7015a8622d"
+    },
+    {
+      "path": "src/simultaneous-properties/closest-and-furthest-point-on-bezier/get-coeffs/double/get-footpoint-poly-1.ts",
+      "sha256": "660896169c20fcf7ce5fb3729c0cbba5745b8d62204073668e1648d81ace2314"
+    },
+    {
+      "path": "src/simultaneous-properties/closest-and-furthest-point-on-bezier/get-coeffs/double/get-footpoint-poly-2.ts",
+      "sha256": "88cf80d20422a47ccb75353bb22724ad07212ff0186efe369515c3e4a20c15e7"
+    },
+    {
+      "path": "src/simultaneous-properties/closest-and-furthest-point-on-bezier/get-coeffs/double/get-footpoint-poly-3.ts",
+      "sha256": "722d77d6ec499859c7acfcbfb4c85932423fff94944d80b4af0ad980fb26278c"
+    },
+    {
+      "path": "src/simultaneous-properties/closest-and-furthest-point-on-bezier/get-coeffs/double/get-footpoint-poly.ts",
+      "sha256": "d72c9449aa4d3de91e9fa1274419ade41f56b9f3d62c83ea3d26757512086f9b"
+    },
+    {
+      "path": "src/simultaneous-properties/closest-and-furthest-point-on-bezier/get-coeffs/double-double/get-footpoint-poly-1-dd.ts",
+      "sha256": "7ed227866dabffc538acc3ba573508067f7472017780d871cb95fcf1746fa76b"
+    },
+    {
+      "path": "src/simultaneous-properties/closest-and-furthest-point-on-bezier/get-coeffs/double-double/get-footpoint-poly-2-dd.ts",
+      "sha256": "ae3d3ff6d6d0a9b59d902265d3787545fe408f197383ad35105ce31a298d2593"
+    },
+    {
+      "path": "src/simultaneous-properties/closest-and-furthest-point-on-bezier/get-coeffs/double-double/get-footpoint-poly-3-dd.ts",
+      "sha256": "9f4e072aa680ee26ab36da1ee297eb5b5aa41deccc2113e855981ab96c24a21c"
+    },
+    {
+      "path": "src/simultaneous-properties/closest-and-furthest-point-on-bezier/get-coeffs/double-double/get-footpoint-poly-dd.ts",
+      "sha256": "bc9c14a461c9dd3c5aba078df85b37e8c18992adf02381fc83ab4d76abc1adc8"
+    },
+    {
+      "path": "src/simultaneous-properties/closest-and-furthest-point-on-bezier/get-coeffs/exact/get-footpoint-poly-1-exact.ts",
+      "sha256": "3cb689ddb897dd36a8633f810cf3b88c142e088a1be9112b2dfa712cbe8f5fa0"
+    },
+    {
+      "path": "src/simultaneous-properties/closest-and-furthest-point-on-bezier/get-coeffs/exact/get-footpoint-poly-2-exact.ts",
+      "sha256": "57388394ca11cbc1004e017c4619055d0ac77dec12ba4ca988f298ec2273eda0"
+    },
+    {
+      "path": "src/simultaneous-properties/closest-and-furthest-point-on-bezier/get-coeffs/exact/get-footpoint-poly-3-exact.ts",
+      "sha256": "1f546f3b3f9e6c65cac596c2844c26a1ed47135553f1099a37b664d12e3171df"
+    },
+    {
+      "path": "src/simultaneous-properties/closest-and-furthest-point-on-bezier/get-coeffs/exact/get-footpoint-poly-exact.ts",
+      "sha256": "c727fe2eef253d88f7d82d7ebe070e42867aaf2ed949d2b2f7df3654003a25bc"
+    },
+    {
+      "path": "src/simultaneous-properties/closest-and-furthest-point-on-bezier/get-coeffs/get-closest-on-bezier-from-point-error-counters.ts",
+      "sha256": "202280e94825ed727dd849ceefe29062e0993a1300e085a0d8b43130f29b3adc"
+    },
+    {
+      "path": "src/simultaneous-properties/closest-and-furthest-point-on-bezier/get-foot-points-on-bezier-certified.ts",
+      "sha256": "d03138f92b54f509d3a7895f0dc3458f23f601352faf3e638070379f38e7520a"
+    },
+    {
+      "path": "src/simultaneous-properties/closest-and-furthest-point-on-bezier/get-foot-points-polys-on-bezier-certified.ts",
+      "sha256": "7b4c790b0ad716a5baca04ea4151af4b5f372c58636cf82c8085a6f41ac98a90"
+    },
+    {
+      "path": "src/simultaneous-properties/closest-and-furthest-point-on-bezier/root-interval-to-distance-squared-interval.ts",
+      "sha256": "5973569906105471f50283f01b85ea7432f65d855b315ee9189a1ff1f2da1f61"
+    },
+    {
+      "path": "src/simultaneous-properties/closest-distance-between-beziers/closest-points-between-beziers.ts",
+      "sha256": "307d0ed92b4f686bed6da994b7055fda5eaff50006c3403dc615ded9170ef444"
+    },
+    {
+      "path": "src/simultaneous-properties/closest-distance-between-beziers/distance-compare.ts",
+      "sha256": "157ee071a5b0f625d5cdeb640b7619dfaf1fecb853663069f9c77d6a8dd0e2a6"
+    },
+    {
+      "path": "src/simultaneous-properties/closest-distance-between-beziers/distance-interval.ts",
+      "sha256": "9a49dc9a46fc101d118781297840c8e6c0824d1e006a77293486aac8b58dce84"
+    },
+    {
+      "path": "src/simultaneous-properties/closest-distance-between-beziers/get-min-max-distance.ts",
+      "sha256": "8a22d75cf8ffeb394a18243c4625121f4ccda64108a11b60009b3e5ba99e70fd"
+    },
+    {
+      "path": "src/simultaneous-properties/closest-distance-between-beziers/points-with-distance.ts",
+      "sha256": "e3bf898eb45bac4534a544dc16983a8e88a1ed5ec3ae4affc61e5d1257d7a7ac"
+    },
+    {
+      "path": "src/simultaneous-properties/equal.ts",
+      "sha256": "721c6ca584ed0cc78c3825289974af4638dd1267ac50ccc96eb00b0aa1728c18"
+    },
+    {
+      "path": "src/simultaneous-properties/get-interface-rotation.ts",
+      "sha256": "8d8774c8277d68f72ee81ffeb1446970e4240e80dd17a1bf3e9b00aa20758647"
+    },
+    {
+      "path": "src/simultaneous-properties/hausdorff-distance/get-max-hausdorff.ts",
+      "sha256": "2c2e34e75e9ccf337a7de958eeb7b1b380ddbcdc8c426ab09f24adcd435efdb6"
+    },
+    {
+      "path": "src/simultaneous-properties/hausdorff-distance/hausdorff-compare.ts",
+      "sha256": "3304743649c7e1bab457f8d05e062d06c7b06f1f67ab5a3d3da0ea30763217b9"
+    },
+    {
+      "path": "src/simultaneous-properties/hausdorff-distance/hausdorff-distance-extra.ts",
+      "sha256": "2ad8613667f3c52039deb248e66557ad1ce9b439484f2f3bf20214ee350f0572"
+    },
+    {
+      "path": "src/simultaneous-properties/hausdorff-distance/hausdorff-distance-one-sided-extra.ts",
+      "sha256": "aa6ff22ad1bf9880f20ff37fb1c9a6ca7f67096f6436c48bec78541a74529a54"
+    },
+    {
+      "path": "src/simultaneous-properties/hausdorff-distance/hausdorff-distance-one-sided.ts",
+      "sha256": "09774abe2eb06bbcda8bf63790948a8c58304441e66d9bcb32c5a88bbd9169ff"
+    },
+    {
+      "path": "src/simultaneous-properties/hausdorff-distance/hausdorff-distance-types.ts",
+      "sha256": "d39e4fd8d625a56aba2c5292499899268f6921b688aa50b89a7766c999b57124"
+    },
+    {
+      "path": "src/simultaneous-properties/hausdorff-distance/hausdorff-distance.ts",
+      "sha256": "a888fda2d73a631e114334679853df40705f9aba34bb0164d77779211381125b"
+    },
+    {
+      "path": "src/simultaneous-properties/hausdorff-distance/hausdorff-interval.ts",
+      "sha256": "601b85fcdf1198cfaf60f6de696165abfe2b07a4026a882ea88fbe2de3748f3a"
+    },
+    {
+      "path": "src/simultaneous-properties/hausdorff-distance-direct/bernstein-roots.ts",
+      "sha256": "2146d97f0419be400dcc8c1222cb3690fcae104447b06e10920acc218524bbcb"
+    },
+    {
+      "path": "src/simultaneous-properties/hausdorff-distance-direct/eval-program.ts",
+      "sha256": "b4ee966d106f56d43c78dcf7d7d3ce078f1d19cc82ec2ab6f8dc17d464191339"
+    },
+    {
+      "path": "src/simultaneous-properties/hausdorff-distance-direct/generated/index.ts",
+      "sha256": "612634ab07abc0b47e83e57e1a4786c1168a6cab3d075f106e10ecce8a64227c"
+    },
+    {
+      "path": "src/simultaneous-properties/hausdorff-distance-direct/generated/maF_B3.ts",
+      "sha256": "dc43b976d4d342efb742f7981e76fbc24fb205902d9fb239d47e70a9e49778b1"
+    },
+    {
+      "path": "src/simultaneous-properties/hausdorff-distance-direct/generated/maN_B2.ts",
+      "sha256": "ed4b3bda2ad32c67886a15b7a1a7bbabc7d0e99036d4958f0c0c8d8acc59e147"
+    },
+    {
+      "path": "src/simultaneous-properties/hausdorff-distance-direct/generated/maN_B3.ts",
+      "sha256": "1779f0ca7ff6780db284443c0e53044ed5adbf54ed644b971e483d3953753525"
+    },
+    {
+      "path": "src/simultaneous-properties/hausdorff-distance-direct/generated/maiG_A1B2.ts",
+      "sha256": "5ee5fce214a08244afb1c09f147c05b8f6ea6e39d3b9ec7b308413621748bd92"
+    },
+    {
+      "path": "src/simultaneous-properties/hausdorff-distance-direct/generated/maiG_A1B3.ts",
+      "sha256": "a08e2ac1f97500b8424640e8d6d96dfc5df0d235aba8c1d283ba9e67fafc0bda"
+    },
+    {
+      "path": "src/simultaneous-properties/hausdorff-distance-direct/generated/maiG_A2B2.ts",
+      "sha256": "e5e2f793ea2c911ff0e2e5fdbc73ba1ca82879bf8d2eb4367c537123fc6bc66b"
+    },
+    {
+      "path": "src/simultaneous-properties/hausdorff-distance-direct/generated/maiG_A2B3.ts",
+      "sha256": "100ef7d93f77b2959ea5008ce045f30139ea0ac2d5b27aca763dde6be4606a0b"
+    },
+    {
+      "path": "src/simultaneous-properties/hausdorff-distance-direct/generated/maiG_A3B2.ts",
+      "sha256": "2bdef3d1b47cb99644b66c58a8a1fac8469c38d05adc826a8c36bc4de7f1930f"
+    },
+    {
+      "path": "src/simultaneous-properties/hausdorff-distance-direct/generated/maiG_A3B3.ts",
+      "sha256": "a585aa7a45ca4076e56ca4b6b58236081f90f1468c6ea3b13ab409b188d84674"
+    },
+    {
+      "path": "src/simultaneous-properties/hausdorff-distance-direct/generated/resI_A1B2.ts",
+      "sha256": "3e7e111c303c3a1bff90327d36b11144495127c7198da15f666e672cc80ae0b1"
+    },
+    {
+      "path": "src/simultaneous-properties/hausdorff-distance-direct/generated/resI_A1B3.ts",
+      "sha256": "5c6b93587b9f12d39982284c61ea3a1db7e1e6a6bdb170eb3001f4ca825e133a"
+    },
+    {
+      "path": "src/simultaneous-properties/hausdorff-distance-direct/generated/resI_A2B1.ts",
+      "sha256": "836af5b7abb84c2ce114d09bae0f314484aae877758c0dda3006afc441ca8cda"
+    },
+    {
+      "path": "src/simultaneous-properties/hausdorff-distance-direct/generated/resI_A2B2.ts",
+      "sha256": "982407bf333ec754c7d8988225a959d789658e5d829242ccf5c83044c17ef6cd"
+    },
+    {
+      "path": "src/simultaneous-properties/hausdorff-distance-direct/generated/resI_A2B3.ts",
+      "sha256": "bb16cb22059794e63f26932dc26ce970dc71efdef6ba9599808a8a0e4b7803d9"
+    },
+    {
+      "path": "src/simultaneous-properties/hausdorff-distance-direct/generated/resI_A3B1.ts",
+      "sha256": "69701a31a9734b3d375943ff6d11e935b9d5d98fd779e1eebfbadf82f4cfd547"
+    },
+    {
+      "path": "src/simultaneous-properties/hausdorff-distance-direct/generated/resI_A3B2.ts",
+      "sha256": "880d3891c853e46089a175efae29dddda96e48692eaed5f9e4469d8df11cea1f"
+    },
+    {
+      "path": "src/simultaneous-properties/hausdorff-distance-direct/generated/resI_A3B3.ts",
+      "sha256": "d44c1bd21034de1f188ca18a6f776be4f5c24a577ab95ca7ed385e89dd0150e7"
+    },
+    {
+      "path": "src/simultaneous-properties/hausdorff-distance-direct/generated/resMAEI_A1B2.ts",
+      "sha256": "80957b8cece11b04de2375d0c48d92c3477383c476aefc6e97d6fdd57d8f2def"
+    },
+    {
+      "path": "src/simultaneous-properties/hausdorff-distance-direct/generated/resMAEI_A1B3.ts",
+      "sha256": "068d54b3f3f047e7925da651bfd597db5a8568d33a1ff2cc7ec1828e98da7ca1"
+    },
+    {
+      "path": "src/simultaneous-properties/hausdorff-distance-direct/generated/resMAEI_A2B2.ts",
+      "sha256": "4408dd6372eaae6b677f4fd0960d637f09e43b477f90f896edf93593d22db9cf"
+    },
+    {
+      "path": "src/simultaneous-properties/hausdorff-distance-direct/generated/resMAEI_A2B3.ts",
+      "sha256": "00e329294e432bab456e9dcf8ebe8df2264cfc857c819e15f1db77e85ffced6a"
+    },
+    {
+      "path": "src/simultaneous-properties/hausdorff-distance-direct/generated/resMAEI_A3B2.ts",
+      "sha256": "f221b17de5d4e40561c1f34694ffdf73fc722f6dfdf19ee17c0f1e53dad40167"
+    },
+    {
+      "path": "src/simultaneous-properties/hausdorff-distance-direct/generated/resMAEI_A3B3.ts",
+      "sha256": "d0b288f7d44279dd5bc3dd841e745716fa8d6efa78baf7d7b2b5b298a0c40340"
+    },
+    {
+      "path": "src/simultaneous-properties/hausdorff-distance-direct/hausdorff-distance-direct.ts",
+      "sha256": "e87e35577e316ec415835da4675e3ef56326a1a7d697d02e6a2f4051ee341968"
+    },
+    {
+      "path": "src/simultaneous-properties/heap.ts",
+      "sha256": "dec7e6f041fcf1ae55a4ebcbfe836d5df3ea3e3029a190eb744bc7b50a277891"
+    },
+    {
+      "path": "src/simultaneous-properties/is-point-on-bezier-extension/is-point-on-bezier-extension-1.ts",
+      "sha256": "ff32acc6227cd545986271d6fa99ff4899266e00ffef961c2f9ce4348890c962"
+    },
+    {
+      "path": "src/simultaneous-properties/is-point-on-bezier-extension/is-point-on-bezier-extension-2.ts",
+      "sha256": "ee86a90b073ebd7e3eb40f82953f6181eed71552c4201253d210378d8661a54f"
+    },
+    {
+      "path": "src/simultaneous-properties/is-point-on-bezier-extension/is-point-on-bezier-extension-3.ts",
+      "sha256": "878911440739b6bff6c203e4724c99da9c5de26a9c8128a92143e4255cd6135b"
+    },
+    {
+      "path": "src/simultaneous-properties/is-point-on-bezier-extension/is-point-on-bezier-extension.ts",
+      "sha256": "5e387c0dc8ef6e27eaebe255a47d7abd07cf4d5b0da88d2722a94d73cf4d5ed6"
+    },
+    {
+      "path": "src/to-power-basis/to-power-basis/double/to-power-basis-with-running-error.ts",
+      "sha256": "9f0a79411fc69460ff7d9f31a34168f8f6008de3b5f740ff1f6a7211e093b04a"
+    },
+    {
+      "path": "src/to-power-basis/to-power-basis/double/to-power-basis.ts",
+      "sha256": "1f1a0b717a699bc4388200599b577024ae7be624913584da9dcbd55eb1d425eb"
+    },
+    {
+      "path": "src/to-power-basis/to-power-basis/double-double/to-power-basis-dd-with-running-error.ts",
+      "sha256": "2b53e1aa20994aa6045c037c30fddcacf54fc487bb60c176ea35f335f82981e8"
+    },
+    {
+      "path": "src/to-power-basis/to-power-basis/double-double/to-power-basis-dd.ts",
+      "sha256": "720b04a8714e9aa201b19dba42935b8b2493664010f69cfd2fea1990b1ad795f"
+    },
+    {
+      "path": "src/to-power-basis/to-power-basis/exact/to-power-basis-exact.ts",
+      "sha256": "f246f44cd896305eb626aff60bb408fb98440cddfc9abab2b1006bd3a71a4ff9"
+    },
+    {
+      "path": "src/to-power-basis/to-power-basis/to-power-basis-error-counters.ts",
+      "sha256": "2f55a7b530cd457764aaaf1ab97e2e096fae99e0ce9dd98c0aca200607781f1a"
+    },
+    {
+      "path": "src/to-power-basis/to-power-basis-1st-derivative/double/to-power-basis-1st-derivative.ts",
+      "sha256": "b3938e236077e4fdb3a9fe522dbbd881b96c1f20527c8a66def094db2787ad08"
+    },
+    {
+      "path": "src/to-power-basis/to-power-basis-1st-derivative/double-double/to-power-basis-1st-derivative-dd.ts",
+      "sha256": "b64c3e3dcef50663d702f8ebc567779a04e118d1227404ecddc6b749d2a8dd99"
+    },
+    {
+      "path": "src/to-power-basis/to-power-basis-1st-derivative/exact/to-power-basis-1st-derivative-exact.ts",
+      "sha256": "749e067ad9dd670b5311a5bf840644801561d59b5a006b8b24f7798000ad3415"
+    },
+    {
+      "path": "src/to-power-basis/to-power-basis-1st-derivative/to-power-basis-1st-derivative-error-counters.ts",
+      "sha256": "451e292b76497c1fc52355deb8781db6f1f63f4424da06afdf0fbedf9d025be8"
+    },
+    {
+      "path": "src/to-power-basis/to-power-basis-2nd-derivative/double/to-power-basis-2nd-derivative.ts",
+      "sha256": "a5cfd53c1a43729137ae8ebc8acd7d177c91c051e845a28bb950cbe19f674f1e"
+    },
+    {
+      "path": "src/to-power-basis/to-power-basis-2nd-derivative/double-double/to-power-basis-2nd-derivative-dd.ts",
+      "sha256": "7e7d6258d25ab1952b43f2ebc64d6c62b1cd327988a8fc6c697aea0f3984e126"
+    },
+    {
+      "path": "src/to-power-basis/to-power-basis-2nd-derivative/exact/to-power-basis-2nd-derivative-exact.ts",
+      "sha256": "41644ffb7ca7909badc89cfc7f7c859728753d014bfd6a8ca4a6f173681e0763"
+    },
+    {
+      "path": "src/to-power-basis/to-power-basis-3rd-derivative/double/to-power-basis-3rd-derivative.ts",
+      "sha256": "6837af10e20e4a4d4170c20bd5dd8563f08d38b8ecb31625c687bfce8fb2d544"
+    },
+    {
+      "path": "src/to-power-basis/to-power-basis-3rd-derivative/double-double/to-power-basis-3rd-derivative-dd.ts",
+      "sha256": "862e2f9b70a4c1692e0c69e55726a9331a5e730abddcf43353517524d94e1a61"
+    },
+    {
+      "path": "src/to-power-basis/to-power-basis-3rd-derivative/exact/to-power-basis-3rd-derivative-exact.ts",
+      "sha256": "9c83c7fb4d3257bd9b018616086ec234f71030cdf9cb5847294912198069d9a4"
+    },
+    {
+      "path": "src/transformation/affine/flip-about.ts",
+      "sha256": "363a771af10460bb9694eb7bc777285a95a48e76fda9e869d1a70552ad3199d8"
+    },
+    {
+      "path": "src/transformation/affine/flip-horizontally.ts",
+      "sha256": "43a7a4a764510abe7adedcc1a7a8b2cc76748cc2aa5e9c251ef103189973e143"
+    },
+    {
+      "path": "src/transformation/affine/flip-vertically.ts",
+      "sha256": "239c74020f4897509c6c8f37a23d126b1f64a23428e14db2b18fbc822e4f3ba1"
+    },
+    {
+      "path": "src/transformation/affine/rotate-90-about.ts",
+      "sha256": "adf4e2e7d4b3af7d5566d40032dfec319bd17ba74f7b9d57ea773ae74c49001b"
+    },
+    {
+      "path": "src/transformation/affine/rotate-90.ts",
+      "sha256": "4b5543d5c8294ae8709338da007f7355ad5cfe99d8b163f8962917f6fac346d1"
+    },
+    {
+      "path": "src/transformation/affine/rotate-about.ts",
+      "sha256": "0ba2d81ccd7ce67c84cf89d9fbadd9fb2b986e5591df0226797e58db06b45584"
+    },
+    {
+      "path": "src/transformation/affine/rotate-neg-90-about.ts",
+      "sha256": "060f2387c59153203dbd2bb1f80066299072f097e770ec6b0507aa2da72ef451"
+    },
+    {
+      "path": "src/transformation/affine/rotate-neg-90.ts",
+      "sha256": "3542b91762334899447a84896de959e26b6c4845d3c49ea4ff26b8ee5f097eaf"
+    },
+    {
+      "path": "src/transformation/affine/rotate.ts",
+      "sha256": "d1b5ddb08c8f6537c347b210965a62e95985ffc4433be8262294f4fa6819fa72"
+    },
+    {
+      "path": "src/transformation/affine/scale.ts",
+      "sha256": "861ca5866effbcf55240c76107a19d7474045e7e158678d074f352d35be61ce7"
+    },
+    {
+      "path": "src/transformation/affine/transform.ts",
+      "sha256": "d132d2aa1159353cefd02ed7c19a5567b349f780fbad75257b921547a53b28a9"
+    },
+    {
+      "path": "src/transformation/affine/translate.ts",
+      "sha256": "15acb3e31c2df77894dc1f4280de0561cc80818d999e125a6d40f1caaaa1f54d"
+    },
+    {
+      "path": "src/transformation/clone.ts",
+      "sha256": "bfc1039d7476cb46493fb6d0980c3eb55a481627a85a23eb24fcd4abaa625581"
+    },
+    {
+      "path": "src/transformation/degree-or-type/cubic-to-hybrid-quadratic.ts",
+      "sha256": "919c59c915b60a74e7b9e79bba5726b9a3d5dd93efb968feedd41593f1b5e9da"
+    },
+    {
+      "path": "src/transformation/degree-or-type/cubic-to-quadratic.ts",
+      "sha256": "c2cd06383a51fa59befd8c4fadd0d8986a0ea92ca189cef05d0c250167927cc8"
+    },
+    {
+      "path": "src/transformation/degree-or-type/elevate-degree.ts",
+      "sha256": "b5fc82ac8ac352f3b77707f12f37196deae02ff2d967e35d67d5e4b2c8b9a891"
+    },
+    {
+      "path": "src/transformation/degree-or-type/line-to-cubic.ts",
+      "sha256": "66b897b99bab8639facc94f504a7bd4fc30fd8871e897f630c8166efb713bbc7"
+    },
+    {
+      "path": "src/transformation/degree-or-type/line-to-quadratic.ts",
+      "sha256": "facf51a5f6ba9bf9840691e10b585af16c0cb52786ce72ebdab1f7866ee5e61b"
+    },
+    {
+      "path": "src/transformation/degree-or-type/quadratic-to-cubic.ts",
+      "sha256": "27592661832e8427eb9e03414737fd46e357ac377a263a1013cbf4b441dee060"
+    },
+    {
+      "path": "src/transformation/degree-or-type/to-cubic.ts",
+      "sha256": "52071b0e8b4887de289bb8e37f54ab5d6dc8f9595d078e7627c2e2d46af9d4a8"
+    },
+    {
+      "path": "src/transformation/get-hodograph.ts",
+      "sha256": "9de2547519df61e2f8bf39cf6e456f1f58c25886116764617d48453facc3593d"
+    },
+    {
+      "path": "src/transformation/reduce-order-if-possible.ts",
+      "sha256": "379c033abd80af9d809709ac98e89f4ba91376266db367a3a334259243acaeaa"
+    },
+    {
+      "path": "src/transformation/reverse.ts",
+      "sha256": "631bc0cd9f157ca8e2e2acaa2d50c31661b007877bedfa2a911d554c114a1906"
+    },
+    {
+      "path": "src/transformation/split/from-to/from-to-1-incl-error-bound.ts",
+      "sha256": "454369fb9f6b4acda112ffcc59f44f8433cb797d0f51488a2f862212dbff4666"
+    },
+    {
+      "path": "src/transformation/split/from-to/from-to-1.ts",
+      "sha256": "86eebc023da92e3b6976f54e3ff3219c688af7c56ca82d92c59bfa69a0a7c341"
+    },
+    {
+      "path": "src/transformation/split/from-to/from-to-2-incl-error-bound.ts",
+      "sha256": "77ec485724af7bc651e447720a1077bec5043677b6ce4a133cb6a3236e8ce0c3"
+    },
+    {
+      "path": "src/transformation/split/from-to/from-to-2.ts",
+      "sha256": "c4633bd2443eb166e80935c74600a673531ab0abf4607035b90104704f972fb1"
+    },
+    {
+      "path": "src/transformation/split/from-to/from-to-3-incl-error-bound.ts",
+      "sha256": "654a78154f609181ef81cc3bf61ecf7a165f6f8be94e135c970102a41b87a46e"
+    },
+    {
+      "path": "src/transformation/split/from-to/from-to-3.ts",
+      "sha256": "4abcea43fd53794176b938b7f3cb797d1df5d023888c8f01c670b8748340612e"
+    },
+    {
+      "path": "src/transformation/split/from-to-incl-error-bound.ts",
+      "sha256": "e68510cdab45f6488ae4df1dcbf9b896a81c2d6ed4414ebe97b94efb46598464"
+    },
+    {
+      "path": "src/transformation/split/from-to.ts",
+      "sha256": "7450f386a365a4f84230092575152679908edac2bc31ee669605c9f4216361d7"
+    },
+    {
+      "path": "src/transformation/split/split-by-curvature-and-length.ts",
+      "sha256": "535442d03e6a5bba991573c69b6b19f6c7bc2ead0e2f00781d1937cbd4b09641"
+    },
+    {
+      "path": "src/transformation/split/split-by-curvature.ts",
+      "sha256": "f24c66e78ab93c5113eabb0a4b16834db3f79acdd4defca21f8b3a937bc05468"
+    },
+    {
+      "path": "src/transformation/split/split-by-deviation-from-straight-line-cubic.ts",
+      "sha256": "dfda7b73da82076cb41d03c16c8bd999a2ea76dd7eb2e162fa309dd4b68c8718"
+    },
+    {
+      "path": "src/transformation/split/split-by-deviation-from-straight-line-quad.ts",
+      "sha256": "2382b40ced0b37bff3efd273c9dd7e9471e642101f09e047fafdf052515535c0"
+    },
+    {
+      "path": "src/transformation/split/split-by-deviation-from-straight-line.ts",
+      "sha256": "b1533a45b004a5ec73c185c53ce3e60e1d4d0d731050df5eaa7cccd52b4671a2"
+    },
+    {
+      "path": "src/transformation/split/split-by-length.ts",
+      "sha256": "6318c6e7ae1f135d8bb4bdb32861680339ac41698c47dead11a1b8dc903a1a32"
+    },
+    {
+      "path": "src/transformation/to-estimation.ts",
+      "sha256": "87a04896c4990ce3ec98f326528cc24068bb5d8ae561610017ec16d58a6f3584"
+    },
+    {
+      "path": "src/transformation/to-expansion.ts",
+      "sha256": "ae3f938b8fd01a6992e953eaae911089faee09007f17139ae4f2dff50e81817a"
+    },
+    {
+      "path": "src/transformation/to-string.ts",
+      "sha256": "8035f3d9f70580da44ac0c00d377b6ef0ab647898e55ab7444819c7a91ce5fe7"
+    },
+    {
+      "path": "src/utils/get-distance-to-line-function.ts",
+      "sha256": "418320cc2a3c20f9efc23ca694ce75012aa52ab1035987e97873400ade96e497"
+    },
+    {
+      "path": "src/utils/mutable.ts",
+      "sha256": "7633a6f20e9bc0e6946cffeedd0e1e619cf885f599bf51d266ac369d584fbffd"
+    },
+    {
+      "path": "src/x-from-y/double/get-coeffs-x-from-y-with-running-err.ts",
+      "sha256": "b425e42c2abba77d2522d038e995a8d221860bb87362b4c397b7c85d7e852a26"
+    },
+    {
+      "path": "src/x-from-y/double/get-coeffs-x-from-y.ts",
+      "sha256": "49a25d74b5465eceb30bdf518f71a6d47b124312b5d38b26969c894ec4d6a1c4"
+    },
+    {
+      "path": "src/x-from-y/double-double/dd-get-coeffs-x-from-y-with-running-err.ts",
+      "sha256": "9d92faeaad63b9f4c6615ced87d8db3735f83ac671be711e86358ba4b032eae9"
+    },
+    {
+      "path": "src/x-from-y/double-double/dd-get-coeffs-x-from-y.ts",
+      "sha256": "d72c1ecf26d3dc6d4b1d722d4bc3e7bbc922e634a09db3c5ab8b8f79d308d5fe"
+    },
+    {
+      "path": "src/x-from-y/expansion/get-coeffs-x-from-y.ts",
+      "sha256": "f3535cc82f79cae6a0b73591112a6daf9d61a964e9f45d422f48d3027b4da949"
+    },
+    {
+      "path": "src/y-from-x/double/get-coeffs-y-from-x-with-running-err.ts",
+      "sha256": "f7b44b1eb2a91adfce49d36e582dfaee8f6be79f5d068d1fd10a273bbaf9872f"
+    },
+    {
+      "path": "src/y-from-x/double/get-coeffs-y-from-x.ts",
+      "sha256": "f295841b010334968855a84d54a149975faff44ff8926e4f5d5321c74e23eeb4"
+    },
+    {
+      "path": "src/y-from-x/double-double/dd-get-coeffs-y-from-x-with-running-err.ts",
+      "sha256": "df1f3486f16d299132c9b38d294081d38379c61ceb87f7919ba14bce5696a94f"
+    },
+    {
+      "path": "src/y-from-x/double-double/dd-get-coeffs-y-from-x.ts",
+      "sha256": "0fcbf01d0866c725c50474d3c3b37db54ba0b22323176c108ccdcceebefdc860"
+    },
+    {
+      "path": "src/y-from-x/expansion/e-get-coeffs-y-from-x.ts",
+      "sha256": "e9bd74d2d0470f8981042b996ef0aa71885caebe8b58f4ae78de8f31795e8ec7"
+    },
+    {
+      "path": "tsconfig.json",
+      "sha256": "92d03cc49635b85b06c0832aea0a2b928723d6faf8a50572d753995d1d1888d8"
+    },
+    {
+      "path": "tsconfig.spec.json",
+      "sha256": "cfbc94c766340d1e67eda2b29cd0300b68f38529b9488cfcf48c57018d3feb24"
+    }
+  ],
+  "gleamRevision": "e63197586b69f6db3f0d2896146bbad7459ef318"
+}

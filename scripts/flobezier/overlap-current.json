@@ -1,0 +1,1302 @@
+[
+  {
+    "name": "FB001",
+    "a": [
+      [
+        1,
+        1
+      ],
+      [
+        2,
+        2
+      ]
+    ],
+    "b": [
+      [
+        0,
+        0
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        0.5,
+        0.5
+      ]
+    ],
+    "reverse": false,
+    "overlaps": {
+      "ok": false,
+      "error": "NonAffineOverlapCorrespondence"
+    },
+    "intersections": {
+      "ok": false,
+      "error": "NonAffineOverlapCorrespondence"
+    },
+    "encounters": {
+      "ok": false,
+      "error": "NonAffineOverlapCorrespondence"
+    },
+    "endpointMatches": [
+      {
+        "ok": true,
+        "value": [
+          0.2053038739296417,
+          0.8856052169794492
+        ]
+      },
+      {
+        "ok": true,
+        "value": []
+      },
+      {
+        "ok": true,
+        "value": []
+      },
+      {
+        "ok": true,
+        "value": []
+      }
+    ]
+  },
+  {
+    "name": "FB001",
+    "a": [
+      [
+        1,
+        1
+      ],
+      [
+        2,
+        2
+      ]
+    ],
+    "b": [
+      [
+        0,
+        0
+      ],
+      [
+        3,
+        3
+      ],
+      [
+        0.5,
+        0.5
+      ]
+    ],
+    "reverse": true,
+    "overlaps": {
+      "ok": false,
+      "error": "NonAffineOverlapCorrespondence"
+    },
+    "intersections": {
+      "ok": false,
+      "error": "NonAffineOverlapCorrespondence"
+    },
+    "encounters": {
+      "ok": false,
+      "error": "NonAffineOverlapCorrespondence"
+    },
+    "endpointMatches": [
+      {
+        "ok": true,
+        "value": []
+      },
+      {
+        "ok": true,
+        "value": []
+      },
+      {
+        "ok": true,
+        "value": [
+          0.2053038739296417,
+          0.8856052169794492
+        ]
+      },
+      {
+        "ok": true,
+        "value": []
+      }
+    ]
+  },
+  {
+    "name": "FI003-a",
+    "a": [
+      [
+        0,
+        0
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        0.25,
+        0.25
+      ]
+    ],
+    "b": [
+      [
+        2,
+        2
+      ],
+      [
+        0.5,
+        0.5
+      ],
+      [
+        0.25,
+        0.25
+      ],
+      [
+        -1,
+        -1
+      ]
+    ],
+    "reverse": false,
+    "overlaps": {
+      "ok": false,
+      "error": "NonAffineOverlapCorrespondence"
+    },
+    "intersections": {
+      "ok": false,
+      "error": "NonAffineOverlapCorrespondence"
+    },
+    "encounters": {
+      "ok": false,
+      "error": "NonAffineOverlapCorrespondence"
+    },
+    "endpointMatches": [
+      {
+        "ok": true,
+        "value": [
+          0.6666666667442769
+        ]
+      },
+      {
+        "ok": true,
+        "value": [
+          0.5644948650151491
+        ]
+      },
+      {
+        "ok": true,
+        "value": []
+      },
+      {
+        "ok": true,
+        "value": []
+      }
+    ]
+  },
+  {
+    "name": "FI003-a",
+    "a": [
+      [
+        0,
+        0
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        0.25,
+        0.25
+      ]
+    ],
+    "b": [
+      [
+        2,
+        2
+      ],
+      [
+        0.5,
+        0.5
+      ],
+      [
+        0.25,
+        0.25
+      ],
+      [
+        -1,
+        -1
+      ]
+    ],
+    "reverse": true,
+    "overlaps": {
+      "ok": false,
+      "error": "NonAffineOverlapCorrespondence"
+    },
+    "intersections": {
+      "ok": false,
+      "error": "NonAffineOverlapCorrespondence"
+    },
+    "encounters": {
+      "ok": false,
+      "error": "NonAffineOverlapCorrespondence"
+    },
+    "endpointMatches": [
+      {
+        "ok": true,
+        "value": []
+      },
+      {
+        "ok": true,
+        "value": []
+      },
+      {
+        "ok": true,
+        "value": [
+          0.6666666667442769
+        ]
+      },
+      {
+        "ok": true,
+        "value": [
+          0.5644948650151491
+        ]
+      }
+    ]
+  },
+  {
+    "name": "FI003-b",
+    "a": [
+      [
+        0.1,
+        0.1
+      ],
+      [
+        0.8,
+        0.8
+      ],
+      [
+        0.2,
+        0.2
+      ]
+    ],
+    "b": [
+      [
+        1,
+        1
+      ],
+      [
+        0.5,
+        0.5
+      ],
+      [
+        0.3,
+        0.3
+      ]
+    ],
+    "reverse": false,
+    "overlaps": {
+      "ok": false,
+      "error": "NonAffineOverlapCorrespondence"
+    },
+    "intersections": {
+      "ok": false,
+      "error": "NonAffineOverlapCorrespondence"
+    },
+    "encounters": {
+      "ok": false,
+      "error": "NonAffineOverlapCorrespondence"
+    },
+    "endpointMatches": [
+      {
+        "ok": true,
+        "value": []
+      },
+      {
+        "ok": true,
+        "value": []
+      },
+      {
+        "ok": true,
+        "value": []
+      },
+      {
+        "ok": true,
+        "value": [
+          0.16955142128363693,
+          0.90737165563944
+        ]
+      }
+    ]
+  },
+  {
+    "name": "FI003-b",
+    "a": [
+      [
+        0.1,
+        0.1
+      ],
+      [
+        0.8,
+        0.8
+      ],
+      [
+        0.2,
+        0.2
+      ]
+    ],
+    "b": [
+      [
+        1,
+        1
+      ],
+      [
+        0.5,
+        0.5
+      ],
+      [
+        0.3,
+        0.3
+      ]
+    ],
+    "reverse": true,
+    "overlaps": {
+      "ok": false,
+      "error": "NonAffineOverlapCorrespondence"
+    },
+    "intersections": {
+      "ok": false,
+      "error": "NonAffineOverlapCorrespondence"
+    },
+    "encounters": {
+      "ok": false,
+      "error": "NonAffineOverlapCorrespondence"
+    },
+    "endpointMatches": [
+      {
+        "ok": true,
+        "value": []
+      },
+      {
+        "ok": true,
+        "value": [
+          0.16955142128363693,
+          0.90737165563944
+        ]
+      },
+      {
+        "ok": true,
+        "value": []
+      },
+      {
+        "ok": true,
+        "value": []
+      }
+    ]
+  },
+  {
+    "name": "minimal-positive-overlap",
+    "a": [
+      [
+        1,
+        0
+      ],
+      [
+        3,
+        0
+      ]
+    ],
+    "b": [
+      [
+        0,
+        0
+      ],
+      [
+        4,
+        0
+      ],
+      [
+        0,
+        0
+      ]
+    ],
+    "reverse": false,
+    "overlaps": {
+      "ok": false,
+      "error": "NonAffineOverlapCorrespondence"
+    },
+    "intersections": {
+      "ok": false,
+      "error": "NonAffineOverlapCorrespondence"
+    },
+    "encounters": {
+      "ok": false,
+      "error": "NonAffineOverlapCorrespondence"
+    },
+    "endpointMatches": [
+      {
+        "ok": true,
+        "value": [
+          0.14644660940672624,
+          0.8535533905932737
+        ]
+      },
+      {
+        "ok": true,
+        "value": []
+      },
+      {
+        "ok": true,
+        "value": []
+      },
+      {
+        "ok": true,
+        "value": []
+      }
+    ]
+  },
+  {
+    "name": "minimal-positive-overlap",
+    "a": [
+      [
+        1,
+        0
+      ],
+      [
+        3,
+        0
+      ]
+    ],
+    "b": [
+      [
+        0,
+        0
+      ],
+      [
+        4,
+        0
+      ],
+      [
+        0,
+        0
+      ]
+    ],
+    "reverse": true,
+    "overlaps": {
+      "ok": false,
+      "error": "NonAffineOverlapCorrespondence"
+    },
+    "intersections": {
+      "ok": false,
+      "error": "NonAffineOverlapCorrespondence"
+    },
+    "encounters": {
+      "ok": false,
+      "error": "NonAffineOverlapCorrespondence"
+    },
+    "endpointMatches": [
+      {
+        "ok": true,
+        "value": []
+      },
+      {
+        "ok": true,
+        "value": []
+      },
+      {
+        "ok": true,
+        "value": [
+          0.14644660940672624,
+          0.8535533905932737
+        ]
+      },
+      {
+        "ok": true,
+        "value": []
+      }
+    ]
+  },
+  {
+    "name": "minimal-touch-only",
+    "a": [
+      [
+        2,
+        0
+      ],
+      [
+        3,
+        0
+      ]
+    ],
+    "b": [
+      [
+        0,
+        0
+      ],
+      [
+        4,
+        0
+      ],
+      [
+        0,
+        0
+      ]
+    ],
+    "reverse": false,
+    "overlaps": {
+      "ok": true,
+      "value": []
+    },
+    "intersections": {
+      "ok": true,
+      "value": [
+        {
+          "left_t": 0,
+          "right_t": 0.5,
+          "point": {
+            "x": 2,
+            "y": 0
+          }
+        }
+      ]
+    },
+    "encounters": {
+      "ok": true,
+      "value": {
+        "overlaps": {},
+        "intersections": {
+          "head": {
+            "left_t": 0,
+            "right_t": 0.5,
+            "point": {
+              "x": 2,
+              "y": 0
+            }
+          },
+          "tail": {}
+        }
+      }
+    },
+    "endpointMatches": [
+      {
+        "ok": true,
+        "value": [
+          0.5
+        ]
+      },
+      {
+        "ok": true,
+        "value": []
+      },
+      {
+        "ok": true,
+        "value": []
+      },
+      {
+        "ok": true,
+        "value": []
+      }
+    ]
+  },
+  {
+    "name": "minimal-touch-only",
+    "a": [
+      [
+        2,
+        0
+      ],
+      [
+        3,
+        0
+      ]
+    ],
+    "b": [
+      [
+        0,
+        0
+      ],
+      [
+        4,
+        0
+      ],
+      [
+        0,
+        0
+      ]
+    ],
+    "reverse": true,
+    "overlaps": {
+      "ok": true,
+      "value": []
+    },
+    "intersections": {
+      "ok": true,
+      "value": [
+        {
+          "left_t": 0.5,
+          "right_t": 0,
+          "point": {
+            "x": 2,
+            "y": 0
+          }
+        }
+      ]
+    },
+    "encounters": {
+      "ok": true,
+      "value": {
+        "overlaps": {},
+        "intersections": {
+          "head": {
+            "left_t": 0.5,
+            "right_t": 0,
+            "point": {
+              "x": 2,
+              "y": 0
+            }
+          },
+          "tail": {}
+        }
+      }
+    },
+    "endpointMatches": [
+      {
+        "ok": true,
+        "value": []
+      },
+      {
+        "ok": true,
+        "value": []
+      },
+      {
+        "ok": true,
+        "value": [
+          0.5
+        ]
+      },
+      {
+        "ok": true,
+        "value": []
+      }
+    ]
+  },
+  {
+    "name": "minimal-disjoint",
+    "a": [
+      [
+        3,
+        0
+      ],
+      [
+        4,
+        0
+      ]
+    ],
+    "b": [
+      [
+        0,
+        0
+      ],
+      [
+        4,
+        0
+      ],
+      [
+        0,
+        0
+      ]
+    ],
+    "reverse": false,
+    "overlaps": {
+      "ok": true,
+      "value": []
+    },
+    "intersections": {
+      "ok": true,
+      "value": []
+    },
+    "encounters": {
+      "ok": true,
+      "value": {
+        "overlaps": {},
+        "intersections": {}
+      }
+    },
+    "endpointMatches": [
+      {
+        "ok": true,
+        "value": []
+      },
+      {
+        "ok": true,
+        "value": []
+      },
+      {
+        "ok": true,
+        "value": []
+      },
+      {
+        "ok": true,
+        "value": []
+      }
+    ]
+  },
+  {
+    "name": "minimal-disjoint",
+    "a": [
+      [
+        3,
+        0
+      ],
+      [
+        4,
+        0
+      ]
+    ],
+    "b": [
+      [
+        0,
+        0
+      ],
+      [
+        4,
+        0
+      ],
+      [
+        0,
+        0
+      ]
+    ],
+    "reverse": true,
+    "overlaps": {
+      "ok": true,
+      "value": []
+    },
+    "intersections": {
+      "ok": true,
+      "value": []
+    },
+    "encounters": {
+      "ok": true,
+      "value": {
+        "overlaps": {},
+        "intersections": {}
+      }
+    },
+    "endpointMatches": [
+      {
+        "ok": true,
+        "value": []
+      },
+      {
+        "ok": true,
+        "value": []
+      },
+      {
+        "ok": true,
+        "value": []
+      },
+      {
+        "ok": true,
+        "value": []
+      }
+    ]
+  },
+  {
+    "name": "identical-retraced",
+    "a": [
+      [
+        0,
+        0
+      ],
+      [
+        4,
+        0
+      ],
+      [
+        0,
+        0
+      ]
+    ],
+    "b": [
+      [
+        0,
+        0
+      ],
+      [
+        4,
+        0
+      ],
+      [
+        0,
+        0
+      ]
+    ],
+    "reverse": false,
+    "overlaps": {
+      "ok": true,
+      "value": []
+    },
+    "intersections": {
+      "ok": true,
+      "value": [
+        {
+          "left_t": 0,
+          "right_t": 0,
+          "point": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "left_t": 0,
+          "right_t": 1,
+          "point": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "left_t": 1,
+          "right_t": 0,
+          "point": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "left_t": 1,
+          "right_t": 1,
+          "point": {
+            "x": 0,
+            "y": 0
+          }
+        }
+      ]
+    },
+    "encounters": {
+      "ok": true,
+      "value": {
+        "overlaps": {},
+        "intersections": {
+          "head": {
+            "left_t": 0,
+            "right_t": 0,
+            "point": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "tail": {
+            "head": {
+              "left_t": 0,
+              "right_t": 1,
+              "point": {
+                "x": 0,
+                "y": 0
+              }
+            },
+            "tail": {
+              "head": {
+                "left_t": 1,
+                "right_t": 0,
+                "point": {
+                  "x": 0,
+                  "y": 0
+                }
+              },
+              "tail": {
+                "head": {
+                  "left_t": 1,
+                  "right_t": 1,
+                  "point": {
+                    "x": 0,
+                    "y": 0
+                  }
+                },
+                "tail": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "endpointMatches": [
+      {
+        "ok": true,
+        "value": [
+          0,
+          1
+        ]
+      },
+      {
+        "ok": true,
+        "value": [
+          0,
+          1
+        ]
+      },
+      {
+        "ok": true,
+        "value": [
+          0,
+          1
+        ]
+      },
+      {
+        "ok": true,
+        "value": [
+          0,
+          1
+        ]
+      }
+    ]
+  },
+  {
+    "name": "identical-retraced",
+    "a": [
+      [
+        0,
+        0
+      ],
+      [
+        4,
+        0
+      ],
+      [
+        0,
+        0
+      ]
+    ],
+    "b": [
+      [
+        0,
+        0
+      ],
+      [
+        4,
+        0
+      ],
+      [
+        0,
+        0
+      ]
+    ],
+    "reverse": true,
+    "overlaps": {
+      "ok": true,
+      "value": []
+    },
+    "intersections": {
+      "ok": true,
+      "value": [
+        {
+          "left_t": 0,
+          "right_t": 0,
+          "point": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "left_t": 0,
+          "right_t": 1,
+          "point": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "left_t": 1,
+          "right_t": 0,
+          "point": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "left_t": 1,
+          "right_t": 1,
+          "point": {
+            "x": 0,
+            "y": 0
+          }
+        }
+      ]
+    },
+    "encounters": {
+      "ok": true,
+      "value": {
+        "overlaps": {},
+        "intersections": {
+          "head": {
+            "left_t": 0,
+            "right_t": 0,
+            "point": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "tail": {
+            "head": {
+              "left_t": 0,
+              "right_t": 1,
+              "point": {
+                "x": 0,
+                "y": 0
+              }
+            },
+            "tail": {
+              "head": {
+                "left_t": 1,
+                "right_t": 0,
+                "point": {
+                  "x": 0,
+                  "y": 0
+                }
+              },
+              "tail": {
+                "head": {
+                  "left_t": 1,
+                  "right_t": 1,
+                  "point": {
+                    "x": 0,
+                    "y": 0
+                  }
+                },
+                "tail": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "endpointMatches": [
+      {
+        "ok": true,
+        "value": [
+          0,
+          1
+        ]
+      },
+      {
+        "ok": true,
+        "value": [
+          0,
+          1
+        ]
+      },
+      {
+        "ok": true,
+        "value": [
+          0,
+          1
+        ]
+      },
+      {
+        "ok": true,
+        "value": [
+          0,
+          1
+        ]
+      }
+    ]
+  },
+  {
+    "name": "affine-monotone",
+    "a": [
+      [
+        0,
+        0
+      ],
+      [
+        1,
+        0
+      ]
+    ],
+    "b": [
+      [
+        0,
+        0
+      ],
+      [
+        0.5,
+        0
+      ],
+      [
+        1,
+        0
+      ]
+    ],
+    "reverse": false,
+    "overlaps": {
+      "ok": true,
+      "value": [
+        {
+          "left_from": 0,
+          "left_to": 1,
+          "right_from": 0,
+          "right_to": 1,
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "end": {
+            "x": 1,
+            "y": 0
+          }
+        }
+      ]
+    },
+    "intersections": {
+      "ok": false,
+      "error": "OverlappingSegments"
+    },
+    "encounters": {
+      "ok": true,
+      "value": {
+        "overlaps": {
+          "head": {
+            "left_from": 0,
+            "left_to": 1,
+            "right_from": 0,
+            "right_to": 1,
+            "start": {
+              "x": 0,
+              "y": 0
+            },
+            "end": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          "tail": {}
+        },
+        "intersections": {}
+      }
+    },
+    "endpointMatches": [
+      {
+        "ok": true,
+        "value": [
+          0
+        ]
+      },
+      {
+        "ok": true,
+        "value": [
+          1
+        ]
+      },
+      {
+        "ok": true,
+        "value": [
+          0
+        ]
+      },
+      {
+        "ok": true,
+        "value": [
+          1
+        ]
+      }
+    ]
+  },
+  {
+    "name": "affine-monotone",
+    "a": [
+      [
+        0,
+        0
+      ],
+      [
+        1,
+        0
+      ]
+    ],
+    "b": [
+      [
+        0,
+        0
+      ],
+      [
+        0.5,
+        0
+      ],
+      [
+        1,
+        0
+      ]
+    ],
+    "reverse": true,
+    "overlaps": {
+      "ok": true,
+      "value": [
+        {
+          "left_from": 0,
+          "left_to": 1,
+          "right_from": 0,
+          "right_to": 1,
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "end": {
+            "x": 1,
+            "y": 0
+          }
+        }
+      ]
+    },
+    "intersections": {
+      "ok": false,
+      "error": "OverlappingSegments"
+    },
+    "encounters": {
+      "ok": true,
+      "value": {
+        "overlaps": {
+          "head": {
+            "left_from": 0,
+            "left_to": 1,
+            "right_from": 0,
+            "right_to": 1,
+            "start": {
+              "x": 0,
+              "y": 0
+            },
+            "end": {
+              "x": 1,
+              "y": 0
+            }
+          },
+          "tail": {}
+        },
+        "intersections": {}
+      }
+    },
+    "endpointMatches": [
+      {
+        "ok": true,
+        "value": [
+          0
+        ]
+      },
+      {
+        "ok": true,
+        "value": [
+          1
+        ]
+      },
+      {
+        "ok": true,
+        "value": [
+          0
+        ]
+      },
+      {
+        "ok": true,
+        "value": [
+          1
+        ]
+      }
+    ]
+  }
+]

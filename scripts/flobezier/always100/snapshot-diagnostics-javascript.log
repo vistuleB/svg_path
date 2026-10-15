@@ -1,0 +1,14 @@
+  Resolving versions
+      Added gleam_stdlib v1.0.5
+      Added gleeunit v1.11.0
+      Added svg_path v3.1.1
+  Compiling gleam_stdlib
+  Compiling gleeunit
+  Compiling svg_path
+  Compiling snapshot_diagnostics
+   Compiled in 0.47s
+    Running snapshot_diagnostics.main
+snapshot raw: 5
+snapshot intersections: 5
+snapshot found: 14
+Both tests pass their remaining geometric and endpoint assertions.

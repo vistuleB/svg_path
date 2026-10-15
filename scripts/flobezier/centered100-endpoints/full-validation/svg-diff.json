@@ -1,0 +1,14 @@
+{
+  "element_counts": [
+    8638,
+    8638
+  ],
+  "changed_attributes": {
+    "('text', 'x')": 5,
+    "('text', 'y')": 5,
+    "('circle', 'cy')": 42,
+    "('circle', 'cx')": 34
+  },
+  "max_coordinate_delta": 1.5544543430223712e-10,
+  "non_numeric_or_structural_changes": []
+}

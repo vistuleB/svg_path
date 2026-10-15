@@ -1,0 +1,54 @@
+import { generateArc } from "./generate-arc.js";
+
+const { PI: π, tan, SQRT1_2: s2 } = Math;
+
+
+const C = tan(π/8);
+
+
+/** 
+ * Quadratic beziers curve that are an approximation of the unit
+ * circle starting from the x-axis.
+ * 
+ * @doc mdx
+ */
+const circle = [
+    [[1,0],[1,C],[s2,s2]],
+    [[s2,s2],[C,1],[0,1]],
+    [[0,1],[-C,1],[-s2,s2]],
+    [[-s2,s2],[-1,C],[-1,0]],
+    [[-1,0],[-1,-C],[-s2,-s2]],
+    [[-s2,-s2],[-C,-1],[0,-1]],
+    [[0,-1],[C,-1],[s2,-s2]],
+    [[s2,-s2],[1,-C],[1,0]]
+];
+
+
+/** 
+ * Returns an arc approximation using unit eighth circle quadratic bezier
+ * curves. The result is returned as an array of quadratic bezier curves.
+ * 
+ * * if the last returned arc is approximately smaller than 2**-40 of an eighth
+ * circle it is not added to the returned value
+ * * if the last returned arc is approximately (1 - 2**-40) of an eighth
+ * circle a full eighth circle is added to the returned value
+ * 
+ * @param c arc circle center
+ * @param p1 arc goes from this point
+ * @param p2 to a point on a line from c to this point (since the problem is over-specified)
+ * (if `p2` lies on the ray from `c` through `p1` (or `p2` equals `c`) a full
+ * circle is generated using 8 quadratic bezier curves; if `p2` lies on the
+ * opposite ray a half circle is generated)
+ *  
+ * @doc mdx
+ */
+function generateArcFromQuads(
+        c: number[],
+        p1: number[],
+        p2: number[]): number[][][] {
+
+    return generateArc(circle, π/4, c, p1, p2);
+}
+
+
+export { generateArcFromQuads }

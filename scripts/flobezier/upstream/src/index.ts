@@ -1,0 +1,229 @@
+export type { BezierPiece } from './bezier-piece/bezier-piece.js';
+export type { Bound, XBounds, YBounds } from './global-properties/bounds/bounds.js';
+export type { X } from './intersection/bezier-bezier-intersection/x.js';
+export type { Extrema } from './get-curvature-extrema/double/get-curvature-extrema.js';
+export type { ClassificationType, Classification, NodeType } from './global-properties/classification/classify.js';
+export type { AnglesAndSpeeds } from './angles-and-speeds/angles-and-speeds.js';
+export type { PointsWithDistance } from './simultaneous-properties/closest-distance-between-beziers/points-with-distance.js';
+export type { FootAndEndpointInfo } from './simultaneous-properties/closest-and-furthest-point-on-bezier/foot-and-endpoint-info.js';
+
+export { totalCurvature } from './global-properties/total-curvature.js';
+export { bezierPieceToBezier } from './bezier-piece/bezier-piece-to-bezier.js';
+export { isBezierPieceZeroLength } from './bezier-piece/is-bezier-piece-zero-length.js';
+export { getBoundingHull } from './global-properties/bounds/get-bounding-hull.js';
+export { classify, classifications, classification } from './global-properties/classification/classify.js';
+export { area } from './global-properties/area.js';
+export { length } from './global-properties/length/length.js';
+export { totalLength } from './global-properties/length/total-length.js';
+export { clone } from './transformation/clone.js';
+export { translate } from './transformation/affine/translate.js';
+export { scale } from './transformation/affine/scale.js';
+export { rotate } from './transformation/affine/rotate.js';
+export { rotate90 } from './transformation/affine/rotate-90.js';
+export { rotateNeg90 } from './transformation/affine/rotate-neg-90.js';
+export { rotateAbout } from './transformation/affine/rotate-about.js';
+export { rotate90About } from './transformation/affine/rotate-90-about.js';
+export { rotateNeg90About } from './transformation/affine/rotate-neg-90-about.js';
+export { transform } from './transformation/affine/transform.js';
+export { flipHorizontally } from './transformation/affine/flip-horizontally.js';
+export { flipVertically } from './transformation/affine/flip-vertically.js';
+export { flipAbout } from './transformation/affine/flip-about.js';
+export { getTAtLength } from './local-properties-to-t/get-t-at-length.js';
+export { equal } from './simultaneous-properties/equal.js';
+export { γ, γγ } from './error-analysis/error-analysis.js'
+export { fromToInclErrorBound } from './transformation/split/from-to-incl-error-bound.js';
+export { fromTo } from './transformation/split/from-to.js';
+export { fitQuadsToCubic } from './fit/fit-quads-to-cubic.js';
+export { fitQuadsToCubicHausdorff } from './fit/fit-quads-to-cubic-hausdorff.js';
+export { getControlPointBox } from './global-properties/bounds/get-control-point-box.js';
+export { closestPointOnBezier } from './simultaneous-properties/closest-and-furthest-point-on-bezier/closest-point-on-bezier.js';
+export { furthestPointOnBezier } from './simultaneous-properties/closest-and-furthest-point-on-bezier/furthest-point-on-bezier.js';
+export { generateQuarterCircle } from './create/generate-quarter-circle.js';
+export { intersectBoxes } from './boxes/intersect-boxes.js';
+export { areBoxesIntersecting } from './boxes/are-boxes-intersecting.js';
+export { evalDeCasteljau } from './local-properties-at-t/evaluate/double/eval-de-casteljau.js';
+export { evalDeCasteljauError } from './local-properties-at-t/evaluate/eval-de-casteljau-error.js';
+export { evalDeCasteljauWithErr } from './local-properties-at-t/evaluate/double/eval-de-casteljau-with-err.js';
+export { evalDeCasteljauWithErrDd } from './local-properties-at-t/evaluate/double-double/eval-de-casteljau-with-err-dd.js';
+export { evalDeCasteljauDd } from './local-properties-at-t/evaluate/double-double/eval-de-casteljau-dd.js';
+export { isPointOnBezierExtension } from './simultaneous-properties/is-point-on-bezier-extension/is-point-on-bezier-extension.js';
+export { totalAbsoluteCurvature } from './global-properties/total-absolute-curvature.js';
+export { reverse } from './transformation/reverse.js';
+export { getInflections } from './global-properties/get-inflections.js';
+export { getCoeffsBezBez } from './intersection/bezier-bezier-intersection/get-coefficients/get-coeffs-bez-bez.js';
+export { evaluateImplicit3 } from './implicit-form/evaluate/double/evaluate-implicit3.js';
+export { getImplicitForm3 } from './implicit-form/double/get-implicit-form3.js';
+export { getImplicitForm3Dd } from './implicit-form/double-double/get-implicit-form3-dd.js'
+export { getImplicitForm3ErrorCounters } from './implicit-form/get-error-counters/get-implicit-form3-error-counters.js';
+export { getImplicitForm3DdWithRunningError, ddGetImplicitForm3_WithRunningError } from './implicit-form/double-double/get-implicit-form3-dd-with-running-error.js';
+export { getImplicitForm3Exact, eGetImplicitForm3 } from './implicit-form/expansion/e-get-implicit-form3.js';
+export { evaluateImplicit2 } from './implicit-form/evaluate/double/evaluate-implicit2.js';
+export { getImplicitForm2 } from './implicit-form/double/get-implicit-form2.js';
+export { getImplicitForm2Dd } from './implicit-form/double-double/get-implicit-form2-dd.js'
+export { getImplicitForm2ErrorCounters } from './implicit-form/get-error-counters/get-implicit-form2-error-counters.js';
+export { getImplicitForm2DdWithRunningError, ddGetImplicitForm2_WithRunningError } from './implicit-form/double-double/get-implicit-form2-dd-with-running-error.js';
+export { getImplicitForm2Exact, eGetImplicitForm2 } from './implicit-form/expansion/e-get-implicit-form2.js';
+export { evaluateImplicit1 } from './implicit-form/evaluate/double/evaluate-implicit1.js';
+export { getImplicitForm1 } from './implicit-form/double/get-implicit-form1.js';
+export { getImplicitForm1Dd } from './implicit-form/double-double/get-implicit-form1-dd.js'
+export { getImplicitForm1ErrorCounters } from './implicit-form/get-error-counters/get-implicit-form1-error-counters.js';
+export { getImplicitForm1DdWithRunningError, ddGetImplicitForm1_WithRunningError } from './implicit-form/double-double/get-implicit-form1-dd-with-running-error.js';
+export { getImplicitForm1Exact, eGetImplicitForm1 } from './implicit-form/expansion/e-get-implicit-form1.js';
+export { fromPowerBasis } from './from-power-basis/from-power-basis.js';
+export { getHodograph } from './transformation/get-hodograph.js';
+export { generateCuspAtHalf3 } from './create/generate-cusp-at-half-t.js';
+export { generateSelfIntersecting } from './create/generate-self-intersecting.js';
+export { cubicThroughPointGiven013 } from './create/cubic-through-point-given013.js';
+export { bezierSelfIntersection } from './intersection/self-intersection/bezier-self-intersection.js';
+export { getEndpointIntersections } from './intersection/get-endpoint-intersections/get-endpoint-intersections.js';
+export { tFromXY } from './local-properties-to-t/t-from-xy.js';
+export { toPowerBasis } from './to-power-basis/to-power-basis/double/to-power-basis.js';
+export { toPowerBasis_1stDerivative } from './to-power-basis/to-power-basis-1st-derivative/double/to-power-basis-1st-derivative.js';
+export { toPowerBasis_2ndDerivative } from './to-power-basis/to-power-basis-2nd-derivative/double/to-power-basis-2nd-derivative.js';
+export { toPowerBasis_3rdDerivative } from './to-power-basis/to-power-basis-3rd-derivative/double/to-power-basis-3rd-derivative.js';
+export { toPowerBasisDd } from './to-power-basis/to-power-basis/double-double/to-power-basis-dd.js';
+export { toPowerBasis_1stDerivativeDd } from './to-power-basis/to-power-basis-1st-derivative/double-double/to-power-basis-1st-derivative-dd.js';
+export { toPowerBasis_2ndDerivativeDd } from './to-power-basis/to-power-basis-2nd-derivative/double-double/to-power-basis-2nd-derivative-dd.js';
+export { toPowerBasis_3rdDerivativeDd } from './to-power-basis/to-power-basis-3rd-derivative/double-double/to-power-basis-3rd-derivative-dd.js';
+export {
+    toPowerBasisExact,
+    toPowerBasis0Exact,
+    toPowerBasis1Exact,
+    toPowerBasis2Exact,
+    toPowerBasis3Exact
+} from './to-power-basis/to-power-basis/exact/to-power-basis-exact.js';
+export { toPowerBasis_1stDerivativeExact } from './to-power-basis/to-power-basis-1st-derivative/exact/to-power-basis-1st-derivative-exact.js';
+export { toPowerBasis_2ndDerivativeExact } from './to-power-basis/to-power-basis-2nd-derivative/exact/to-power-basis-2nd-derivative-exact.js';
+export { toPowerBasis_3rdDerivativeExact } from './to-power-basis/to-power-basis-3rd-derivative/exact/to-power-basis-3rd-derivative-exact.js';
+export { toPowerBasisWithRunningError } from './to-power-basis/to-power-basis/double/to-power-basis-with-running-error.js';
+export {
+    toPowerBasisDdWithRunningError,
+    toPowerBasis1DdWithRunningError,
+    toPowerBasis2DdWithRunningError,
+    toPowerBasis3DdWithRunningError
+} from './to-power-basis/to-power-basis/double-double/to-power-basis-dd-with-running-error.js';
+export { toPowerBasisErrorCounters } from './to-power-basis/to-power-basis/to-power-basis-error-counters.js';
+export { toPowerBasis_1stDerivativeErrorCounters } from './to-power-basis/to-power-basis-1st-derivative/to-power-basis-1st-derivative-error-counters.js';
+export { normal } from './local-properties-at-t/normal/double/normal.js';
+export { normal2 } from './local-properties-at-t/normal/double/normal2.js';
+export { unitNormal } from './local-properties-at-t/normal/double/unit-normal.js';
+export { ddNormalAt0 } from './local-properties-at-t/normal/double-double/dd-normal-at-0.js';
+export { ddNormalAt1 } from './local-properties-at-t/normal/double-double/dd-normal-at-1.js';
+export { ddNormal } from './local-properties-at-t/normal/double-double/dd-normal.js';
+export { eNormal } from './local-properties-at-t/normal/expansion/e-normal.js';
+export { bezierBezierIntersection } from './intersection/bezier-bezier-intersection/bezier-bezier-intersection.js';
+export { toCubic } from './transformation/degree-or-type/to-cubic.js';
+export { κ, curvature, radiusOfCurvature, curvatureND } from './local-properties-at-t/curvature/curvature.js';
+export { ddCurvature, ddRadiusOfCurvature, ddCurvatureND } from './local-properties-at-t/curvature/dd-curvature.js';
+export { eCurvature } from './local-properties-at-t/curvature/e-curvature.js';
+export { quadraticToPolyline } from './fit/quadratic-to-polyline.js';
+export { isQuadObtuse } from './global-properties/classification/is-quad-obtuse.js';
+export { getIntervalBox } from './global-properties/bounds/get-interval-box/get-interval-box.js';
+export { getIntervalBoxDd } from './global-properties/bounds/get-interval-box/get-interval-box-dd.js';
+export { getInterfaceRotation } from './simultaneous-properties/get-interface-rotation.js';
+export { closestPointOnBezierCertified } from './simultaneous-properties/closest-and-furthest-point-on-bezier/closest-point-on-bezier-certified.js';
+export { getFootPointsOnBezierCertified } from './simultaneous-properties/closest-and-furthest-point-on-bezier/get-foot-points-on-bezier-certified.js';
+export { getFootPointsOnBezierPolysCertified } from './simultaneous-properties/closest-and-furthest-point-on-bezier/get-foot-points-polys-on-bezier-certified.js';
+export { hausdorffDistanceOneSided } from './simultaneous-properties/hausdorff-distance/hausdorff-distance-one-sided.js';
+export { hausdorffDistanceOneSidedExtra } from './simultaneous-properties/hausdorff-distance/hausdorff-distance-one-sided-extra.js';
+export type { HausdorffDistanceOneSidedExtra, HausdorffDistanceExtra } from './simultaneous-properties/hausdorff-distance/hausdorff-distance-types.js';
+export { hausdorffDistance } from './simultaneous-properties/hausdorff-distance/hausdorff-distance.js';
+export { hausdorffDistanceExtra } from './simultaneous-properties/hausdorff-distance/hausdorff-distance-extra.js';
+export { hausdorffDistanceDirect, hausdorffDistanceOneSidedDirect } from './simultaneous-properties/hausdorff-distance-direct/hausdorff-distance-direct.js';
+export type { HausdorffDistanceOneSidedDirect, HausdorffDistanceDirect, HausdorffDirectKind } from './simultaneous-properties/hausdorff-distance-direct/hausdorff-distance-direct.js';
+export { controlPointLinesLength } from './global-properties/length/control-point-lines-length.js';
+export { splitByLength } from './transformation/split/split-by-length.js';
+export { getCurvatureExtrema } from './get-curvature-extrema/double/get-curvature-extrema.js';
+export { getCurvatureExtremaDd } from './get-curvature-extrema/double-double/get-curvature-extrema-dd.js';
+export { getCurvatureExtremaE } from './get-curvature-extrema/expansion/get-curvature-extrema-e.js';
+export { curviness } from './global-properties/curviness.js';
+export { splitByCurvature } from './transformation/split/split-by-curvature.js';
+export { splitByCurvatureAndLength } from './transformation/split/split-by-curvature-and-length.js';
+export { isCollinear, isHorizontal, isVertical } from './global-properties/classification/is-collinear.js';
+export { isSelfOverlapping } from './global-properties/classification/is-self-overlapping.js';
+export { getBounds } from './global-properties/bounds/get-bounds.js';
+export { getBoundingBoxTight } from './global-properties/bounds/get-bounding-box-tight.js';
+export { getBoundingBox } from './global-properties/bounds/get-bounding-box.js';
+export { cubicToHybridQuadratic } from './transformation/degree-or-type/cubic-to-hybrid-quadratic.js';
+export { isCubicReallyLine } from './global-properties/classification/is-cubic-really-line.js';
+export { isCubicReallyQuad } from './global-properties/classification/is-cubic-really-quad.js';
+export { isQuadReallyLine } from  './global-properties/classification/is-quad-really-line.js';
+export { isReallyPoint } from './global-properties/classification/is-really-point.js';
+export { cubicToQuadratic } from './transformation/degree-or-type/cubic-to-quadratic.js';
+export { quadraticToCubic } from './transformation/degree-or-type/quadratic-to-cubic.js';
+export { elevateDegree } from './transformation/degree-or-type/elevate-degree.js';
+export { circleBezierIntersection } from './intersection/circle-bezier-intersection/circle-bezier-intersection.js';
+export { evaluateExact } from './local-properties-at-t/evaluate/exact/evaluate-exact.js';
+export { evaluate } from './local-properties-at-t/evaluate/double/evaluate.js';
+export { lineToQuadratic } from './transformation/degree-or-type/line-to-quadratic.js';
+export { lineToCubic } from './transformation/degree-or-type/line-to-cubic.js';
+export { tangent } from './local-properties-at-t/tangent/double/tangent.js';
+export { unitTangent } from './local-properties-at-t/tangent/double/unit-tangent.js';
+export { evaluate1stDerivative } from './local-properties-at-t/evaluate-1st-derivative/double/evaluate-1st-derivative.js';
+export { evaluate1stDerivativeExact } from './local-properties-at-t/evaluate-1st-derivative/exact/evaluate-1st-derivative-exact.js';
+export { ddTangentAt0 } from './local-properties-at-t/tangent/double-double/dd-tangent-at-0.js';
+export { ddTangentAt1 } from './local-properties-at-t/tangent/double-double/dd-tangent-at-1.js';
+export { ddTangent } from './local-properties-at-t/tangent/double-double/dd-tangent.js';
+export { tangentExact, eTangent } from './local-properties-at-t/tangent/exact/tangent-exact.js'
+export { evaluate2ndDerivative } from './local-properties-at-t/evaluate-2nd-derivative/double/evaluate-2nd-derivative.js';
+export { evaluate2ndDerivativeExact } from './local-properties-at-t/evaluate-2nd-derivative/exact/evaluate-2nd-derivative-exact.js'
+export { tangentAt0Exact, eTangentAt0 } from './local-properties-at-t/tangent/exact/tangent-at-0-exact.js'
+export { evaluate2ndDerivativeAt0Exact } from './local-properties-at-t/evaluate-2nd-derivative/exact/evaluate-2nd-derivative-at-0-exact.js'
+export { tangentAt1Exact, eTangentAt1 } from './local-properties-at-t/tangent/exact/tangent-at-1-exact.js'
+export { evaluate2ndDerivativeAt1Exact } from './local-properties-at-t/evaluate-2nd-derivative/exact/evaluate-2nd-derivative-at-1-exact.js'
+export { tangentAt0 } from './local-properties-at-t/tangent/double/tangent-at-0.js';
+export { evaluate2ndDerivativeAt0 } from './local-properties-at-t/evaluate-2nd-derivative/double/evaluate-2nd-derivative-at-0.js';
+export { tangentAt1 } from './local-properties-at-t/tangent/double/tangent-at-1.js';
+export { evaluate2ndDerivativeAt1 } from './local-properties-at-t/evaluate-2nd-derivative/double/evaluate-2nd-derivative-at-1.js';
+export { toString } from './transformation/to-string.js';
+export { bezierBezierIntersectionBoundless } from './intersection/bezier-bezier-intersection/bezier-bezier-intersection-boundless.js';
+export { bezierBezierIntersectionBoundlessBoth } from './intersection/bezier-bezier-intersection/bezier-bezier-intersection-boundless-both.js';
+export { getXBoundsTight } from './global-properties/bounds/get-x-bounds-tight.js';
+export { getYBoundsTight } from './global-properties/bounds/get-y-bounds-tight.js';
+export { getFootpointPolyExact } from "./simultaneous-properties/closest-and-furthest-point-on-bezier/get-coeffs/exact/get-footpoint-poly-exact.js";
+export { getFootpointPoly } from "./simultaneous-properties/closest-and-furthest-point-on-bezier/get-coeffs/double/get-footpoint-poly.js";
+export { getFootpointPolyDd } from "./simultaneous-properties/closest-and-furthest-point-on-bezier/get-coeffs/double-double/get-footpoint-poly-dd.js";
+export { reduceOrderIfPossible } from './transformation/reduce-order-if-possible.js'
+export { getAbsAreaBetween } from './fit/get-abs-area-between.js';
+export { getBendingEnergy } from './global-properties/get-bending-energy.js';
+export { cubicFromAnglesAndSpeeds } from './angles-and-speeds/bezier-by-angles-and-speeds/cubic-from-angles-and-speeds.js';
+export { cubicToAnglesAndSpeeds } from './angles-and-speeds/bezier-by-angles-and-speeds/cubic-to-angles-and-speeds.js';
+export { getCubicSpeeds } from './angles-and-speeds/bezier-by-angles-and-speeds/get-cubic-speeds.js';
+export { setCubicSpeeds } from './angles-and-speeds/bezier-by-angles-and-speeds/set-cubic-speeds.js';
+export { closestPointsBetweenBeziers } from './simultaneous-properties/closest-distance-between-beziers/closest-points-between-beziers.js';
+export { maxAbsCoordinate } from './error-analysis/max-abs-coordinate.js';
+export { generateArcFromQuads } from './create/generate-arc-from-quads.js';
+export { generateArcFromCubics } from './create/generate-arc-from-cubics.js';
+export { calcQuadOffsetCurveXPoint } from './offset/calc-quad-offset-x-point.js';
+export { getMedialPoints } from './get-medial-points/double/get-medial-points.js';
+export { getMedialPointCoeffs } from './get-medial-points/double/get-medial-point-coeffs.js';
+export { getMedialPointCoeffsBez0 } from './get-medial-points/double/get-medial-point-coeffs-bez0.js';
+export { getMedialPointCoeffsBez1 } from './get-medial-points/double/get-medial-point-coeffs-bez1.js';
+export { getMedialPointCoeffsBez2 } from './get-medial-points/double/get-medial-point-coeffs-bez2.js';
+export { getMedialPointCoeffsBez3 } from './get-medial-points/double/get-medial-point-coeffs-bez3.js';
+export { getMedialPointCoeffsBez2_SameCurve } from './get-medial-points/double/get-medial-point-coeffs-bez2-same-curve.js';
+export { getMedialPointCoeffsBez3_SameCurve } from './get-medial-points/double/get-medial-point-coeffs-bez3-same-curve.js';
+export { getBezierPieceLength } from './bezier-piece/get-bezier-piece-length.js';
+export { ddGetMedialPointCoeffs } from './get-medial-points/double-double/dd-get-medial-point-coeffs.js';
+export { ddGetMedialPointCoeffsBez0 } from './get-medial-points/double-double/dd-get-medial-point-coeffs-bez0.js';
+export { ddGetMedialPointCoeffsBez1 } from './get-medial-points/double-double/dd-get-medial-point-coeffs-bez1.js';
+export { ddGetMedialPointCoeffsBez2 } from './get-medial-points/double-double/dd-get-medial-point-coeffs-bez2.js';
+export { ddGetMedialPointCoeffsBez3 } from './get-medial-points/double-double/dd-get-medial-point-coeffs-bez3.js';
+export { ddGetMedialPointCoeffsBez2_SameCurve } from './get-medial-points/double-double/dd-get-medial-point-coeffs-bez2-same-curve.js';
+export { ddGetMedialPointCoeffsBez3_SameCurve } from './get-medial-points/double-double/dd-get-medial-point-coeffs-bez3-same-curve.js';
+export { getCoeffsYFromX } from './y-from-x/double/get-coeffs-y-from-x.js';
+export { getCoeffsYFromX_WithRunningErr } from './y-from-x/double/get-coeffs-y-from-x-with-running-err.js';
+export { ddGetCoeffsYFromX } from './y-from-x/double-double/dd-get-coeffs-y-from-x.js';
+export { ddGetCoeffsYFromX_WithRunningErr } from './y-from-x/double-double/dd-get-coeffs-y-from-x-with-running-err.js';
+export { eGetCoeffsYFromX } from './y-from-x/expansion/e-get-coeffs-y-from-x.js';
+export { getCoeffsXFromY } from './x-from-y/double/get-coeffs-x-from-y.js';
+export { getCoeffsXFromY_WithRunningErr } from './x-from-y/double/get-coeffs-x-from-y-with-running-err.js';
+export { ddGetCoeffsXFromY } from './x-from-y/double-double/dd-get-coeffs-x-from-y.js';
+export { ddGetCoeffsXFromY_WithRunningErr } from './x-from-y/double-double/dd-get-coeffs-x-from-y-with-running-err.js';
+export { eGetCoeffsXFromY } from './x-from-y/expansion/get-coeffs-x-from-y.js';
+export { splitByDeviationFromStraightLine } from './transformation/split/split-by-deviation-from-straight-line.js';
+export { splitByDeviationFromStraightLine_Cubic } from './transformation/split/split-by-deviation-from-straight-line-cubic.js';
+export { splitByDeviationFromStraightLine_Quad } from './transformation/split/split-by-deviation-from-straight-line-quad.js';
+export { getImplicitForm1WithRunningError } from './implicit-form/double/get-implicit-form1-with-running-error.js';
+export { getImplicitForm2WithRunningError } from './implicit-form/double/get-implicit-form2-with-running-error.js';
+export { getImplicitForm3WithRunningError } from './implicit-form/double/get-implicit-form3-with-running-error.js';

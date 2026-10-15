@@ -1,0 +1,11 @@
+  Resolving versions
+  Compiling snapshot_diagnostics
+   Compiled in 0.03s
+    Running snapshot_diagnostics.main
+PASS shared endpoint: raw/snapped counts, validity, exact endpoint, separation
+PASS off-center contact: known parameters, residual, count
+PASS flat crossing: known parameters, residual, count
+PASS thin-curve root, both orientations
+PASS remaining original-candidate test geometric assertions
+PASS overlap and strict certification
+PASS unrepresentable tolerance error

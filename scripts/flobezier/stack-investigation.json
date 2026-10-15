@@ -1,0 +1,197 @@
+[
+  {
+    "name": "upstream",
+    "a": [
+      [
+        100000,
+        100000
+      ],
+      [
+        100001,
+        100010
+      ],
+      [
+        100007,
+        100003
+      ],
+      [
+        100010,
+        100000
+      ]
+    ],
+    "b": [
+      [
+        100000,
+        100005.18996761437
+      ],
+      [
+        100010,
+        100005.18996761437
+      ]
+    ],
+    "exception": "RangeError: Maximum call stack size exceeded",
+    "stack": "RangeError: Maximum call stack size exceeded\n    at isEqual (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/prelude.mjs:1481:24)\n    at assert_split_segment_preserves_endpoints (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5235:9)\n    at split_segment (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5441:3)\n    at segment_split (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5457:12)\n    at forward_segment_between (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5782:14)\n    at Module.segment_between (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5840:14)\n    at intersection_piece_bounding_box (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:4937:15)\n    at inspect_projection_window (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:4950:11)\n    at collect_projection_terminal_windows_generation (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5048:9)\n    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5060:18",
+    "elapsedMs": 102.48579199999999,
+    "metrics": {
+      "inspections": 0,
+      "byDepth": {},
+      "terminalCount": 0
+    }
+  },
+  {
+    "name": "translated",
+    "a": [
+      [
+        0,
+        0
+      ],
+      [
+        1,
+        10
+      ],
+      [
+        7,
+        3
+      ],
+      [
+        10,
+        0
+      ]
+    ],
+    "b": [
+      [
+        0,
+        5.18996761437
+      ],
+      [
+        10,
+        5.18996761437
+      ]
+    ],
+    "exception": "RangeError: Maximum call stack size exceeded",
+    "stack": "RangeError: Maximum call stack size exceeded\n    at isEqual (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/prelude.mjs:1481:24)\n    at assert_split_segment_preserves_endpoints (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5235:9)\n    at split_segment (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5441:3)\n    at segment_split (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5457:12)\n    at forward_segment_between (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5782:14)\n    at Module.segment_between (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5840:14)\n    at intersection_piece_bounding_box (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:4937:15)\n    at inspect_projection_window (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:4950:11)\n    at collect_projection_terminal_windows_generation (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5048:9)\n    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5060:18",
+    "elapsedMs": 99.98304199999998,
+    "metrics": {
+      "inspections": 0,
+      "byDepth": {},
+      "terminalCount": 0
+    }
+  },
+  {
+    "name": "integer-gap",
+    "a": [
+      [
+        0,
+        0
+      ],
+      [
+        1,
+        10
+      ],
+      [
+        7,
+        3
+      ],
+      [
+        10,
+        0
+      ]
+    ],
+    "b": [
+      [
+        0,
+        6
+      ],
+      [
+        10,
+        6
+      ]
+    ],
+    "exception": "RangeError: Maximum call stack size exceeded",
+    "stack": "RangeError: Maximum call stack size exceeded\n    at isEqual (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/prelude.mjs:1481:24)\n    at assert_split_segment_preserves_endpoints (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5235:9)\n    at split_segment (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5441:3)\n    at segment_split (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5457:12)\n    at forward_segment_between (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5782:14)\n    at Module.segment_between (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5840:14)\n    at intersection_piece_bounding_box (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:4937:15)\n    at inspect_projection_window (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:4950:11)\n    at collect_projection_terminal_windows_generation (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5048:9)\n    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5060:18",
+    "elapsedMs": 100.225417,
+    "metrics": {
+      "inspections": 0,
+      "byDepth": {},
+      "terminalCount": 0
+    }
+  },
+  {
+    "name": "symmetric-unit",
+    "a": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        0
+      ]
+    ],
+    "b": [
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        1
+      ]
+    ],
+    "exception": "RangeError: Maximum call stack size exceeded",
+    "stack": "RangeError: Maximum call stack size exceeded\n    at isEqual (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/prelude.mjs:1481:24)\n    at assert_split_segment_preserves_endpoints (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5235:9)\n    at split_segment (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5441:3)\n    at segment_split (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5457:12)\n    at forward_segment_between (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5782:14)\n    at Module.segment_between (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5840:14)\n    at intersection_piece_bounding_box (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:4937:15)\n    at inspect_projection_window (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:4950:11)\n    at collect_projection_terminal_windows_generation (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5048:9)\n    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5060:18",
+    "elapsedMs": 99.08887499999997,
+    "metrics": {
+      "inspections": 0,
+      "byDepth": {},
+      "terminalCount": 0
+    }
+  },
+  {
+    "name": "symmetric-ten",
+    "a": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        10
+      ],
+      [
+        10,
+        10
+      ],
+      [
+        10,
+        0
+      ]
+    ],
+    "b": [
+      [
+        0,
+        10
+      ],
+      [
+        10,
+        10
+      ]
+    ],
+    "exception": "RangeError: Maximum call stack size exceeded",
+    "stack": "RangeError: Maximum call stack size exceeded\n    at isEqual (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/prelude.mjs:1481:24)\n    at assert_split_segment_preserves_endpoints (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5235:9)\n    at split_segment (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5441:3)\n    at segment_split (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5457:12)\n    at forward_segment_between (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5782:14)\n    at Module.segment_between (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5840:14)\n    at intersection_piece_bounding_box (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:4937:15)\n    at inspect_projection_window (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:4950:11)\n    at collect_projection_terminal_windows_generation (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5048:9)\n    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:5060:18",
+    "elapsedMs": 97.36587499999996,
+    "metrics": {
+      "inspections": 0,
+      "byDepth": {},
+      "terminalCount": 0
+    }
+  }
+]

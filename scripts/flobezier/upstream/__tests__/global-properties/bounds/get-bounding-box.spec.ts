@@ -1,0 +1,32 @@
+import { describe, expect, it } from '@jest/globals';
+import { getBoundingBox } from '../../../src/global-properties/bounds/get-bounding-box.js';
+import { getRandomBezier } from '../../helpers/get-random-bezier.js';
+
+
+describe('getBoundingBox', function() {
+    const getRandomBezier_ = getRandomBezier(128, 50)(3);
+
+    it('it should find a correct bounding box for some beziers', 
+    function() {
+        {
+            const ps = getRandomBezier_(0);
+            const r = getBoundingBox(ps);
+            expect(r).toBeNearly(2**8, [ 
+                [-108.49686506776891, -112.19754035329095],
+                  [124.76385737178953, 2.2882635064333403]
+            ]);
+        }
+        {
+            const ps = [ 
+                [-94.81526242914038, -85.23564826446488],
+                [-99.10150372309181, 6.600052566872932],
+                [80.17857884247292, -101.65036486965846],
+                [-95.539309056601269, -84.89133452900955] 
+            ];
+            expect(getBoundingBox(ps)).toBeNearly(2**8, [ 
+                [-95.53930905660127, -86.68993123068566],
+                [-18.202031865991252, -47.821196161479136]
+            ]);
+        }
+    });
+});

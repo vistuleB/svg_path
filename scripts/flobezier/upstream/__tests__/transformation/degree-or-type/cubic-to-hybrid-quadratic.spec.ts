@@ -1,0 +1,42 @@
+import { describe, expect, it } from '@jest/globals';
+import { getRandomCubic } from '../../helpers/get-random-bezier.js';
+import { evalDeCasteljau } from '../../../src/local-properties-at-t/evaluate/double/eval-de-casteljau.js';
+import { cubicToHybridQuadratic } from '../../../src/transformation/degree-or-type/cubic-to-hybrid-quadratic.js';
+
+
+describe('cubicToHybridQuadratic', function() {
+    it('it should correctly convert some cubic bezier curves to hybrid quadratic bezier curves',
+    function() {
+        {
+            let ps = getRandomCubic(0);
+            const r = cubicToHybridQuadratic(ps);
+            expect(r).toBeNearly(2**8, [
+                [-108.49686506776892, -13.011161175008596],
+                  [
+                    [34.75308976818554, -3.9834616658639064],
+                    [-91.79537575871359, 134.59002206439018] 
+                ],
+                  [124.76385737178956, -112.1975403532909]
+            ]);
+
+            // also test some evaluation points
+            const ts = [0,0.1,0.2,0.999,1];
+
+            const ps1 = ts.map(t => evalDeCasteljau(ps, t));
+            const ps2 = ts.map(t => evalDeCasteljau([
+                r[0],
+                evalDeCasteljau(r[1], t),
+                r[2]
+            ], t));
+
+            expect(ps1).toBeNearly(2**4, ps2);
+        }
+
+        // some edge cases
+        {
+            const p = [1,1];
+            const ps = [p,p,p,p,p];
+            expect(() => cubicToHybridQuadratic(ps)).toThrow();
+        }
+    });
+});

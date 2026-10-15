@@ -1,0 +1,11 @@
+  Compiling flobezier_audit_probe
+   Compiled in 0.35s
+    Running flobezier_audit_probe.main
+line then quadratic: overlaps, intersections, encounters
+Ok([])
+Error(InternalOverlapClassificationInconsistency)
+Error(OverlappingSegments)
+quadratic then line: overlaps, intersections, encounters
+Ok([])
+Error(InternalOverlapClassificationInconsistency)
+Error(OverlappingSegments)

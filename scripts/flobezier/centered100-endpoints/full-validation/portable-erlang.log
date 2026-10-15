@@ -1,0 +1,30 @@
+Portable numerical tests (all, all): Erlang
+  Compiling svg_path
+  Compiling svg_path_portable_tests
+   Compiled in 1.49s
+    Running svg_path_portable_tests_test.main
+..............................................................
+assert test/svg_path_conditioned_intersections_test.gleam:53
+ test: svg_path_conditioned_intersections_test.conditioned_search_preserves_original_candidates_test
+ code: assert list.any(found, fn(hit) {
+      hit.left_t == candidate.left_t && hit.right_t == candidate.right_t
+    })
+    0: [SegmentIntersection(0.4962432835063433, 0.18393974411322178, Point(0.5609921393610562, 1.6895258233783162e-14)), SegmentIntersection(0.6089752746725361, 0.0, Point(0.49548010542429927, 1.8755974807070452e-14))]
+    1: //fn(a) { ... }
+ info: Assertion failed.
+.......................................................................................................
+assert test/svg_path_intersections_test.gleam:338
+ test: svg_path_intersections_test.production_off_center_kissing_quadratics_test
+ code: assert list.length(found) == 4
+ left: 1
+right: 4
+ info: Assertion failed.
+.
+assert test/svg_path_intersections_test.gleam:379
+ test: svg_path_intersections_test.flat_cubic_crossing_regression_test
+ code: assert list.length(found) == 9
+ left: 6
+right: 9
+ info: Assertion failed.
+.............................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................
+755 passed, 3 failures

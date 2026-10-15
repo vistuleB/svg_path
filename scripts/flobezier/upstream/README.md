@@ -1,0 +1,177 @@
+# FloBezier
+
+[![npm][1]][2] [![downloads][3]][2]
+
+[1]: https://img.shields.io/npm/v/flo-bezier3 "FloBezier, npm badge"
+[2]: https://www.npmjs.com/package/flo-bezier3 "FloBezier, npm link"
+[3]: https://img.shields.io/npm/dm/flo-bezier3 "FloBezier downloads, badge"
+
+## [Demo](https://florissteenkamp.github.io/FloBezier/demo/)
+Try FloBezier live in your browser with the [interactive demo](https://florissteenkamp.github.io/FloBezier/demo/).
+
+## Overview
+
+The focus is to provide a portable, practical, easy-to-use, robust and fast bezier curve
+library with zero vendor lock-in.
+
+For example, finding the intersection between two cubic bezier curves
+should be simple:
+
+```typescript
+import { bezierBezierIntersection, evalDeCasteljau } from 'flo-bezier3';
+
+// some cubic bezier curve given by an array of its control points
+const cubic1 = [[6.4, 4.8], [15, 5], [1, 4], [10, 4]];
+// another cubic bezier curve
+const cubic2 = [[9.4, 0.4], [9.3, 10.3], [8.1, 0.1], [7.53125, 5.5]];
+const xs = bezierBezierIntersection(cubic1, cubic2);
+// xs.length === 9 (nine points of intersection)
+
+// each intersection is an object carrying the point of intersection `p` as well as
+// the parameter values `t1` and `t2` on the first and second curve respectively
+const x = xs[0];  //=> { p: [7.617926141015112, 4.822433357454532], t1: 0.054810011880009515, t2: 0.9516779285879587, ... }
+
+// Evaluating the 1st curve at the first intersection gives the point of intersection
+const p1 = evalDeCasteljau(cubic1, x.t1);  //=> [7.6179261410151105, 4.822433357454532]
+// ... or alternatively evaluating the 2nd curve at the first intersection
+const p2 = evalDeCasteljau(cubic2, x.t2);  //=> [7.6179261410151105, 4.822433357454532]
+```
+
+In general, the functions in this library are limited to points, lines, quadratic bezier
+curves and cubic bezier curves (i.e. order 0,1,2 and 3 bezier curves) in 2d.
+
+A point is simply an array of two numbers, e.g. `[1,2]`, and a bezier curve is an
+array of its control points (`number[][]`): 2 points for a line, 3 for a quadratic
+and 4 for a cubic, e.g. `[[0,0], [1,1], [2,1], [2,0]]`.
+
+## What's included
+
+* **Intersection** bezier–bezier, self-intersection, circle–bezier, endpoint intersections
+* **Distance** closest and furthest point on a curve, Hausdorff distance between curves
+* **Measures** length, area, curvature and its extrema, inflections, bounding boxes and hulls, classification
+* **Transformations** affine transformations, splitting, degree elevation and reduction, fitting quadratics to cubics
+* **Representations** implicit form, power basis, hodograph
+
+### Precision variants
+
+Many functions come in several precision variants, distinguished by their names:
+
+* no suffix, e.g. `toPowerBasis` - double precision
+* `Dd` suffix (or `dd` prefix), e.g. `toPowerBasisDd` - [double-double](https://en.wikipedia.org/wiki/Quadruple-precision_floating-point_format#Double-double_arithmetic) precision
+* `Exact` suffix (or `e` prefix), e.g. `toPowerBasisExact` - exact, using floating point expansions
+* `WithErr` / `WithRunningError` suffix - also returns an error bound on the result
+* `ErrorCounters` suffix - returns error counters from which an a priori error bound can be calculated
+
+## Features
+
+* **Robust** Based on dozens of research papers (referenced in the docs) and using adaptive multi-precision
+floating point operations with strict error-bounding techniques ensures
+robust results you can trust.
+
+* **Fast** Special care has been taken to ensure each function performs well not 
+only in theory but also in practice.
+
+* **Tested** Hundreds of carefully crafted tests and over 99% coverage means you can
+use every function with confidence and peace of mind.
+
+* **Freestanding** For maximum interoperability, each function is entirely independent (e.g.
+not a method of a class) and takes simple parameters (e.g. a point is just
+an array of numbers and a bezier curve is simply represented as an array of points).
+
+* **Accurate** High [condition numbers](https://en.wikipedia.org/wiki/Condition_number)
+are completely mitigated where necessary without a hit to performance. For example,
+bezier curve intersection is _guaranteed_ accurate to
+within `4*Number.EPSILON` in the returned parameter values.
+
+* **Pure** Every function is [pure](https://en.wikipedia.org/wiki/Pure_function).
+The same input to the same function gives the same results - every time. No need
+to clog your short term memory by worrying about state of any kind.
+
+
+## [Documentation](https://florissteenkamp.github.io/FloBezier)
+For in-depth interactive documentation please [read the docs!](https://florissteenkamp.github.io/FloBezier).
+
+## Installation
+
+```sh
+npm install flo-bezier3
+```
+
+This package is [ESM only](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c).
+It can be used in `Node.js` (version 22 or later) or in a browser.
+
+For direct browser support (without using a bundler), `index.js` and `index.min.js` are provided in the `./browser` folder.
+
+## Usage
+
+Below are usage examples for some common environments. 
+
+Please see the [docs](https://florissteenkamp.github.io/FloBezier) for a complete
+list of available functions.
+
+### Node.js
+```js
+import { closestPointOnBezier, length } from 'flo-bezier3';
+
+// some cubic bezier curve given by an array of its control points
+const cubic = [[1, 1], [5.125, 8], [15.375, 0.875], [13.6875, 7.71875]];
+
+// the closest point on the curve to the point [8,2]
+const closest = closestPointOnBezier(cubic, [8, 2]);
+//=> { p: [7.947779632175788, 4.423680481174277], t: 0.41164114810332675, d: 2.4242429832095778 }
+
+// the length of the curve over the parameter interval [0,1]
+const len = length([0, 1], cubic);  //=> 16.543386822168507
+```
+
+### Browsers - directly, without a bundler, using the pre-bundled minified .js file
+
+Please note that no tree shaking will take place in this case.
+
+The file can be loaded from a CDN, e.g.
+`https://cdn.jsdelivr.net/npm/flo-bezier3/browser/index.min.js`, or locally from
+`./node_modules/flo-bezier3/browser/index.min.js`.
+
+```html
+<!doctype html>
+
+<html lang="en">
+<head>
+    <script type="module">
+        import { fitQuadsToCubic } from "https://cdn.jsdelivr.net/npm/flo-bezier3/browser/index.min.js";
+
+        // some cubic bezier curve given by an array of its control points
+        const cubic = [[1, 1], [5.125, 8], [15.375, 0.875], [13.6875, 7.71875]];
+        const quads = fitQuadsToCubic(cubic, 0.1); //=> [[[1, 1], [2.617431640625, 3.5152587890625], ...
+
+        if (quads.length === 4) {
+            console.log('success! 😁');  // we should get to here!
+        } else {
+            console.log('failure! 😥');  // ...and not here
+        }
+    </script>
+</head>
+
+<body>Check the console.</body>
+
+</html>
+```
+
+### Bundlers (Webpack, Rollup, Vite, ...)
+
+Works with any modern bundler that supports ES modules.
+
+If you are using TypeScript, follow this [guide](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c#how-can-i-make-my-typescript-project-output-esm)
+to configure your project for ESM output.
+
+
+## Contributing
+
+Bug reports, pull requests and ⭐⭐⭐⭐⭐s are welcome and appreciated!
+
+Please report issues on [GitHub](https://github.com/FlorisSteenkamp/FloBezier/issues).
+
+
+## License
+
+MIT, see [LICENSE](LICENSE).

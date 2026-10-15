@@ -1,0 +1,3523 @@
+{
+  "files": [
+    {
+      "file": "__tests__/bezier-piece/is-bezier-piece-zero-length.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "bezier-piece",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "isBezierPieceZeroLength should correctly identify zero-length bezier pieces",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "point-input-api-difference": 22,
+        "matches-adapted-contract": 67
+      },
+      "comparisonOperations": [
+        "isBezierPieceZeroLength"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered.",
+      "reviewNote": "Compare exact-zero tolerance after segment_between; point-only inputs recorded separately."
+    },
+    {
+      "file": "__tests__/boxes/are-boxes-intersecting.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "boxes",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "areBoxesIntersecting it should correctly check that 'open' boxes with coinciding sides / corners don' t intersect",
+          "status": "passed"
+        },
+        {
+          "name": "areBoxesIntersecting it should correctly check that 'closed' boxes with coinciding sides / corners do intersect",
+          "status": "passed"
+        },
+        {
+          "name": "areBoxesIntersecting it should correctly check if some 'open' boxes are intersecting or not",
+          "status": "passed"
+        },
+        {
+          "name": "areBoxesIntersecting it should correctly check if some 'open' boxes are intersecting or not",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Closed-box intersection predicate; our public bounds API exposes enclosure and union, not this predicate. No direct contract.",
+      "reviewNote": "Closed-box intersection predicate; our public bounds API exposes enclosure and union, not this predicate. No direct contract."
+    },
+    {
+      "file": "__tests__/boxes/intersect-boxes.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "boxes",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "intersectBoxes it should correctly intersect two boxes for some boxes",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Box intersection result/empty convention; no public box-intersection operation. Bounds union is not equivalent.",
+      "reviewNote": "Box intersection result/empty convention; no public box-intersection operation. Bounds union is not equivalent."
+    },
+    {
+      "file": "__tests__/create/cubic-through-point-given013.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "create",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "cubicThroughPointGiven013 should create the correct cubic though a given point given control points 0, 1 and 3 at time `t`",
+          "status": "passed"
+        },
+        {
+          "name": "cubicThroughPointGiven013 should throw if `t` is 0 or 1 (previously `NaN` control points were returned)",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Solves one missing cubic control given the other three and a point at t. Our cubic least-squares fitting API has different constraints; no direct constructor.",
+      "reviewNote": "Solves one missing cubic control given the other three and a point at t. Our cubic least-squares fitting API has different constraints; no direct constructor."
+    },
+    {
+      "file": "__tests__/create/generate-arc.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "create",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "generateArcFromCubics should return no pieces if `p1` is the circle center",
+          "status": "passed"
+        },
+        {
+          "name": "generateArcFromCubics should return a closed full circle if `p2` lies on the ray from `c` through `p1` (or is `c`)",
+          "status": "passed"
+        },
+        {
+          "name": "generateArcFromCubics should return a half circle if `p2` lies on the opposite ray",
+          "status": "passed"
+        },
+        {
+          "name": "generateArcFromCubics should return a contiguous arc from `p1` to the ray from `c` through `p2` that approximates the circle",
+          "status": "passed"
+        },
+        {
+          "name": "generateArcFromQuads should return no pieces if `p1` is the circle center",
+          "status": "passed"
+        },
+        {
+          "name": "generateArcFromQuads should return a closed full circle if `p2` lies on the ray from `c` through `p1` (or is `c`)",
+          "status": "passed"
+        },
+        {
+          "name": "generateArcFromQuads should return a half circle if `p2` lies on the opposite ray",
+          "status": "passed"
+        },
+        {
+          "name": "generateArcFromQuads should return a contiguous arc from `p1` to the ray from `c` through `p2` that approximates the circle",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Center-and-rays constructors choose full circles for coincident rays and fixed 4-cubic/8-quadratic subdivisions. Our SVG endpoint arcs have different degeneracy and approximation contracts; no output-list parity requirement.",
+      "reviewNote": "Center-and-rays constructors choose full circles for coincident rays and fixed 4-cubic/8-quadratic subdivisions. Our SVG endpoint arcs have different degeneracy and approximation contracts; no output-list parity requirement."
+    },
+    {
+      "file": "__tests__/create/generate-cusp-at-half-t.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "create",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "generateCuspAtHalf3 it should generate the correct cubic curve with a cusp at `t === 0.5`",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Dedicated cusp constructor has no counterpart. Generated cusps already enter the shared self-intersection/length comparisons.",
+      "reviewNote": "Dedicated cusp constructor has no counterpart. Generated cusps already enter the shared self-intersection/length comparisons."
+    },
+    {
+      "file": "__tests__/create/generate-self-intersecting.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "create",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "generateSelfIntersecting it should generate some self-intersection cubic bezier under some given constraints",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 1
+      },
+      "comparisonOperations": [
+        "bezierSelfIntersection"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/fit/fit-quads-to-cubic.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "fit",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "fitQuadsToCubic it should approximate the given cubic bezier curve to within a given tolerance to ordered piecewise quadratic bezier curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Piecewise quadratic approximation of a cubic; no public cubic-to-piecewise-quadratic fitting API. Candidate capability only.",
+      "reviewNote": "Piecewise quadratic approximation of a cubic; no public cubic-to-piecewise-quadratic fitting API. Candidate capability only."
+    },
+    {
+      "file": "__tests__/fit/quadratic-to-polyline.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "fit",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "quadToPolyline it should approximate some quadratic bezier curves with polylines",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-adapted-contract": 2
+      },
+      "comparisonOperations": [
+        "quadraticToPolyline"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered.",
+      "reviewNote": "Run our linearizer with the same deviation tolerance and sample 1001 original-curve points against output lines. Exact upstream point lists are algorithm choices, not required; sampled check is not a proof."
+    },
+    {
+      "file": "__tests__/from-power-basis/from-power-basis.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "from-power-basis",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "fromPowerBasis it should correctly convert from power basis to Bernstein basis",
+          "status": "passed"
+        },
+        {
+          "name": "fromPowerBasis it should throw for invalid input",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Polynomial coefficients, exact expansions, or coefficient error bounds; no corresponding public representation."
+    },
+    {
+      "file": "__tests__/get-curvature-extrema/curvature-extrema-precision.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "get-curvature-extrema",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "curvature extrema precision benchmark (double vs double-double vs expansion) should measure the accuracy for cubic bezier curves",
+          "status": "passed"
+        },
+        {
+          "name": "curvature extrema precision benchmark (double vs double-double vs expansion) should measure the accuracy for quadratic bezier curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Compares double, double-double, and exact curvature-extremum solvers. We expose curvature at t and inflections, not general curvature extrema or certified roots.",
+      "reviewNote": "Compares double, double-double, and exact curvature-extremum solvers. We expose curvature at t and inflections, not general curvature extrema or certified roots."
+    },
+    {
+      "file": "__tests__/get-curvature-extrema/get-curvature-extrema.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "get-curvature-extrema",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "getCurvatureExtrema it should find the curvature extrema (or rather lack thereof) of some lines",
+          "status": "passed"
+        },
+        {
+          "name": "getCurvatureExtrema it should find the curvature extrema of some quadratic bezier curves",
+          "status": "passed"
+        },
+        {
+          "name": "getCurvatureExtrema it should find the curvature extrema of quadratic bezier curves disguised as cubics",
+          "status": "passed"
+        },
+        {
+          "name": "getCurvatureExtrema it should find the curvature extrema of some cubic bezier curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 7792
+      },
+      "comparisonOperations": [
+        "curvature"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/get-curvature-extrema/inflection-poly.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "get-curvature-extrema",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "the inflection polynomial of getAbsCurvatureExtremaPolys(Dd/E) should be the quadratic `x''y' - y''x'`",
+          "status": "passed"
+        },
+        {
+          "name": "the other extrema polynomial of getAbsCurvatureExtremaPolys(Dd/E) should be the quintic `(x\u2032\u2032\u2032y\u2032 \u2212 x\u2032y\u2032\u2032\u2032)(x\u2032\u00b2 + y\u2032\u00b2) \u2212 3(x\u2032x\u2032\u2032 + y\u2032y\u2032\u2032)(x\u2032\u2032y\u2032 \u2212 x\u2032y\u2032\u2032)`",
+          "status": "passed"
+        },
+        {
+          "name": "the other extrema polynomial of getAbsCurvatureExtremaPolys(Dd/E) should be calculated exactly in double and double-double precision for small integer inputs",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Asserts curvature-extrema polynomial coefficients and exact arithmetic. No corresponding public polynomial representation.",
+      "reviewNote": "Asserts curvature-extrema polynomial coefficients and exact arithmetic. No corresponding public polynomial representation."
+    },
+    {
+      "file": "__tests__/get-medial-points/dd-get-medial-point-coeffs.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "get-medial-points",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "ddGetMedialPointCoeffsBez0 should equal the double precision version exactly when all calculations are exact (small integer inputs)",
+          "status": "passed"
+        },
+        {
+          "name": "ddGetMedialPointCoeffsBez0 should agree closely with the double precision version for general inputs",
+          "status": "passed"
+        },
+        {
+          "name": "ddGetMedialPointCoeffsBez1 should equal the double precision version exactly when all calculations are exact (small integer inputs)",
+          "status": "passed"
+        },
+        {
+          "name": "ddGetMedialPointCoeffsBez1 should agree closely with the double precision version for general inputs",
+          "status": "passed"
+        },
+        {
+          "name": "ddGetMedialPointCoeffsBez2 should equal the double precision version exactly when all calculations are exact (small integer inputs)",
+          "status": "passed"
+        },
+        {
+          "name": "ddGetMedialPointCoeffsBez2 should agree closely with the double precision version for general inputs",
+          "status": "passed"
+        },
+        {
+          "name": "ddGetMedialPointCoeffsBez3 should equal the double precision version exactly when all calculations are exact (small integer inputs)",
+          "status": "passed"
+        },
+        {
+          "name": "ddGetMedialPointCoeffsBez3 should agree closely with the double precision version for general inputs",
+          "status": "passed"
+        },
+        {
+          "name": "ddGetMedialPointCoeffsBez2_SameCurve should equal the double precision version exactly when all calculations are exact (small integer inputs)",
+          "status": "passed"
+        },
+        {
+          "name": "ddGetMedialPointCoeffsBez2_SameCurve should agree closely with the double precision version for general inputs",
+          "status": "passed"
+        },
+        {
+          "name": "ddGetMedialPointCoeffsBez3_SameCurve should equal the double precision version exactly when all calculations are exact (small integer inputs)",
+          "status": "passed"
+        },
+        {
+          "name": "ddGetMedialPointCoeffsBez3_SameCurve should agree closely with the double precision version for general inputs",
+          "status": "passed"
+        },
+        {
+          "name": "ddGetMedialPointCoeffsBez1/2/3 should give medial points (equidistant from `p` and the curve) at the roots of `H`",
+          "status": "passed"
+        },
+        {
+          "name": "ddGetMedialPointCoeffs dispatch should dispatch to the correct specialized implementation",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Upstream solver coefficient construction/error bounds; no direct public contract to compare."
+    },
+    {
+      "file": "__tests__/get-medial-points/get-medial-point-coeffs-bez0.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "get-medial-points",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "getMedialPointCoeffsBez0 should compute order-0 coefficients correctly",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Upstream solver coefficient construction/error bounds; no direct public contract to compare."
+    },
+    {
+      "file": "__tests__/get-medial-points/get-medial-point-coeffs-bez1.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "get-medial-points",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "getMedialPointCoeffsBez1 should compute order-1 coefficient polynomials correctly",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Upstream solver coefficient construction/error bounds; no direct public contract to compare."
+    },
+    {
+      "file": "__tests__/get-medial-points/get-medial-point-coeffs-bez2-same-curve.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "get-medial-points",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "getMedialPointCoeffsBez2_SameCurve ",
+          "status": "passed"
+        },
+        {
+          "name": "getMedialPointCoeffsBez2_SameCurve should satisfy same-curve degeneracies at the given parameter t",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Upstream solver coefficient construction/error bounds; no direct public contract to compare."
+    },
+    {
+      "file": "__tests__/get-medial-points/get-medial-point-coeffs-bez2.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "get-medial-points",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "getMedialPointCoeffsBez2 should compute order-2 coefficient polynomials correctly",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Upstream solver coefficient construction/error bounds; no direct public contract to compare."
+    },
+    {
+      "file": "__tests__/get-medial-points/get-medial-point-coeffs-bez3-same-curve.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "get-medial-points",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "getMedialPointCoeffsBez3_SameCurve ",
+          "status": "passed"
+        },
+        {
+          "name": "getMedialPointCoeffsBez3_SameCurve should satisfy same-curve degeneracies at the given parameter t",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Upstream solver coefficient construction/error bounds; no direct public contract to compare."
+    },
+    {
+      "file": "__tests__/get-medial-points/get-medial-point-coeffs-bez3.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "get-medial-points",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "getMedialPointCoeffsBez3 should compute order-3 coefficient polynomials correctly",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Upstream solver coefficient construction/error bounds; no direct public contract to compare."
+    },
+    {
+      "file": "__tests__/get-medial-points/get-medial-point-coeffs-dispatch.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "get-medial-points",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "getMedialPointCoeffs dispatch should dispatch to the correct specialized implementation",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Upstream solver coefficient construction/error bounds; no direct public contract to compare."
+    },
+    {
+      "file": "__tests__/get-medial-points/get-medial-points-point.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "get-medial-points",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "getMedialPoints for a point (order 0 bezier curve) should return the intersection of the ray with the perpendicular bisector",
+          "status": "passed"
+        },
+        {
+          "name": "getMedialPoints for a point (order 0 bezier curve) should return a negative `t` if the medial point lies behind `p`",
+          "status": "passed"
+        },
+        {
+          "name": "getMedialPoints for a point (order 0 bezier curve) should return `NaN` for `t` if the ray is parallel to the bisector or `p` coincides with the point",
+          "status": "passed"
+        },
+        {
+          "name": "getMedialPointCoeffs / ddGetMedialPointCoeffs unsupported orders should throw a descriptive error for unsupported bezier curve orders",
+          "status": "passed"
+        },
+        {
+          "name": "getMedialPoints scale invariance should give scaled results for scaled inputs (also for very small and very large coordinates)",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Ray/bisector medial-point coefficients and parameters; no public medial-axis API.",
+      "reviewNote": "Ray/bisector medial-point coefficients and parameters; no public medial-axis API."
+    },
+    {
+      "file": "__tests__/get-medial-points/get-medial-points.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "get-medial-points",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "`getMedialPoint`",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "exclude-endpoints-policy-difference": 7
+      },
+      "comparisonOperations": [
+        "closestPointOnBezier"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/global-properties/area.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "global-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "area it should calculate the correct area for some bezier curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 2
+      },
+      "comparisonOperations": [
+        "area"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/global-properties/bounds/get-bounding-box-tight.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "global-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "getBoundingBoxTight it should find a correct tight bounding box for some quadratic beziers",
+          "status": "passed"
+        },
+        {
+          "name": "getBoundingBoxTight it should find a correct tight bounding box for some cubic beziers",
+          "status": "passed"
+        },
+        {
+          "name": "getBoundingBoxTight it should handle degenerate beziers (e.g. all control points coincident)",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "rotated-box-policy-difference": 6
+      },
+      "comparisonOperations": [
+        "getBoundingBoxTight"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/global-properties/bounds/get-bounding-box.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "global-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "getBoundingBox it should find a correct bounding box for some beziers",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 2
+      },
+      "comparisonOperations": [
+        "getBoundingBox"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/global-properties/bounds/get-bounds.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "global-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "getBounds it should find correct bounds for some lines",
+          "status": "passed"
+        },
+        {
+          "name": "getBounds it should find correct bounds for some quadratic bezier curves",
+          "status": "passed"
+        },
+        {
+          "name": "getBounds it should find correct bounds for some cubic bezier curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 3
+      },
+      "comparisonOperations": [
+        "getBounds"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/global-properties/bounds/get-control-point-box.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "global-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "getControlPointBox it should get the correct control point bounding box for some cubic beziers",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-adapted-contract": 1
+      },
+      "comparisonOperations": [
+        "getControlPointBox"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered.",
+      "reviewNote": "Compare public points_bounding_box over the same control points."
+    },
+    {
+      "file": "__tests__/global-properties/bounds/get-interval-box/get-interval-box-dd.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "global-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "getIntervalBoxDd it should get a reasonable interval box in double-double precision for some lines",
+          "status": "passed"
+        },
+        {
+          "name": "getIntervalBoxDd it should get a reasonable interval box in double-double precision for some quadratic beziers",
+          "status": "passed"
+        },
+        {
+          "name": "getIntervalBoxDd it should get a reasonable interval box in double-double precision for some cubic beziers",
+          "status": "passed"
+        },
+        {
+          "name": "getIntervalBoxDd it should get a reasonable interval box in double-double precision for special cases",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Certified outward interval enclosure (including expansion/double-double error accounting). Our floating-point bounds do not promise exact-arithmetic interval containment. Ordinary evaluated bounds compared separately.",
+      "reviewNote": "Certified outward interval enclosure (including expansion/double-double error accounting). Our floating-point bounds do not promise exact-arithmetic interval containment. Ordinary evaluated bounds compared separately."
+    },
+    {
+      "file": "__tests__/global-properties/bounds/get-interval-box/get-interval-box.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "global-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "interval box it should get a reasonable interval box for some lines",
+          "status": "passed"
+        },
+        {
+          "name": "interval box it should get a reasonable interval box for some quadratic bezier curves",
+          "status": "passed"
+        },
+        {
+          "name": "interval box it should get a reasonable interval box for some cubic bezier curves",
+          "status": "passed"
+        },
+        {
+          "name": "interval box it should get a reasonable interval box in double-double precision for special cases",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Certified outward interval enclosure (including expansion/double-double error accounting). Our floating-point bounds do not promise exact-arithmetic interval containment. Ordinary evaluated bounds compared separately.",
+      "reviewNote": "Certified outward interval enclosure (including expansion/double-double error accounting). Our floating-point bounds do not promise exact-arithmetic interval containment. Ordinary evaluated bounds compared separately."
+    },
+    {
+      "file": "__tests__/global-properties/bounds/get-x-bounds-tight.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "global-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "getXBoundsTight it should find correct x bounds for some lines",
+          "status": "passed"
+        },
+        {
+          "name": "getXBoundsTight it should find correct x bounds for some quadratic bezier curves",
+          "status": "passed"
+        },
+        {
+          "name": "getXBoundsTight it should find correct x bounds for some cubic bezier curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-adapted-contract": 7
+      },
+      "comparisonOperations": [
+        "getXBoundsTight"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered.",
+      "reviewNote": "Compare our min/max x against reference enclosure with diagnostic allowance; certified t-interval metadata is outside our contract."
+    },
+    {
+      "file": "__tests__/global-properties/bounds/get-y-bounds-tight.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "global-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "getYBoundsTight it should find correct y bounds for some lines",
+          "status": "passed"
+        },
+        {
+          "name": "getYBoundsTight it should find correct y bounds for some quadratic bezier curves",
+          "status": "passed"
+        },
+        {
+          "name": "getYBoundsTight it should find correct y bounds for some cubic bezier curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-adapted-contract": 6
+      },
+      "comparisonOperations": [
+        "getYBoundsTight"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered.",
+      "reviewNote": "Compare our min/max y against reference enclosure with diagnostic allowance; certified t-interval metadata is outside our contract."
+    },
+    {
+      "file": "__tests__/global-properties/bounds/interval-box-containment.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "global-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "quadratic interval error bounds and boxes should give a valid error bound for the control points of a quadratic bezier curve restricted to an interval",
+          "status": "passed"
+        },
+        {
+          "name": "quadratic interval error bounds and boxes should return interval boxes that contain the (exact) quadratic bezier curve on the interval",
+          "status": "passed"
+        },
+        {
+          "name": "interval boxes at a single t value should contain the (exact) point on the bezier curve at the given t value",
+          "status": "passed"
+        },
+        {
+          "name": "double-double interval boxes should contain the exact control points of the bezier curve restricted to the (double-double) interval",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Certified outward interval enclosure (including expansion/double-double error accounting). Our floating-point bounds do not promise exact-arithmetic interval containment. Ordinary evaluated bounds compared separately.",
+      "reviewNote": "Certified outward interval enclosure (including expansion/double-double error accounting). Our floating-point bounds do not promise exact-arithmetic interval containment. Ordinary evaluated bounds compared separately."
+    },
+    {
+      "file": "__tests__/global-properties/classification/classify.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "global-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "classify it should correctly classify some beziers curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-adapted-contract": 1
+      },
+      "comparisonOperations": [
+        "toCubic"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered.",
+      "reviewNote": "Exact degree/collinearity/shape classification predicate or taxonomy. Our tolerance-based minimization and overlap APIs have different contracts; no direct classifier comparison. Any captured degree-conversion helper calls are listed separately."
+    },
+    {
+      "file": "__tests__/global-properties/classification/is-collinear.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "global-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "isCollinear it should correctly check that some beziers have all control points collinear",
+          "status": "passed"
+        },
+        {
+          "name": "isVertical it should correctly check that some bezier control points are collinear and vertical",
+          "status": "passed"
+        },
+        {
+          "name": "isHorizontal it should correctly check that some bezier control points are collinear and horizontal",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Exact degree/collinearity/shape classification predicate or taxonomy. Our tolerance-based minimization and overlap APIs have different contracts; no direct classifier comparison. Any captured degree-conversion helper calls are listed separately.",
+      "reviewNote": "Exact degree/collinearity/shape classification predicate or taxonomy. Our tolerance-based minimization and overlap APIs have different contracts; no direct classifier comparison. Any captured degree-conversion helper calls are listed separately."
+    },
+    {
+      "file": "__tests__/global-properties/classification/is-cubic-really-line.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "global-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "isCubicReallyLine it should correctly check that some cubic beziers really is a line in disguise or not",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-adapted-contract": 1
+      },
+      "comparisonOperations": [
+        "toCubic"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered.",
+      "reviewNote": "Exact degree/collinearity/shape classification predicate or taxonomy. Our tolerance-based minimization and overlap APIs have different contracts; no direct classifier comparison. Any captured degree-conversion helper calls are listed separately."
+    },
+    {
+      "file": "__tests__/global-properties/classification/is-cubic-really-quad.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "global-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "isCubicReallyQuad it should check correctly if a cubic is really a quadratic bezier curve in disguise",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Exact degree/collinearity/shape classification predicate or taxonomy. Our tolerance-based minimization and overlap APIs have different contracts; no direct classifier comparison. Any captured degree-conversion helper calls are listed separately.",
+      "reviewNote": "Exact degree/collinearity/shape classification predicate or taxonomy. Our tolerance-based minimization and overlap APIs have different contracts; no direct classifier comparison. Any captured degree-conversion helper calls are listed separately."
+    },
+    {
+      "file": "__tests__/global-properties/classification/is-quad-flat.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "global-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "isQuadFlat (an internally used function) it should correctly check that some quadratic bezier curves are 'flat'",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Exact degree/collinearity/shape classification predicate or taxonomy. Our tolerance-based minimization and overlap APIs have different contracts; no direct classifier comparison. Any captured degree-conversion helper calls are listed separately.",
+      "reviewNote": "Exact degree/collinearity/shape classification predicate or taxonomy. Our tolerance-based minimization and overlap APIs have different contracts; no direct classifier comparison. Any captured degree-conversion helper calls are listed separately."
+    },
+    {
+      "file": "__tests__/global-properties/classification/is-quad-obtuse.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "global-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "isQuadObtuse it should correctly determined if the given quadratic bezier curve is obtuse or acute",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Exact degree/collinearity/shape classification predicate or taxonomy. Our tolerance-based minimization and overlap APIs have different contracts; no direct classifier comparison. Any captured degree-conversion helper calls are listed separately.",
+      "reviewNote": "Exact degree/collinearity/shape classification predicate or taxonomy. Our tolerance-based minimization and overlap APIs have different contracts; no direct classifier comparison. Any captured degree-conversion helper calls are listed separately."
+    },
+    {
+      "file": "__tests__/global-properties/classification/is-quad-really-line.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "global-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "isQuadReallyLine it should check correctly if a quadratic bezier is really a line in disguise",
+          "status": "passed"
+        },
+        {
+          "name": "isQuadReallyLine it should agree with exact arithmetic and resolve non-lines with the fast filter",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Exact degree/collinearity/shape classification predicate or taxonomy. Our tolerance-based minimization and overlap APIs have different contracts; no direct classifier comparison. Any captured degree-conversion helper calls are listed separately.",
+      "reviewNote": "Exact degree/collinearity/shape classification predicate or taxonomy. Our tolerance-based minimization and overlap APIs have different contracts; no direct classifier comparison. Any captured degree-conversion helper calls are listed separately."
+    },
+    {
+      "file": "__tests__/global-properties/classification/is-really-point.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "global-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "isReallyPoint it should check correctly if a line is really a point in disguise",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Exact degree/collinearity/shape classification predicate or taxonomy. Our tolerance-based minimization and overlap APIs have different contracts; no direct classifier comparison. Any captured degree-conversion helper calls are listed separately.",
+      "reviewNote": "Exact degree/collinearity/shape classification predicate or taxonomy. Our tolerance-based minimization and overlap APIs have different contracts; no direct classifier comparison. Any captured degree-conversion helper calls are listed separately."
+    },
+    {
+      "file": "__tests__/global-properties/classification/is-self-overlapping.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "global-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "isSelfOverlapping it should check correctly for self-overlapping curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Exact degree/collinearity/shape classification predicate or taxonomy. Our tolerance-based minimization and overlap APIs have different contracts; no direct classifier comparison. Any captured degree-conversion helper calls are listed separately.",
+      "reviewNote": "Exact degree/collinearity/shape classification predicate or taxonomy. Our tolerance-based minimization and overlap APIs have different contracts; no direct classifier comparison. Any captured degree-conversion helper calls are listed separately."
+    },
+    {
+      "file": "__tests__/global-properties/curviness.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "global-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "curviness it should give reasonable curviness values for some bezier curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Control-polygon turning measure used by upstream subdivision; no public curviness operation here.",
+      "reviewNote": "Control-polygon turning measure used by upstream subdivision; no public curviness operation here."
+    },
+    {
+      "file": "__tests__/global-properties/get-bending-energy.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "global-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "getBendingEnergy it should calculate an accurate bending for some bezier curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-adapted-contract": 1
+      },
+      "comparisonOperations": [
+        "quadraticToCubic"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered.",
+      "reviewNote": "Integral bending energy with cusp/degeneracy conventions; no public bending-energy operation. Captured quadratic-to-cubic helper calls do not cover the energy assertions."
+    },
+    {
+      "file": "__tests__/global-properties/get-inflections.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "global-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "getInflections it should return the correct inflection points for some cubic bezier curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 2
+      },
+      "comparisonOperations": [
+        "getInflections"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/global-properties/length/control-point-lines-length.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "global-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "controlPointLinesLength it should return the sum of the approximate length between control points for some bezier curves",
+          "status": "passed"
+        },
+        {
+          "name": "controlPointLinesLength it should get a reasonable upper bound for the length squared of some cubic bezier curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "point-input-api-difference": 11,
+        "matches-adapted-contract": 32
+      },
+      "comparisonOperations": [
+        "controlPointLinesLength"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered.",
+      "reviewNote": "Compare segment_length_upper_bound with upstream control-polygon length; point-only inputs separate."
+    },
+    {
+      "file": "__tests__/global-properties/length/length-accuracy.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "global-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "length (accuracy against a double-double reference) should be accurate for some random cubic, quadratic and linear bezier curves",
+          "status": "passed"
+        },
+        {
+          "name": "length (accuracy against a double-double reference) should be accurate for cubic bezier curves with a cusp or near cusp",
+          "status": "passed"
+        },
+        {
+          "name": "length (accuracy against a double-double reference) should be accurate for degenerate curves (collinear / folded / lower order in disguise)",
+          "status": "passed"
+        },
+        {
+          "name": "length (accuracy against a double-double reference) should give consistent results with `getTAtLength`",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 157
+      },
+      "comparisonOperations": [
+        "getTAtLength",
+        "length"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/global-properties/length/length.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "global-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "length it should return a reasonable approximate length (between two `t` values) of some cubic bezier curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "point-input-api-difference": 30,
+        "matches-at-diagnostic-tolerance": 93,
+        "upstream-rejected-input": 1
+      },
+      "comparisonOperations": [
+        "length"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/global-properties/total-curvature.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "global-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "totalCurvature it should calculate total curvature roughly equal to that calculated with Gauss Quadrature for some bezier curves",
+          "status": "passed"
+        },
+        {
+          "name": "totalCurvature it should calculate total curvature a multiple of 2\ud835\udf0b if some bezier curves form a closed loop",
+          "status": "passed"
+        },
+        {
+          "name": "totalCurvature it should calculate the correct total curvature for some bezier curves",
+          "status": "passed"
+        },
+        {
+          "name": "totalAbsoluteCurvature it should calculate the correct total absolute curvature for some bezier curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Integrated signed/absolute turning, including closed-loop winding assertions; no public total-curvature integral. Pointwise curvature is not this operation.",
+      "reviewNote": "Integrated signed/absolute turning, including closed-loop winding assertions; no public total-curvature integral. Pointwise curvature is not this operation."
+    },
+    {
+      "file": "__tests__/implicit-form/double-running-error-bound.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "implicit-form",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "double precision running error bounds should give a valid error bound for the implicit form of quadratic bezier curves, including hard cases",
+          "status": "passed"
+        },
+        {
+          "name": "double precision running error bounds should give a valid error bound for the implicit form of cubic bezier curves, including hard cases",
+          "status": "passed"
+        },
+        {
+          "name": "double precision running error bounds should give a valid error bound for the self-intersection polynomial coefficients of cubic bezier curves, including hard cases",
+          "status": "passed"
+        },
+        {
+          "name": "double precision running error bounds should propagate the errors of all power basis coefficients into the self-intersection polynomial coefficient bounds",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Polynomial coefficients, exact expansions, or coefficient error bounds; no corresponding public representation."
+    },
+    {
+      "file": "__tests__/implicit-form/evaluate/double/evaluate-implicit123.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "implicit-form",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "evaluateImplicit1, evaluateImplicit2, evaluateImplicit3 should correctly evaluate the implicit form of some cubic bezier curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Polynomial coefficients, exact expansions, or coefficient error bounds; no corresponding public representation."
+    },
+    {
+      "file": "__tests__/implicit-form/implicit-form.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "implicit-form",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "implicit form it should find the implicit form (including error bound) of some beziers in double precision",
+          "status": "passed"
+        },
+        {
+          "name": "implicit form it should find the implicit form (including error bound) of some beziers in double-double precision",
+          "status": "passed"
+        },
+        {
+          "name": "implicit form it should find the implicit form (including error bound) of some specific beziers in double-double precision",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Polynomial coefficients, exact expansions, or coefficient error bounds; no corresponding public representation."
+    },
+    {
+      "file": "__tests__/implicit-form/implicit-form2-dd-error-bound.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "implicit-form",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "getImplicitForm2DdWithRunningError error bound should give a valid (coefficient-wise) error bound for the implicit form of quadratic bezier curves, including hard cases",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Polynomial coefficients, exact expansions, or coefficient error bounds; no corresponding public representation."
+    },
+    {
+      "file": "__tests__/implicit-form/implicit-form3-dd-error-bound.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "implicit-form",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "getImplicitForm3DdWithRunningError error bound should give a valid (coefficient-wise) error bound for the implicit form of cubic bezier curves, including hard cases",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Polynomial coefficients, exact expansions, or coefficient error bounds; no corresponding public representation."
+    },
+    {
+      "file": "__tests__/intersection/bezier-bezier-intersection/b-cbrt.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "intersection",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "bCbrt it should ensure the bigint cube root helper function return correct results",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Upstream bigint/range utility, not a geometry-level public operation."
+    },
+    {
+      "file": "__tests__/intersection/bezier-bezier-intersection/b-sign.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "intersection",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "bSign it should ensure the bigint sign helper function return correct results",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Upstream bigint/range utility, not a geometry-level public operation."
+    },
+    {
+      "file": "__tests__/intersection/bezier-bezier-intersection/b-sqrt.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "intersection",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "bSqrt it should ensure the bigint square root helper function return correct results",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Upstream bigint/range utility, not a geometry-level public operation."
+    },
+    {
+      "file": "__tests__/intersection/bezier-bezier-intersection/bezier-bezier-intersection-specific-cases.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "intersection",
+      "upstreamTests": [
+        {
+          "name": "bezierBezierIntersection it should find intersections between two points",
+          "status": "passed"
+        },
+        {
+          "name": "bezierBezierIntersection it should find intersections between a point and a line",
+          "status": "passed"
+        },
+        {
+          "name": "bezierBezierIntersection it should find intersections between a point and a quadratic bezier curve",
+          "status": "passed"
+        },
+        {
+          "name": "bezierBezierIntersection it should find intersections between a point and a cubic bezier curve",
+          "status": "passed"
+        },
+        {
+          "name": "bezierBezierIntersection it should find intersections between two generic intersecting lines",
+          "status": "passed"
+        },
+        {
+          "name": "bezierBezierIntersection it should find the intersection between two overlapping lines",
+          "status": "passed"
+        },
+        {
+          "name": "bezierBezierIntersection it should find the intersections between a line and a quadratic bezier curve",
+          "status": "passed"
+        },
+        {
+          "name": "bezierBezierIntersection it should find the intersection between an overlapping line and quadratic bezier curve",
+          "status": "passed"
+        },
+        {
+          "name": "bezierBezierIntersection it should find intersections between two generic cubic bezier curves",
+          "status": "passed"
+        },
+        {
+          "name": "bezierBezierIntersection it should find intersections between two cubic bezier curves with overlapping self-intersections",
+          "status": "passed"
+        },
+        {
+          "name": "bezierBezierIntersection it should find intersections between two cubic bezier curves, one explicit and one a quadratic in disguise",
+          "status": "passed"
+        },
+        {
+          "name": "bezierBezierIntersection it should return the cusp of two overlapping cuspidal cubics only once",
+          "status": "passed"
+        }
+      ],
+      "capturedCalls": 59,
+      "report": "FIRST_BATCH.md",
+      "upstreamStatus": "passed",
+      "comparisonCounts": {
+        "point-input-api-difference": 24,
+        "matches-at-diagnostic-tolerance": 25,
+        "overlap-api-difference": 7,
+        "needs-investigation": 3
+      },
+      "comparisonOperations": [
+        "bezierBezierIntersection"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/intersection/bezier-bezier-intersection/bezier-bezier-intersection.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "intersection",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "bezierBezierIntersection it should ensure accuracy of calculated intersections",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "needs-investigation": 4,
+        "matches-at-diagnostic-tolerance": 995,
+        "overlap-api-difference": 1
+      },
+      "comparisonOperations": [
+        "bezierBezierIntersection"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/intersection/bezier-bezier-intersection/bigint-to-expansion.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "intersection",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "bigintToExpansion it should ensure the bigint to Shewchuk expansion helper function return correct results",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Upstream bigint/range utility, not a geometry-level public operation."
+    },
+    {
+      "file": "__tests__/intersection/bezier-bezier-intersection/coeffs-bez3-bez3-dd-error-bound.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "intersection",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "getCoeffsBez3Bez3Dd error bound should give a valid (coefficient-wise) error bound for cubic-cubic intersection coefficients, including hard cases",
+          "status": "passed"
+        },
+        {
+          "name": "getCoeffsBez3Bez3Dd error bound should propagate the error of the implicit form coefficients of the 1st curve into the bound of the `t^8` coefficient",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Upstream solver coefficient construction/error bounds; no direct public contract to compare."
+    },
+    {
+      "file": "__tests__/intersection/bezier-bezier-intersection/coeffs-dd-error-bound.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "intersection",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "double-double intersection coefficients error bounds should give a valid (coefficient-wise) error bound for cubic-quadratic intersection coefficients, including hard cases",
+          "status": "passed"
+        },
+        {
+          "name": "double-double intersection coefficients error bounds should give a valid (coefficient-wise) error bound for quadratic-quadratic intersection coefficients, including hard cases",
+          "status": "passed"
+        },
+        {
+          "name": "double-double intersection coefficients error bounds should follow the error bound convention for double-double products (see `error-bound-calc.txt`)",
+          "status": "passed"
+        },
+        {
+          "name": "double-double intersection coefficients error bounds should not multiply two absolute values in any double-double error bound",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Upstream solver coefficient construction/error bounds; no direct public contract to compare."
+    },
+    {
+      "file": "__tests__/intersection/bezier-bezier-intersection/coeffs-double-error-bound.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "intersection",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "double precision bezier-bezier intersection coefficients should have valid (exact arithmetic verified) coefficient error bounds",
+          "status": "passed"
+        },
+        {
+          "name": "double precision bezier-bezier intersection coefficients should return the correct coefficients",
+          "status": "passed"
+        },
+        {
+          "name": "double precision bezier-bezier intersection coefficients should include the 2nd order error term for products of two inexact values",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Upstream solver coefficient construction/error bounds; no direct public contract to compare."
+    },
+    {
+      "file": "__tests__/intersection/bezier-bezier-intersection/coeffs.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "intersection",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "intersection coefficients it should find valid polynomial intersection coefficients (including error bound) of beziers in double-double precision (and for Shewchuk expansions)",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Upstream solver coefficient construction/error bounds; no direct public contract to compare."
+    },
+    {
+      "file": "__tests__/intersection/bezier-bezier-intersection/ensure-range.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "intersection",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "ensureRange it should ensure the `ensureRange` helper function return correct results",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Upstream bigint/range utility, not a geometry-level public operation."
+    },
+    {
+      "file": "__tests__/intersection/bezier-bezier-intersection/get-endpoint-intersections.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "intersection",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "getEndpointIntersections it should find intersection intervals pairs of overlapping/non-overlapping algebraically identical bezier curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-adapted-contract": 722
+      },
+      "comparisonOperations": [
+        "getEndpointIntersections"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered.",
+      "reviewNote": "Compare continuous overlap endpoint parameter correspondences using overlaps.segment. Single point contacts are excluded by our overlap contract. Reference helper has algebraic-identity preconditions."
+    },
+    {
+      "file": "__tests__/intersection/bezier-bezier-intersection-fast/bezier-bezier-intersection-fast.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "intersection",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "bezier3Intersection it should accurately find intersections between pairs of bezier curves using fast geo clipping",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "needs-investigation": 8,
+        "matches-at-diagnostic-tolerance": 1541,
+        "overlap-api-difference": 2
+      },
+      "comparisonOperations": [
+        "bezierBezierIntersection"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/intersection/bezier-bezier-intersection-fast/specific-cases.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "intersection",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "bezierBezierIntersectionFast it should find intersections between two coinciding points",
+          "status": "passed"
+        },
+        {
+          "name": "bezierBezierIntersectionFast it should find intersections between two generic quadratic bezier curves",
+          "status": "passed"
+        },
+        {
+          "name": "bezierBezierIntersectionFast it should find intersections between two generic cubic bezier curves",
+          "status": "passed"
+        },
+        {
+          "name": "bezierBezierIntersectionFast it should find intersections between two cubic bezier curves with overlapping self-intersections",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "overlap-api-difference": 2,
+        "point-input-api-difference": 1,
+        "matches-at-diagnostic-tolerance": 3
+      },
+      "comparisonOperations": [
+        "bezierBezierIntersection"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/intersection/bezier-bezier-intersection-shared-endpoint/coeffs-shared-start.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "intersection",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "getCoeffsSharedStart should return (exactly) the general intersection polynomial with the root at `t = 0` divided out (up to a scalar)",
+          "status": "passed"
+        },
+        {
+          "name": "getCoeffsSharedStart should have a zero constant term if the curves are tangent at the shared point",
+          "status": "passed"
+        },
+        {
+          "name": "getCoeffsSharedStart should have valid (exact arithmetic verified) double-double coefficient error bounds",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Upstream solver coefficient construction/error bounds; no direct public contract to compare."
+    },
+    {
+      "file": "__tests__/intersection/bezier-bezier-intersection-shared-endpoint/shared-endpoint-intersection.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "intersection",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "bezier-bezier intersection of curves sharing an endpoint should return the same intersections as the general algorithm (with the shared point exact)",
+          "status": "passed"
+        },
+        {
+          "name": "bezier-bezier intersection of curves sharing an endpoint should return the same root intervals as the general boundless algorithms",
+          "status": "passed"
+        },
+        {
+          "name": "bezier-bezier intersection of curves sharing an endpoint should return results identical to the general algorithm for curves not sharing an endpoint",
+          "status": "passed"
+        },
+        {
+          "name": "bezier-bezier intersection of curves sharing an endpoint should handle some special cases",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 943,
+        "overlap-api-difference": 41,
+        "needs-investigation": 9
+      },
+      "comparisonOperations": [
+        "bezierBezierIntersection"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/intersection/circle-bezier-intersection-error-bound.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "intersection",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "circleBezierIntersection error bounds should multiply the error bound of each coefficient by its (documented) error counter",
+          "status": "passed"
+        },
+        {
+          "name": "circleBezierIntersection error bounds should have valid (exact arithmetic verified) coefficient error bounds",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Circle-intersection polynomial coefficient error bounds; our public solver does not expose these coefficients or certified arithmetic.",
+      "reviewNote": "Circle-intersection polynomial coefficient error bounds; our public solver does not expose these coefficients or certified arithmetic."
+    },
+    {
+      "file": "__tests__/intersection/circle-bezier-intersection.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "intersection",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "circleBezierIntersection it should find intersections between a circle and a generic cubic bezier curve",
+          "status": "passed"
+        },
+        {
+          "name": "circleBezierIntersection it should find intersections between a circle and a generic quadratic bezier curve",
+          "status": "passed"
+        },
+        {
+          "name": "circleBezierIntersection it should find intersections between a circle and line",
+          "status": "passed"
+        },
+        {
+          "name": "circleBezierIntersection it should throw when the given bezier curve is a point",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-adapted-contract": 4,
+        "upstream-rejected-input": 1,
+        "constant-curve-parameter-convention": 2
+      },
+      "comparisonOperations": [
+        "circleBezierIntersection"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered.",
+      "reviewNote": "Represent circle as two exact SVG semicircle arcs and merge segment parameter duplicates at their seam. Ordinary intersections compared; constant-line errors retained for review."
+    },
+    {
+      "file": "__tests__/intersection/get-endpoint-intersections/get-endpoint-ts.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "intersection",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "getEndpointTs should derive the parameter values of `B` at the endpoints of `A` from those of `A` at the endpoints of `B`",
+          "status": "passed"
+        },
+        {
+          "name": "getEndpointTs should return exactly `0` or `1` for parameter values that are exactly `0` or `1`",
+          "status": "passed"
+        },
+        {
+          "name": "getEndpointTs should place values that are near but not exactly `1` on the correct side of `1`",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Converts rational-expansion parameter maps, including distinctions smaller than a float ulp. No corresponding public rational parameter-map API.",
+      "reviewNote": "Converts rational-expansion parameter maps, including distinctions smaller than a float ulp. No corresponding public rational parameter-map API."
+    },
+    {
+      "file": "__tests__/intersection/self-intersection/self-intersection.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "intersection",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "bezierSelfIntersection it should calculate bezier curve self intersections accurately - case 1: cubic - no self intersection",
+          "status": "passed"
+        },
+        {
+          "name": "bezierSelfIntersection it should calculate bezier curve self intersections accurately - case 2: cubic - self intersection",
+          "status": "passed"
+        },
+        {
+          "name": "bezierSelfIntersection it should calculate bezier curve self intersections accurately - case 3: cubic - cusp",
+          "status": "passed"
+        },
+        {
+          "name": "bezierSelfIntersection it should calculate bezier curve self intersections accurately - case 4: order < cubic",
+          "status": "passed"
+        },
+        {
+          "name": "bezierSelfIntersection it should calculate bezier curve self intersections accurately - special cases",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 6,
+        "cusp-is-not-two-visits-contract-difference": 1,
+        "point-input-api-difference": 1
+      },
+      "comparisonOperations": [
+        "bezierSelfIntersection"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/local-properties-at-t/curried-forms.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "local-properties-at-t",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "curried forms of the local property functions the curried forms should give exactly the same results as the uncurried forms",
+          "status": "passed"
+        },
+        {
+          "name": "curried forms of the local property functions the curried form should be usable for sampling many points",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 1050
+      },
+      "comparisonOperations": [
+        "curvature",
+        "evaluate1stDerivative",
+        "evaluate2ndDerivative"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/local-properties-at-t/curvature.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "local-properties-at-t",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "curvature it should calculate curvature accurately for some bezier curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 3,
+        "degenerate-curvature-error-vs-NaN": 1
+      },
+      "comparisonOperations": [
+        "curvature"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/local-properties-at-t/evaluate/double/eval-de-casteljau-with-err.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "local-properties-at-t",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "evalDeCasteljauWithErr it should evaluate some beziers correctly (including returning an error bound) at some `t` values using Decasteljau's algorithm",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Exact expansion/double-double evaluation or certified evaluation error bounds. These stronger arithmetic contracts are absent from our ordinary-float point API; plain evaluation was compared separately.",
+      "reviewNote": "Exact expansion/double-double evaluation or certified evaluation error bounds. These stronger arithmetic contracts are absent from our ordinary-float point API; plain evaluation was compared separately."
+    },
+    {
+      "file": "__tests__/local-properties-at-t/evaluate/double/evaluate.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "local-properties-at-t",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "evaluate / evalDeCasteljau it should evaluate some beziers correctly at some `t` values",
+          "status": "passed"
+        },
+        {
+          "name": "evaluate / evalDeCasteljau it should evaluate some beziers correctly at some t values using Decasteljau's algorithm",
+          "status": "passed"
+        },
+        {
+          "name": "evaluate / evalDeCasteljau it should correctly evaluate (x and y values) in the power basis representation of some bezier curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 69,
+        "point-input-api-difference": 1
+      },
+      "comparisonOperations": [
+        "evalDeCasteljau"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/local-properties-at-t/evaluate/double-double/eval-de-casteljau-dd.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "local-properties-at-t",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "evalDeCasteljauDd it should evaluate some beziers correctly (in double-double precision) at some `t` values using De Casteljau's algorithm",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Exact expansion/double-double evaluation or certified evaluation error bounds. These stronger arithmetic contracts are absent from our ordinary-float point API; plain evaluation was compared separately.",
+      "reviewNote": "Exact expansion/double-double evaluation or certified evaluation error bounds. These stronger arithmetic contracts are absent from our ordinary-float point API; plain evaluation was compared separately."
+    },
+    {
+      "file": "__tests__/local-properties-at-t/evaluate/double-double/eval-de-casteljau-with-err-dd.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "local-properties-at-t",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "evalDeCasteljauWithErrDd it should evaluate some beziers correctly (in double-double precision including returning an error bound) at some `t` values using Decasteljau's algorithm",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Exact expansion/double-double evaluation or certified evaluation error bounds. These stronger arithmetic contracts are absent from our ordinary-float point API; plain evaluation was compared separately.",
+      "reviewNote": "Exact expansion/double-double evaluation or certified evaluation error bounds. These stronger arithmetic contracts are absent from our ordinary-float point API; plain evaluation was compared separately."
+    },
+    {
+      "file": "__tests__/local-properties-at-t/evaluate/exact/evaluate-exact.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "local-properties-at-t",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "evaluateExact it should exactly evaluate (x and y values) of some bezier curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Exact expansion/double-double evaluation or certified evaluation error bounds. These stronger arithmetic contracts are absent from our ordinary-float point API; plain evaluation was compared separately.",
+      "reviewNote": "Exact expansion/double-double evaluation or certified evaluation error bounds. These stronger arithmetic contracts are absent from our ordinary-float point API; plain evaluation was compared separately."
+    },
+    {
+      "file": "__tests__/local-properties-at-t/evaluate-1st-derivative/double/evaluate-1st-derivative.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "local-properties-at-t",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "evaluate1stDerivative it should equal the (Horner-evaluated) tangent for some bezier curves at some `t` values",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 420
+      },
+      "comparisonOperations": [
+        "evaluate1stDerivative"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/local-properties-at-t/evaluate-1st-derivative/exact/evaluate-1st-derivative-exact.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "local-properties-at-t",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "evaluate1stDerivativeExact it should exactly evaluate the 1st derivative of the power basis of some bezier curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 120
+      },
+      "comparisonOperations": [
+        "evaluate1stDerivative"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/local-properties-at-t/evaluate-2nd-derivative/double/evaluate-2nd-derivative.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "local-properties-at-t",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "evaluate2ndDerivative it should correctly evaluate the first and second derivative of the power basis representation of some bezier curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 6,
+        "point-input-api-difference": 2
+      },
+      "comparisonOperations": [
+        "evaluate1stDerivative",
+        "evaluate2ndDerivative"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/local-properties-at-t/evaluate-2nd-derivative/exact/evaluate-2nd-derivative-exact.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "local-properties-at-t",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "evaluate2ndDerivativeExact it should correctly evaluate the exact first and second derivative of the power basis representation of some bezier curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 5
+      },
+      "comparisonOperations": [
+        "evaluate1stDerivative",
+        "evaluate2ndDerivative"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/local-properties-at-t/normal/normal.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "local-properties-at-t",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "normal it should accurately calculate the normal of some bezier curves at some `t` values",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 120
+      },
+      "comparisonOperations": [
+        "evaluate1stDerivative"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/local-properties-at-t/normal/normal2.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "local-properties-at-t",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "normal2 it should accurately calculate the normal of some bezier curves, including degenerate bezier curves, at some `t` values",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 1
+      },
+      "comparisonOperations": [
+        "evaluate1stDerivative"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/local-properties-at-t/normal/unit-normal.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "local-properties-at-t",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "unitNormal it should return a unit-length vector perpendicular to the tangent",
+          "status": "passed"
+        },
+        {
+          "name": "unitNormal it should return undefined where the tangent vanishes (e.g. at a cusp)",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 121
+      },
+      "comparisonOperations": [
+        "evaluate1stDerivative"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/local-properties-at-t/tangent/tangent.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "local-properties-at-t",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "tangent it should accurately calculate the tangent of some bezier curves at some `t` values",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 10
+      },
+      "comparisonOperations": [
+        "evaluate1stDerivative"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/local-properties-at-t/tangent/unit-tangent.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "local-properties-at-t",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "unitTangent it should return a unit-length vector parallel to the tangent",
+          "status": "passed"
+        },
+        {
+          "name": "unitTangent it should return undefined where the tangent vanishes (e.g. at a cusp)",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 121
+      },
+      "comparisonOperations": [
+        "evaluate1stDerivative"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/local-properties-to-t/get-t-at-length.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "local-properties-to-t",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "getTAtLength it should return an accurate `t` value for the given length for some bezier curves",
+          "status": "passed"
+        },
+        {
+          "name": "getTAtLength it should handle order 0 curves and out-of-range lengths",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 12,
+        "extended-length-domain-difference": 3,
+        "point-input-api-difference": 2,
+        "needs-investigation": 1
+      },
+      "comparisonOperations": [
+        "getTAtLength",
+        "length"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/local-properties-to-t/t-from-xy-combine.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "local-properties-to-t",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "combineRoots should return the intersection of overlapping root intervals",
+          "status": "passed"
+        },
+        {
+          "name": "combineRoots should return a best estimate `t` inside the intersection",
+          "status": "passed"
+        },
+        {
+          "name": "combineRoots should return `undefined` for non-overlapping root intervals",
+          "status": "passed"
+        },
+        {
+          "name": "tFromXY should return the same exact polynomials on repeated calls of `getPExact` (as `roots` may do)",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Certified root-interval intersection and repeatable exact-polynomial callbacks. No public root interval/callback contract.",
+      "reviewNote": "Certified root-interval intersection and repeatable exact-polynomial callbacks. No public root interval/callback contract."
+    },
+    {
+      "file": "__tests__/local-properties-to-t/t-from-xy.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "local-properties-to-t",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "tFromXY it should return the correct `t` value given `x` and `y` values for some bezier curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Finds all exact parameter preimages using expansion points and certified root intervals. Our nearest projection returns one minimizer with a tolerance, so it is not an all-preimages equivalent.",
+      "reviewNote": "Finds all exact parameter preimages using expansion points and certified root intervals. Our nearest projection returns one minimizer with a tolerance, so it is not an all-preimages equivalent."
+    },
+    {
+      "file": "__tests__/next-down.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "next-down.spec.ts",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "nextDown should subtract one unit in the last place (ulp) to some floating point numbers",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Upstream numerical or test infrastructure; no direct public geometry contract."
+    },
+    {
+      "file": "__tests__/next-up.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "next-up.spec.ts",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "nextUp should add one unit in the last place (ulp) to some floating point numbers",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Upstream numerical or test infrastructure; no direct public geometry contract."
+    },
+    {
+      "file": "__tests__/simultaneous-properties/closest-and-furthest-point-on-bezier/closest-point-on-bezier-certified.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "simultaneous-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "closestPointOnBezierCertified it should find the certified closest point(s) on some bezier curves from a given point",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 68,
+        "upstream-rejected-input": 1
+      },
+      "comparisonOperations": [
+        "closestPointOnBezier",
+        "closestPointOnBezierCertified"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/simultaneous-properties/closest-and-furthest-point-on-bezier/closest-point-on-bezier.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "simultaneous-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "closestPointOnBezier it should find the closest point on some bezier curves from a given point",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "point-input-api-difference": 1,
+        "matches-at-diagnostic-tolerance": 3,
+        "upstream-rejected-input": 1
+      },
+      "comparisonOperations": [
+        "closestPointOnBezier"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/simultaneous-properties/closest-and-furthest-point-on-bezier/distance-squared-interval.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "simultaneous-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "rootIntervalToDistanceSquaredInterval should return an interval containing the squared distance from the point to any point in the box",
+          "status": "passed"
+        },
+        {
+          "name": "closestPointOnBezierCertified should return a squared distance interval containing the exact squared distance, also for points on the curve",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 601
+      },
+      "comparisonOperations": [
+        "closestPointOnBezierCertified"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/simultaneous-properties/closest-and-furthest-point-on-bezier/furthest-point-on-bezier.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "simultaneous-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "furthestPointOnBezier it should find the furthest point on some bezier curves from a given point",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Maximum distance from an external point to a curve; our public distance module provides minima, while convex-hull diameter is between two curve points. Neither is this operation.",
+      "reviewNote": "Maximum distance from an external point to a curve; our public distance module provides minima, while convex-hull diameter is between two curve points. Neither is this operation."
+    },
+    {
+      "file": "__tests__/simultaneous-properties/closest-and-furthest-point-on-bezier/get-coeffs/double/get-footpoint-poly.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "simultaneous-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "getFootpointPoly it should return the footpoint polynomial of some bezier curves from a given point",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Upstream solver coefficient construction/error bounds; no direct public contract to compare."
+    },
+    {
+      "file": "__tests__/simultaneous-properties/closest-and-furthest-point-on-bezier/get-coeffs/double-double/get-footpoint-poly-dd.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "simultaneous-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "getFootpointPoly it should return the footpoint polynomial of some bezier curves from a given point",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Upstream solver coefficient construction/error bounds; no direct public contract to compare."
+    },
+    {
+      "file": "__tests__/simultaneous-properties/closest-and-furthest-point-on-bezier/get-coeffs/exact/get-footpoint-poly-exact.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "simultaneous-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "getFootpointPoly it should return the footpoint polynomial of some bezier curves from a given point",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Upstream solver coefficient construction/error bounds; no direct public contract to compare."
+    },
+    {
+      "file": "__tests__/simultaneous-properties/closest-distance-between-beziers/closest-points-between-lines.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "simultaneous-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "closestPointsBetweenBeziers for two lines should return the intersection with distance 0 for intersecting lines",
+          "status": "passed"
+        },
+        {
+          "name": "closestPointsBetweenBeziers for two lines should return the closest endpoint pair for non-intersecting lines",
+          "status": "passed"
+        },
+        {
+          "name": "closestPointsBetweenBeziers for two lines should return all endpoints at the minimum distance for parallel lines",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-adapted-contract": 4
+      },
+      "comparisonOperations": [
+        "closestPointsBetweenBeziers"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered.",
+      "reviewNote": "Compare minimum distances; our API returns one minimizer rather than all tied pairs."
+    },
+    {
+      "file": "__tests__/simultaneous-properties/equal.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "simultaneous-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "equal it should correctly test whether two bezier curves are identical or not",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Exact equality of control arrays, including aliasing and unequal degree. Gleam structural equality supplies this language behavior; not a library geometry algorithm.",
+      "reviewNote": "Exact equality of control arrays, including aliasing and unequal degree. Gleam structural equality supplies this language behavior; not a library geometry algorithm."
+    },
+    {
+      "file": "__tests__/simultaneous-properties/get-interface-rotation.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "simultaneous-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "getInterfaceRotation it should correctly return the rotation difference between some vectors",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Vector-to-vector angle convention with polygon-turn accumulation. No named curve-interface rotation operation; affine decomposition is a different contract.",
+      "reviewNote": "Vector-to-vector angle convention with polygon-turn accumulation. No named curve-interface rotation operation; affine decomposition is a different contract."
+    },
+    {
+      "file": "__tests__/simultaneous-properties/hausdorff-distance-direct/hausdorff-distance-direct.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "simultaneous-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "candidate based one-sided Hausdorff distance matches the library and brute force on random curves of all orders",
+          "status": "passed"
+        },
+        {
+          "name": "candidate based one-sided Hausdorff distance returns the larger one-sided result, with the roles of A and B swapped if it is h(B,A)",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Hausdorff set-distance/accuracy assertions and internal heap checks; no public Hausdorff distance API. Nearest distance is not a substitute for maximum-of-minima distance.",
+      "reviewNote": "Hausdorff set-distance/accuracy assertions and internal heap checks; no public Hausdorff distance API. Nearest distance is not a substitute for maximum-of-minima distance."
+    },
+    {
+      "file": "__tests__/simultaneous-properties/hausdorff-distance-direct/regression-cases.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "simultaneous-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "regression cases (MA-interiors, cubic B) nearly parabolic B: s1 + s2 nearly constant along the medial axis",
+          "status": "passed"
+        },
+        {
+          "name": "regression cases (MA-interiors, cubic B) cubic/cubic missed with a too coarse (100 interval) grid (1)",
+          "status": "passed"
+        },
+        {
+          "name": "regression cases (MA-interiors, cubic B) cubic/cubic missed with a too coarse (100 interval) grid (2)",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Hausdorff set-distance/accuracy assertions and internal heap checks; no public Hausdorff distance API. Nearest distance is not a substitute for maximum-of-minima distance.",
+      "reviewNote": "Hausdorff set-distance/accuracy assertions and internal heap checks; no public Hausdorff distance API. Nearest distance is not a substitute for maximum-of-minima distance."
+    },
+    {
+      "file": "__tests__/simultaneous-properties/hausdorff-distance.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "simultaneous-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "hausdorffDistance the bindary heap accompanying the algorithm should work as expected",
+          "status": "passed"
+        },
+        {
+          "name": "hausdorffDistance it should find accurate approximate hausdorff distances for some curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Hausdorff set-distance/accuracy assertions and internal heap checks; no public Hausdorff distance API. Nearest distance is not a substitute for maximum-of-minima distance.",
+      "reviewNote": "Hausdorff set-distance/accuracy assertions and internal heap checks; no public Hausdorff distance API. Nearest distance is not a substitute for maximum-of-minima distance."
+    },
+    {
+      "file": "__tests__/simultaneous-properties/heap.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "simultaneous-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "Heap should pop elements in order of the compare function",
+          "status": "passed"
+        },
+        {
+          "name": "Heap should return `undefined` when popping an empty heap (and remain empty)",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Upstream numerical or test infrastructure; no direct public geometry contract."
+    },
+    {
+      "file": "__tests__/simultaneous-properties/is-point-on-bezier-extension/is-point-on-bezier-extension.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "simultaneous-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "isPointOnBezierExtension it should correctly check if some given points are exactly on some given bezier curves",
+          "status": "passed"
+        },
+        {
+          "name": "isPointOnBezierExtension for degenerate curves (all control points coincident) should compare the point exactly, also if given as uncompressed expansions",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "point-input-api-difference": 25,
+        "matches-at-diagnostic-tolerance": 75
+      },
+      "comparisonOperations": [
+        "closestPointOnBezier"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/simultaneous-properties/tolerance-zero.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "simultaneous-properties",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "an explicit tolerance of `0` should not be replaced by the default tolerance in `hausdorffDistanceOneSided`",
+          "status": "passed"
+        },
+        {
+          "name": "an explicit tolerance of `0` should not be replaced by the default tolerance in `closestPointsBetweenBeziers`",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "needs-investigation": 1,
+        "zero-tolerance-contract-difference": 1
+      },
+      "comparisonOperations": [
+        "closestPointsBetweenBeziers"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered.",
+      "reviewNote": "Compare default closest-pair call on the upstream geometry. Explicit zero tolerance and Hausdorff accuracy policy are outside shared contract; retain default-call stack overflow."
+    },
+    {
+      "file": "__tests__/stewart-error-counters.ts/stewart-error-counters.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "stewart-error-counters.ts",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "correctly calculate and use Stewart Error Counters ",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Upstream numerical or test infrastructure; no direct public geometry contract."
+    },
+    {
+      "file": "__tests__/test-helpers.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "test-helpers.spec.ts",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "helpers should make sure the test helpers work as intended",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Upstream numerical or test infrastructure; no direct public geometry contract."
+    },
+    {
+      "file": "__tests__/to-power-basis/to-power-basis/double/to-power-basis-with-running-error.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "to-power-basis",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "toPowerBasisWithRunningError it should get the the power basis representation (and a running error bound) of some bezier curves (in double precision)",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Polynomial coefficients, exact expansions, or coefficient error bounds; no corresponding public representation."
+    },
+    {
+      "file": "__tests__/to-power-basis/to-power-basis/double/to-power-basis.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "to-power-basis",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "toPowerBasis it should get the the power basis representation of some bezier curves (in double precision)",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Polynomial coefficients, exact expansions, or coefficient error bounds; no corresponding public representation."
+    },
+    {
+      "file": "__tests__/to-power-basis/to-power-basis/double-double/to-power-basis-dd-with-running-error.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "to-power-basis",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "toPowerBasisDdWithRunningError it should get the the power basis representation (and a running error bound) of some bezier curves (in double-double precision)",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Polynomial coefficients, exact expansions, or coefficient error bounds; no corresponding public representation."
+    },
+    {
+      "file": "__tests__/to-power-basis/to-power-basis/double-double/to-power-basis-dd.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "to-power-basis",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "toPowerBasisDd it should get the power basis representation of some bezier curves (in double-double precision)",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Polynomial coefficients, exact expansions, or coefficient error bounds; no corresponding public representation."
+    },
+    {
+      "file": "__tests__/to-power-basis/to-power-basis/exact/to-power-basis-exact.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "to-power-basis",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "toPowerBasisExact it should get the exact power basis representation of some bezier curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Polynomial coefficients, exact expansions, or coefficient error bounds; no corresponding public representation."
+    },
+    {
+      "file": "__tests__/to-power-basis/to-power-basis/to-power-basis-error-counters.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "to-power-basis",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "toPowerBasisWithRunningError it should get the the power basis representation error bound counters of some bezier curves (in double precision)",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Polynomial coefficients, exact expansions, or coefficient error bounds; no corresponding public representation."
+    },
+    {
+      "file": "__tests__/to-power-basis/to-power-basis-1st-derivative/double/to-power-basis-1st-derivative.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "to-power-basis",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "toPowerBasis_1stDerivative it should get the derivative of the power basis representation of some bezier curves (in double precision)",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Polynomial coefficients, exact expansions, or coefficient error bounds; no corresponding public representation."
+    },
+    {
+      "file": "__tests__/to-power-basis/to-power-basis-1st-derivative/double-double/to-power-basis-1st-derivative-dd.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "to-power-basis",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "toPowerBasis_1stDerivativeDd it should get the derivative of the power basis representation of some bezier curves (in double-double precision)",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Polynomial coefficients, exact expansions, or coefficient error bounds; no corresponding public representation."
+    },
+    {
+      "file": "__tests__/to-power-basis/to-power-basis-1st-derivative/exact/to-power-basis-1st-derivative-exact.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "to-power-basis",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "toPowerBasis_1stDerivativeExact it should get the exact derivative of the power basis representation of some bezier curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Polynomial coefficients, exact expansions, or coefficient error bounds; no corresponding public representation."
+    },
+    {
+      "file": "__tests__/to-power-basis/to-power-basis-1st-derivative/to-power-basis-1st-derivative-error-counters.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "to-power-basis",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "toPowerBasis_1stDerivativeErrorCounters it should get tight error bounds when calculating the derivative of the power basis representation of a bezier curve of order <= 3 ",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Polynomial coefficients, exact expansions, or coefficient error bounds; no corresponding public representation."
+    },
+    {
+      "file": "__tests__/to-power-basis/to-power-basis-2nd-derivative/double/to-power-basis-2nd-derivative.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "to-power-basis",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "toPowerBasis_2ndDerivative it should get the 2nd derivative of the power basis representation of some bezier curves (in double precision)",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Polynomial coefficients, exact expansions, or coefficient error bounds; no corresponding public representation."
+    },
+    {
+      "file": "__tests__/to-power-basis/to-power-basis-2nd-derivative/double-double/to-power-basis-2nd-derivative-dd.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "to-power-basis",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "toPowerBasis_2ndDerivativeDd it should get the 2nd derivative of the power basis representation of some bezier curves (in double-double precision)",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Polynomial coefficients, exact expansions, or coefficient error bounds; no corresponding public representation."
+    },
+    {
+      "file": "__tests__/to-power-basis/to-power-basis-2nd-derivative/exact/to-power-basis-2nd-derivative-exact.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "to-power-basis",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "toPowerBasis_2ndDerivativeExact it should get the exact 2nd derivative of the power basis representation of some bezier curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Polynomial coefficients, exact expansions, or coefficient error bounds; no corresponding public representation."
+    },
+    {
+      "file": "__tests__/to-power-basis/to-power-basis-3rd-derivative/double/to-power-basis-3rd-derivative.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "to-power-basis",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "toPowerBasis_3rdDerivative it should get the 3rd derivative of the power basis representation of some bezier curves (in double precision)",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Polynomial coefficients, exact expansions, or coefficient error bounds; no corresponding public representation."
+    },
+    {
+      "file": "__tests__/to-power-basis/to-power-basis-3rd-derivative/double-double/to-power-basis-3rd-derivative-dd.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "to-power-basis",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "toPowerBasis_3rdDerivativeDd it should get the 3rd derivative of the power basis representation of some bezier curves (in double-double precision)",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Polynomial coefficients, exact expansions, or coefficient error bounds; no corresponding public representation."
+    },
+    {
+      "file": "__tests__/to-power-basis/to-power-basis-3rd-derivative/exact/to-power-basis-3rd-derivative-exact.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "to-power-basis",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "toPowerBasis_3rdDerivativeExact it should get the exact 3rd derivative of the power basis representation of some bezier curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Polynomial coefficients, exact expansions, or coefficient error bounds; no corresponding public representation."
+    },
+    {
+      "file": "__tests__/transformation/affine/flip-about.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "transformation",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "flipAbout it should match flipVertically when reflecting about the x-axis",
+          "status": "passed"
+        },
+        {
+          "name": "flipAbout it should match flipHorizontally when reflecting about the y-axis",
+          "status": "passed"
+        },
+        {
+          "name": "flipAbout it should leave points on the axis (nearly) fixed",
+          "status": "passed"
+        },
+        {
+          "name": "flipAbout it should be the (near) identity when applied twice",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 65
+      },
+      "comparisonOperations": [
+        "flipAbout",
+        "flipHorizontally",
+        "flipVertically"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/transformation/affine/flip-horizontally.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "transformation",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "flipHorizontally it should match the reflection matrix about the y-axis",
+          "status": "passed"
+        },
+        {
+          "name": "flipHorizontally it should map [x,y] to [-x,y]",
+          "status": "passed"
+        },
+        {
+          "name": "flipHorizontally it should be the identity when applied twice",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 63
+      },
+      "comparisonOperations": [
+        "flipHorizontally",
+        "transform"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/transformation/affine/flip-vertically.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "transformation",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "flipVertically it should match the reflection matrix about the x-axis",
+          "status": "passed"
+        },
+        {
+          "name": "flipVertically it should map [x,y] to [x,-y]",
+          "status": "passed"
+        },
+        {
+          "name": "flipVertically it should be the identity when applied twice",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 63
+      },
+      "comparisonOperations": [
+        "flipVertically",
+        "transform"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/transformation/affine/rotate-90-about.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "transformation",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "rotate90About it should nearly equal a rotation by \u03c0/2 about the center",
+          "status": "passed"
+        },
+        {
+          "name": "rotate90About it should leave a control point that coincides with the center fixed (exactly)",
+          "status": "passed"
+        },
+        {
+          "name": "rotate90About it should be the exact identity after four applications",
+          "status": "passed"
+        },
+        {
+          "name": "rotate90About it should be the exact inverse of rotateNeg90About",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 69
+      },
+      "comparisonOperations": [
+        "rotate90About",
+        "rotateAbout",
+        "rotateNeg90About"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/transformation/affine/rotate-90.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "transformation",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "rotate90 it should nearly equal a rotation by \u03c0/2",
+          "status": "passed"
+        },
+        {
+          "name": "rotate90 it should map [x,y] to [-y,x] exactly",
+          "status": "passed"
+        },
+        {
+          "name": "rotate90 it should be the exact identity after four applications",
+          "status": "passed"
+        },
+        {
+          "name": "rotate90 it should be the exact inverse of rotateNeg90",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 69
+      },
+      "comparisonOperations": [
+        "rotate",
+        "rotate90",
+        "rotateNeg90"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/transformation/affine/rotate-about.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "transformation",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "rotateAbout it should equal translate-to-origin, rotate, then translate-back",
+          "status": "passed"
+        },
+        {
+          "name": "rotateAbout it should leave a control point that coincides with the center fixed",
+          "status": "passed"
+        },
+        {
+          "name": "rotateAbout it should be (nearly) the identity after a full turn",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 122
+      },
+      "comparisonOperations": [
+        "rotate",
+        "rotateAbout",
+        "translate"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/transformation/affine/rotate-neg-90-about.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "transformation",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "rotateNeg90About it should nearly equal a rotation by -\u03c0/2 about the center",
+          "status": "passed"
+        },
+        {
+          "name": "rotateNeg90About it should leave a control point that coincides with the center fixed (exactly)",
+          "status": "passed"
+        },
+        {
+          "name": "rotateNeg90About it should be the exact identity after four applications",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 65
+      },
+      "comparisonOperations": [
+        "rotateAbout",
+        "rotateNeg90About"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/transformation/affine/rotate-neg-90.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "transformation",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "rotateNeg90 it should nearly equal a rotation by -\u03c0/2",
+          "status": "passed"
+        },
+        {
+          "name": "rotateNeg90 it should map [x,y] to [y,-x] exactly",
+          "status": "passed"
+        },
+        {
+          "name": "rotateNeg90 it should be the exact identity after four applications",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 65
+      },
+      "comparisonOperations": [
+        "rotate",
+        "rotateNeg90"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/transformation/affine/rotate.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "transformation",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "rotate it should preserve each control point's distance from the origin",
+          "status": "passed"
+        },
+        {
+          "name": "rotate it should rotate the x-axis unit vector by a quarter turn to the y-axis",
+          "status": "passed"
+        },
+        {
+          "name": "rotate it should be (nearly) the identity after a full turn",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 32
+      },
+      "comparisonOperations": [
+        "rotate"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/transformation/affine/scale.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "transformation",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "scale it should scale every control point about the origin by the given factor",
+          "status": "passed"
+        },
+        {
+          "name": "scale it should be the identity when scaling by 1",
+          "status": "passed"
+        },
+        {
+          "name": "scale it should return to the original when scaled by the reciprocal",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 33
+      },
+      "comparisonOperations": [
+        "scale"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/transformation/affine/transform.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "transformation",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "transform it should be the identity for the identity matrix",
+          "status": "passed"
+        },
+        {
+          "name": "transform it should match `translate` for a pure translation matrix",
+          "status": "passed"
+        },
+        {
+          "name": "transform it should match `scale` for a pure scaling matrix",
+          "status": "passed"
+        },
+        {
+          "name": "transform it should match `rotate` for a pure rotation matrix",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 7
+      },
+      "comparisonOperations": [
+        "rotate",
+        "scale",
+        "transform",
+        "translate"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/transformation/affine/translate.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "transformation",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "translate it should move every control point by the given vector",
+          "status": "passed"
+        },
+        {
+          "name": "translate it should be the identity when translating by the zero vector",
+          "status": "passed"
+        },
+        {
+          "name": "translate it should return to the original when translated back",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 33
+      },
+      "comparisonOperations": [
+        "translate"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/transformation/clone.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "transformation",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "clone should deep clone some bezier curves, i.e. create an identical bezier but with a different reference",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Deep-clone reference independence for mutable JavaScript arrays. Gleam values are immutable and expose no clone operation.",
+      "reviewNote": "Deep-clone reference independence for mutable JavaScript arrays. Gleam values are immutable and expose no clone operation."
+    },
+    {
+      "file": "__tests__/transformation/degree-or-type/cubic-to-hybrid-quadratic.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "transformation",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "cubicToHybridQuadratic it should correctly convert some cubic bezier curves to hybrid quadratic bezier curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Upstream hybrid quadratic data representation is absent from our API.",
+      "reviewNote": "Upstream hybrid quadratic data representation is absent from our API."
+    },
+    {
+      "file": "__tests__/transformation/degree-or-type/cubic-to-quadratic.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "transformation",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "cubicToQuadratic it should approximate some cubic bezier curves with a quadratic bezier curve",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "One-piece quadratic approximation with area/tangent policies; our minimize operation is tolerance-driven and need not choose these controls. Captured to-cubic helper calls do not establish approximation parity.",
+      "reviewNote": "One-piece quadratic approximation with area/tangent policies; our minimize operation is tolerance-driven and need not choose these controls. Captured to-cubic helper calls do not establish approximation parity."
+    },
+    {
+      "file": "__tests__/transformation/degree-or-type/elevate-degree.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "transformation",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "elevateDegree it should add one control point while tracing the identical curve",
+          "status": "passed"
+        },
+        {
+          "name": "elevateDegree it should elevate a line to a quadratic with an evenly spaced midpoint",
+          "status": "passed"
+        },
+        {
+          "name": "elevateDegree it should keep a degenerate (point) curve at that point",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Arbitrary degree elevation includes cubic-to-quartic and an exact control-count assertion. Our segment types stop at cubic and expose conversion to cubic, not arbitrary degree elevation.",
+      "reviewNote": "Arbitrary degree elevation includes cubic-to-quartic and an exact control-count assertion. Our segment types stop at cubic and expose conversion to cubic, not arbitrary degree elevation."
+    },
+    {
+      "file": "__tests__/transformation/degree-or-type/line-to-quadratic.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "transformation",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "lineToQuadratic it should correctly convert some lines to quadratic bezier curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Dedicated degree-two conversion and exact midpoint-control assertion; no named public line-to-quadratic conversion. Conversion-to-cubic geometry is tested separately.",
+      "reviewNote": "Dedicated degree-two conversion and exact midpoint-control assertion; no named public line-to-quadratic conversion. Conversion-to-cubic geometry is tested separately."
+    },
+    {
+      "file": "__tests__/transformation/degree-or-type/to-cubic.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "transformation",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "toCubic it should correctly convert some point, line and quadratic bezier curves to cubic bezier curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-adapted-contract": 9,
+        "point-input-api-difference": 1,
+        "upstream-rejected-input": 1
+      },
+      "comparisonOperations": [
+        "lineToCubic",
+        "quadraticToCubic",
+        "toCubic"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered.",
+      "reviewNote": "Compare geometry of public segment_to_cubic_beziers at five parameters against captured conversion results; invalid degree/point inputs separate."
+    },
+    {
+      "file": "__tests__/transformation/get-hodograph.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "transformation",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "getHodograph it should return the correct hodographs of some bezier curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-adapted-contract": 6,
+        "upstream-rejected-input": 2
+      },
+      "comparisonOperations": [
+        "getHodograph"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered.",
+      "reviewNote": "Compare our derivative at five parameters with independently evaluated upstream hodograph. We do not return a hodograph curve object."
+    },
+    {
+      "file": "__tests__/transformation/reverse.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "transformation",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "reverse it should reverse some bezier curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-adapted-contract": 3,
+        "point-input-api-difference": 1
+      },
+      "comparisonOperations": [
+        "reverse"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered.",
+      "reviewNote": "Compare reversed-curve geometry at five parameters. Point-only inputs separate."
+    },
+    {
+      "file": "__tests__/transformation/split/from-to-incl-error-bound.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "transformation",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "fromToInclErrorBound it should return new bezier curves (including error bound) by limiting the `t` domain of some bezier curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Sliced control points with certified per-control error bounds. Ordinary segment slicing is already compared; error-bound metadata has no counterpart.",
+      "reviewNote": "Sliced control points with certified per-control error bounds. Ordinary segment slicing is already compared; error-bound metadata has no counterpart."
+    },
+    {
+      "file": "__tests__/transformation/split/from-to.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "transformation",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "fromTo it should return new bezier curves by limiting the `t` domain of some bezier curves",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 21,
+        "point-input-api-difference": 1,
+        "upstream-rejected-input": 1
+      },
+      "comparisonOperations": [
+        "fromTo"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/transformation/split/split-by-curvature-and-length.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "transformation",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "splitByCurvatureAndLength it should correctly split some bezier curves according to maximum curviness and length",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 1
+      },
+      "comparisonOperations": [
+        "fromTo"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/transformation/split/split-by-curvature.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "transformation",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "splitByCurvature it should correctly split some bezier curves according to maximum curviness",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 3
+      },
+      "comparisonOperations": [
+        "fromTo",
+        "length"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/transformation/split/split-by-deviation-from-straight-line-cubic.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "transformation",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "splitByDeviationFromStraightLine_Cubic should not split a straight-line cubic",
+          "status": "passed"
+        },
+        {
+          "name": "splitByDeviationFromStraightLine_Cubic should return a strictly increasing sequence from 0 to 1",
+          "status": "passed"
+        },
+        {
+          "name": "splitByDeviationFromStraightLine_Cubic should produce pieces that each deviate at most `maxD` from their chord",
+          "status": "passed"
+        },
+        {
+          "name": "splitByDeviationFromStraightLine_Cubic should be invariant under rotation and translation",
+          "status": "passed"
+        },
+        {
+          "name": "splitByDeviationFromStraightLine_Cubic should not split into fewer pieces as `maxD` decreases",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-at-diagnostic-tolerance": 2866
+      },
+      "comparisonOperations": [
+        "fromTo"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered."
+    },
+    {
+      "file": "__tests__/transformation/split/split-by-deviation-from-straight-line.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "transformation",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "splitByDeviationFromStraightLine should be exported from the package index (with the correct spelling)",
+          "status": "passed"
+        },
+        {
+          "name": "splitByDeviationFromStraightLine should return [0,1] for points and lines",
+          "status": "passed"
+        },
+        {
+          "name": "splitByDeviationFromStraightLine should dispatch quadratics to the quad splitter",
+          "status": "passed"
+        },
+        {
+          "name": "splitByDeviationFromStraightLine should dispatch cubics to the cubic splitter",
+          "status": "passed"
+        },
+        {
+          "name": "splitByDeviationFromStraightLine should throw for bezier order > 3",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "point-input-api-difference": 1,
+        "matches-adapted-contract": 3,
+        "upstream-rejected-input": 1
+      },
+      "comparisonOperations": [
+        "splitByDeviationFromStraightLine"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered.",
+      "reviewNote": "Use our linearizer and a 1001-point deviation check. Upstream export identity/dispatch assertions and exact split parameters do not apply."
+    },
+    {
+      "file": "__tests__/transformation/split/split-by-length.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "transformation",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "splitByLength it should ",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "matches-adapted-contract": 4,
+        "point-input-api-difference": 1
+      },
+      "comparisonOperations": [
+        "splitByLength"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered.",
+      "reviewNote": "Check maximum piece lengths and total length, not identical dyadic split parameters/piece counts."
+    },
+    {
+      "file": "__tests__/transformation/to-estimation.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "transformation",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "toEstimation it should correctly convert some bezier curves with control point coordinates in Shewchuk expansions to double precision",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Shewchuk expansion conversion; our point API stores ordinary floats."
+    },
+    {
+      "file": "__tests__/transformation/to-expansion.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "transformation",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "toExpansion it should convert some given bezier curves so their control point coordinates are Shewchuk expansions",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Shewchuk expansion conversion; our point API stores ordinary floats."
+    },
+    {
+      "file": "__tests__/transformation/to-string.spec.ts",
+      "status": "reviewed-contract-difference",
+      "category": "transformation",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "toString should correctly convert some bezier curves to a string representation",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "JSON-like control-array diagnostic text; this is not SVG path serialization. No corresponding output contract.",
+      "reviewNote": "JSON-like control-array diagnostic text; this is not SVG path serialization. No corresponding output contract."
+    },
+    {
+      "file": "__tests__/utils/get-distance-to-line-function.spec.ts",
+      "status": "selected-operations-compared",
+      "category": "utils",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "getDistanceToLineFunction should return the signed distance from a point to a line",
+          "status": "passed"
+        },
+        {
+          "name": "getDistanceToLineFunction should return the distance to the point if both given points coincide",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {
+        "infinite-signed-line-vs-clamped-segment-contract": 9
+      },
+      "comparisonOperations": [
+        "getDistanceToLineFunction"
+      ],
+      "scopeNote": "Only the recorded operations/calls are compared; other assertions in this file are not implied to be covered.",
+      "reviewNote": "Signed distance to an infinite supporting line differs from our clamped unsigned segment projection. Captured calls are recorded as a contract difference, not passing numeric comparisons."
+    },
+    {
+      "file": "__tests__/x-from-y/double/get-coeffs-x-from-y-with-running-err.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "x-from-y",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "getCoeffsXFromY_WithRunningErr it should get the polynomial coefficients (and a running error bound) whose roots are the `x` coordinates given a `y` coordinate of some bezier curves (in double precision) - and the actual errors should be within their bounds when compared to the exact (expansion) version",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Polynomial coefficients, exact expansions, or coefficient error bounds; no corresponding public representation."
+    },
+    {
+      "file": "__tests__/x-from-y/double-double/dd-get-coeffs-x-from-y-with-running-err.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "x-from-y",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "ddGetCoeffsXFromY_WithRunningErr it should get the polynomial coefficients (and a running error bound) whose roots are the `x` coordinates given a `y` coordinate of some bezier curves (in double-double precision) - and the actual errors should be within their bounds when compared to the exact (expansion) version",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Polynomial coefficients, exact expansions, or coefficient error bounds; no corresponding public representation."
+    },
+    {
+      "file": "__tests__/y-from-x/double/get-coeffs-y-from-x-with-running-err.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "y-from-x",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "getCoeffsYFromX_WithRunningErr it should get the polynomial coefficients (and a running error bound) whose roots are the `y` coordinates given an `x` coordinate of some bezier curves (in double precision) - and the actual errors should be within their bounds when compared to the exact (expansion) version",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Polynomial coefficients, exact expansions, or coefficient error bounds; no corresponding public representation."
+    },
+    {
+      "file": "__tests__/y-from-x/double-double/dd-get-coeffs-y-from-x-with-running-err.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "category": "y-from-x",
+      "upstreamStatus": "passed",
+      "upstreamTests": [
+        {
+          "name": "ddGetCoeffsYFromX_WithRunningErr it should get the polynomial coefficients (and a running error bound) whose roots are the `y` coordinates given an `x` coordinate of some bezier curves (in double-double precision) - and the actual errors should be within their bounds when compared to the exact (expansion) version",
+          "status": "passed"
+        }
+      ],
+      "comparisonCounts": {},
+      "comparisonOperations": [],
+      "scopeNote": "Polynomial coefficients, exact expansions, or coefficient error bounds; no corresponding public representation."
+    }
+  ],
+  "experimentalFiles": [
+    {
+      "file": "experiments/hausdorff/__tests__/accuracy.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "scopeNote": "Hausdorff accuracy/timing experiment, excluded by upstream normal Jest config; no public Hausdorff API here. Source reviewed, not executed."
+    },
+    {
+      "file": "experiments/hausdorff/__tests__/benchmark-2-2.spec.ts",
+      "status": "screened-no-direct-public-contract",
+      "scopeNote": "Hausdorff accuracy/timing experiment, excluded by upstream normal Jest config; no public Hausdorff API here. Source reviewed, not executed."
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  'matches-at-diagnostic-tolerance': 14440,
+  'point-input-api-difference': 63,
+  'upstream-rejected-input': 4,
+  'exclude-endpoints-policy-difference': 7,
+  'rotated-box-policy-difference': 6,
+  'extended-length-domain-difference': 3,
+  'needs-investigation': 1,
+  'degenerate-curvature-error-vs-NaN': 1,
+  'cusp-is-not-two-visits-contract-difference': 1
+}

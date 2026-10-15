@@ -1,0 +1,93 @@
+import { describe, expect, it } from '@jest/globals';
+import { area } from '../../src/global-properties/area.js';
+import { classify } from '../../src/global-properties/classification/classify.js';
+import { generateCuspAtHalf3 } from '../../src/create/generate-cusp-at-half-t.js';
+import { isCubicReallyQuad } from '../../src/global-properties/classification/is-cubic-really-quad.js';
+import { isSelfOverlapping } from '../../src/global-properties/classification/is-self-overlapping.js';
+import { quadraticToCubic } from '../../src/transformation/degree-or-type/quadratic-to-cubic.js';
+import { randomRotateAndTranslate } from '../helpers/random-rotate-and-translate.js';
+import { getRandomCubic, getRandomLine, getRandomPoint, getRandomQuad } from '../helpers/get-random-bezier.js';
+import { getBendingEnergy } from '../../src/global-properties/get-bending-energy.js';
+
+
+describe('getBendingEnergy', function() {
+    it('it should calculate an accurate bending for some bezier curves',
+    function() {
+        {
+            const ps = getRandomCubic(0);
+            const E = getBendingEnergy(ps);
+            expect(E).toBeNearly(2**4, 0.011797062321182999);
+        }
+
+        {
+            const ps = generateCuspAtHalf3([9,3], [3,6], [-6,-6]);
+            // classify(ps).nodeType; //? cusp
+            const E = getBendingEnergy(ps);
+            expect(E).toEqual(Infinity);
+        }
+
+        {
+            const ps = [[1,1], [2,2], [3,3], [-6,-6]];
+            // isSelfOverlapping(ps); // true
+            const E = getBendingEnergy(ps);
+            expect(E).toEqual(Infinity);
+        }
+
+        {
+            const ps = [[1,1], [2,2], [3,3], [6,6]];
+            // isSelfOverlapping(ps); // false
+            const E = getBendingEnergy(ps);
+            expect(E).toEqual(0);
+        }
+
+        {
+            const ps = getRandomQuad(0);
+            const E = getBendingEnergy(ps);
+            expect(E).toEqual(0.0269249201054867);
+        }
+
+        {
+            const ps = [[1,1], [-2,-2], [3,3]];
+            // isSelfOverlapping(ps); // true
+            const E = getBendingEnergy(ps);
+            expect(E).toEqual(Infinity);
+        }
+
+        {
+            const ps = [[-1,-1], [-2,-2], [-3,-3]];
+            // isSelfOverlapping(ps); // false
+            const E = getBendingEnergy(ps);
+            expect(E).toEqual(0);
+        }
+
+        {
+            const psQ = [
+                [-108.49686506776892, -13.011161175008596],
+                  [-12.996895177132615, -6.992694835578803],
+                  [-19.608964715212537, 52.32750125849648]
+            ];
+
+            const psC = quadraticToCubic(psQ);
+
+            // isCubicReallyQuad(psC);  // false
+
+            const EQ = getBendingEnergy(psQ);
+            const EC = getBendingEnergy(psC);
+            expect(EQ).toBeNearly(2**4, 0.0269249201054867);
+            expect(EC).toBeNearly(2**4, 0.0269249201054867);
+            expect(EQ).toBeNearly(2**4, EC);
+        }
+
+        {
+            const ps = getRandomLine(0);
+            const E = getBendingEnergy(ps);
+            expect(E).toEqual(0);
+        }
+
+        {
+            const ps = getRandomPoint(0);
+            const E = getBendingEnergy(ps);
+            expect(E).toEqual(0);
+        }
+    });
+});

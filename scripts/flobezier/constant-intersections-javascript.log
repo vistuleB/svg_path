@@ -1,0 +1,97 @@
+warning: Redundant record update
+   ┌─ /Users/jpsteinb/github.com/vistuleB/svg_path/scripts/flobezier/probe/src/length_probe.gleam:88:18
+   │  
+88 │           options: svg_path.LengthOptions(
+   │ ╭──────────────────^
+89 │ │           ..options,
+90 │ │           tolerance: options.tolerance /. { count |> int.to_float },
+91 │ │           max_depth: depth,
+92 │ │         ),
+   │ ╰─────────^ This record update specifies all fields
+
+Hint: It is better style to use the record creation syntax.
+
+  Compiling flobezier_audit_probe
+   Compiled in 0.07s
+    Running constant_intersection_probe.main
+center / line
+Error(IndeterminateDirection)
+Error(IndeterminateDirection)
+center / quadratic
+Ok([])
+Ok([])
+center / cubic
+Ok([])
+Ok([])
+arc endpoint / line
+Error(IndeterminateDirection)
+Error(IndeterminateDirection)
+arc endpoint / quadratic
+Ok([SegmentIntersection(left_t: 0, right_t: 0, point: Point(x: 2, y: 1)), SegmentIntersection(left_t: 0.25, right_t: 0, point: Point(x: 2, y: 1)), SegmentIntersection(left_t: 0.5, right_t: 0, point: Point(x: 2, y: 1)), SegmentIntersection(left_t: 1, right_t: 0, point: Point(x: 2, y: 1))])
+Ok([SegmentIntersection(left_t: 0, right_t: 0, point: Point(x: 2, y: 1)), SegmentIntersection(left_t: 0, right_t: 0.25, point: Point(x: 2, y: 1)), SegmentIntersection(left_t: 0, right_t: 0.5, point: Point(x: 2, y: 1)), SegmentIntersection(left_t: 0, right_t: 1, point: Point(x: 2, y: 1))])
+arc endpoint / cubic
+Ok([SegmentIntersection(left_t: 0, right_t: 0, point: Point(x: 2, y: 1)), SegmentIntersection(left_t: 0.125, right_t: 0, point: Point(x: 2, y: 1)), SegmentIntersection(left_t: 0.25, right_t: 0, point: Point(x: 2, y: 1)), SegmentIntersection(left_t: 0.5, right_t: 0, point: Point(x: 2, y: 1)), SegmentIntersection(left_t: 0.75, right_t: 0, point: Point(x: 2, y: 1)), SegmentIntersection(left_t: 1, right_t: 0, point: Point(x: 2, y: 1))])
+Ok([SegmentIntersection(left_t: 0, right_t: 0, point: Point(x: 2, y: 1)), SegmentIntersection(left_t: 0, right_t: 0.125, point: Point(x: 2, y: 1)), SegmentIntersection(left_t: 0, right_t: 0.25, point: Point(x: 2, y: 1)), SegmentIntersection(left_t: 0, right_t: 0.5, point: Point(x: 2, y: 1)), SegmentIntersection(left_t: 0, right_t: 0.75, point: Point(x: 2, y: 1)), SegmentIntersection(left_t: 0, right_t: 1, point: Point(x: 2, y: 1))])
+arc interior / line
+Error(IndeterminateDirection)
+Error(IndeterminateDirection)
+arc interior / quadratic
+Ok([SegmentIntersection(left_t: 0, right_t: 0.5, point: Point(x: 1, y: 2)), SegmentIntersection(left_t: 0.25051440329218105, right_t: 0.5, point: Point(x: 1, y: 2)), SegmentIntersection(left_t: 0.5313786008230453, right_t: 0.5, point: Point(x: 1, y: 2)), SegmentIntersection(left_t: 1, right_t: 0.5, point: Point(x: 1, y: 2))])
+Ok([SegmentIntersection(left_t: 0.5, right_t: 0, point: Point(x: 1, y: 2)), SegmentIntersection(left_t: 0.5, right_t: 0.25051440329218105, point: Point(x: 1, y: 2)), SegmentIntersection(left_t: 0.5, right_t: 0.5313786008230453, point: Point(x: 1, y: 2)), SegmentIntersection(left_t: 0.5, right_t: 1, point: Point(x: 1, y: 2))])
+arc interior / cubic
+Ok([SegmentIntersection(left_t: 0, right_t: 0.5, point: Point(x: 1, y: 2)), SegmentIntersection(left_t: 0.12505715592135344, right_t: 0.5, point: Point(x: 1, y: 2)), SegmentIntersection(left_t: 0.25051440329218105, right_t: 0.5, point: Point(x: 1, y: 2)), SegmentIntersection(left_t: 0.37602880658436216, right_t: 0.5, point: Point(x: 1, y: 2)), SegmentIntersection(left_t: 0.5313786008230453, right_t: 0.5, point: Point(x: 1, y: 2)), SegmentIntersection(left_t: 1, right_t: 0.5, point: Point(x: 1, y: 2))])
+Ok([SegmentIntersection(left_t: 0.5, right_t: 0, point: Point(x: 1, y: 2)), SegmentIntersection(left_t: 0.5, right_t: 0.12505715592135344, point: Point(x: 1, y: 2)), SegmentIntersection(left_t: 0.5, right_t: 0.25051440329218105, point: Point(x: 1, y: 2)), SegmentIntersection(left_t: 0.5, right_t: 0.37602880658436216, point: Point(x: 1, y: 2)), SegmentIntersection(left_t: 0.5, right_t: 0.5313786008230453, point: Point(x: 1, y: 2)), SegmentIntersection(left_t: 0.5, right_t: 1, point: Point(x: 1, y: 2))])
+outside / line
+Error(IndeterminateDirection)
+Error(IndeterminateDirection)
+outside / quadratic
+Ok([])
+Ok([])
+outside / cubic
+Ok([])
+Ok([])
+constant pair #(Line(start: Point(x: 1, y: 1), end: Point(x: 1, y: 1)), Line(start: Point(x: 1, y: 1), end: Point(x: 1, y: 1)))
+intersections Error(IndeterminateDirection)
+overlaps Ok([])
+encounters Error(IndeterminateDirection)
+constant pair #(Line(start: Point(x: 1, y: 1), end: Point(x: 1, y: 1)), QuadraticBezier(start: Point(x: 1, y: 1), control: Point(x: 1, y: 1), end: Point(x: 1, y: 1)))
+intersections Error(IndeterminateDirection)
+overlaps Ok([])
+encounters Error(IndeterminateDirection)
+constant pair #(Line(start: Point(x: 1, y: 1), end: Point(x: 1, y: 1)), CubicBezier(start: Point(x: 1, y: 1), control1: Point(x: 1, y: 1), control2: Point(x: 1, y: 1), end: Point(x: 1, y: 1)))
+intersections Error(IndeterminateDirection)
+overlaps Ok([])
+encounters Error(IndeterminateDirection)
+constant versus nondegenerate line
+Error(IndeterminateDirection)
+Ok([SegmentIntersection(left_t: 0.5, right_t: 0, point: Point(x: 1, y: 1))])
+constant pair #(QuadraticBezier(start: Point(x: 1, y: 1), control: Point(x: 1, y: 1), end: Point(x: 1, y: 1)), Line(start: Point(x: 1, y: 1), end: Point(x: 1, y: 1)))
+intersections Error(IndeterminateDirection)
+overlaps Ok([])
+encounters Error(IndeterminateDirection)
+constant pair #(QuadraticBezier(start: Point(x: 1, y: 1), control: Point(x: 1, y: 1), end: Point(x: 1, y: 1)), QuadraticBezier(start: Point(x: 1, y: 1), control: Point(x: 1, y: 1), end: Point(x: 1, y: 1)))
+intersections Ok([SegmentIntersection(left_t: 0, right_t: 0, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 0, right_t: 1, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 1, right_t: 0, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 1, right_t: 1, point: Point(x: 1, y: 1))])
+overlaps Ok([])
+encounters Ok(Encounters(overlaps: [], intersections: [SegmentIntersection(left_t: 0, right_t: 0, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 0, right_t: 1, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 1, right_t: 0, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 1, right_t: 1, point: Point(x: 1, y: 1))]))
+constant pair #(QuadraticBezier(start: Point(x: 1, y: 1), control: Point(x: 1, y: 1), end: Point(x: 1, y: 1)), CubicBezier(start: Point(x: 1, y: 1), control1: Point(x: 1, y: 1), control2: Point(x: 1, y: 1), end: Point(x: 1, y: 1)))
+intersections Ok([SegmentIntersection(left_t: 0, right_t: 0, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 0, right_t: 0.5, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 0, right_t: 1, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 0.5, right_t: 0, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 1, right_t: 0, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 1, right_t: 1, point: Point(x: 1, y: 1))])
+overlaps Ok([])
+encounters Ok(Encounters(overlaps: [], intersections: [SegmentIntersection(left_t: 0, right_t: 0, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 0, right_t: 0.5, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 0, right_t: 1, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 0.5, right_t: 0, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 1, right_t: 0, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 1, right_t: 1, point: Point(x: 1, y: 1))]))
+constant versus nondegenerate line
+Ok([SegmentIntersection(left_t: 0, right_t: 0.5, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 1, right_t: 0.5, point: Point(x: 1, y: 1))])
+Ok([SegmentIntersection(left_t: 0.5, right_t: 0, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 0.5, right_t: 1, point: Point(x: 1, y: 1))])
+constant pair #(CubicBezier(start: Point(x: 1, y: 1), control1: Point(x: 1, y: 1), control2: Point(x: 1, y: 1), end: Point(x: 1, y: 1)), Line(start: Point(x: 1, y: 1), end: Point(x: 1, y: 1)))
+intersections Error(IndeterminateDirection)
+overlaps Ok([])
+encounters Error(IndeterminateDirection)
+constant pair #(CubicBezier(start: Point(x: 1, y: 1), control1: Point(x: 1, y: 1), control2: Point(x: 1, y: 1), end: Point(x: 1, y: 1)), QuadraticBezier(start: Point(x: 1, y: 1), control: Point(x: 1, y: 1), end: Point(x: 1, y: 1)))
+intersections Ok([SegmentIntersection(left_t: 0, right_t: 0, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 0, right_t: 0.5, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 0, right_t: 1, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 0.5, right_t: 0, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 1, right_t: 0, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 1, right_t: 1, point: Point(x: 1, y: 1))])
+overlaps Ok([])
+encounters Ok(Encounters(overlaps: [], intersections: [SegmentIntersection(left_t: 0, right_t: 0, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 0, right_t: 0.5, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 0, right_t: 1, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 0.5, right_t: 0, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 1, right_t: 0, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 1, right_t: 1, point: Point(x: 1, y: 1))]))
+constant pair #(CubicBezier(start: Point(x: 1, y: 1), control1: Point(x: 1, y: 1), control2: Point(x: 1, y: 1), end: Point(x: 1, y: 1)), CubicBezier(start: Point(x: 1, y: 1), control1: Point(x: 1, y: 1), control2: Point(x: 1, y: 1), end: Point(x: 1, y: 1)))
+intersections Ok([SegmentIntersection(left_t: 0, right_t: 0, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 0, right_t: 0.25, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 0, right_t: 0.5, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 0, right_t: 0.75, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 0, right_t: 1, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 0.5, right_t: 0, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 0.5, right_t: 0.5, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 1, right_t: 0, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 1, right_t: 1, point: Point(x: 1, y: 1))])
+overlaps Ok([])
+encounters Ok(Encounters(overlaps: [], intersections: [SegmentIntersection(left_t: 0, right_t: 0, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 0, right_t: 0.25, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 0, right_t: 0.5, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 0, right_t: 0.75, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 0, right_t: 1, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 0.5, right_t: 0, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 0.5, right_t: 0.5, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 1, right_t: 0, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 1, right_t: 1, point: Point(x: 1, y: 1))]))
+constant versus nondegenerate line
+Ok([SegmentIntersection(left_t: 0, right_t: 0.5, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 1, right_t: 0.5, point: Point(x: 1, y: 1))])
+Ok([SegmentIntersection(left_t: 0.5, right_t: 0, point: Point(x: 1, y: 1)), SegmentIntersection(left_t: 0.5, right_t: 1, point: Point(x: 1, y: 1))])

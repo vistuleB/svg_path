@@ -1,0 +1,21 @@
+Running fast test profile.
+Downloading packages
+ Downloaded 2 packages in 0.01s
+  Compiling gleam_stdlib
+  Compiling gleeunit
+  Compiling svg_path
+   Compiled in 3.79s
+    Running svg_path_test.main
+assert test/svg_path_geometry_test.gleam:2563
+ test: svg_path_geometry_test.segment_intersections_prefers_shared_endpoint_over_near_endpoint_minimum_test
+ code: assert list.length(raw) == 4
+ left: 5
+right: 4
+ info: Assertion failed.
+assert test/svg_path_intersections_test.gleam:379
+ test: svg_path_intersections_test.flat_cubic_crossing_regression_test
+ code: assert list.length(found) == 9
+ left: 14
+right: 9
+ info: Assertion failed.
+2010 passed, 2 failures

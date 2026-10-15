@@ -1,0 +1,16 @@
+import { describe, expect, it } from '@jest/globals';
+import { getControlPointBox } from '../../../src/global-properties/bounds/get-control-point-box.js';
+import { getRandomCubic } from '../../helpers/get-random-bezier.js';
+
+
+describe('getControlPointBox', function() {
+    it('it should get the correct control point bounding box for some cubic beziers', 
+    function() {
+        const ps0 = getRandomCubic(0);
+        const box = getControlPointBox(ps0);
+        expect(box).toEqual([
+            [-108.49686506776892, -112.1975403532909],
+              [124.76385737178956, 52.32750125849648]
+        ]);
+    });
+});

@@ -1,0 +1,98 @@
+  Compiling svg_path
+  Compiling flobezier_audit_probe
+warning: Redundant record update
+   ┌─ /Users/jpsteinb/github.com/vistuleB/svg_path/scripts/flobezier/probe/src/length_probe.gleam:88:18
+   │  
+88 │           options: svg_path.LengthOptions(
+   │ ╭──────────────────^
+89 │ │           ..options,
+90 │ │           tolerance: options.tolerance /. { count |> int.to_float },
+91 │ │           max_depth: depth,
+92 │ │         ),
+   │ ╰─────────^ This record update specifies all fields
+
+Hint: It is better style to use the record creation syntax.
+
+   Compiled in 2.49s
+    Running constant_intersection_probe.main
+center / line
+Error(IndeterminateDirection)
+Error(IndeterminateDirection)
+center / quadratic
+Ok([])
+Ok([])
+center / cubic
+Ok([])
+Ok([])
+arc endpoint / line
+Error(IndeterminateDirection)
+Error(IndeterminateDirection)
+arc endpoint / quadratic
+Ok([SegmentIntersection(0.0, 0.0, Point(2.0, 1.0)), SegmentIntersection(0.25, 0.0, Point(2.0, 1.0)), SegmentIntersection(0.5, 0.0, Point(2.0, 1.0)), SegmentIntersection(1.0, 0.0, Point(2.0, 1.0))])
+Ok([SegmentIntersection(0.0, 0.0, Point(2.0, 1.0)), SegmentIntersection(0.0, 0.25, Point(2.0, 1.0)), SegmentIntersection(0.0, 0.5, Point(2.0, 1.0)), SegmentIntersection(0.0, 1.0, Point(2.0, 1.0))])
+arc endpoint / cubic
+Ok([SegmentIntersection(0.0, 0.0, Point(2.0, 1.0)), SegmentIntersection(0.125, 0.0, Point(2.0, 1.0)), SegmentIntersection(0.25, 0.0, Point(2.0, 1.0)), SegmentIntersection(0.5, 0.0, Point(2.0, 1.0)), SegmentIntersection(0.75, 0.0, Point(2.0, 1.0)), SegmentIntersection(1.0, 0.0, Point(2.0, 1.0))])
+Ok([SegmentIntersection(0.0, 0.0, Point(2.0, 1.0)), SegmentIntersection(0.0, 0.125, Point(2.0, 1.0)), SegmentIntersection(0.0, 0.25, Point(2.0, 1.0)), SegmentIntersection(0.0, 0.5, Point(2.0, 1.0)), SegmentIntersection(0.0, 0.75, Point(2.0, 1.0)), SegmentIntersection(0.0, 1.0, Point(2.0, 1.0))])
+arc interior / line
+Error(IndeterminateDirection)
+Error(IndeterminateDirection)
+arc interior / quadratic
+Ok([SegmentIntersection(0.0, 0.5, Point(1.0, 2.0)), SegmentIntersection(0.25051440329218105, 0.5, Point(1.0, 2.0)), SegmentIntersection(0.5313786008230453, 0.5, Point(1.0, 2.0)), SegmentIntersection(1.0, 0.5, Point(1.0, 2.0))])
+Ok([SegmentIntersection(0.5, 0.0, Point(1.0, 2.0)), SegmentIntersection(0.5, 0.25051440329218105, Point(1.0, 2.0)), SegmentIntersection(0.5, 0.5313786008230453, Point(1.0, 2.0)), SegmentIntersection(0.5, 1.0, Point(1.0, 2.0))])
+arc interior / cubic
+Ok([SegmentIntersection(0.0, 0.5, Point(1.0, 2.0)), SegmentIntersection(0.12505715592135344, 0.5, Point(1.0, 2.0)), SegmentIntersection(0.25051440329218105, 0.5, Point(1.0, 2.0)), SegmentIntersection(0.37602880658436216, 0.5, Point(1.0, 2.0)), SegmentIntersection(0.5313786008230453, 0.5, Point(1.0, 2.0)), SegmentIntersection(1.0, 0.5, Point(1.0, 2.0))])
+Ok([SegmentIntersection(0.5, 0.0, Point(1.0, 2.0)), SegmentIntersection(0.5, 0.12505715592135344, Point(1.0, 2.0)), SegmentIntersection(0.5, 0.25051440329218105, Point(1.0, 2.0)), SegmentIntersection(0.5, 0.37602880658436216, Point(1.0, 2.0)), SegmentIntersection(0.5, 0.5313786008230453, Point(1.0, 2.0)), SegmentIntersection(0.5, 1.0, Point(1.0, 2.0))])
+outside / line
+Error(IndeterminateDirection)
+Error(IndeterminateDirection)
+outside / quadratic
+Ok([])
+Ok([])
+outside / cubic
+Ok([])
+Ok([])
+constant pair #(Line(Point(1.0, 1.0), Point(1.0, 1.0)), Line(Point(1.0, 1.0), Point(1.0, 1.0)))
+intersections Error(IndeterminateDirection)
+overlaps Ok([])
+encounters Error(IndeterminateDirection)
+constant pair #(Line(Point(1.0, 1.0), Point(1.0, 1.0)), QuadraticBezier(Point(1.0, 1.0), Point(1.0, 1.0), Point(1.0, 1.0)))
+intersections Error(IndeterminateDirection)
+overlaps Ok([])
+encounters Error(IndeterminateDirection)
+constant pair #(Line(Point(1.0, 1.0), Point(1.0, 1.0)), CubicBezier(Point(1.0, 1.0), Point(1.0, 1.0), Point(1.0, 1.0), Point(1.0, 1.0)))
+intersections Error(IndeterminateDirection)
+overlaps Ok([])
+encounters Error(IndeterminateDirection)
+constant versus nondegenerate line
+Error(IndeterminateDirection)
+Ok([SegmentIntersection(0.5, 0.0, Point(1.0, 1.0))])
+constant pair #(QuadraticBezier(Point(1.0, 1.0), Point(1.0, 1.0), Point(1.0, 1.0)), Line(Point(1.0, 1.0), Point(1.0, 1.0)))
+intersections Error(IndeterminateDirection)
+overlaps Ok([])
+encounters Error(IndeterminateDirection)
+constant pair #(QuadraticBezier(Point(1.0, 1.0), Point(1.0, 1.0), Point(1.0, 1.0)), QuadraticBezier(Point(1.0, 1.0), Point(1.0, 1.0), Point(1.0, 1.0)))
+intersections Ok([SegmentIntersection(0.0, 0.0, Point(1.0, 1.0)), SegmentIntersection(0.0, 1.0, Point(1.0, 1.0)), SegmentIntersection(1.0, 0.0, Point(1.0, 1.0)), SegmentIntersection(1.0, 1.0, Point(1.0, 1.0))])
+overlaps Ok([])
+encounters Ok(Encounters([], [SegmentIntersection(0.0, 0.0, Point(1.0, 1.0)), SegmentIntersection(0.0, 1.0, Point(1.0, 1.0)), SegmentIntersection(1.0, 0.0, Point(1.0, 1.0)), SegmentIntersection(1.0, 1.0, Point(1.0, 1.0))]))
+constant pair #(QuadraticBezier(Point(1.0, 1.0), Point(1.0, 1.0), Point(1.0, 1.0)), CubicBezier(Point(1.0, 1.0), Point(1.0, 1.0), Point(1.0, 1.0), Point(1.0, 1.0)))
+intersections Ok([SegmentIntersection(0.0, 0.0, Point(1.0, 1.0)), SegmentIntersection(0.0, 0.5, Point(1.0, 1.0)), SegmentIntersection(0.0, 1.0, Point(1.0, 1.0)), SegmentIntersection(0.5, 0.0, Point(1.0, 1.0)), SegmentIntersection(1.0, 0.0, Point(1.0, 1.0)), SegmentIntersection(1.0, 1.0, Point(1.0, 1.0))])
+overlaps Ok([])
+encounters Ok(Encounters([], [SegmentIntersection(0.0, 0.0, Point(1.0, 1.0)), SegmentIntersection(0.0, 0.5, Point(1.0, 1.0)), SegmentIntersection(0.0, 1.0, Point(1.0, 1.0)), SegmentIntersection(0.5, 0.0, Point(1.0, 1.0)), SegmentIntersection(1.0, 0.0, Point(1.0, 1.0)), SegmentIntersection(1.0, 1.0, Point(1.0, 1.0))]))
+constant versus nondegenerate line
+Ok([SegmentIntersection(0.0, 0.5, Point(1.0, 1.0)), SegmentIntersection(1.0, 0.5, Point(1.0, 1.0))])
+Ok([SegmentIntersection(0.5, 0.0, Point(1.0, 1.0)), SegmentIntersection(0.5, 1.0, Point(1.0, 1.0))])
+constant pair #(CubicBezier(Point(1.0, 1.0), Point(1.0, 1.0), Point(1.0, 1.0), Point(1.0, 1.0)), Line(Point(1.0, 1.0), Point(1.0, 1.0)))
+intersections Error(IndeterminateDirection)
+overlaps Ok([])
+encounters Error(IndeterminateDirection)
+constant pair #(CubicBezier(Point(1.0, 1.0), Point(1.0, 1.0), Point(1.0, 1.0), Point(1.0, 1.0)), QuadraticBezier(Point(1.0, 1.0), Point(1.0, 1.0), Point(1.0, 1.0)))
+intersections Ok([SegmentIntersection(0.0, 0.0, Point(1.0, 1.0)), SegmentIntersection(0.0, 0.5, Point(1.0, 1.0)), SegmentIntersection(0.0, 1.0, Point(1.0, 1.0)), SegmentIntersection(0.5, 0.0, Point(1.0, 1.0)), SegmentIntersection(1.0, 0.0, Point(1.0, 1.0)), SegmentIntersection(1.0, 1.0, Point(1.0, 1.0))])
+overlaps Ok([])
+encounters Ok(Encounters([], [SegmentIntersection(0.0, 0.0, Point(1.0, 1.0)), SegmentIntersection(0.0, 0.5, Point(1.0, 1.0)), SegmentIntersection(0.0, 1.0, Point(1.0, 1.0)), SegmentIntersection(0.5, 0.0, Point(1.0, 1.0)), SegmentIntersection(1.0, 0.0, Point(1.0, 1.0)), SegmentIntersection(1.0, 1.0, Point(1.0, 1.0))]))
+constant pair #(CubicBezier(Point(1.0, 1.0), Point(1.0, 1.0), Point(1.0, 1.0), Point(1.0, 1.0)), CubicBezier(Point(1.0, 1.0), Point(1.0, 1.0), Point(1.0, 1.0), Point(1.0, 1.0)))
+intersections Ok([SegmentIntersection(0.0, 0.0, Point(1.0, 1.0)), SegmentIntersection(0.0, 0.25, Point(1.0, 1.0)), SegmentIntersection(0.0, 0.5, Point(1.0, 1.0)), SegmentIntersection(0.0, 0.75, Point(1.0, 1.0)), SegmentIntersection(0.0, 1.0, Point(1.0, 1.0)), SegmentIntersection(0.5, 0.0, Point(1.0, 1.0)), SegmentIntersection(0.5, 0.5, Point(1.0, 1.0)), SegmentIntersection(1.0, 0.0, Point(1.0, 1.0)), SegmentIntersection(1.0, 1.0, Point(1.0, 1.0))])
+overlaps Ok([])
+encounters Ok(Encounters([], [SegmentIntersection(0.0, 0.0, Point(1.0, 1.0)), SegmentIntersection(0.0, 0.25, Point(1.0, 1.0)), SegmentIntersection(0.0, 0.5, Point(1.0, 1.0)), SegmentIntersection(0.0, 0.75, Point(1.0, 1.0)), SegmentIntersection(0.0, 1.0, Point(1.0, 1.0)), SegmentIntersection(0.5, 0.0, Point(1.0, 1.0)), SegmentIntersection(0.5, 0.5, Point(1.0, 1.0)), SegmentIntersection(1.0, 0.0, Point(1.0, 1.0)), SegmentIntersection(1.0, 1.0, Point(1.0, 1.0))]))
+constant versus nondegenerate line
+Ok([SegmentIntersection(0.0, 0.5, Point(1.0, 1.0)), SegmentIntersection(1.0, 0.5, Point(1.0, 1.0))])
+Ok([SegmentIntersection(0.5, 0.0, Point(1.0, 1.0)), SegmentIntersection(0.5, 1.0, Point(1.0, 1.0))])

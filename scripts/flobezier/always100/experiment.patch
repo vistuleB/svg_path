@@ -1,0 +1,35 @@
+diff --git a/src/svg_path/intersections.gleam b/src/svg_path/intersections.gleam
+index 12d4e68..80db828 100644
+--- a/src/svg_path/intersections.gleam
++++ b/src/svg_path/intersections.gleam
+@@ -5162,7 +5162,7 @@ fn curve_curve_intersections(
+ 
+ // Supplement, never replace, the original-metric search. Axis normalization
+ // changes distances and must not decide overlap or discard existing contacts.
+-// Only polynomial pairs with an extreme control-range aspect ratio participate.
++// EXPERIMENT: normalize every polynomial pair with finite positive ranges.
+ fn supplement_conditioned_candidates(
+   left: Segment,
+   right: Segment,
+@@ -5190,16 +5190,15 @@ fn supplement_conditioned_candidates(
+       let dx = high.x -. low.x
+       let dy = high.y -. low.y
+       case
+-        number.is_finite(dx)
+-        && number.is_finite(dy)
+-        && dx >. 0.0
+-        && dy >. 0.0
+-        && float.min(dx, dy) <. 0.000001 *. float.max(dx, dy)
++        number.is_finite(dx) && number.is_finite(dy) && dx >. 0.0 && dy >. 0.0
+       {
+         False -> original
+         True -> {
+           let normalize = fn(p: Point) {
+-            Point({ p.x -. low.x } /. dx, { p.y -. low.y } /. dy)
++            Point(
++              100.0 *. { { p.x -. low.x } /. dx },
++              100.0 *. { { p.y -. low.y } /. dy },
++            )
+           }
+           let normalized = {
+             use a <- result.try(svg_path.segment_map_points(
