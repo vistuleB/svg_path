@@ -9,6 +9,12 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
+## Unreleased
+
+- Fix JavaScript closest-pair stack overflow for crossing line/arc geometry.
+  Make descent-list traversal stack-safe and seed line/curve distance searches
+  with evaluated crossing candidates, preserving actual nonzero gaps.
+
 ## 3.1.2 - 2026-10-15
 
 - Search eligible polynomial curve pairs once in centered `[-100,100]`

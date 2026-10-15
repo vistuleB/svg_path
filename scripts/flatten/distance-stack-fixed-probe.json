@@ -1,0 +1,66 @@
+[
+  {
+    "probe": "intersection",
+    "result": {
+      "0": {
+        "head": {
+          "left_t": 0.5590169943749472,
+          "right_t": 0.4645590543975402,
+          "point": {
+            "x": 2.236067977499789,
+            "y": 2.0000000000000004
+          }
+        },
+        "tail": {}
+      }
+    }
+  },
+  {
+    "probe": "segment-distance",
+    "result": {
+      "0": {
+        "left_at": 0.5590169943749475,
+        "right_at": 0.46455905439753997,
+        "left_point": {
+          "x": 2.23606797749979,
+          "y": 2
+        },
+        "right_point": {
+          "x": 2.23606797749979,
+          "y": 2
+        },
+        "distance": 0
+      }
+    }
+  },
+  {
+    "probe": "path-distance",
+    "result": {
+      "0": {
+        "left_at": {
+          "subpath_index": 0,
+          "at": {
+            "segment_index": 0,
+            "t": 0.5590169943749475
+          }
+        },
+        "right_at": {
+          "subpath_index": 0,
+          "at": {
+            "segment_index": 0,
+            "t": 0.46455905439753997
+          }
+        },
+        "left_point": {
+          "x": 2.23606797749979,
+          "y": 2
+        },
+        "right_point": {
+          "x": 2.23606797749979,
+          "y": 2
+        },
+        "distance": 0
+      }
+    }
+  }
+]

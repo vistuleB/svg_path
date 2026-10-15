@@ -5274,6 +5274,12 @@ fn segment_pair_projection_minima(
 ) -> Result(List(DistanceMinimum), svg_path.Error) {
   use boundary_minima <- result.try(boundary_edge_minima(left, right, options))
   use best <- result.try(best_distance_minimum(boundary_minima))
+  use best <- result.try(seed_projection_from_line_crossings(
+    left,
+    right,
+    best,
+    options,
+  ))
   use #(raw_terminal_windows, best) <- result.try(
     collect_projection_terminal_windows(
       IntersectionPiece(segment: left, from: 0.0, to: 1.0),
@@ -5290,6 +5296,50 @@ fn segment_pair_projection_minima(
     finish_tolerance: options.tolerance,
   ))
   Ok([best, ..list.append(boundary_minima, terminal_minima)])
+}
+
+// A crossing candidate supplies a valid distance upper bound even when its
+// evaluated points do not exactly coincide. Failed crossing searches leave the
+// existing distance search intact; do not turn a crossing error into a distance
+// error or assume an approximate intersection has zero distance.
+fn seed_projection_from_line_crossings(
+  left: Segment,
+  right: Segment,
+  best: DistanceMinimum,
+  options: IntersectionOptions,
+) -> Result(DistanceMinimum, svg_path.Error) {
+  let crossings = case left, right {
+    Line(start:, end:), _ ->
+      line_segment_intersections(start, end, True, right, options)
+    _, Line(start:, end:) ->
+      line_segment_intersections(start, end, False, left, options)
+    _, _ -> Ok([])
+  }
+  case crossings {
+    Error(_) -> Ok(best)
+    Ok(hits) -> {
+      // Tolerant crossing queries may admit a parameter just outside a finite
+      // segment. Only points on both finite segments provide a valid bound.
+      let hits =
+        list.filter(hits, fn(hit) {
+          hit.left_t >=. 0.0
+          && hit.left_t <=. 1.0
+          && hit.right_t >=. 0.0
+          && hit.right_t <=. 1.0
+        })
+      use candidates <- result.try(
+        list.try_map(hits, fn(hit) {
+          global_distance_minimum_at(
+            IntersectionPiece(left, 0.0, 1.0),
+            IntersectionPiece(right, 0.0, 1.0),
+            hit.left_t,
+            hit.right_t,
+          )
+        }),
+      )
+      best_distance_minimum([best, ..candidates])
+    }
+  }
 }
 
 fn boundary_edge_minima(
@@ -5700,22 +5750,29 @@ fn initial_descent_records_loop(
       case initial_descent_seed(start_left_t, start_right_t) {
         False -> initial_descent_records_loop(rest, descents:)
         True -> {
-          use current <- result.try(global_distance_minimum_at(
-            left,
-            right,
-            interpolate_float(left.from, left.to, start_left_t),
-            interpolate_float(right.from, right.to, start_right_t),
-          ))
-          initial_descent_records_loop(rest, descents: [
-            DescentRecord(
-              id:,
-              window_id: id,
-              current:,
-              last_window: Some(id),
-              status: Pending,
-            ),
-            ..descents
-          ])
+          // Keep the recursive call outside a result.try callback so the
+          // JavaScript target compiles this walk as a constant-stack loop.
+          case
+            global_distance_minimum_at(
+              left,
+              right,
+              interpolate_float(left.from, left.to, start_left_t),
+              interpolate_float(right.from, right.to, start_right_t),
+            )
+          {
+            Error(error) -> Error(error)
+            Ok(current) ->
+              initial_descent_records_loop(rest, descents: [
+                DescentRecord(
+                  id:,
+                  window_id: id,
+                  current:,
+                  last_window: Some(id),
+                  status: Pending,
+                ),
+                ..descents
+              ])
+          }
         }
       }
     }
@@ -5738,19 +5795,28 @@ fn run_descents(
   case descents_to_run {
     [] -> Ok(state)
     [descent, ..rest] -> {
-      use current <- result.try(find_descent(state.descents, descent.id))
-      use state <- result.try(case current.status {
-        Pending ->
-          run_one_descent(
-            current.id,
-            state,
-            certification_tolerance:,
-            step: 1.0,
-            iterations: 45,
-          )
-        Finished(_) -> Ok(state)
-      })
-      run_descents(rest, state, certification_tolerance:)
+      // This list can be as large as the initial seed list. Keep its
+      // traversal tail-recursive on JavaScript as well.
+      case find_descent(state.descents, descent.id) {
+        Error(error) -> Error(error)
+        Ok(current) -> {
+          let next = case current.status {
+            Pending ->
+              run_one_descent(
+                current.id,
+                state,
+                certification_tolerance:,
+                step: 1.0,
+                iterations: 45,
+              )
+            Finished(_) -> Ok(state)
+          }
+          case next {
+            Error(error) -> Error(error)
+            Ok(state) -> run_descents(rest, state, certification_tolerance:)
+          }
+        }
+      }
     }
   }
 }

@@ -10,9 +10,10 @@
       "stack": "RangeError: Maximum call stack size exceeded\n    at center_prime (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/ellipse.mjs:518:22)\n    at do_endpoint_to_center (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/ellipse.mjs:577:26)\n    at Module.endpoint_to_center (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/ellipse.mjs:1090:10)\n    at arc_center_data (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5223:22)\n    at Module.segment_point (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5337:15)\n    at global_piece_point (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:4375:20)\n    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:4383:9\n    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)\n    at global_distance_minimum_at (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:4379:18)\n    at initial_descent_records_loop (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:4939:11)"
     },
     "disposition": {
-      "status": "confirmed-library-bug",
+      "status": "fixed",
       "finding": "FL001",
-      "reason": "Native segment and path closest-pair APIs overflow on JavaScript; reproduced independently in probe-distance-stack.mjs."
+      "reason": "FL001 fixed by stack-safe descent traversal and evaluated line-crossing distance seeds. Original failure preserved; standalone native and original audit queries now pass.",
+      "verification": "linear-call66-public-results.json"
     }
   },
   {
@@ -26,9 +27,10 @@
       "stack": "RangeError: Maximum call stack size exceeded\n    at square_root (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/ellipse.mjs:203:21)\n    at do_endpoint_to_center (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/ellipse.mjs:574:19)\n    at Module.endpoint_to_center (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/ellipse.mjs:1090:10)\n    at arc_center_data (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5223:22)\n    at Module.segment_point (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path.mjs:5337:15)\n    at global_piece_point (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:4375:20)\n    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:4383:9\n    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)\n    at global_distance_minimum_at (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:4379:18)\n    at initial_descent_records_loop (file:///Users/jpsteinb/github.com/vistuleB/svg_path/test_portable/build/dev/javascript/svg_path/svg_path/intersections.mjs:4939:11)"
     },
     "disposition": {
-      "status": "confirmed-library-bug",
+      "status": "fixed",
       "finding": "FL001",
-      "reason": "Same JavaScript recursion failure as linear:66; standalone native reproducer uses this positive-x quarter-circle crossing."
+      "reason": "FL001 fixed by stack-safe descent traversal and evaluated line-crossing distance seeds. Original failure preserved; standalone native and original audit queries now pass.",
+      "verification": "linear-call67-public-results.json"
     }
   },
   {

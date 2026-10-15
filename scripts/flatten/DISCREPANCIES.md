@@ -4,8 +4,8 @@ Raw flagged comparisons, not a count of confirmed bugs. See FINDINGS.md for know
 
 | Call | Upstream file and test | Observation | Disposition |
 | --- | --- | --- | --- |
-| `linear:66` | `test/classes/segment.js` — #Flatten.Segment #Flatten.Segment.DistanceTo Distance to Circle Case 1 Intersection - two points | RangeError: Maximum call stack size exceeded | confirmed-library-bug |
-| `linear:67` | `test/classes/segment.js` — #Flatten.Segment #Flatten.Segment.DistanceTo Distance to Circle Case 1 Intersection - one points | RangeError: Maximum call stack size exceeded | confirmed-library-bug |
+| `linear:66` | `test/classes/segment.js` — #Flatten.Segment #Flatten.Segment.DistanceTo Distance to Circle Case 1 Intersection - two points | RangeError: Maximum call stack size exceeded | fixed |
+| `linear:67` | `test/classes/segment.js` — #Flatten.Segment #Flatten.Segment.DistanceTo Distance to Circle Case 1 Intersection - one points | RangeError: Maximum call stack size exceeded | fixed |
 | `polygons:317` | `test/classes/polygon.js` — #Flatten.Polygon Can measure distance between two polygons | 30-second timeout | deferred investigation |
 | `polygons:3115` | `test/algorithms/boolean_op.js` — #Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. Fixed: Infinite loop for boolean union over (valid) polygons. Issue #53 | Discontinuous; adapt-upstream-output | deferred investigation |
 | `polygons:3380` | `test/algorithms/boolean_op.js` — #Algorithms.Boolean Operations #Algorithms.Boolean Union Can perform unify. Fixed: Infinite loop for boolean union over (valid) polygons. Issue #55 case 2 | ArrangementGraphError; native-boolean-query | deferred investigation |

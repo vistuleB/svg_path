@@ -45678,7 +45678,7 @@
               "call": 66,
               "operation": "distanceTo",
               "observedStatus": "needs-investigation",
-              "status": "confirmed-library-bug"
+              "status": "fixed"
             }
           ],
           "auditStatus": "selected-operations-compared",
@@ -45698,7 +45698,7 @@
               "call": 67,
               "operation": "distanceTo",
               "observedStatus": "needs-investigation",
-              "status": "confirmed-library-bug"
+              "status": "fixed"
             }
           ],
           "auditStatus": "selected-operations-compared",

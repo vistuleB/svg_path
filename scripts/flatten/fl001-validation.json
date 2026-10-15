@@ -1,0 +1,32 @@
+{
+  "finding": "FL001",
+  "state": "validated-fix",
+  "baseCommit": "eae13fa751fe22da63cc550c01dbc42c1e34a9e5",
+  "compiler": "gleam 1.18.1",
+  "sourceSha256": "ed7616e582938c1e00a22d9ba4042e1947b2003a5147d7ac40cb61fc8d9dd237",
+  "tests": [
+    {
+      "command": "scripts/test-portable all all",
+      "erlangPassed": 762,
+      "javascriptPassed": 762,
+      "failures": 0
+    },
+    {
+      "command": "scripts/test-all",
+      "fastPassed": 2016,
+      "slowPassed": 31,
+      "failures": 0
+    }
+  ],
+  "regressionModule": "test/svg_path_flatten_closest_pair_test.gleam",
+  "nativeReproducer": "distance-stack-fixed-probe.json",
+  "auditRechecks": [
+    "linear-call66-public-results.json",
+    "linear-call67-public-results.json"
+  ],
+  "limitations": [
+    "No F# port in this change.",
+    "No published-figure regeneration requested or performed.",
+    "Other Flatten discrepancy investigations remain deferred."
+  ]
+}

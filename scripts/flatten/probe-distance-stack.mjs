@@ -20,6 +20,6 @@ if(!isMainThread) {
   worker.once('message',v=>{clearTimeout(timer);resolve(v);});
   worker.once('error',e=>{clearTimeout(timer);resolve({probe,error:String(e)});});
  }));
- fs.writeFileSync(new URL('distance-stack-probe.json',import.meta.url),JSON.stringify(rows,null,2)+'\n');
+ fs.writeFileSync(new URL(process.env.FLATTEN_PROBE_OUTPUT??'distance-stack-probe.json',import.meta.url),JSON.stringify(rows,null,2)+'\n');
  for(const row of rows) console.log(row.probe,row.error??JSON.stringify(row.result)??'timeout');
 }

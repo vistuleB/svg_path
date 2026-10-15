@@ -1,7 +1,8 @@
 # Flatten.js geometry audit
 
 Bug-finding comparison of overlapping public contracts, started 2026-10-15.
-Production geometry code is unchanged. This audit is separate from the completed
+Production geometry code was unchanged during inventory. FL001 now has a validated
+fix documented in FINDINGS.md. This audit is separate from the completed
 Paper.js, SVGO and FloBezier investigations and does not claim complete parity.
 
 ## Pinned upstream
@@ -120,4 +121,4 @@ The deferred discrepancy queue is ready for investigation. Stronger boundary
 checks, cutting/clipping, island grouping, point-based splitting, distance
 witnesses and path-string round trips remain explicit adaptation gaps, not
 silently passing tests. Whole-shape relations/validity are recorded as API-scope
-ideas. Production code is unchanged; no fixes were attempted during inventory.
+ideas. No fixes were attempted during inventory; see the later FL001 fix validation in FINDINGS.md.

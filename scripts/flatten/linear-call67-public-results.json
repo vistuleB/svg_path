@@ -1,0 +1,74 @@
+{
+  "distanceAdapter": "public-path-query",
+  "timeoutMs": 30000,
+  "implementation": "eae13fa751fe22da63cc550c01dbc42c1e34a9e5",
+  "diagnosticTolerance": 0.000001,
+  "counts": {
+    "match": 1
+  },
+  "rows": [
+    {
+      "call": 67,
+      "file": "test/classes/segment.js",
+      "test": "#Flatten.Segment #Flatten.Segment.DistanceTo Distance to Circle Case 1 Intersection - one points",
+      "testOrdinal": 37,
+      "operation": "distanceTo",
+      "input": {
+        "type": "segment",
+        "start": {
+          "type": "point",
+          "x": 0,
+          "y": 2
+        },
+        "end": {
+          "type": "point",
+          "x": 4,
+          "y": 2
+        }
+      },
+      "arguments": [
+        {
+          "type": "circle",
+          "center": {
+            "type": "point",
+            "x": 0,
+            "y": 0
+          },
+          "radius": 3
+        }
+      ],
+      "result": [
+        0,
+        {
+          "type": "segment",
+          "start": {
+            "type": "point",
+            "x": 2.23606797749979,
+            "y": 2
+          },
+          "end": {
+            "type": "point",
+            "x": 2.23606797749979,
+            "y": 2
+          }
+        }
+      ],
+      "comparison": {
+        "status": "match",
+        "value": {
+          "distance": 0,
+          "left": {
+            "x": 2.23606797749979,
+            "y": 2
+          },
+          "right": {
+            "x": 2.23606797749979,
+            "y": 2
+          }
+        },
+        "referenceDistance": 0,
+        "error": 0
+      }
+    }
+  ]
+}

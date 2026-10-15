@@ -82,7 +82,7 @@ many descent records or whether further issues would appear after fixing it.
 This is a violation of our result-returning query contract for valid geometry,
 not a disagreement about circle representation, witness choice or tolerance.
 Confirmed on JavaScript only; Erlang behavior has not been measured in this
-batch. No production fix has been applied. Raw comparison failures are retained;
+batch. At inventory time no production fix had been applied; see the fix validation below. Raw comparison failures are retained;
 `dispositions.json` classifies both as this one bug.
 
 ## Linear overlap conventions
@@ -175,3 +175,29 @@ The discrepancy queue remains 23 call observations: two for confirmed FL001,
 and the 21 polygon-batch observations awaiting investigation. The first-pass
 inventory now covers all 23 files / 544 tests. COVERAGE-GAPS.md explicitly lists
 unimplemented assertion adaptations; this is not a complete-parity claim.
+
+
+## FL001 fix validation
+
+The seed-list walk and descent-list walk now use explicit Result cases so the
+JavaScript compiler emits loops rather than recursion through `result.try`.
+Removing the first overflow alone exposed a distance search exceeding the
+30-second diagnostic cap. Line/curve closest-pair queries now also use existing
+crossing candidates to tighten their initial upper bound. Both points are
+re-evaluated on the original segments, with parameters constrained to [0,1];
+no intersection candidate is assumed to have zero distance. Failed crossing
+queries retain the original distance-search fallback.
+
+The standalone line/quarter-circle reproducer now returns distance zero for
+both the segment and path APIs. Original audit calls `linear:66` and `linear:67`
+match their reference distances. Original failure reports remain unchanged;
+new results are in `distance-stack-fixed-probe.json` and
+`linear-call66-public-results.json` / `linear-call67-public-results.json`.
+Four regressions in `test/svg_path_flatten_closest_pair_test.gleam` cover operand
+order, path dispatch, a positive sub-tolerance tangent gap, and disjoint fallback.
+
+Validation on the final source: `scripts/test-portable all all` passed **762 tests
+on each of Erlang and JavaScript**; `scripts/test-all` passed **2,016 fast and
+31 slow tests**. Gleam 1.18.1. Source hash and commands are recorded in
+`fl001-validation.json`. The audit snapshot is `eae13fa`; this change fixes FL001
+and adds its regressions and validation evidence. F# is unchanged.
