@@ -25,6 +25,12 @@ rather than only the tag object.
 - Certify line/line overlap correspondences from endpoint distances, avoiding
   rejection caused by rounded interior samples at large coordinates.
 
+- Avoid excessive closest-pair subdivision for line/elliptical-arc pairs by
+  evaluating endpoint projections, crossings, and interior normal-projection
+  extrema.
+- Tighten arc/arc closest-pair subdivision bounds using directional projection
+  intervals, avoiding excessive work on disjoint circular and elliptical arcs.
+
 ## 3.1.3 - 2026-10-15
 
 - Fix JavaScript closest-pair stack overflow for crossing line/arc geometry.

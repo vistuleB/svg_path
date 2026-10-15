@@ -42,6 +42,7 @@ import svg_path.{
   SubpathSelfIntersection,
 }
 import svg_path/bezier
+import svg_path/ellipse
 import svg_path/internal/number
 import svg_path/internal/overlap_detection
 import svg_path/internal/query
@@ -971,6 +972,10 @@ fn segment_segment_projection_valid_options(
     [] -> {
       case left, right {
         Line(..), Line(..) -> line_line_segment_projection(left, right, options)
+        Line(..), Arc(..) ->
+          line_arc_segment_projection(left, right, True, options)
+        Arc(..), Line(..) ->
+          line_arc_segment_projection(right, left, False, options)
         _, _ -> {
           use minima <- result.try(segment_pair_projection_minima(
             left,
@@ -5267,6 +5272,94 @@ fn polynomial_control_points(segment: Segment) -> List(Point) {
   }
 }
 
+// For an interior closest pair with positive separation, the separation is
+// perpendicular to both tangents. With one straight segment this means the
+// arc's projection onto the line normal is stationary. Together with all
+// four endpoint projections and crossings, these candidates cover the minimum
+// without a two-parameter subdivision search.
+fn line_arc_segment_projection(
+  line: Segment,
+  curve: Segment,
+  line_is_left: Bool,
+  options: IntersectionOptions,
+) -> Result(SegmentSegmentProjection, svg_path.Error) {
+  let #(left, right) = case line_is_left {
+    True -> #(line, curve)
+    False -> #(curve, line)
+  }
+  let minima = case line_arc_projection_minima(line, curve, options) {
+    Ok(minima) ->
+      Ok(
+        list.map(minima, fn(minimum) {
+          case line_is_left {
+            True -> minimum
+            False ->
+              DistanceMinimum(
+                ..minimum,
+                left_t: minimum.right_t,
+                right_t: minimum.left_t,
+              )
+          }
+        }),
+      )
+    // Preserve the existing search when a numerical crossing query fails.
+    Error(_) -> segment_pair_projection_minima(left, right, options)
+  }
+  use minima <- result.try(minima)
+  use best <- result.try(best_distance_minimum(minima))
+  segment_segment_projection_from_minimum(left, right, best)
+}
+
+fn line_arc_projection_minima(
+  line: Segment,
+  curve: Segment,
+  options: IntersectionOptions,
+) -> Result(List(DistanceMinimum), svg_path.Error) {
+  let assert Line(start, end) = line
+  use boundary <- result.try(boundary_edge_minima(line, curve, options))
+  case start == end {
+    True -> Ok(boundary)
+    False -> {
+      let direction = point_difference(end, start)
+      let scale =
+        float.max(
+          float.absolute_value(direction.x),
+          float.absolute_value(direction.y),
+        )
+      let normal = Point(0.0 -. direction.y /. scale, direction.x /. scale)
+      use arc <- result.try(svg_path.arc_center_data(curve))
+      let extrema =
+        ellipse.arc_projection_extrema(
+          arc,
+          direction: ellipse.EllipsePoint(normal.x, normal.y),
+        )
+      use crossings <- result.try(line_segment_intersections(
+        start,
+        end,
+        True,
+        curve,
+        options,
+      ))
+      let parameters =
+        list.append(extrema, list.map(crossings, fn(hit) { hit.right_t }))
+      use candidates <- result.try(
+        list.try_map(parameters, fn(t) {
+          // Crossing tolerance may admit parameters outside the finite segment.
+          let t = clamp01(t)
+          use p <- result.try(svg_path.segment_point(curve, t))
+          global_distance_minimum_at(
+            IntersectionPiece(line, 0.0, 1.0),
+            IntersectionPiece(curve, 0.0, 1.0),
+            clamp01(line_projection_t(p, start, end)),
+            t,
+          )
+        }),
+      )
+      Ok(list.append(boundary, candidates))
+    }
+  }
+}
+
 fn segment_pair_projection_minima(
   left: Segment,
   right: Segment,
@@ -5516,10 +5609,13 @@ fn inspect_projection_window(
   {
     Error(error), _ | _, Error(error) -> Error(error)
     Ok(left_box), Ok(right_box) -> {
-      case
-        bounding_box_distance_squared(left_box, right_box)
-        >. best.distance_squared
-      {
+      use #(lower_bound, best) <- result.try(arc_projection_window_bound(
+        left,
+        right,
+        bounding_box_distance_squared(left_box, right_box),
+        best,
+      ))
+      case lower_bound >. best.distance_squared {
         True -> Ok(#(windows, best, next_generation))
         False -> {
           case
@@ -5589,6 +5685,91 @@ fn inspect_projection_window(
       }
     }
   }
+}
+
+// Project arc windows onto the direction between evaluated midpoint witnesses.
+// A projected interval gap is a lower bound on Euclidean separation. Near an
+// interior minimum this direction is far more informative than the world axes.
+// Neither the witnesses nor this pruning bound assert a stationary minimum.
+fn arc_projection_window_bound(
+  left: IntersectionPiece,
+  right: IntersectionPiece,
+  box_bound: Float,
+  best: DistanceMinimum,
+) -> Result(#(Float, DistanceMinimum), svg_path.Error) {
+  case left.segment, right.segment {
+    Arc(..), Arc(..) if box_bound <=. best.distance_squared -> {
+      let t = interpolate_float(left.from, left.to, 0.5)
+      let u = interpolate_float(right.from, right.to, 0.5)
+      use p <- result.try(global_piece_point(left, t))
+      use q <- result.try(global_piece_point(right, u))
+      use candidate <- result.try(global_distance_minimum_at(left, right, t, u))
+      let best = closer_distance_minimum(best, candidate)
+      let delta = point_difference(q, p)
+      let scale =
+        float.max(float.absolute_value(delta.x), float.absolute_value(delta.y))
+      case scale == 0.0 || !number.is_finite(scale) {
+        True -> Ok(#(box_bound, best))
+        False -> {
+          let x = delta.x /. scale
+          let y = delta.y /. scale
+          let assert Ok(length) = float.square_root(x *. x +. y *. y)
+          let direction = Point(x /. length, y /. length)
+          use #(left_min, left_max) <- result.try(arc_piece_projection_range(
+            left,
+            p,
+            direction,
+          ))
+          use #(right_min, right_max) <- result.try(arc_piece_projection_range(
+            right,
+            p,
+            direction,
+          ))
+          let gap =
+            float.max(
+              0.0,
+              float.max(right_min -. left_max, left_min -. right_max),
+            )
+          Ok(#(float.max(box_bound, gap *. gap), best))
+        }
+      }
+    }
+    _, _ -> Ok(#(box_bound, best))
+  }
+}
+
+fn arc_piece_projection_range(
+  piece: IntersectionPiece,
+  origin: Point,
+  direction: Point,
+) -> Result(#(Float, Float), svg_path.Error) {
+  use arc <- result.try(svg_path.arc_center_data(piece.segment))
+  let parameters =
+    ellipse.arc_projection_extrema(
+      arc,
+      direction: ellipse.EllipsePoint(direction.x, direction.y),
+    )
+    |> list.filter(fn(t) { t >. piece.from && t <. piece.to })
+  use projections <- result.try(
+    list.try_map([piece.from, piece.to, ..parameters], fn(t) {
+      use p <- result.try(global_piece_point(piece, t))
+      Ok(dot(point_difference(p, origin), direction))
+    }),
+  )
+  let assert [first, ..rest] = projections
+  let low = list.fold(rest, first, float.min)
+  let high = list.fold(rest, first, float.max)
+  // Expand, rather than tighten, the bound for floating-point reconstruction
+  // and projection error. This slack affects pruning only, not caller tolerance.
+  let magnitude =
+    float.absolute_value(arc.center.x)
+    +. float.absolute_value(arc.center.y)
+    +. float.absolute_value(origin.x)
+    +. float.absolute_value(origin.y)
+    +. arc.radius.x
+    +. arc.radius.y
+  let slack = 0.000000000000014210854715202004 *. magnitude
+  Ok(#(low -. slack, high +. slack))
 }
 
 fn number_terminal_windows(
