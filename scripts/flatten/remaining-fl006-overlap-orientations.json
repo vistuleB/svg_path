@@ -1,0 +1,172 @@
+{
+  "rows": [
+    {
+      "reverseLeft": false,
+      "reverseRight": false,
+      "swapped": false,
+      "hits": [
+        {
+          "left_t": 0.44912266796885775,
+          "right_t": 0.44912362585449117,
+          "point": {
+            "x": 59.737530727907135,
+            "y": 59.76264755921041
+          }
+        }
+      ],
+      "overlaps": []
+    },
+    {
+      "reverseLeft": false,
+      "reverseRight": false,
+      "swapped": true,
+      "hits": [
+        {
+          "left_t": 0.44912362585449117,
+          "right_t": 0.44912266796885775,
+          "point": {
+            "x": 59.737530727907135,
+            "y": 59.76264755921041
+          }
+        }
+      ],
+      "overlaps": []
+    },
+    {
+      "reverseLeft": false,
+      "reverseRight": true,
+      "swapped": false,
+      "hits": [
+        {
+          "left_t": 0.4491226684150254,
+          "right_t": 0.5508763736992145,
+          "point": {
+            "x": 59.73753072788235,
+            "y": 59.762647559235184
+          }
+        }
+      ],
+      "overlaps": []
+    },
+    {
+      "reverseLeft": false,
+      "reverseRight": true,
+      "swapped": true,
+      "hits": [
+        {
+          "left_t": 0.5508763736992145,
+          "right_t": 0.4491226684150254,
+          "point": {
+            "x": 59.73753072788235,
+            "y": 59.762647559235184
+          }
+        }
+      ],
+      "overlaps": []
+    },
+    {
+      "reverseLeft": true,
+      "reverseRight": false,
+      "swapped": false,
+      "hits": [
+        {
+          "left_t": 0.5508773320309753,
+          "right_t": 0.44912362585449117,
+          "point": {
+            "x": 59.73753072790713,
+            "y": 59.762647559210414
+          }
+        }
+      ],
+      "overlaps": []
+    },
+    {
+      "reverseLeft": true,
+      "reverseRight": false,
+      "swapped": true,
+      "hits": [
+        {
+          "left_t": 0.44912362585449117,
+          "right_t": 0.5508773320309753,
+          "point": {
+            "x": 59.73753072790713,
+            "y": 59.762647559210414
+          }
+        }
+      ],
+      "overlaps": []
+    },
+    {
+      "reverseLeft": true,
+      "reverseRight": true,
+      "swapped": false,
+      "hits": [
+        {
+          "left_t": 0.5508773318629893,
+          "right_t": 0.5508763739773576,
+          "point": {
+            "x": 59.7375307278978,
+            "y": 59.762647559219744
+          }
+        }
+      ],
+      "overlaps": []
+    },
+    {
+      "reverseLeft": true,
+      "reverseRight": true,
+      "swapped": true,
+      "hits": [
+        {
+          "left_t": 0.5508763739773576,
+          "right_t": 0.5508773318629893,
+          "point": {
+            "x": 59.7375307278978,
+            "y": 59.762647559219744
+          }
+        }
+      ],
+      "overlaps": []
+    }
+  ],
+  "controls": [
+    {
+      "reversed": false,
+      "overlaps": [
+        {
+          "left_from": 0,
+          "left_to": 1,
+          "right_from": 0,
+          "right_to": 1,
+          "start": {
+            "x": 59.76247350201103,
+            "y": 59.7377048577821
+          },
+          "end": {
+            "x": 59.70692262458793,
+            "y": 59.79322713698864
+          }
+        }
+      ]
+    },
+    {
+      "reversed": true,
+      "overlaps": [
+        {
+          "left_from": 0,
+          "left_to": 1,
+          "right_from": 1,
+          "right_to": 0,
+          "start": {
+            "x": 59.76247350201103,
+            "y": 59.7377048577821
+          },
+          "end": {
+            "x": 59.70692262458793,
+            "y": 59.79322713698864
+          }
+        }
+      ]
+    }
+  ]
+}

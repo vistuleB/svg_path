@@ -11,6 +11,9 @@ rather than only the tag object.
 
 ## Unreleased
 
+- Reject backwards arc overlap correspondences near shared endpoints so that
+  they cannot suppress a separate interior crossing during Boolean refinement.
+
 - Rank curve-intersection windows using four corners and a chord-derived sample,
   recovering a short-arc crossing previously discarded by the bounded search.
 

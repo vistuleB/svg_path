@@ -1,0 +1,256 @@
+{
+  "source": "working tree after 0a67c0a",
+  "overlapSourceSha256": "9e07aa7902c34ff3d7d58a5c0e88f7a6528a01bd882d039d1903bc87b5c5f852",
+  "results": {
+    "pair": {
+      "left": {
+        "start": {
+          "x": 59.76247350201103,
+          "y": 59.7377048577821
+        },
+        "radius": {
+          "x": 84.49938828627135,
+          "y": 84.49938828627135
+        },
+        "x_axis_rotation": 0,
+        "large_arc": false,
+        "sweep": true,
+        "end": {
+          "x": 59.70692262458793,
+          "y": 59.79322713698864
+        }
+      },
+      "right": {
+        "start": {
+          "x": 59.76247342962466,
+          "y": 59.73770478542024
+        },
+        "radius": {
+          "x": 85.20624291591454,
+          "y": 85.20624291591454
+        },
+        "x_axis_rotation": 0,
+        "large_arc": false,
+        "sweep": false,
+        "end": {
+          "x": 59.70695115012889,
+          "y": 59.79325542571751
+        }
+      },
+      "options": {
+        "tolerance": 5e-07,
+        "max_depth": 48,
+        "parameter_snap": {}
+      },
+      "result": {
+        "0": {}
+      }
+    },
+    "rows": [
+      {
+        "tolerance": 1e-06,
+        "overlaps": {
+          "ok": true,
+          "values": []
+        },
+        "details": [],
+        "intersections": {
+          "ok": true,
+          "values": [
+            {
+              "left_t": 0.44912266796885775,
+              "right_t": 0.44912362585449117,
+              "point": {
+                "x": 59.737530727907135,
+                "y": 59.76264755921041
+              }
+            }
+          ]
+        },
+        "withoutOverlap": {
+          "ok": true,
+          "values": [
+            {
+              "left_t": 0.44912266796885775,
+              "right_t": 0.44912362585449117,
+              "point": {
+                "x": 59.737530727907135,
+                "y": 59.76264755921041
+              }
+            }
+          ]
+        }
+      },
+      {
+        "tolerance": 5e-07,
+        "overlaps": {
+          "ok": true,
+          "values": []
+        },
+        "details": [],
+        "intersections": {
+          "ok": true,
+          "values": [
+            {
+              "left_t": 0.44912266796885775,
+              "right_t": 0.44912362585449117,
+              "point": {
+                "x": 59.737530727907135,
+                "y": 59.76264755921041
+              }
+            }
+          ]
+        },
+        "withoutOverlap": {
+          "ok": true,
+          "values": [
+            {
+              "left_t": 0.44912266796885775,
+              "right_t": 0.44912362585449117,
+              "point": {
+                "x": 59.737530727907135,
+                "y": 59.76264755921041
+              }
+            }
+          ]
+        }
+      },
+      {
+        "tolerance": 1e-07,
+        "overlaps": {
+          "ok": true,
+          "values": []
+        },
+        "details": [],
+        "intersections": {
+          "ok": true,
+          "values": [
+            {
+              "left_t": 0.44912266796885775,
+              "right_t": 0.44912362585449117,
+              "point": {
+                "x": 59.737530727907135,
+                "y": 59.76264755921041
+              }
+            }
+          ]
+        },
+        "withoutOverlap": {
+          "ok": true,
+          "values": [
+            {
+              "left_t": 0.44912266796885775,
+              "right_t": 0.44912362585449117,
+              "point": {
+                "x": 59.737530727907135,
+                "y": 59.76264755921041
+              }
+            }
+          ]
+        }
+      },
+      {
+        "tolerance": 5e-08,
+        "overlaps": {
+          "ok": true,
+          "values": []
+        },
+        "details": [],
+        "intersections": {
+          "ok": true,
+          "values": [
+            {
+              "left_t": 0.44912266796885775,
+              "right_t": 0.44912362585449117,
+              "point": {
+                "x": 59.737530727907135,
+                "y": 59.76264755921041
+              }
+            }
+          ]
+        },
+        "withoutOverlap": {
+          "ok": true,
+          "values": [
+            {
+              "left_t": 0.44912266796885775,
+              "right_t": 0.44912362585449117,
+              "point": {
+                "x": 59.737530727907135,
+                "y": 59.76264755921041
+              }
+            }
+          ]
+        }
+      },
+      {
+        "tolerance": 1e-08,
+        "overlaps": {
+          "ok": true,
+          "values": []
+        },
+        "details": [],
+        "intersections": {
+          "ok": true,
+          "values": [
+            {
+              "left_t": 0.44912266796885775,
+              "right_t": 0.44912362585449117,
+              "point": {
+                "x": 59.737530727907135,
+                "y": 59.76264755921041
+              }
+            }
+          ]
+        },
+        "withoutOverlap": {
+          "ok": true,
+          "values": [
+            {
+              "left_t": 0.44912266796885775,
+              "right_t": 0.44912362585449117,
+              "point": {
+                "x": 59.737530727907135,
+                "y": 59.76264755921041
+              }
+            }
+          ]
+        }
+      },
+      {
+        "tolerance": 1e-09,
+        "overlaps": {
+          "ok": true,
+          "values": []
+        },
+        "details": [],
+        "intersections": {
+          "ok": true,
+          "values": [
+            {
+              "left_t": 0.44912266796885775,
+              "right_t": 0.44912362585449117,
+              "point": {
+                "x": 59.737530727907135,
+                "y": 59.76264755921041
+              }
+            }
+          ]
+        },
+        "withoutOverlap": {
+          "ok": true,
+          "values": [
+            {
+              "left_t": 0.44912266796885775,
+              "right_t": 0.44912362585449117,
+              "point": {
+                "x": 59.737530727907135,
+                "y": 59.76264755921041
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

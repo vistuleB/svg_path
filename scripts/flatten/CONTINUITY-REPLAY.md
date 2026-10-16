@@ -1,5 +1,9 @@
 # Twelve formerly blocked comparisons
 
+Current status: the arc guard is implemented and fully tested in Gleam. See
+[FL006 implementation and validation](FL006-OVERLAP-FIX.md). The earlier
+experiment/status descriptions below are historical.
+
 Follow-up: [FL006 investigation](FL006-INVESTIGATION.md) identifies search-budget
 loss for the full arc pair. A temporary ranking improvement recovers that
 crossing; the default Boolean discrepancy also involves a separate short-pair

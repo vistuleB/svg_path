@@ -1076,10 +1076,16 @@ fn sampled_overlap_valid(
   samples: Int,
 ) -> Result(Bool, svg_path.Error) {
   let #(left_from, left_to, right_from, right_to, _, _) = overlap
-  case left, right {
-    svg_path.Line(..), svg_path.Line(..) ->
+  use aligned <- result.try(arc_correspondence_directions_agree(
+    overlap,
+    left,
+    right,
+  ))
+  case aligned, left, right {
+    False, _, _ -> Ok(False)
+    True, svg_path.Line(..), svg_path.Line(..) ->
       line_correspondence_valid(overlap, left, right, tolerance)
-    _, _ -> {
+    True, _, _ -> {
       use right_piece <- result.try(svg_path.segment_between_inside(
         right,
         from: min_float(right_from, right_to),
@@ -1095,6 +1101,41 @@ fn sampled_overlap_valid(
         1,
       )
     }
+  }
+}
+
+// Distance tests alone admit backwards maps inside tolerance-sized endpoint
+// neighborhoods. For arcs, verify the paired traversal directions at the
+// interval midpoints before accepting coincidence. Normalize before taking the
+// dot product; multiplying raw tangent magnitudes and interval spans can overflow.
+fn arc_correspondence_directions_agree(
+  overlap: RawOverlap,
+  left: svg_path.Segment,
+  right: svg_path.Segment,
+) -> Result(Bool, svg_path.Error) {
+  case left, right {
+    svg_path.Arc(..), svg_path.Arc(..) -> {
+      let #(lf, lt, rf, rt, _, _) = overlap
+      use a <- result.try(svg_path.segment_derivative(
+        left,
+        lf +. { lt -. lf } /. 2.0,
+      ))
+      use b <- result.try(svg_path.segment_derivative(
+        right,
+        rf +. { rt -. rf } /. 2.0,
+      ))
+      Ok(case point.normalize(a), point.normalize(b) {
+        Ok(a), Ok(b) -> {
+          let direction = point.dot(a, b)
+          case lt >. lf == rt >. rf {
+            True -> direction >. 0.0
+            False -> direction <. 0.0
+          }
+        }
+        _, _ -> False
+      })
+    }
+    _, _ -> Ok(True)
   }
 }
 

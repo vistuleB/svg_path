@@ -1,5 +1,9 @@
 # FL006 five-sample replacement experiment
 
+Current status: the arc guard is implemented and fully tested in Gleam. See
+[FL006 implementation and validation](FL006-OVERLAP-FIX.md). The earlier
+experiment/status descriptions below are historical.
+
 2026-10-15. Follow-up to `FL006-BENCHMARK.md`.
 
 ## Change and recommendation

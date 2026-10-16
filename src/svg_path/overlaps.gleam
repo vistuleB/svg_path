@@ -9,7 +9,9 @@
 ////
 //// A supplied `tolerance` is finite and non-negative. It is used only as a
 //// Euclidean distance in path coordinates when testing coincidence and
-//// joining geometrically adjacent pieces. Internal fixed parameter-space
+//// joining geometrically adjacent pieces. Line/line and arc/arc correspondences
+//// must also agree with the paired traversal directions; endpoint proximity
+//// alone does not establish a backwards overlap. Internal fixed parameter-space
 //// tolerances reconcile endpoint projections and segment-boundary pieces.
 //// Invalid geometric tolerances return `svg_path.InvalidOverlapTolerance`.
 ////

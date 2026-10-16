@@ -1,16 +1,14 @@
 # Remaining Flatten.js observations: triage on 3.1.3
 
-Update: the FL006 ranking miss is fixed and validated in both Gleam and F#.
-The separate short-pair overlap classification affecting CSG 4295 remains open.
-See [the adopted replacement and validation](FL006-REPLACEMENT.md).
+**FL006 is fixed in Gleam:** the ranking fix retains the full-arc crossing, and
+the arc-direction guard rejects the backwards endpoint correspondence that
+suppressed the CSG cut. All twelve reconciled comparisons and both native-output
+chains pass the recorded sampled checks. See [validation](FL006-OVERLAP-FIX.md).
+Both FL006 fixes are ported and tested in F#; FL002–FL005 ports remain pending.
+See [the port checklist](FSHARP-PORT-STATUS.md).
+Broader assertion coverage gaps remain separate from these resolved findings.
 
-**FL006 is open:** executing the twelve formerly blocked comparisons found a
-missed arc intersection on both targets. Eleven individual cases pass sampled
-boundary checks; 4295 exposes FL006 and its discrepancy propagates into a chained
-4296 result. See [the continuity replay](CONTINUITY-REPLAY.md). FL002–FL005 have
-Gleam fixes; FL005 was committed as `2a2f94a`. FL004 retains its explicit
-minimum-length policy limitation. F# ports and broader assertion coverage remain
-outstanding; this is not release readiness.
+The following triage narrative and counts preserve the historical stages.
 
 Triage baseline: Gleam `a0d45fbc` (3.1.3). No production source was changed for
 the initial investigation. The subsequent FL005 implementation is described below. The original comparison records are preserved. New evidence

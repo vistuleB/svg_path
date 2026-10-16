@@ -59,3 +59,4 @@ svg_path_flatten_overlap_test.gleam
 svg_path_flatten_cyclic_order_test.gleam
 
 svg_path_flatten_boundary_test.gleam
+svg_path_flatten_arc_overlap_test.gleam

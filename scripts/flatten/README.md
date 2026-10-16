@@ -1,23 +1,16 @@
 # Flatten.js geometry audit
 
-Update: the FL006 ranking miss is fixed and validated in both Gleam and F#.
-The separate short-pair overlap classification affecting CSG 4295 remains open.
-See [the adopted replacement and validation](FL006-REPLACEMENT.md).
+## Current status after FL006 fixes
 
-## Current status after continuity replay
+FL006's missed crossing and backwards endpoint-overlap suppression are fixed in
+Gleam. The twelve reconciled comparisons pass with both adapter policies;
+the two native-output chains also pass their sampled checks. See
+[the implementation and validation](FL006-OVERLAP-FIX.md).
 
-**FL006 remains open:** the twelve formerly blocked comparisons have now been
-executed with bounded audit-only endpoint reconciliation. Eleven individual cases
-pass sampled boundary checks; call 4295 reveals a missed arc intersection on both
-targets, also affecting the next operation when replayed as a chain.
-See [the continuity replay](CONTINUITY-REPLAY.md).
-
-FL002–FL005 have Gleam fixes (FL005 committed as `2a2f94a`); their F# ports remain
-pending. FL004 reports its size-filter closure limitation explicitly.
-See [the triage and reproductions](REMAINING-TRIAGE.md).
-
-This completes discrepancy classification, **not fixes or full assertion parity**.
-The original inventory counts below are retained as historical observations.
+Both FL006 fixes are also ported and tested in F#. FL002–FL005 still need F#
+ports; see [the port checklist](FSHARP-PORT-STATUS.md). FL004 retains its explicit size-policy limitation.
+Broader assertion coverage gaps remain; this is not a claim of full upstream
+parity or release readiness. Historical comparison records are preserved.
 
 Bug-finding comparison of overlapping public contracts, started 2026-10-15.
 Production geometry code was unchanged during inventory. FL001 now has a validated

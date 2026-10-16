@@ -139,17 +139,17 @@
     "adapterPolicy": "Bounded endpoint reconciliation <=1e-6, both snapping directions; original strict conversion failure preserved."
   },
   "polygons:4295": {
-    "status": "confirmed-native-failure",
-    "reason": "Missed arc intersection on both targets, certified by independent circle calculation and evaluated witness. Area/grid pass but sampled boundaries differ by 3.68e-6; also affects chained 4296.",
-    "verification": "remaining-continuity-replay.json",
+    "status": "fixed",
+    "reason": "FL006 ranking and backwards arc correspondence fixes recover the interior crossing and default Boolean split. Both bounded endpoint-reconciliation policies pass sampled area, membership and boundary comparisons; strict input continuity remains unchanged.",
+    "verification": "remaining-fl006-overlap-production-replay.json",
     "adapterPolicy": "Bounded endpoint reconciliation <=1e-6, both snapping directions; original strict conversion failure preserved.",
     "finding": "FL006",
-    "fixStatus": "open",
+    "fixStatus": "fixed-in-gleam",
     "diagnosticVerification": "remaining-continuity-4295-witness.json"
   },
   "polygons:4296": {
     "status": "sampled-geometry-match-after-reconciliation",
-    "reason": "Both endpoint reconciliation policies pass area, membership-grid and sampled bidirectional boundary checks. Standalone match; chained native inputs inherit FL006 from 4295.",
+    "reason": "Standalone and native-output chain comparisons pass after the FL006 Gleam fixes under both bounded endpoint-reconciliation policies; sampled checks do not establish exhaustive assertion parity.",
     "verification": "remaining-continuity-replay.json",
     "adapterPolicy": "Bounded endpoint reconciliation <=1e-6, both snapping directions; original strict conversion failure preserved."
   },

@@ -1,5 +1,7 @@
 # Flatten.js audit — first batch
 
+Current follow-up: [FL006 is fixed and validated in Gleam](FL006-OVERLAP-FIX.md).
+
 **Latest status:** the history below predates the 3.1.3 remaining-observation
 triage. [REMAINING-TRIAGE.md](REMAINING-TRIAGE.md) classifies all 21 later flags
 and records Gleam fixes for FL002–FL005 (F# ports pending), including an

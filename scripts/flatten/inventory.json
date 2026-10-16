@@ -16224,7 +16224,7 @@
               "call": 4295,
               "operation": "algorithm:intersect",
               "observedStatus": "needs-investigation",
-              "status": "confirmed-native-failure"
+              "status": "fixed"
             },
             {
               "batch": "polygons",
