@@ -12,8 +12,9 @@ pub fn default_distance_options() -> svg_path.DistanceOptions {
 
 /// Return the shortest distance from a point to a segment.
 ///
-/// Lines are measured exactly. Quadratic Beziers, cubic Beziers, and arcs are
-/// measured by finding stationary points of squared distance in `0.0..1.0`.
+/// Lines use orthogonal projection; circular arcs use radial projection and
+/// endpoint comparisons. Other curves are measured by finding stationary points
+/// of squared distance in `0.0..1.0`.
 pub fn segment_distance(
   point: svg_path.Point,
   to segment: svg_path.Segment,
@@ -31,6 +32,8 @@ pub fn segment_distance_with(
 }
 
 /// Return the nearest point on a segment to an input point.
+///
+/// When several points are equally near, any one of them may be returned.
 pub fn segment_projection(
   point: svg_path.Point,
   to segment: svg_path.Segment,
@@ -39,6 +42,9 @@ pub fn segment_projection(
 }
 
 /// Return the nearest point on a segment to an input point using explicit options.
+///
+/// Circular arcs use an analytic radial candidate and endpoints, so their result
+/// does not depend on the sampling or iteration budget. Options are still validated.
 pub fn segment_projection_with(
   point: svg_path.Point,
   to segment: svg_path.Segment,

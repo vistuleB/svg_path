@@ -2955,13 +2955,74 @@ fn arc_projection_with(
   segment: Segment,
   options: DistanceOptions,
 ) -> Result(SegmentProjection, Error) {
-  use candidates <- result.try(arc_projection_candidates(
-    point,
-    segment,
-    options,
-    options.max_iterations,
-  ))
+  use arc <- result.try(arc_center_data(segment))
+  use candidates <- result.try(case arc.radius.x == arc.radius.y {
+    True -> Ok(circle_projection_candidates(point, segment_start(segment), arc))
+    False ->
+      arc_projection_candidates(point, segment, options, options.max_iterations)
+  })
   smallest_segment_projection(point, segment, candidates)
+}
+
+// A circle's nearest interior point is in the query's radial direction. If that
+// direction is outside the sweep, a minimum is at an endpoint. At the center
+// every point is a minimizer, so endpoints suffice. Do not approximate ellipses
+// as circles: this branch is selected only for exactly equal corrected radii.
+fn circle_projection_candidates(
+  point: Point,
+  start: Point,
+  arc: ellipse.CenterArcData,
+) -> List(Float) {
+  let center = Point(arc.center.x, arc.center.y)
+  let radial = point_difference(point, center)
+  case radial.x == 0.0 && radial.y == 0.0 {
+    True -> [0.0, 1.0]
+    False -> {
+      let start_radial =
+        point_scale(point_difference(start, center), 1.0 /. arc.radius.x)
+      let offset = point_difference(point, start)
+      let scale =
+        float.max(
+          arc.radius.x,
+          float.max(
+            float.absolute_value(radial.x),
+            float.absolute_value(radial.y),
+          ),
+        )
+      let scaled_radial = point_scale(radial, 1.0 /. scale)
+      // Near the start, cross(start-center, point-start) avoids cancellation
+      // between nearly parallel large radial vectors on shallow arcs. Near the
+      // center use the query's radial vector directly instead.
+      let cross_vector = case
+        float.max(
+          float.absolute_value(offset.x),
+          float.absolute_value(offset.y),
+        )
+        <. arc.radius.x *. 0.5
+      {
+        True -> point_scale(offset, 1.0 /. scale)
+        False -> scaled_radial
+      }
+      let angle =
+        trig.atan2_degrees(
+          cross(start_radial, cross_vector),
+          dot(start_radial, scaled_radial),
+        )
+      let directed = case arc.delta_angle <. 0.0 {
+        True -> 0.0 -. angle
+        False -> angle
+      }
+      let travel = case directed <. 0.0 {
+        True -> directed +. 360.0
+        False -> directed
+      }
+      let sweep = float.absolute_value(arc.delta_angle)
+      case travel <=. sweep {
+        True -> [travel /. sweep, 0.0, 1.0]
+        False -> [0.0, 1.0]
+      }
+    }
+  }
 }
 
 fn bezier_projection_with(
