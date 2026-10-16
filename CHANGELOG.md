@@ -9,7 +9,7 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
-## Unreleased
+## 3.1.4 - 2026-10-16
 
 - Reject backwards arc overlap correspondences near shared endpoints so that
   they cannot suppress a separate interior crossing during Boolean refinement.
