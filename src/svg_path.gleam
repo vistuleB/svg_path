@@ -4504,13 +4504,8 @@ fn refine_arc_projection_window_by_bisection_loop(
   remaining_iterations: Int,
   polish_iterations: Int,
 ) -> Result(Float, Error) {
-  use portion <- result.try(segment_between_inside(
-    segment,
-    from: left_t,
-    to: right_t,
-  ))
-  use box <- result.try(segment_bounding_box(portion))
-  case bounding_box_taxicab_diameter(box) <=. tolerance {
+  use diameter <- result.try(distance_bracket_diameter(segment, left_t, right_t))
+  case diameter <=. tolerance {
     True -> {
       use estimate <- result.try(best_distance_parameter(
         point,
@@ -4541,7 +4536,11 @@ fn refine_arc_projection_window_by_bisection_loop(
         segment,
         midpoint_t,
       ))
-      case remaining_iterations <= 1 {
+      case
+        remaining_iterations <= 1
+        || midpoint_t == left_t
+        || midpoint_t == right_t
+      {
         True ->
           Error(DistanceMaxIterationsReached(
             estimate: midpoint_t,
@@ -4693,11 +4692,11 @@ fn tangential_error_is_improving(
   proposal_t: Float,
   proposal_value: Float,
 ) -> Result(Bool, Error) {
-  use previous_derivative <- result.try(segment_derivative(
+  use previous_derivative <- result.try(distance_derivative(
     segment,
     at: previous_t,
   ))
-  use proposal_derivative <- result.try(segment_derivative(
+  use proposal_derivative <- result.try(distance_derivative(
     segment,
     at: proposal_t,
   ))
@@ -4761,9 +4760,9 @@ fn best_distance_parameter(
   right_t: Float,
 ) -> Result(Float, Error) {
   let midpoint_t = left_t +. { right_t -. left_t } /. 2.0
-  use left <- result.try(segment_point(segment, at: left_t))
-  use midpoint <- result.try(segment_point(segment, at: midpoint_t))
-  use right <- result.try(segment_point(segment, at: right_t))
+  use left <- result.try(distance_point(segment, at: left_t))
+  use midpoint <- result.try(distance_point(segment, at: midpoint_t))
+  use right <- result.try(distance_point(segment, at: right_t))
   let left_distance = distance_squared(point, left)
   let midpoint_distance = distance_squared(point, midpoint)
   let right_distance = distance_squared(point, right)
@@ -4777,24 +4776,99 @@ fn best_distance_parameter(
   }
 }
 
+// Arc subdivision in endpoint form is ill-conditioned when the chord becomes
+// very short relative to its radius. Bound the original parameter interval by
+// its maximum speed instead. Keep the existing Bezier bound for polynomial roots.
+fn distance_bracket_diameter(
+  segment: Segment,
+  left_t: Float,
+  right_t: Float,
+) -> Result(Float, Error) {
+  case segment {
+    Arc(..) -> {
+      use speed <- result.try(segment_derivative_scale(segment))
+      Ok(speed *. { right_t -. left_t })
+    }
+    _ -> {
+      use portion <- result.try(segment_between_inside(
+        segment,
+        from: left_t,
+        to: right_t,
+      ))
+      use box <- result.try(segment_bounding_box(portion))
+      Ok(bounding_box_taxicab_diameter(box))
+    }
+  }
+}
+
+fn distance_point(segment: Segment, at t: Float) -> Result(Point, Error) {
+  distance_geometry(segment, t) |> result.map(fn(pair) { pair.0 })
+}
+
+fn distance_derivative(segment: Segment, at t: Float) -> Result(Point, Error) {
+  distance_geometry(segment, t) |> result.map(fn(pair) { pair.1 })
+}
+
+// Evaluate relative to the nearer original endpoint, avoiding center + radius
+// cancellation on shallow arcs. cos(delta)-1 uses the half-angle identity.
+fn distance_geometry(
+  segment: Segment,
+  t: Float,
+) -> Result(#(Point, Point), Error) {
+  case segment {
+    Arc(start:, end:, ..) -> {
+      use arc <- result.try(arc_center_data(segment))
+      let #(anchor, progress) = case t <=. 0.5 {
+        True -> #(start, t)
+        False -> #(end, t -. 1.0)
+      }
+      let cos_phi = trig.cos_degrees(arc.x_axis_rotation)
+      let sin_phi = trig.sin_degrees(arc.x_axis_rotation)
+      let dx = anchor.x -. arc.center.x
+      let dy = anchor.y -. arc.center.y
+      let cos_start = { cos_phi *. dx +. sin_phi *. dy } /. arc.radius.x
+      let sin_start = { cos_phi *. dy -. sin_phi *. dx } /. arc.radius.y
+      let delta = arc.delta_angle *. progress
+      let sin_delta = trig.sin_degrees(delta)
+      let half_sin = trig.sin_degrees(delta /. 2.0)
+      let cos_minus_one = -2.0 *. half_sin *. half_sin
+      let local_x =
+        arc.radius.x *. { cos_start *. cos_minus_one -. sin_start *. sin_delta }
+      let local_y =
+        arc.radius.y *. { sin_start *. cos_minus_one +. cos_start *. sin_delta }
+      let position =
+        Point(
+          anchor.x +. cos_phi *. local_x -. sin_phi *. local_y,
+          anchor.y +. sin_phi *. local_x +. cos_phi *. local_y,
+        )
+      let cos_angle =
+        cos_start *. { 1.0 +. cos_minus_one } -. sin_start *. sin_delta
+      let sin_angle =
+        sin_start *. { 1.0 +. cos_minus_one } +. cos_start *. sin_delta
+      let angular_speed = trig.degrees_to_radians(arc.delta_angle)
+      let vx = 0.0 -. arc.radius.x *. sin_angle *. angular_speed
+      let vy = arc.radius.y *. cos_angle *. angular_speed
+      Ok(#(
+        position,
+        Point(cos_phi *. vx -. sin_phi *. vy, sin_phi *. vx +. cos_phi *. vy),
+      ))
+    }
+    _ -> {
+      use position <- result.try(segment_point(segment, at: t))
+      use derivative <- result.try(segment_derivative(segment, at: t))
+      Ok(#(position, derivative))
+    }
+  }
+}
+
 fn distance_stationary_value(
   point: Point,
   segment: Segment,
   t: Float,
 ) -> Result(Float, Error) {
-  case segment_point(segment, at: t) {
-    Error(error) -> Error(error)
-    Ok(segment_point) -> {
-      case segment_derivative(segment, at: t) {
-        Error(error) -> Error(error)
-        Ok(derivative) -> {
-          let offset = point_difference(segment_point, point)
-
-          Ok(dot(offset, derivative))
-        }
-      }
-    }
-  }
+  use geometry <- result.try(distance_geometry(segment, t))
+  let #(position, derivative) = geometry
+  Ok(dot(point_difference(position, point), derivative))
 }
 
 fn smallest_segment_projection(
@@ -4856,7 +4930,7 @@ fn segment_projection_at(
   segment: Segment,
   t: Float,
 ) -> Result(SegmentProjection, Error) {
-  case segment_point(segment, at: t) {
+  case distance_point(segment, at: t) {
     Error(error) -> Error(error)
     Ok(segment_point) ->
       Ok(Projection(
