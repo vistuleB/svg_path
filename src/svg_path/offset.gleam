@@ -2865,7 +2865,7 @@ const source_tangent_colinearization_angle_degrees = 2.0
 
 const reversal_tangent_gap_degrees = 1.0
 
-const reversal_fit_tangent_nudge_degrees = 0.5
+const reversal_fit_tangent_nudge_degrees = 0.1
 
 const reversal_fit_line_aperture_degrees = 0.02
 
