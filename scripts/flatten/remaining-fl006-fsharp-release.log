@@ -1,0 +1,26 @@
+Running canonical pre-release test suite.
+Running the full test suite (fast then slow profiles).
+Running fast test profile (all tests except the slow suite).
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  SvgPath -> /Users/jpsteinb/github.com/vistuleB/svg_path_fsharp/src/SvgPath/bin/Debug/net9.0/SvgPath.dll
+  SvgPath.Tests -> /Users/jpsteinb/github.com/vistuleB/svg_path_fsharp/tests/SvgPath.Tests/bin/Debug/net9.0/SvgPath.Tests.dll
+Test run for /Users/jpsteinb/github.com/vistuleB/svg_path_fsharp/tests/SvgPath.Tests/bin/Debug/net9.0/SvgPath.Tests.dll (.NETCoreApp,Version=v9.0)
+VSTest version 17.13.0 (arm64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:  2015, Skipped:     0, Total:  2015, Duration: 1 m 22 s - SvgPath.Tests.dll (net9.0)
+Running slow test profile (convex-hull and Paper.js stress suites).
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  SvgPath -> /Users/jpsteinb/github.com/vistuleB/svg_path_fsharp/src/SvgPath/bin/Debug/net9.0/SvgPath.dll
+  SvgPath.Tests -> /Users/jpsteinb/github.com/vistuleB/svg_path_fsharp/tests/SvgPath.Tests/bin/Debug/net9.0/SvgPath.Tests.dll
+Test run for /Users/jpsteinb/github.com/vistuleB/svg_path_fsharp/tests/SvgPath.Tests/bin/Debug/net9.0/SvgPath.Tests.dll (.NETCoreApp,Version=v9.0)
+VSTest version 17.13.0 (arm64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+
+Passed!  - Failed:     0, Passed:    30, Skipped:     0, Total:    30, Duration: 27 s - SvgPath.Tests.dll (net9.0)

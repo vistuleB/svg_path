@@ -1,0 +1,3252 @@
+[
+  {
+    "tolerance": 0.000001,
+    "minimum": 0.00001,
+    "segments": 4,
+    "area": 0.006167927557369612,
+    "maxBoundaryDistance": 0.0000036260129541760442,
+    "matchingEdges": [
+      {
+        "segment": {
+          "start": {
+            "x": 59.762664600825765,
+            "y": 59.84855755939034
+          },
+          "radius": {
+            "x": 84.79252389141845,
+            "y": 84.79252389141845
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": false,
+          "end": {
+            "x": 59.70695115012889,
+            "y": 59.79325542571751
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 0,
+            "segment": {
+              "start": {
+                "x": 59.70692262458793,
+                "y": 59.79322713698864
+              },
+              "radius": {
+                "x": 84.79252389141845,
+                "y": 84.79252389141845
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "x": 59.70695115012888,
+                "y": 59.79325542571751
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.706922624587925,
+                "y": 59.793227136988634
+              },
+              "max": {
+                "x": 59.70695115012888,
+                "y": 59.793255425717504
+              }
+            },
+            "start_vertex": 0,
+            "end_vertex": 6,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.07854058541958478
+        }
+      },
+      {
+        "segment": {
+          "start": {
+            "x": 59.70695115012889,
+            "y": 59.79325542571751
+          },
+          "radius": {
+            "x": 85.20624291591454,
+            "y": 85.20624291591454
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 59.76247346581785,
+            "y": 59.73770482160117
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 7,
+            "segment": {
+              "start": {
+                "x": 59.76247342962466,
+                "y": 59.73770478542024
+              },
+              "radius": {
+                "x": 85.20624291591454,
+                "y": 85.20624291591454
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "x": 59.70695115012889,
+                "y": 59.79325542571751
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.70695115012891,
+                "y": 59.73770478542025
+              },
+              "max": {
+                "x": 59.762473429624656,
+                "y": 59.79325542571749
+              }
+            },
+            "start_vertex": 3,
+            "end_vertex": 6,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.15708083469983716
+        }
+      },
+      {
+        "segment": {
+          "start": {
+            "x": 59.76247346581785,
+            "y": 59.73770482160117
+          },
+          "radius": {
+            "x": 84.8710637077582,
+            "y": 84.8710637077582
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 59.81821506960193,
+            "y": 59.79303528018376
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 2,
+            "segment": {
+              "start": {
+                "x": 59.81821506960193,
+                "y": 59.79303528018376
+              },
+              "radius": {
+                "x": 84.8710637077582,
+                "y": 84.8710637077582
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "x": 59.76247350201103,
+                "y": 59.7377048577821
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.762473502011034,
+                "y": 59.73770485778208
+              },
+              "max": {
+                "x": 59.81821506960193,
+                "y": 59.79303528018374
+              }
+            },
+            "start_vertex": 2,
+            "end_vertex": 3,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.15708064196467963
+        }
+      },
+      {
+        "segment": {
+          "start": {
+            "x": 59.81821506960193,
+            "y": 59.79303528018376
+          },
+          "radius": {
+            "x": 84.5779281026111,
+            "y": 84.5779281026111
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 59.762664600825765,
+            "y": 59.84855755939034
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 1,
+            "segment": {
+              "start": {
+                "x": 59.762664600825765,
+                "y": 59.84855755939034
+              },
+              "radius": {
+                "x": 84.5779281026111,
+                "y": 84.5779281026111
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "x": 59.81821506960193,
+                "y": 59.79303528018376
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.76266460082576,
+                "y": 59.79303528018376
+              },
+              "max": {
+                "x": 59.818215069601926,
+                "y": 59.84855755939034
+              }
+            },
+            "start_vertex": 1,
+            "end_vertex": 2,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.15708059166613822
+        }
+      }
+    ],
+    "images": [
+      {
+        "id": 0,
+        "sources": [
+          {
+            "segment_index": 0,
+            "ta": 0,
+            "tb": 0.0005115075574419389,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "sources": [
+          {
+            "segment_index": 0,
+            "ta": 0.0005115075574419389,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "sources": [
+          {
+            "segment_index": 1,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "sources": [
+          {
+            "segment_index": 2,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "sources": [
+          {
+            "segment_index": 3,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "sources": [
+          {
+            "segment_index": 4,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "sources": [
+          {
+            "segment_index": 5,
+            "ta": 0,
+            "tb": 0.49986914330511356,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "sources": [
+          {
+            "segment_index": 5,
+            "ta": 0.49986914330511356,
+            "tb": 0.500455959278631,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "sources": [
+          {
+            "segment_index": 5,
+            "ta": 0.500455959278631,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "sources": [
+          {
+            "segment_index": 6,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "sources": [
+          {
+            "segment_index": 7,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "tolerance": 0.000001,
+    "minimum": 1e-9,
+    "segments": 4,
+    "area": 0.006167927557369612,
+    "maxBoundaryDistance": 0.0000036260129541760442,
+    "matchingEdges": [
+      {
+        "segment": {
+          "start": {
+            "x": 59.762664600825765,
+            "y": 59.84855755939034
+          },
+          "radius": {
+            "x": 84.79252389141845,
+            "y": 84.79252389141845
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": false,
+          "end": {
+            "x": 59.70695115012889,
+            "y": 59.79325542571751
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 0,
+            "segment": {
+              "start": {
+                "x": 59.70692262458793,
+                "y": 59.79322713698864
+              },
+              "radius": {
+                "x": 84.79252389141845,
+                "y": 84.79252389141845
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "x": 59.70695115012888,
+                "y": 59.79325542571751
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.706922624587925,
+                "y": 59.793227136988634
+              },
+              "max": {
+                "x": 59.70695115012888,
+                "y": 59.793255425717504
+              }
+            },
+            "start_vertex": 0,
+            "end_vertex": 6,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.07854058541958478
+        }
+      },
+      {
+        "segment": {
+          "start": {
+            "x": 59.70695115012889,
+            "y": 59.79325542571751
+          },
+          "radius": {
+            "x": 85.20624291591454,
+            "y": 85.20624291591454
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 59.76247346581785,
+            "y": 59.73770482160117
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 7,
+            "segment": {
+              "start": {
+                "x": 59.76247342962466,
+                "y": 59.73770478542024
+              },
+              "radius": {
+                "x": 85.20624291591454,
+                "y": 85.20624291591454
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "x": 59.70695115012889,
+                "y": 59.79325542571751
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.70695115012891,
+                "y": 59.73770478542025
+              },
+              "max": {
+                "x": 59.762473429624656,
+                "y": 59.79325542571749
+              }
+            },
+            "start_vertex": 3,
+            "end_vertex": 6,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.15708083469983716
+        }
+      },
+      {
+        "segment": {
+          "start": {
+            "x": 59.76247346581785,
+            "y": 59.73770482160117
+          },
+          "radius": {
+            "x": 84.8710637077582,
+            "y": 84.8710637077582
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 59.81821506960193,
+            "y": 59.79303528018376
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 2,
+            "segment": {
+              "start": {
+                "x": 59.81821506960193,
+                "y": 59.79303528018376
+              },
+              "radius": {
+                "x": 84.8710637077582,
+                "y": 84.8710637077582
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "x": 59.76247350201103,
+                "y": 59.7377048577821
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.762473502011034,
+                "y": 59.73770485778208
+              },
+              "max": {
+                "x": 59.81821506960193,
+                "y": 59.79303528018374
+              }
+            },
+            "start_vertex": 2,
+            "end_vertex": 3,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.15708064196467963
+        }
+      },
+      {
+        "segment": {
+          "start": {
+            "x": 59.81821506960193,
+            "y": 59.79303528018376
+          },
+          "radius": {
+            "x": 84.5779281026111,
+            "y": 84.5779281026111
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 59.762664600825765,
+            "y": 59.84855755939034
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 1,
+            "segment": {
+              "start": {
+                "x": 59.762664600825765,
+                "y": 59.84855755939034
+              },
+              "radius": {
+                "x": 84.5779281026111,
+                "y": 84.5779281026111
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "x": 59.81821506960193,
+                "y": 59.79303528018376
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.76266460082576,
+                "y": 59.79303528018376
+              },
+              "max": {
+                "x": 59.818215069601926,
+                "y": 59.84855755939034
+              }
+            },
+            "start_vertex": 1,
+            "end_vertex": 2,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.15708059166613822
+        }
+      }
+    ],
+    "images": [
+      {
+        "id": 0,
+        "sources": [
+          {
+            "segment_index": 0,
+            "ta": 0,
+            "tb": 0.0005115075574419389,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "sources": [
+          {
+            "segment_index": 0,
+            "ta": 0.0005115075574419389,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "sources": [
+          {
+            "segment_index": 1,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "sources": [
+          {
+            "segment_index": 2,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "sources": [
+          {
+            "segment_index": 3,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "sources": [
+          {
+            "segment_index": 4,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "sources": [
+          {
+            "segment_index": 5,
+            "ta": 0,
+            "tb": 0.49986914330511356,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "sources": [
+          {
+            "segment_index": 5,
+            "ta": 0.49986914330511356,
+            "tb": 0.500455959278631,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "sources": [
+          {
+            "segment_index": 5,
+            "ta": 0.500455959278631,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "sources": [
+          {
+            "segment_index": 6,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "sources": [
+          {
+            "segment_index": 7,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "tolerance": 1e-7,
+    "minimum": 0.00001,
+    "segments": 5,
+    "area": 0.0061678415426460464,
+    "maxBoundaryDistance": 1.7414212376943012e-11,
+    "matchingEdges": [
+      {
+        "segment": {
+          "start": {
+            "x": 59.762664600825765,
+            "y": 59.84855755939034
+          },
+          "radius": {
+            "x": 84.79252389141845,
+            "y": 84.79252389141845
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": false,
+          "end": {
+            "x": 59.70695115012889,
+            "y": 59.79325542571752
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 0,
+            "segment": {
+              "start": {
+                "x": 59.70692262458793,
+                "y": 59.79322713698864
+              },
+              "radius": {
+                "x": 84.79252389141845,
+                "y": 84.79252389141845
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "x": 59.70695115012889,
+                "y": 59.79325542571752
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.70692262458794,
+                "y": 59.79322713698864
+              },
+              "max": {
+                "x": 59.70695115012889,
+                "y": 59.79325542571752
+              }
+            },
+            "start_vertex": 0,
+            "end_vertex": 6,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.07854058541957767
+        }
+      },
+      {
+        "segment": {
+          "start": {
+            "x": 59.70695115012889,
+            "y": 59.79325542571752
+          },
+          "radius": {
+            "x": 85.20624291591454,
+            "y": 85.20624291591454
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 59.73753072786535,
+            "y": 59.76264755925219
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 8,
+            "segment": {
+              "start": {
+                "x": 59.73753072786534,
+                "y": 59.762647559252194
+              },
+              "radius": {
+                "x": 85.20624291591454,
+                "y": 85.20624291591454
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "x": 59.70695115012889,
+                "y": 59.79325542571751
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.70695115012889,
+                "y": 59.76264755925219
+              },
+              "max": {
+                "x": 59.73753072786534,
+                "y": 59.79325542571751
+              }
+            },
+            "start_vertex": 7,
+            "end_vertex": 6,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.08653212268514278
+        }
+      },
+      {
+        "segment": {
+          "start": {
+            "x": 59.73753072786535,
+            "y": 59.76264755925219
+          },
+          "radius": {
+            "x": 84.49938828627135,
+            "y": 84.49938828627135
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": false,
+          "end": {
+            "x": 59.76247350201103,
+            "y": 59.7377048577821
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 3,
+            "segment": {
+              "start": {
+                "x": 59.76247350201103,
+                "y": 59.7377048577821
+              },
+              "radius": {
+                "x": 84.49938828627135,
+                "y": 84.49938828627135
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "x": 59.73753072786535,
+                "y": 59.76264755925219
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.737530727865355,
+                "y": 59.73770485778213
+              },
+              "max": {
+                "x": 59.76247350201103,
+                "y": 59.7626475592522
+              }
+            },
+            "start_vertex": 3,
+            "end_vertex": 7,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.07054871618132481
+        }
+      },
+      {
+        "segment": {
+          "start": {
+            "x": 59.76247350201103,
+            "y": 59.7377048577821
+          },
+          "radius": {
+            "x": 84.8710637077582,
+            "y": 84.8710637077582
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 59.81821506960193,
+            "y": 59.79303528018376
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 2,
+            "segment": {
+              "start": {
+                "x": 59.81821506960193,
+                "y": 59.79303528018376
+              },
+              "radius": {
+                "x": 84.8710637077582,
+                "y": 84.8710637077582
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "x": 59.76247350201103,
+                "y": 59.7377048577821
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.762473502011034,
+                "y": 59.73770485778208
+              },
+              "max": {
+                "x": 59.81821506960193,
+                "y": 59.79303528018374
+              }
+            },
+            "start_vertex": 2,
+            "end_vertex": 3,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.15708059078877654
+        }
+      },
+      {
+        "segment": {
+          "start": {
+            "x": 59.81821506960193,
+            "y": 59.79303528018376
+          },
+          "radius": {
+            "x": 84.5779281026111,
+            "y": 84.5779281026111
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 59.762664600825765,
+            "y": 59.84855755939034
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 1,
+            "segment": {
+              "start": {
+                "x": 59.762664600825765,
+                "y": 59.84855755939034
+              },
+              "radius": {
+                "x": 84.5779281026111,
+                "y": 84.5779281026111
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "x": 59.81821506960193,
+                "y": 59.79303528018376
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.76266460082576,
+                "y": 59.79303528018376
+              },
+              "max": {
+                "x": 59.818215069601926,
+                "y": 59.84855755939034
+              }
+            },
+            "start_vertex": 1,
+            "end_vertex": 2,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.15708059166613822
+        }
+      }
+    ],
+    "images": [
+      {
+        "id": 0,
+        "sources": [
+          {
+            "segment_index": 0,
+            "ta": 0,
+            "tb": 0.0005115075575512079,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "sources": [
+          {
+            "segment_index": 0,
+            "ta": 0.0005115075575512079,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "sources": [
+          {
+            "segment_index": 1,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "sources": [
+          {
+            "segment_index": 2,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "sources": [
+          {
+            "segment_index": 3,
+            "ta": 0,
+            "tb": 0.4491226687211246,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "sources": [
+          {
+            "segment_index": 3,
+            "ta": 0.4491226687211246,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "sources": [
+          {
+            "segment_index": 4,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "sources": [
+          {
+            "segment_index": 5,
+            "ta": 0,
+            "tb": 0.5001326962232907,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "sources": [
+          {
+            "segment_index": 5,
+            "ta": 0.5001326962232907,
+            "tb": 0.5004559592786312,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "sources": [
+          {
+            "segment_index": 5,
+            "ta": 0.5004559592786312,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "sources": [
+          {
+            "segment_index": 6,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 11,
+        "sources": [
+          {
+            "segment_index": 7,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "tolerance": 1e-7,
+    "minimum": 1e-9,
+    "segments": 5,
+    "area": 0.0061678415426460464,
+    "maxBoundaryDistance": 1.7414212376943012e-11,
+    "matchingEdges": [
+      {
+        "segment": {
+          "start": {
+            "x": 59.762664600825765,
+            "y": 59.84855755939034
+          },
+          "radius": {
+            "x": 84.79252389141845,
+            "y": 84.79252389141845
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": false,
+          "end": {
+            "x": 59.70695115012889,
+            "y": 59.79325542571752
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 0,
+            "segment": {
+              "start": {
+                "x": 59.70692262458793,
+                "y": 59.79322713698864
+              },
+              "radius": {
+                "x": 84.79252389141845,
+                "y": 84.79252389141845
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "x": 59.70695115012889,
+                "y": 59.79325542571752
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.70692262458794,
+                "y": 59.79322713698864
+              },
+              "max": {
+                "x": 59.70695115012889,
+                "y": 59.79325542571752
+              }
+            },
+            "start_vertex": 0,
+            "end_vertex": 6,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.07854058541957767
+        }
+      },
+      {
+        "segment": {
+          "start": {
+            "x": 59.70695115012889,
+            "y": 59.79325542571752
+          },
+          "radius": {
+            "x": 85.20624291591454,
+            "y": 85.20624291591454
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 59.73753072786535,
+            "y": 59.76264755925219
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 8,
+            "segment": {
+              "start": {
+                "x": 59.73753072786534,
+                "y": 59.762647559252194
+              },
+              "radius": {
+                "x": 85.20624291591454,
+                "y": 85.20624291591454
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "x": 59.70695115012889,
+                "y": 59.79325542571751
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.70695115012889,
+                "y": 59.76264755925219
+              },
+              "max": {
+                "x": 59.73753072786534,
+                "y": 59.79325542571751
+              }
+            },
+            "start_vertex": 7,
+            "end_vertex": 6,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.08653212268514278
+        }
+      },
+      {
+        "segment": {
+          "start": {
+            "x": 59.73753072786535,
+            "y": 59.76264755925219
+          },
+          "radius": {
+            "x": 84.49938828627135,
+            "y": 84.49938828627135
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": false,
+          "end": {
+            "x": 59.76247350201103,
+            "y": 59.7377048577821
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 3,
+            "segment": {
+              "start": {
+                "x": 59.76247350201103,
+                "y": 59.7377048577821
+              },
+              "radius": {
+                "x": 84.49938828627135,
+                "y": 84.49938828627135
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "x": 59.73753072786535,
+                "y": 59.76264755925219
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.737530727865355,
+                "y": 59.73770485778213
+              },
+              "max": {
+                "x": 59.76247350201103,
+                "y": 59.7626475592522
+              }
+            },
+            "start_vertex": 3,
+            "end_vertex": 7,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.07054871618132481
+        }
+      },
+      {
+        "segment": {
+          "start": {
+            "x": 59.76247350201103,
+            "y": 59.7377048577821
+          },
+          "radius": {
+            "x": 84.8710637077582,
+            "y": 84.8710637077582
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 59.81821506960193,
+            "y": 59.79303528018376
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 2,
+            "segment": {
+              "start": {
+                "x": 59.81821506960193,
+                "y": 59.79303528018376
+              },
+              "radius": {
+                "x": 84.8710637077582,
+                "y": 84.8710637077582
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "x": 59.76247350201103,
+                "y": 59.7377048577821
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.762473502011034,
+                "y": 59.73770485778208
+              },
+              "max": {
+                "x": 59.81821506960193,
+                "y": 59.79303528018374
+              }
+            },
+            "start_vertex": 2,
+            "end_vertex": 3,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.15708059078877654
+        }
+      },
+      {
+        "segment": {
+          "start": {
+            "x": 59.81821506960193,
+            "y": 59.79303528018376
+          },
+          "radius": {
+            "x": 84.5779281026111,
+            "y": 84.5779281026111
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 59.762664600825765,
+            "y": 59.84855755939034
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 1,
+            "segment": {
+              "start": {
+                "x": 59.762664600825765,
+                "y": 59.84855755939034
+              },
+              "radius": {
+                "x": 84.5779281026111,
+                "y": 84.5779281026111
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "x": 59.81821506960193,
+                "y": 59.79303528018376
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.76266460082576,
+                "y": 59.79303528018376
+              },
+              "max": {
+                "x": 59.818215069601926,
+                "y": 59.84855755939034
+              }
+            },
+            "start_vertex": 1,
+            "end_vertex": 2,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.15708059166613822
+        }
+      }
+    ],
+    "images": [
+      {
+        "id": 0,
+        "sources": [
+          {
+            "segment_index": 0,
+            "ta": 0,
+            "tb": 0.0005115075575512079,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "sources": [
+          {
+            "segment_index": 0,
+            "ta": 0.0005115075575512079,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "sources": [
+          {
+            "segment_index": 1,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "sources": [
+          {
+            "segment_index": 2,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "sources": [
+          {
+            "segment_index": 3,
+            "ta": 0,
+            "tb": 0.4491226687211246,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "sources": [
+          {
+            "segment_index": 3,
+            "ta": 0.4491226687211246,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "sources": [
+          {
+            "segment_index": 4,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "sources": [
+          {
+            "segment_index": 5,
+            "ta": 0,
+            "tb": 0.5001326962232907,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "sources": [
+          {
+            "segment_index": 5,
+            "ta": 0.5001326962232907,
+            "tb": 0.5004559592786312,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "sources": [
+          {
+            "segment_index": 5,
+            "ta": 0.5004559592786312,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "sources": [
+          {
+            "segment_index": 6,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 11,
+        "sources": [
+          {
+            "segment_index": 7,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "tolerance": 1e-8,
+    "minimum": 0.00001,
+    "segments": 5,
+    "area": 0.0061678415426460464,
+    "maxBoundaryDistance": 1.7414212376943012e-11,
+    "matchingEdges": [
+      {
+        "segment": {
+          "start": {
+            "x": 59.762664600825765,
+            "y": 59.84855755939034
+          },
+          "radius": {
+            "x": 84.79252389141845,
+            "y": 84.79252389141845
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": false,
+          "end": {
+            "x": 59.70695115012889,
+            "y": 59.79325542571752
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 0,
+            "segment": {
+              "start": {
+                "x": 59.70692262458793,
+                "y": 59.79322713698864
+              },
+              "radius": {
+                "x": 84.79252389141845,
+                "y": 84.79252389141845
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "x": 59.70695115012889,
+                "y": 59.79325542571752
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.70692262458794,
+                "y": 59.79322713698864
+              },
+              "max": {
+                "x": 59.70695115012889,
+                "y": 59.79325542571752
+              }
+            },
+            "start_vertex": 0,
+            "end_vertex": 6,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.07854058541957767
+        }
+      },
+      {
+        "segment": {
+          "start": {
+            "x": 59.70695115012889,
+            "y": 59.79325542571752
+          },
+          "radius": {
+            "x": 85.20624291591454,
+            "y": 85.20624291591454
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 59.73753072786535,
+            "y": 59.76264755925219
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 8,
+            "segment": {
+              "start": {
+                "x": 59.73753072786534,
+                "y": 59.762647559252194
+              },
+              "radius": {
+                "x": 85.20624291591454,
+                "y": 85.20624291591454
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "x": 59.70695115012889,
+                "y": 59.79325542571751
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.70695115012889,
+                "y": 59.76264755925219
+              },
+              "max": {
+                "x": 59.73753072786534,
+                "y": 59.79325542571751
+              }
+            },
+            "start_vertex": 7,
+            "end_vertex": 6,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.08653212268514278
+        }
+      },
+      {
+        "segment": {
+          "start": {
+            "x": 59.73753072786535,
+            "y": 59.76264755925219
+          },
+          "radius": {
+            "x": 84.49938828627135,
+            "y": 84.49938828627135
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": false,
+          "end": {
+            "x": 59.76247350201103,
+            "y": 59.7377048577821
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 3,
+            "segment": {
+              "start": {
+                "x": 59.76247350201103,
+                "y": 59.7377048577821
+              },
+              "radius": {
+                "x": 84.49938828627135,
+                "y": 84.49938828627135
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "x": 59.73753072786535,
+                "y": 59.76264755925219
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.737530727865355,
+                "y": 59.73770485778213
+              },
+              "max": {
+                "x": 59.76247350201103,
+                "y": 59.7626475592522
+              }
+            },
+            "start_vertex": 3,
+            "end_vertex": 7,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.07054871618132481
+        }
+      },
+      {
+        "segment": {
+          "start": {
+            "x": 59.76247350201103,
+            "y": 59.7377048577821
+          },
+          "radius": {
+            "x": 84.8710637077582,
+            "y": 84.8710637077582
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 59.81821506960193,
+            "y": 59.79303528018376
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 2,
+            "segment": {
+              "start": {
+                "x": 59.81821506960193,
+                "y": 59.79303528018376
+              },
+              "radius": {
+                "x": 84.8710637077582,
+                "y": 84.8710637077582
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "x": 59.76247350201103,
+                "y": 59.7377048577821
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.762473502011034,
+                "y": 59.73770485778208
+              },
+              "max": {
+                "x": 59.81821506960193,
+                "y": 59.79303528018374
+              }
+            },
+            "start_vertex": 2,
+            "end_vertex": 3,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.15708059078877654
+        }
+      },
+      {
+        "segment": {
+          "start": {
+            "x": 59.81821506960193,
+            "y": 59.79303528018376
+          },
+          "radius": {
+            "x": 84.5779281026111,
+            "y": 84.5779281026111
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 59.762664600825765,
+            "y": 59.84855755939034
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 1,
+            "segment": {
+              "start": {
+                "x": 59.762664600825765,
+                "y": 59.84855755939034
+              },
+              "radius": {
+                "x": 84.5779281026111,
+                "y": 84.5779281026111
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "x": 59.81821506960193,
+                "y": 59.79303528018376
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.76266460082576,
+                "y": 59.79303528018376
+              },
+              "max": {
+                "x": 59.818215069601926,
+                "y": 59.84855755939034
+              }
+            },
+            "start_vertex": 1,
+            "end_vertex": 2,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.15708059166613822
+        }
+      }
+    ],
+    "images": [
+      {
+        "id": 0,
+        "sources": [
+          {
+            "segment_index": 0,
+            "ta": 0,
+            "tb": 0.0005115075575512079,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "sources": [
+          {
+            "segment_index": 0,
+            "ta": 0.0005115075575512079,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "sources": [
+          {
+            "segment_index": 1,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "sources": [
+          {
+            "segment_index": 2,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "sources": [
+          {
+            "segment_index": 3,
+            "ta": 0,
+            "tb": 0.4491226687211246,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "sources": [
+          {
+            "segment_index": 3,
+            "ta": 0.4491226687211246,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "sources": [
+          {
+            "segment_index": 4,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "sources": [
+          {
+            "segment_index": 5,
+            "ta": 0,
+            "tb": 0.5001326962232907,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "sources": [
+          {
+            "segment_index": 5,
+            "ta": 0.5001326962232907,
+            "tb": 0.5004559592786312,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "sources": [
+          {
+            "segment_index": 5,
+            "ta": 0.5004559592786312,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "sources": [
+          {
+            "segment_index": 6,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 11,
+        "sources": [
+          {
+            "segment_index": 7,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "tolerance": 1e-8,
+    "minimum": 1e-9,
+    "segments": 5,
+    "area": 0.0061678415426460464,
+    "maxBoundaryDistance": 1.7414212376943012e-11,
+    "matchingEdges": [
+      {
+        "segment": {
+          "start": {
+            "x": 59.762664600825765,
+            "y": 59.84855755939034
+          },
+          "radius": {
+            "x": 84.79252389141845,
+            "y": 84.79252389141845
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": false,
+          "end": {
+            "x": 59.70695115012889,
+            "y": 59.79325542571752
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 0,
+            "segment": {
+              "start": {
+                "x": 59.70692262458793,
+                "y": 59.79322713698864
+              },
+              "radius": {
+                "x": 84.79252389141845,
+                "y": 84.79252389141845
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "x": 59.70695115012889,
+                "y": 59.79325542571752
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.70692262458794,
+                "y": 59.79322713698864
+              },
+              "max": {
+                "x": 59.70695115012889,
+                "y": 59.79325542571752
+              }
+            },
+            "start_vertex": 0,
+            "end_vertex": 6,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.07854058541957767
+        }
+      },
+      {
+        "segment": {
+          "start": {
+            "x": 59.70695115012889,
+            "y": 59.79325542571752
+          },
+          "radius": {
+            "x": 85.20624291591454,
+            "y": 85.20624291591454
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 59.73753072786535,
+            "y": 59.76264755925219
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 8,
+            "segment": {
+              "start": {
+                "x": 59.73753072786534,
+                "y": 59.762647559252194
+              },
+              "radius": {
+                "x": 85.20624291591454,
+                "y": 85.20624291591454
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "x": 59.70695115012889,
+                "y": 59.79325542571751
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.70695115012889,
+                "y": 59.76264755925219
+              },
+              "max": {
+                "x": 59.73753072786534,
+                "y": 59.79325542571751
+              }
+            },
+            "start_vertex": 7,
+            "end_vertex": 6,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.08653212268514278
+        }
+      },
+      {
+        "segment": {
+          "start": {
+            "x": 59.73753072786535,
+            "y": 59.76264755925219
+          },
+          "radius": {
+            "x": 84.49938828627135,
+            "y": 84.49938828627135
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": false,
+          "end": {
+            "x": 59.76247350201103,
+            "y": 59.7377048577821
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 3,
+            "segment": {
+              "start": {
+                "x": 59.76247350201103,
+                "y": 59.7377048577821
+              },
+              "radius": {
+                "x": 84.49938828627135,
+                "y": 84.49938828627135
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "x": 59.73753072786535,
+                "y": 59.76264755925219
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.737530727865355,
+                "y": 59.73770485778213
+              },
+              "max": {
+                "x": 59.76247350201103,
+                "y": 59.7626475592522
+              }
+            },
+            "start_vertex": 3,
+            "end_vertex": 7,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.07054871618132481
+        }
+      },
+      {
+        "segment": {
+          "start": {
+            "x": 59.76247350201103,
+            "y": 59.7377048577821
+          },
+          "radius": {
+            "x": 84.8710637077582,
+            "y": 84.8710637077582
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 59.81821506960193,
+            "y": 59.79303528018376
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 2,
+            "segment": {
+              "start": {
+                "x": 59.81821506960193,
+                "y": 59.79303528018376
+              },
+              "radius": {
+                "x": 84.8710637077582,
+                "y": 84.8710637077582
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "x": 59.76247350201103,
+                "y": 59.7377048577821
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.762473502011034,
+                "y": 59.73770485778208
+              },
+              "max": {
+                "x": 59.81821506960193,
+                "y": 59.79303528018374
+              }
+            },
+            "start_vertex": 2,
+            "end_vertex": 3,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.15708059078877654
+        }
+      },
+      {
+        "segment": {
+          "start": {
+            "x": 59.81821506960193,
+            "y": 59.79303528018376
+          },
+          "radius": {
+            "x": 84.5779281026111,
+            "y": 84.5779281026111
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 59.762664600825765,
+            "y": 59.84855755939034
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 1,
+            "segment": {
+              "start": {
+                "x": 59.762664600825765,
+                "y": 59.84855755939034
+              },
+              "radius": {
+                "x": 84.5779281026111,
+                "y": 84.5779281026111
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "x": 59.81821506960193,
+                "y": 59.79303528018376
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.76266460082576,
+                "y": 59.79303528018376
+              },
+              "max": {
+                "x": 59.818215069601926,
+                "y": 59.84855755939034
+              }
+            },
+            "start_vertex": 1,
+            "end_vertex": 2,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.15708059166613822
+        }
+      }
+    ],
+    "images": [
+      {
+        "id": 0,
+        "sources": [
+          {
+            "segment_index": 0,
+            "ta": 0,
+            "tb": 0.0005115075575512079,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "sources": [
+          {
+            "segment_index": 0,
+            "ta": 0.0005115075575512079,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "sources": [
+          {
+            "segment_index": 1,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "sources": [
+          {
+            "segment_index": 2,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "sources": [
+          {
+            "segment_index": 3,
+            "ta": 0,
+            "tb": 0.4491226687211246,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "sources": [
+          {
+            "segment_index": 3,
+            "ta": 0.4491226687211246,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "sources": [
+          {
+            "segment_index": 4,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "sources": [
+          {
+            "segment_index": 5,
+            "ta": 0,
+            "tb": 0.5001326962232907,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "sources": [
+          {
+            "segment_index": 5,
+            "ta": 0.5001326962232907,
+            "tb": 0.5004559592786312,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "sources": [
+          {
+            "segment_index": 5,
+            "ta": 0.5004559592786312,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "sources": [
+          {
+            "segment_index": 6,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 11,
+        "sources": [
+          {
+            "segment_index": 7,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "tolerance": 1e-9,
+    "minimum": 0.00001,
+    "segments": 5,
+    "area": 0.0061678415426460464,
+    "maxBoundaryDistance": 1.7414212376943012e-11,
+    "matchingEdges": [
+      {
+        "segment": {
+          "start": {
+            "x": 59.762664600825765,
+            "y": 59.84855755939034
+          },
+          "radius": {
+            "x": 84.79252389141845,
+            "y": 84.79252389141845
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": false,
+          "end": {
+            "x": 59.70695115012889,
+            "y": 59.79325542571752
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 0,
+            "segment": {
+              "start": {
+                "x": 59.70692262458793,
+                "y": 59.79322713698864
+              },
+              "radius": {
+                "x": 84.79252389141845,
+                "y": 84.79252389141845
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "x": 59.70695115012889,
+                "y": 59.79325542571752
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.70692262458794,
+                "y": 59.79322713698864
+              },
+              "max": {
+                "x": 59.70695115012889,
+                "y": 59.79325542571752
+              }
+            },
+            "start_vertex": 0,
+            "end_vertex": 6,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.07854058541957767
+        }
+      },
+      {
+        "segment": {
+          "start": {
+            "x": 59.70695115012889,
+            "y": 59.79325542571752
+          },
+          "radius": {
+            "x": 85.20624291591454,
+            "y": 85.20624291591454
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 59.73753072786535,
+            "y": 59.76264755925219
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 8,
+            "segment": {
+              "start": {
+                "x": 59.73753072786534,
+                "y": 59.762647559252194
+              },
+              "radius": {
+                "x": 85.20624291591454,
+                "y": 85.20624291591454
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "x": 59.70695115012889,
+                "y": 59.79325542571751
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.70695115012889,
+                "y": 59.76264755925219
+              },
+              "max": {
+                "x": 59.73753072786534,
+                "y": 59.79325542571751
+              }
+            },
+            "start_vertex": 7,
+            "end_vertex": 6,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.08653212268514278
+        }
+      },
+      {
+        "segment": {
+          "start": {
+            "x": 59.73753072786535,
+            "y": 59.76264755925219
+          },
+          "radius": {
+            "x": 84.49938828627135,
+            "y": 84.49938828627135
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": false,
+          "end": {
+            "x": 59.76247350201103,
+            "y": 59.7377048577821
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 3,
+            "segment": {
+              "start": {
+                "x": 59.76247350201103,
+                "y": 59.7377048577821
+              },
+              "radius": {
+                "x": 84.49938828627135,
+                "y": 84.49938828627135
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "x": 59.73753072786535,
+                "y": 59.76264755925219
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.737530727865355,
+                "y": 59.73770485778213
+              },
+              "max": {
+                "x": 59.76247350201103,
+                "y": 59.7626475592522
+              }
+            },
+            "start_vertex": 3,
+            "end_vertex": 7,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.07054871618132481
+        }
+      },
+      {
+        "segment": {
+          "start": {
+            "x": 59.76247350201103,
+            "y": 59.7377048577821
+          },
+          "radius": {
+            "x": 84.8710637077582,
+            "y": 84.8710637077582
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 59.81821506960193,
+            "y": 59.79303528018376
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 2,
+            "segment": {
+              "start": {
+                "x": 59.81821506960193,
+                "y": 59.79303528018376
+              },
+              "radius": {
+                "x": 84.8710637077582,
+                "y": 84.8710637077582
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "x": 59.76247350201103,
+                "y": 59.7377048577821
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.762473502011034,
+                "y": 59.73770485778208
+              },
+              "max": {
+                "x": 59.81821506960193,
+                "y": 59.79303528018374
+              }
+            },
+            "start_vertex": 2,
+            "end_vertex": 3,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.15708059078877654
+        }
+      },
+      {
+        "segment": {
+          "start": {
+            "x": 59.81821506960193,
+            "y": 59.79303528018376
+          },
+          "radius": {
+            "x": 84.5779281026111,
+            "y": 84.5779281026111
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 59.762664600825765,
+            "y": 59.84855755939034
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 1,
+            "segment": {
+              "start": {
+                "x": 59.762664600825765,
+                "y": 59.84855755939034
+              },
+              "radius": {
+                "x": 84.5779281026111,
+                "y": 84.5779281026111
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "x": 59.81821506960193,
+                "y": 59.79303528018376
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.76266460082576,
+                "y": 59.79303528018376
+              },
+              "max": {
+                "x": 59.818215069601926,
+                "y": 59.84855755939034
+              }
+            },
+            "start_vertex": 1,
+            "end_vertex": 2,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.15708059166613822
+        }
+      }
+    ],
+    "images": [
+      {
+        "id": 0,
+        "sources": [
+          {
+            "segment_index": 0,
+            "ta": 0,
+            "tb": 0.0005115075575512079,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "sources": [
+          {
+            "segment_index": 0,
+            "ta": 0.0005115075575512079,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "sources": [
+          {
+            "segment_index": 1,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "sources": [
+          {
+            "segment_index": 2,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "sources": [
+          {
+            "segment_index": 3,
+            "ta": 0,
+            "tb": 0.4491226687211246,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "sources": [
+          {
+            "segment_index": 3,
+            "ta": 0.4491226687211246,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "sources": [
+          {
+            "segment_index": 4,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "sources": [
+          {
+            "segment_index": 5,
+            "ta": 0,
+            "tb": 0.5001326962232907,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "sources": [
+          {
+            "segment_index": 5,
+            "ta": 0.5001326962232907,
+            "tb": 0.5004559592786312,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "sources": [
+          {
+            "segment_index": 5,
+            "ta": 0.5004559592786312,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "sources": [
+          {
+            "segment_index": 6,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 11,
+        "sources": [
+          {
+            "segment_index": 7,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "tolerance": 1e-9,
+    "minimum": 1e-9,
+    "segments": 5,
+    "area": 0.0061678415426460464,
+    "maxBoundaryDistance": 1.7414212376943012e-11,
+    "matchingEdges": [
+      {
+        "segment": {
+          "start": {
+            "x": 59.762664600825765,
+            "y": 59.84855755939034
+          },
+          "radius": {
+            "x": 84.79252389141845,
+            "y": 84.79252389141845
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": false,
+          "end": {
+            "x": 59.70695115012889,
+            "y": 59.79325542571752
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 0,
+            "segment": {
+              "start": {
+                "x": 59.70692262458793,
+                "y": 59.79322713698864
+              },
+              "radius": {
+                "x": 84.79252389141845,
+                "y": 84.79252389141845
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "x": 59.70695115012889,
+                "y": 59.79325542571752
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.70692262458794,
+                "y": 59.79322713698864
+              },
+              "max": {
+                "x": 59.70695115012889,
+                "y": 59.79325542571752
+              }
+            },
+            "start_vertex": 0,
+            "end_vertex": 6,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.07854058541957767
+        }
+      },
+      {
+        "segment": {
+          "start": {
+            "x": 59.70695115012889,
+            "y": 59.79325542571752
+          },
+          "radius": {
+            "x": 85.20624291591454,
+            "y": 85.20624291591454
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 59.73753072786535,
+            "y": 59.76264755925219
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 8,
+            "segment": {
+              "start": {
+                "x": 59.73753072786534,
+                "y": 59.762647559252194
+              },
+              "radius": {
+                "x": 85.20624291591454,
+                "y": 85.20624291591454
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "x": 59.70695115012889,
+                "y": 59.79325542571751
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.70695115012889,
+                "y": 59.76264755925219
+              },
+              "max": {
+                "x": 59.73753072786534,
+                "y": 59.79325542571751
+              }
+            },
+            "start_vertex": 7,
+            "end_vertex": 6,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.08653212268514278
+        }
+      },
+      {
+        "segment": {
+          "start": {
+            "x": 59.73753072786535,
+            "y": 59.76264755925219
+          },
+          "radius": {
+            "x": 84.49938828627135,
+            "y": 84.49938828627135
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": false,
+          "end": {
+            "x": 59.76247350201103,
+            "y": 59.7377048577821
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 3,
+            "segment": {
+              "start": {
+                "x": 59.76247350201103,
+                "y": 59.7377048577821
+              },
+              "radius": {
+                "x": 84.49938828627135,
+                "y": 84.49938828627135
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "x": 59.73753072786535,
+                "y": 59.76264755925219
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.737530727865355,
+                "y": 59.73770485778213
+              },
+              "max": {
+                "x": 59.76247350201103,
+                "y": 59.7626475592522
+              }
+            },
+            "start_vertex": 3,
+            "end_vertex": 7,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.07054871618132481
+        }
+      },
+      {
+        "segment": {
+          "start": {
+            "x": 59.76247350201103,
+            "y": 59.7377048577821
+          },
+          "radius": {
+            "x": 84.8710637077582,
+            "y": 84.8710637077582
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 59.81821506960193,
+            "y": 59.79303528018376
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 2,
+            "segment": {
+              "start": {
+                "x": 59.81821506960193,
+                "y": 59.79303528018376
+              },
+              "radius": {
+                "x": 84.8710637077582,
+                "y": 84.8710637077582
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "x": 59.76247350201103,
+                "y": 59.7377048577821
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.762473502011034,
+                "y": 59.73770485778208
+              },
+              "max": {
+                "x": 59.81821506960193,
+                "y": 59.79303528018374
+              }
+            },
+            "start_vertex": 2,
+            "end_vertex": 3,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.15708059078877654
+        }
+      },
+      {
+        "segment": {
+          "start": {
+            "x": 59.81821506960193,
+            "y": 59.79303528018376
+          },
+          "radius": {
+            "x": 84.5779281026111,
+            "y": 84.5779281026111
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 59.762664600825765,
+            "y": 59.84855755939034
+          }
+        },
+        "closestStored": {
+          "edge": {
+            "id": 1,
+            "segment": {
+              "start": {
+                "x": 59.762664600825765,
+                "y": 59.84855755939034
+              },
+              "radius": {
+                "x": 84.5779281026111,
+                "y": 84.5779281026111
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "x": 59.81821506960193,
+                "y": 59.79303528018376
+              }
+            },
+            "bounds": {
+              "min": {
+                "x": 59.76266460082576,
+                "y": 59.79303528018376
+              },
+              "max": {
+                "x": 59.818215069601926,
+                "y": 59.84855755939034
+              }
+            },
+            "start_vertex": 1,
+            "end_vertex": 2,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          "delta": 0.15708059166613822
+        }
+      }
+    ],
+    "images": [
+      {
+        "id": 0,
+        "sources": [
+          {
+            "segment_index": 0,
+            "ta": 0,
+            "tb": 0.0005115075575512079,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "sources": [
+          {
+            "segment_index": 0,
+            "ta": 0.0005115075575512079,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 1,
+        "sources": [
+          {
+            "segment_index": 1,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "sources": [
+          {
+            "segment_index": 2,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "sources": [
+          {
+            "segment_index": 3,
+            "ta": 0,
+            "tb": 0.4491226687211246,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "sources": [
+          {
+            "segment_index": 3,
+            "ta": 0.4491226687211246,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "sources": [
+          {
+            "segment_index": 4,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "sources": [
+          {
+            "segment_index": 5,
+            "ta": 0,
+            "tb": 0.5001326962232907,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "sources": [
+          {
+            "segment_index": 5,
+            "ta": 0.5001326962232907,
+            "tb": 0.5004559592786312,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "sources": [
+          {
+            "segment_index": 5,
+            "ta": 0.5004559592786312,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "sources": [
+          {
+            "segment_index": 6,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      },
+      {
+        "id": 11,
+        "sources": [
+          {
+            "segment_index": 7,
+            "ta": 0,
+            "tb": 1,
+            "reversed": false
+          }
+        ]
+      }
+    ]
+  }
+]

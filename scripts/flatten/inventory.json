@@ -7626,7 +7626,7 @@
               "call": 3115,
               "operation": "algorithm:unify",
               "observedStatus": "needs-investigation",
-              "status": "adapter-contract-difference"
+              "status": "sampled-geometry-match-after-reconciliation"
             }
           ],
           "auditStatus": "selected-operations-compared",
@@ -16092,35 +16092,35 @@
               "call": 4278,
               "operation": "algorithm:intersect",
               "observedStatus": "needs-investigation",
-              "status": "adapter-contract-difference"
+              "status": "sampled-geometry-match-after-reconciliation"
             },
             {
               "batch": "polygons",
               "call": 4279,
               "operation": "algorithm:subtract",
               "observedStatus": "needs-investigation",
-              "status": "adapter-contract-difference"
+              "status": "sampled-geometry-match-after-reconciliation"
             },
             {
               "batch": "polygons",
               "call": 4280,
               "operation": "algorithm:intersect",
               "observedStatus": "needs-investigation",
-              "status": "adapter-contract-difference"
+              "status": "sampled-geometry-match-after-reconciliation"
             },
             {
               "batch": "polygons",
               "call": 4281,
               "operation": "algorithm:subtract",
               "observedStatus": "needs-investigation",
-              "status": "adapter-contract-difference"
+              "status": "sampled-geometry-match-after-reconciliation"
             },
             {
               "batch": "polygons",
               "call": 4282,
               "operation": "algorithm:intersect",
               "observedStatus": "needs-investigation",
-              "status": "adapter-contract-difference"
+              "status": "sampled-geometry-match-after-reconciliation"
             }
           ],
           "auditStatus": "selected-operations-compared",
@@ -16196,42 +16196,42 @@
               "call": 4291,
               "operation": "algorithm:intersect",
               "observedStatus": "needs-investigation",
-              "status": "adapter-contract-difference"
+              "status": "sampled-geometry-match-after-reconciliation"
             },
             {
               "batch": "polygons",
               "call": 4292,
               "operation": "algorithm:subtract",
               "observedStatus": "needs-investigation",
-              "status": "adapter-contract-difference"
+              "status": "sampled-geometry-match-after-reconciliation"
             },
             {
               "batch": "polygons",
               "call": 4293,
               "operation": "algorithm:intersect",
               "observedStatus": "needs-investigation",
-              "status": "adapter-contract-difference"
+              "status": "sampled-geometry-match-after-reconciliation"
             },
             {
               "batch": "polygons",
               "call": 4294,
               "operation": "algorithm:subtract",
               "observedStatus": "needs-investigation",
-              "status": "adapter-contract-difference"
+              "status": "sampled-geometry-match-after-reconciliation"
             },
             {
               "batch": "polygons",
               "call": 4295,
               "operation": "algorithm:intersect",
               "observedStatus": "needs-investigation",
-              "status": "adapter-contract-difference"
+              "status": "confirmed-native-failure"
             },
             {
               "batch": "polygons",
               "call": 4296,
               "operation": "algorithm:subtract",
               "observedStatus": "needs-investigation",
-              "status": "adapter-contract-difference"
+              "status": "sampled-geometry-match-after-reconciliation"
             }
           ],
           "auditStatus": "selected-operations-compared",

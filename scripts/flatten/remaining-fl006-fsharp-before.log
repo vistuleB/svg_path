@@ -1,0 +1,17 @@
+Test run for /Users/jpsteinb/github.com/vistuleB/svg_path_fsharp/tests/SvgPath.Tests/bin/Debug/net9.0/SvgPath.Tests.dll (.NETCoreApp,Version=v9.0)
+VSTest version 17.13.0 (arm64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.44]     SvgPath.Tests.ElizabethTests.flatten_fl006_unequal_arc_spans_keep_crossing [FAIL]
+  Failed SvgPath.Tests.ElizabethTests.flatten_fl006_unequal_arc_spans_keep_crossing [253 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 1
+Actual:   0
+  Stack Trace:
+     at SvgPath.Tests.ElizabethTests.flatten_fl006_unequal_arc_spans_keep_crossing() in /Users/jpsteinb/github.com/vistuleB/svg_path_fsharp/tests/SvgPath.Tests/ElizabethTests.fs:line 180
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 253 ms - SvgPath.Tests.dll (net9.0)

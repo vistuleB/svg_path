@@ -60,7 +60,7 @@ function matchingPoints(a,b) {
 const polygonPath=s=>new g.Path(fromArray(s.faces.map(f=>unwrap(g.subpath(fromArray(f.flatMap(pieces)))))));
 let phase='comparison';
 const errorDetails=e=>e&&typeof e==='object'?{type:e.constructor.name,...Object.fromEntries(Object.entries(e).map(([k,v])=>[k,errorDetails(v)]))}:e;
-function compare(c) {
+function compare(c, {adaptPolygon = polygonPath, observeBoolean = () => {}} = {}) {
  const b=c.arguments[0];
  const compared=(value,reference=c.result)=>{
   const numbers=v=>typeof v==='number'?[v]:Array.isArray(v)?v.flatMap(numbers):v&&typeof v==='object'?Object.entries(v).filter(([k])=>k!=='type').flatMap(([,v])=>numbers(v)):[];
@@ -81,10 +81,11 @@ function compare(c) {
   const operation=c.operation.slice(10),fn={unify:csg.union_path,subtract:csg.difference_path,intersect:csg.intersection_path}[operation];
   if(!fn) return scope('Clipping lists or paired intersection ordering require a separate adapter.');
   if(c.thrown) return scope('Upstream operation throws; retained as an upstream failure-contract fixture.');
-  phase='adapt-left-input';const left=polygonPath(c.input);
-  phase='adapt-right-input';const right=polygonPath(b);
+  phase='adapt-left-input';const left=adaptPolygon(c.input);
+  phase='adapt-right-input';const right=adaptPolygon(b);
   phase='native-boolean-query';const actual=unwrap(fn(left,right,new g.EvenOdd()));
-  phase='adapt-upstream-output';const expected=polygonPath(c.result);
+  phase='adapt-upstream-output';const expected=adaptPolygon(c.result);
+  observeBoolean(actual, expected);
   phase='compare-output-geometry';
   const actualArea=Math.abs(area.signed_path(actual)),expectedArea=Math.abs(area.signed_path(expected));
   const samples=pieces(c.input).concat(pieces(b)).map(s=>unwrap(bounds.segment_bounding_box(s)));
@@ -101,10 +102,10 @@ function compare(c) {
  }
  if(c.input.type==='polygon'&&(c.operation==='contains'||c.operation==='algorithm:ray_shoot')) {
   if(b.type!=='point') return scope('Shape inclusion requires a whole-shape predicate, not point sampling.');
-  const value=unwrap(containment.path_containment(point(b),polygonPath(c.input),new g.EvenOdd()));
+  const value=unwrap(containment.path_containment(point(b),adaptPolygon(c.input),new g.EvenOdd()));
   return compared(c.operation==='contains'?!(value instanceof g.Outside):value instanceof g.Outside?0:value instanceof g.Inside?1:2);
  }
- if(c.input.type==='polygon'&&c.operation==='area') return compared(Math.abs(area.signed_path(polygonPath(c.input))));
+ if(c.input.type==='polygon'&&c.operation==='area') return compared(Math.abs(area.signed_path(adaptPolygon(c.input))));
  if(c.input.type==='polygon'&&c.operation==='intersect'&&b.type==='point') return scope('Point/polygon set inclusion differs from boundary intersection.');
  if(c.thrown) {
   if(c.input.type==='vector'&&c.operation==='normalize') {

@@ -79,64 +79,79 @@
     "pairVerification": "remaining-fl005-bound-pairs.json"
   },
   "polygons:3115": {
-    "status": "adapter-contract-difference",
-    "reason": "Captured upstream contour has unequal consecutive endpoints. Strict subpath construction correctly rejects it before the affected query. Geometry comparison remains unexecuted pending an explicit adapter continuity policy.",
-    "verification": "remaining-gaps.json"
+    "status": "sampled-geometry-match-after-reconciliation",
+    "reason": "Both endpoint reconciliation policies pass area, membership-grid and sampled bidirectional boundary checks.",
+    "verification": "remaining-continuity-replay.json",
+    "adapterPolicy": "Bounded endpoint reconciliation <=1e-6, both snapping directions; original strict conversion failure preserved."
   },
   "polygons:4278": {
-    "status": "adapter-contract-difference",
-    "reason": "Captured upstream contour has unequal consecutive endpoints. Strict subpath construction correctly rejects it before the affected query. Geometry comparison remains unexecuted pending an explicit adapter continuity policy.",
-    "verification": "remaining-gaps.json"
+    "status": "sampled-geometry-match-after-reconciliation",
+    "reason": "Both endpoint reconciliation policies pass area, membership-grid and sampled bidirectional boundary checks.",
+    "verification": "remaining-continuity-replay.json",
+    "adapterPolicy": "Bounded endpoint reconciliation <=1e-6, both snapping directions; original strict conversion failure preserved."
   },
   "polygons:4279": {
-    "status": "adapter-contract-difference",
-    "reason": "Captured upstream contour has unequal consecutive endpoints. Strict subpath construction correctly rejects it before the affected query. Geometry comparison remains unexecuted pending an explicit adapter continuity policy.",
-    "verification": "remaining-gaps.json"
+    "status": "sampled-geometry-match-after-reconciliation",
+    "reason": "Both endpoint reconciliation policies pass area, membership-grid and sampled bidirectional boundary checks.",
+    "verification": "remaining-continuity-replay.json",
+    "adapterPolicy": "Bounded endpoint reconciliation <=1e-6, both snapping directions; original strict conversion failure preserved."
   },
   "polygons:4280": {
-    "status": "adapter-contract-difference",
-    "reason": "Captured upstream contour has unequal consecutive endpoints. Strict subpath construction correctly rejects it before the affected query. Geometry comparison remains unexecuted pending an explicit adapter continuity policy.",
-    "verification": "remaining-gaps.json"
+    "status": "sampled-geometry-match-after-reconciliation",
+    "reason": "Both endpoint reconciliation policies pass area, membership-grid and sampled bidirectional boundary checks.",
+    "verification": "remaining-continuity-replay.json",
+    "adapterPolicy": "Bounded endpoint reconciliation <=1e-6, both snapping directions; original strict conversion failure preserved."
   },
   "polygons:4281": {
-    "status": "adapter-contract-difference",
-    "reason": "Captured upstream contour has unequal consecutive endpoints. Strict subpath construction correctly rejects it before the affected query. Geometry comparison remains unexecuted pending an explicit adapter continuity policy.",
-    "verification": "remaining-gaps.json"
+    "status": "sampled-geometry-match-after-reconciliation",
+    "reason": "Both endpoint reconciliation policies pass area, membership-grid and sampled bidirectional boundary checks.",
+    "verification": "remaining-continuity-replay.json",
+    "adapterPolicy": "Bounded endpoint reconciliation <=1e-6, both snapping directions; original strict conversion failure preserved."
   },
   "polygons:4282": {
-    "status": "adapter-contract-difference",
-    "reason": "Captured upstream contour has unequal consecutive endpoints. Strict subpath construction correctly rejects it before the affected query. Geometry comparison remains unexecuted pending an explicit adapter continuity policy.",
-    "verification": "remaining-gaps.json"
+    "status": "sampled-geometry-match-after-reconciliation",
+    "reason": "Both endpoint reconciliation policies pass area, membership-grid and sampled bidirectional boundary checks.",
+    "verification": "remaining-continuity-replay.json",
+    "adapterPolicy": "Bounded endpoint reconciliation <=1e-6, both snapping directions; original strict conversion failure preserved."
   },
   "polygons:4291": {
-    "status": "adapter-contract-difference",
-    "reason": "Captured upstream contour has unequal consecutive endpoints. Strict subpath construction correctly rejects it before the affected query. Geometry comparison remains unexecuted pending an explicit adapter continuity policy.",
-    "verification": "remaining-gaps.json"
+    "status": "sampled-geometry-match-after-reconciliation",
+    "reason": "Both endpoint reconciliation policies pass area, membership-grid and sampled bidirectional boundary checks.",
+    "verification": "remaining-continuity-replay.json",
+    "adapterPolicy": "Bounded endpoint reconciliation <=1e-6, both snapping directions; original strict conversion failure preserved."
   },
   "polygons:4292": {
-    "status": "adapter-contract-difference",
-    "reason": "Captured upstream contour has unequal consecutive endpoints. Strict subpath construction correctly rejects it before the affected query. Geometry comparison remains unexecuted pending an explicit adapter continuity policy.",
-    "verification": "remaining-gaps.json"
+    "status": "sampled-geometry-match-after-reconciliation",
+    "reason": "Both endpoint reconciliation policies pass area, membership-grid and sampled bidirectional boundary checks.",
+    "verification": "remaining-continuity-replay.json",
+    "adapterPolicy": "Bounded endpoint reconciliation <=1e-6, both snapping directions; original strict conversion failure preserved."
   },
   "polygons:4293": {
-    "status": "adapter-contract-difference",
-    "reason": "Captured upstream contour has unequal consecutive endpoints. Strict subpath construction correctly rejects it before the affected query. Geometry comparison remains unexecuted pending an explicit adapter continuity policy.",
-    "verification": "remaining-gaps.json"
+    "status": "sampled-geometry-match-after-reconciliation",
+    "reason": "Both endpoint reconciliation policies pass area, membership-grid and sampled bidirectional boundary checks.",
+    "verification": "remaining-continuity-replay.json",
+    "adapterPolicy": "Bounded endpoint reconciliation <=1e-6, both snapping directions; original strict conversion failure preserved."
   },
   "polygons:4294": {
-    "status": "adapter-contract-difference",
-    "reason": "Captured upstream contour has unequal consecutive endpoints. Strict subpath construction correctly rejects it before the affected query. Geometry comparison remains unexecuted pending an explicit adapter continuity policy.",
-    "verification": "remaining-gaps.json"
+    "status": "sampled-geometry-match-after-reconciliation",
+    "reason": "Both endpoint reconciliation policies pass area, membership-grid and sampled bidirectional boundary checks.",
+    "verification": "remaining-continuity-replay.json",
+    "adapterPolicy": "Bounded endpoint reconciliation <=1e-6, both snapping directions; original strict conversion failure preserved."
   },
   "polygons:4295": {
-    "status": "adapter-contract-difference",
-    "reason": "Captured upstream contour has unequal consecutive endpoints. Strict subpath construction correctly rejects it before the affected query. Geometry comparison remains unexecuted pending an explicit adapter continuity policy.",
-    "verification": "remaining-gaps.json"
+    "status": "confirmed-native-failure",
+    "reason": "Missed arc intersection on both targets, certified by independent circle calculation and evaluated witness. Area/grid pass but sampled boundaries differ by 3.68e-6; also affects chained 4296.",
+    "verification": "remaining-continuity-replay.json",
+    "adapterPolicy": "Bounded endpoint reconciliation <=1e-6, both snapping directions; original strict conversion failure preserved.",
+    "finding": "FL006",
+    "fixStatus": "open",
+    "diagnosticVerification": "remaining-continuity-4295-witness.json"
   },
   "polygons:4296": {
-    "status": "adapter-contract-difference",
-    "reason": "Captured upstream contour has unequal consecutive endpoints. Strict subpath construction correctly rejects it before the affected query. Geometry comparison remains unexecuted pending an explicit adapter continuity policy.",
-    "verification": "remaining-gaps.json"
+    "status": "sampled-geometry-match-after-reconciliation",
+    "reason": "Both endpoint reconciliation policies pass area, membership-grid and sampled bidirectional boundary checks. Standalone match; chained native inputs inherit FL006 from 4295.",
+    "verification": "remaining-continuity-replay.json",
+    "adapterPolicy": "Bounded endpoint reconciliation <=1e-6, both snapping directions; original strict conversion failure preserved."
   },
   "polygons:4354": {
     "status": "upstream-contract-difference",

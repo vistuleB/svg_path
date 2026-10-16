@@ -1,10 +1,16 @@
 # Remaining Flatten.js observations: triage on 3.1.3
 
-**Triage complete; FL002–FL005 have Gleam fixes. FL004 still requires a smaller minimum length for a successful result; default filtering now reports an explicit closure error.** All 21 polygon
-observations have a disposition. No confirmed native bug in this inventory
-remains without a Gleam fix. F# ports, the pending FL005 commit, and explicitly
-deferred comparisons remain outstanding; this is not full upstream assertion
-parity or release readiness. The earlier FL001 is fixed separately.
+Update: the FL006 ranking miss is fixed and validated in both Gleam and F#.
+The separate short-pair overlap classification affecting CSG 4295 remains open.
+See [the adopted replacement and validation](FL006-REPLACEMENT.md).
+
+**FL006 is open:** executing the twelve formerly blocked comparisons found a
+missed arc intersection on both targets. Eleven individual cases pass sampled
+boundary checks; 4295 exposes FL006 and its discrepancy propagates into a chained
+4296 result. See [the continuity replay](CONTINUITY-REPLAY.md). FL002–FL005 have
+Gleam fixes; FL005 was committed as `2a2f94a`. FL004 retains its explicit
+minimum-length policy limitation. F# ports and broader assertion coverage remain
+outstanding; this is not release readiness.
 
 Triage baseline: Gleam `a0d45fbc` (3.1.3). No production source was changed for
 the initial investigation. The subsequent FL005 implementation is described below. The original comparison records are preserved. New evidence
@@ -17,7 +23,8 @@ is in `remaining-*.json`, with executable probes alongside it.
 | Native numerical failures, fixed in Gleam | 6 | FL002 and FL003; F# port pending |
 | Native crossing bug fixed; size-policy limitation remains | 1 | FL004: explicit closure error at default minimum length; success with retained short pieces |
 | Native performance failure, fixed in Gleam | 1 | FL005; all recorded distance cases now pass; F# port pending |
-| Adapter contract mismatches | 12 | Strict path construction rejects discontinuous upstream coordinates |
+| Reconciled adapter comparisons, sampled matches | 11 | Exact joins supplied by bounded audit-only reconciliation |
+| Newly confirmed native search miss | 1 | FL006, call 4295; also affects a chained 4296 result |
 | Upstream orientation-contract mismatch | 1 | Oppositely oriented operands in the rectangle subtraction fixture |
 | Unclassified | 0 | F# ports and broader assertion adaptations remain outstanding |
 
@@ -324,7 +331,7 @@ Validation of the combined line/arc and arc/arc changes:
 `scripts/test-release` passed **2,023 main tests + 31 slow tests**, plus
 **769 portable tests on each of Erlang and JavaScript**. Formatting, whitespace,
 and the archive/catalog checks passed. No figure regeneration was performed.
-The implementation and added regressions remain uncommitted.
+The implementation and added regressions were subsequently committed as `2a2f94a`.
 
 No F# port has been made. This addresses the recorded FL005 cases, not a claim
 that the general closest-pair solver has bounded work for every geometry.
@@ -344,10 +351,11 @@ first rejected joins in the original observations are approximately 1e-14 to
 the original adapter: call 4296's reference result includes a larger 1.86e-8
 join gap. That is upstream geometry too, not native output.
 
-These observations are classified, but their underlying geometry comparisons
-remain **unexecuted** until an explicit adapter continuity policy is chosen.
-They are not promoted to matches. A bounded endpoint-reconciliation policy is
-an audit-adapter suggestion, not a proposed weakening of our constructor.
+This was the initial blocked state. The twelve geometry comparisons have now
+been executed with explicit bounded reconciliation and two snapping directions.
+Eleven individual cases pass the sampled boundary checks; 4295 exposes FL006.
+See `CONTINUITY-REPLAY.md` for the policy, both-target results, chain replay and
+independent intersection certificate. The library constructor is unchanged.
 
 ## Call 4354: opposite orientation in upstream Boolean operands
 

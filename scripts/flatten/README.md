@@ -1,16 +1,20 @@
 # Flatten.js geometry audit
 
-## Current status after 3.1.3 triage
+Update: the FL006 ranking miss is fixed and validated in both Gleam and F#.
+The separate short-pair overlap classification affecting CSG 4295 remains open.
+See [the adopted replacement and validation](FL006-REPLACEMENT.md).
 
-All 21 previously deferred polygon observations are classified. **FL004 has a crossing fix and an explicit size-policy limitation:** default
-filtering opens a boundary and now reports `RefinedBoundaryNotClosed`. Retaining
-short pieces with a smaller minimum length gives a matching sampled result. FL002
-and FL003 now have a vertex-local cyclic-sampling fix: all six original Boolean
-calls succeed on Erlang and JavaScript, and their sampled geometry comparisons
-pass. The excessive closest-pair search (FL005) also has a Gleam fix. F# ports
-of these recent fixes are pending. Twelve
-observations are adapter continuity-contract differences; one is an upstream
-orientation-contract mismatch. See [the full triage and reproductions](REMAINING-TRIAGE.md).
+## Current status after continuity replay
+
+**FL006 remains open:** the twelve formerly blocked comparisons have now been
+executed with bounded audit-only endpoint reconciliation. Eleven individual cases
+pass sampled boundary checks; call 4295 reveals a missed arc intersection on both
+targets, also affecting the next operation when replayed as a chain.
+See [the continuity replay](CONTINUITY-REPLAY.md).
+
+FL002–FL005 have Gleam fixes (FL005 committed as `2a2f94a`); their F# ports remain
+pending. FL004 reports its size-filter closure limitation explicitly.
+See [the triage and reproductions](REMAINING-TRIAGE.md).
 
 This completes discrepancy classification, **not fixes or full assertion parity**.
 The original inventory counts below are retained as historical observations.
@@ -134,8 +138,8 @@ logs are stored beside their machine-readable reports.
 
 FL002–FL005 need F# ports. FL004 retains its documented minimum-length
 limitation; no automatic threshold override is applied.
-The twelve conversion cases need an explicit audit-adapter continuity policy
-before their geometry comparisons can run; they are not passing comparisons.
+The twelve conversion cases are now executed; FL006 needs investigation and a
+fix. Their sampled comparison coverage is described in CONTINUITY-REPLAY.md.
 Stronger boundary
 checks, cutting/clipping, island grouping, point-based splitting, distance
 witnesses and path-string round trips remain explicit adaptation gaps, not

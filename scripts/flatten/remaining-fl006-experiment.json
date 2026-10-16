@@ -1,0 +1,168 @@
+{
+  "experiment": "Extra closest-chord sample in temporary generated JS runtime; not adopted",
+  "publicPairQueries": [
+    {
+      "reverse": false,
+      "max_depth": 48,
+      "result": [
+        {
+          "left_t": 0.44912266830263037,
+          "right_t": 0.5001326962230451,
+          "point": {
+            "x": 59.737530727888604,
+            "y": 59.762647559228945
+          }
+        }
+      ]
+    },
+    {
+      "reverse": false,
+      "max_depth": 96,
+      "result": [
+        {
+          "left_t": 0.44912266830263037,
+          "right_t": 0.5001326962230451,
+          "point": {
+            "x": 59.737530727888604,
+            "y": 59.762647559228945
+          }
+        }
+      ]
+    },
+    {
+      "reverse": true,
+      "max_depth": 48,
+      "result": [
+        {
+          "left_t": 0.5001326962230451,
+          "right_t": 0.44912266830263037,
+          "point": {
+            "x": 59.737530727888604,
+            "y": 59.762647559228945
+          }
+        }
+      ]
+    },
+    {
+      "reverse": true,
+      "max_depth": 96,
+      "result": [
+        {
+          "left_t": 0.5001326962230451,
+          "right_t": 0.44912266830263037,
+          "point": {
+            "x": 59.737530727888604,
+            "y": 59.762647559228945
+          }
+        }
+      ]
+    }
+  ],
+  "booleanResults": [
+    {
+      "tolerance": 1e-06,
+      "minimum": 1e-05,
+      "segments": 4,
+      "area": 0.006167927557369612,
+      "maxBoundaryDistance": 3.6260129541760442e-06
+    },
+    {
+      "tolerance": 1e-06,
+      "minimum": 1e-09,
+      "segments": 4,
+      "area": 0.006167927557369612,
+      "maxBoundaryDistance": 3.6260129541760442e-06
+    },
+    {
+      "tolerance": 1e-07,
+      "minimum": 1e-05,
+      "segments": 5,
+      "area": 0.006167841542201513,
+      "maxBoundaryDistance": 2.9969925272503915e-11
+    },
+    {
+      "tolerance": 1e-07,
+      "minimum": 1e-09,
+      "segments": 5,
+      "area": 0.006167841542201513,
+      "maxBoundaryDistance": 2.9969925272503915e-11
+    },
+    {
+      "tolerance": 1e-08,
+      "minimum": 1e-05,
+      "segments": 5,
+      "area": 0.006167841542201513,
+      "maxBoundaryDistance": 2.9969925272503915e-11
+    },
+    {
+      "tolerance": 1e-08,
+      "minimum": 1e-09,
+      "segments": 5,
+      "area": 0.006167841542201513,
+      "maxBoundaryDistance": 2.9969925272503915e-11
+    },
+    {
+      "tolerance": 1e-09,
+      "minimum": 1e-05,
+      "segments": 5,
+      "area": 0.006167841542201513,
+      "maxBoundaryDistance": 2.9969925272503915e-11
+    },
+    {
+      "tolerance": 1e-09,
+      "minimum": 1e-09,
+      "segments": 5,
+      "area": 0.006167841542201513,
+      "maxBoundaryDistance": 2.9969925272503915e-11
+    }
+  ],
+  "arrangementShortPair": {
+    "left": {
+      "start": {
+        "x": 59.76247350201103,
+        "y": 59.7377048577821
+      },
+      "radius": {
+        "x": 84.49938828627135,
+        "y": 84.49938828627135
+      },
+      "x_axis_rotation": 0,
+      "large_arc": false,
+      "sweep": true,
+      "end": {
+        "x": 59.70692262458793,
+        "y": 59.79322713698864
+      }
+    },
+    "right": {
+      "start": {
+        "x": 59.76247342962466,
+        "y": 59.73770478542024
+      },
+      "radius": {
+        "x": 85.20624291591454,
+        "y": 85.20624291591454
+      },
+      "x_axis_rotation": 0,
+      "large_arc": false,
+      "sweep": false,
+      "end": {
+        "x": 59.70695115012889,
+        "y": 59.79325542571751
+      }
+    },
+    "options": {
+      "tolerance": 5e-07,
+      "max_depth": 48,
+      "parameter_snap": {}
+    },
+    "result": {
+      "0": {}
+    }
+  },
+  "shortPairPublicResultType": "Error(OverlappingSegments)",
+  "shortPairBeamResult": {
+    "left_t": 0.44912266796885775,
+    "right_t": 0.44912362585449117
+  }
+}

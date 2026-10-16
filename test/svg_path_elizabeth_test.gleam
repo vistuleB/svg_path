@@ -243,3 +243,34 @@ pub fn elizabeth_disjoint_windows_need_no_refinement_test() {
   let options = ix.IntersectionOptions(..ix.default_options(), max_depth: 1)
   assert ix.segment_with(horizontal(), other, options: options) == Ok([])
 }
+
+// Flatten boolean fixture 4295: the root window used to be dropped by ranking.
+pub fn flatten_fl006_unequal_arc_spans_keep_crossing_test() {
+  let left =
+    svg_path.Arc(
+      svg_path.Point(59.76247350201103, 59.7377048577821),
+      svg_path.Point(84.49938828627135, 84.49938828627135),
+      0.0,
+      False,
+      True,
+      svg_path.Point(59.70692262458793, 59.79322713698864),
+    )
+  let right =
+    svg_path.Arc(
+      svg_path.Point(120.0, 34.793757084085456),
+      svg_path.Point(85.20624291591454, 85.20624291591454),
+      0.0,
+      False,
+      False,
+      svg_path.Point(34.793757084085456, 119.99999999999999),
+    )
+  list.each([#(left, right), #(right, left)], fn(pair) {
+    let assert Ok([hit]) = ix.segment(pair.0, pair.1)
+    assert float.absolute_value(hit.point.x -. 59.73753072787354) <. 0.000000001
+    assert float.absolute_value(hit.point.y -. 59.76264755924401) <. 0.000000001
+    let assert Ok(p) = svg_path.segment_point(pair.0, hit.left_t)
+    let assert Ok(q) = svg_path.segment_point(pair.1, hit.right_t)
+    assert float.absolute_value(p.x -. q.x) <. 0.000000000001
+    assert float.absolute_value(p.y -. q.y) <. 0.000000000001
+  })
+}

@@ -3,7 +3,9 @@
 **Latest status:** the history below predates the 3.1.3 remaining-observation
 triage. [REMAINING-TRIAGE.md](REMAINING-TRIAGE.md) classifies all 21 later flags
 and records Gleam fixes for FL002–FL005 (F# ports pending), including an
-explicit size-filter closure error for FL004 at default options. Statements
+explicit size-filter closure error for FL004 at default options. The later
+[continuity replay](CONTINUITY-REPLAY.md) found the open FL006 arc-intersection
+miss while executing the twelve previously blocked comparisons. Statements
 below that only FL001 was confirmed describe the earlier inventory snapshot.
 
 2026-10-15. Gleam implementation: `ba6988cc036dc340e69bde411fb6ffab11ce98fa`

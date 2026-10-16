@@ -1,0 +1,114 @@
+{
+  "curved": {
+    "start": {
+      "x": 59.76247350201103,
+      "y": 59.7377048577821
+    },
+    "radius": {
+      "x": 84.49938828627135,
+      "y": 84.49938828627135
+    },
+    "x_axis_rotation": 0,
+    "large_arc": false,
+    "sweep": true,
+    "end": {
+      "x": 59.70692262458793,
+      "y": 59.79322713698864
+    }
+  },
+  "cutter": {
+    "start": {
+      "x": 120,
+      "y": 34.793757084085456
+    },
+    "radius": {
+      "x": 85.20624291591454,
+      "y": 85.20624291591454
+    },
+    "x_axis_rotation": 0,
+    "large_arc": false,
+    "sweep": false,
+    "end": {
+      "x": 34.793757084085456,
+      "y": 119.99999999999999
+    }
+  },
+  "centers": [
+    {
+      "0": {
+        "center": {
+          "x": 3.572608875401784e-11,
+          "y": -3.574740503609064e-11
+        },
+        "radius": {
+          "x": 84.49938828627135,
+          "y": 84.49938828627135
+        },
+        "x_axis_rotation": 0,
+        "start_angle": 44.98812437961484,
+        "delta_angle": 0.05325534641664562
+      }
+    },
+    {
+      "0": {
+        "center": {
+          "x": 120,
+          "y": 120
+        },
+        "radius": {
+          "x": 85.20624291591454,
+          "y": 85.20624291591454
+        },
+        "x_axis_rotation": 0,
+        "start_angle": -90,
+        "delta_angle": -90
+      }
+    }
+  ],
+  "pairQueries": [
+    {
+      "tolerance": 5e-7,
+      "intersections": {
+        "ok": true,
+        "values": []
+      },
+      "overlaps": {
+        "ok": true,
+        "values": []
+      }
+    },
+    {
+      "tolerance": 5e-8,
+      "intersections": {
+        "ok": true,
+        "values": []
+      },
+      "overlaps": {
+        "ok": true,
+        "values": []
+      }
+    },
+    {
+      "tolerance": 1e-9,
+      "intersections": {
+        "ok": true,
+        "values": []
+      },
+      "overlaps": {
+        "ok": true,
+        "values": []
+      }
+    },
+    {
+      "tolerance": 1e-12,
+      "intersections": {
+        "ok": true,
+        "values": []
+      },
+      "overlaps": {
+        "ok": true,
+        "values": []
+      }
+    }
+  ]
+}

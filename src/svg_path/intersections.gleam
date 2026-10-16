@@ -4846,14 +4846,22 @@ fn elizabeth_window_score(
   use last <- result.try(elizabeth_cached_pair(left, right, b, d, first.1))
   let crossing =
     window_preserving_chord_crossing(first.0.0, last.0.0, first.0.1, last.0.1)
-  let parameters = [#(a, d), #(b, c), #({ a +. b } /. 2.0, { c +. d } /. 2.0)]
-  // Keep the midpoint even when the chords cross: its actual curve residual
-  // can be better. Evaluate the curves at the crossing, not chord residual.
-  let parameters = case crossing {
-    None -> parameters
-    Some(#(u, v)) ->
-      list.append(parameters, [#(a +. u *. { b -. a }, c +. v *. { d -. c })])
+  let parameters = [#(a, d), #(b, c)]
+  // Rank with four corners and one chord-derived sample on the actual curves.
+  // Noncrossing chords can still bound a curve crossing. Their closest pair
+  // gives a useful sample when the two windows have very different lengths.
+  let #(u, v) = case crossing {
+    None ->
+      window_preserving_chord_closest_parameters(
+        first.0.0,
+        last.0.0,
+        first.0.1,
+        last.0.1,
+      )
+    Some(pair) -> pair
   }
+  let parameters =
+    list.append(parameters, [#(a +. u *. { b -. a }, c +. v *. { d -. c })])
   use scored <- result.try(
     list.try_fold(
       parameters,
