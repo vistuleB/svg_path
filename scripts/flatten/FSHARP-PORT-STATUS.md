@@ -1,5 +1,10 @@
 # F# port status since 3.1.3
 
+**3.x compatibility update:** the FL004 boundary guard remains active, but its
+new public error case is deferred to 4.0.0 in both languages. Current 3.x code
+returns the existing arrangement-construction error. Historical descriptions
+below retain the original diagnostic. See [API-001](../../DEFERRED-API.md).
+
 Last released F# preparation: `11a36c9` (3.1.3). Corresponding Gleam release
 preparation: `a0d45fbc`. This table distinguishes fixes from investigation records.
 

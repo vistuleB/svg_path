@@ -1,5 +1,10 @@
 # Flatten.js geometry audit
 
+**3.x compatibility update:** the FL004 boundary guard remains active, but its
+new public error case is deferred to 4.0.0 in both languages. Current 3.x code
+returns the existing arrangement-construction error. Historical descriptions
+below retain the original diagnostic. See [API-001](../../DEFERRED-API.md).
+
 ## Current status after FL006 fixes
 
 FL006's missed crossing and backwards endpoint-overlap suppression are fixed in

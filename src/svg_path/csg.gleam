@@ -27,7 +27,8 @@ const default_minimum_length = 0.00001
 /// size threshold: refined pieces are discarded when their segment length upper bound is below it,
 /// not merely when their endpoints are close. Both values must be finite and
 /// greater than zero. If discarding pieces opens an operand boundary, the
-/// operation returns `RefinedBoundaryNotClosed`; it does not silently lower
+/// operation returns `ArrangementGraphError(arrangement.ConstructionFailed)`;
+/// it does not silently lower
 /// the threshold or widen endpoint clustering.
 pub type Options {
   Options(tolerance: Float, minimum_length: Float)
@@ -38,13 +39,6 @@ pub type Error {
   /// Arrangement construction, dual certification, or winding consistency failed.
   ArrangementGraphError(error: arrangement.Error)
 
-  /// Refinement left an operand's directed boundary open at this vertex.
-  /// `path_index` is zero-based (left operand 0, right operand 1). A nonzero
-  /// `net_flow` is incoming minus outgoing source multiplicity. Discarding
-  /// split pieces below `minimum_length` can cause this; reducing that option
-  /// may retain the missing connections. No winding result is inferred.
-  RefinedBoundaryNotClosed(path_index: Int, vertex: Int, net_flow: Int)
-
   /// An underlying path operation failed.
   PathError(error: svg_path.Error)
 
@@ -52,6 +46,12 @@ pub type Error {
   /// This indicates an internal consistency failure rather than invalid caller
   /// syntax.
   InternalBoundaryTopologyError(vertex: Int, reason: BoundaryTopologyFailure)
+}
+
+// Deferred public diagnostic: see DEFERRED-API.md (API-001).
+// Keep the reason internally while preserving the 3.x public error union.
+type RefinedBoundaryFailure {
+  RefinedBoundaryNotClosed(path_index: Int, vertex: Int, net_flow: Int)
 }
 
 /// The stage at which classified boundary topology became inconsistent.
@@ -258,13 +258,12 @@ fn csg_arrangement_build(
   )
   let edges =
     dict.from_list(list.map(built.graph.edges, fn(edge) { #(edge.id, edge) }))
-  use _ <- result.try(validate_refined_boundaries(
-    paths,
-    built.edge_images,
-    edges,
-    0,
-    0,
-  ))
+  use _ <- result.try(
+    validate_refined_boundaries(paths, built.edge_images, edges, 0, 0)
+    |> result.map_error(fn(_) {
+      ArrangementGraphError(arrangement.ConstructionFailed)
+    }),
+  )
   Ok(built)
 }
 
@@ -274,7 +273,7 @@ fn validate_refined_boundaries(
   edges: Dict(Int, ArrangementEdge),
   path_index: Int,
   first_segment: Int,
-) -> Result(Nil, Error) {
+) -> Result(Nil, RefinedBoundaryFailure) {
   case paths {
     [] -> Ok(Nil)
     [path, ..rest] -> {

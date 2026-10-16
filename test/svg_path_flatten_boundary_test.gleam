@@ -1,16 +1,13 @@
 // Flatten.js issue #139; pinned upstream provenance in scripts/flatten/provenance.json.
 import svg_path.{Point}
 import svg_path/area
+import svg_path/arrangement
 import svg_path/csg
 
-pub fn fl004_filtered_boundary_reports_operand_test() {
-  let assert Error(csg.RefinedBoundaryNotClosed(
-    path_index: index,
-    vertex: _,
-    net_flow: flow,
-  )) = csg.intersection_path(left(), right(), svg_path.EvenOdd)
-  assert index == 1
-  assert flow != 0
+// API-001 keeps the detailed operand/vertex/flow diagnostic private in 3.x.
+pub fn fl004_filtered_boundary_preserves_public_error_contract_test() {
+  let assert Error(csg.ArrangementGraphError(arrangement.ConstructionFailed)) =
+    csg.intersection_path(left(), right(), svg_path.EvenOdd)
 }
 
 pub fn fl004_retained_boundary_intersection_test() {

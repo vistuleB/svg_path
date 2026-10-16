@@ -278,3 +278,11 @@ passing Paper.js adaptation modules, defaulting to both targets and profiles.
 It shares the portable runner's generated directory; do not run them concurrently.
 The raw `scripts/test-paperjs` command remains diagnostic and can fail on known
 API differences. Neither command establishes complete upstream parity.
+
+## Deferred Public API Changes
+
+Before release preparation or a public API change, review
+[DEFERRED-API.md](DEFERRED-API.md) in both the Gleam and F# repositories.
+API-001 (the detailed refined-boundary CSG error) is reserved for 4.0.0;
+3.x retains the existing public error union and the internal boundary guard.
+Keep the deferred-change register synchronized across both implementations.

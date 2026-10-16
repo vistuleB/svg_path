@@ -19,10 +19,10 @@ rather than only the tag object.
 
 - Reject line overlap correspondences whose paired traversal directions disagree,
   preventing tolerance-sized endpoint matches from hiding interior crossings.
-- Report `csg.RefinedBoundaryNotClosed` with the operand index, vertex and net
-  source flow when refinement leaves an operand boundary open. Size filtering
-  retains its documented policy; CSG does not silently change either tolerance
-  or minimum length to recover a result.
+- Reject operand boundaries opened by refinement using the existing arrangement
+  construction error. The detailed public diagnostic is deferred to 4.0.0;
+  see [API-001](DEFERRED-API.md). Boundary validation remains active.
+
 
 - Sample arrangement incident edges in vertex-local coordinates, preventing
   rounded world-space samples from reversing nearly parallel edges and causing

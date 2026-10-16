@@ -1,5 +1,10 @@
 # Remaining Flatten.js observations: triage on 3.1.3
 
+**3.x compatibility update:** the FL004 boundary guard remains active, but its
+new public error case is deferred to 4.0.0 in both languages. Current 3.x code
+returns the existing arrangement-construction error. Historical descriptions
+below retain the original diagnostic. See [API-001](../../DEFERRED-API.md).
+
 **FL006 is fixed in Gleam:** the ranking fix retains the full-arc crossing, and
 the arc-direction guard rejects the backwards endpoint correspondence that
 suppressed the CSG cut. All twelve reconciled comparisons and both native-output
