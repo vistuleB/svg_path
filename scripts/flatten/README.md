@@ -7,8 +7,7 @@ Gleam. The twelve reconciled comparisons pass with both adapter policies;
 the two native-output chains also pass their sampled checks. See
 [the implementation and validation](FL006-OVERLAP-FIX.md).
 
-Both FL006 fixes are also ported and tested in F#. FL002–FL005 still need F#
-ports; see [the port checklist](FSHARP-PORT-STATUS.md). FL004 retains its explicit size-policy limitation.
+All FL002–FL006 fixes are ported and tested in F#; see [the port checklist](FSHARP-PORT-STATUS.md). FL004 retains its explicit size-policy limitation.
 Broader assertion coverage gaps remain; this is not a claim of full upstream
 parity or release readiness. Historical comparison records are preserved.
 
@@ -129,10 +128,9 @@ logs are stored beside their machine-readable reports.
 
 ## Remaining scope after triage
 
-FL002–FL005 need F# ports. FL004 retains its documented minimum-length
+FL002–FL006 ports are complete and fully tested. FL004 retains its documented minimum-length
 limitation; no automatic threshold override is applied.
-The twelve conversion cases are now executed; FL006 needs investigation and a
-fix. Their sampled comparison coverage is described in CONTINUITY-REPLAY.md.
+The twelve conversion cases are now executed; FL006 is fixed and validated. Their sampled comparison coverage is described in CONTINUITY-REPLAY.md.
 Stronger boundary
 checks, cutting/clipping, island grouping, point-based splitting, distance
 witnesses and path-string round trips remain explicit adaptation gaps, not

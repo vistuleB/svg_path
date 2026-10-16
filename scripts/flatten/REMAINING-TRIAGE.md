@@ -4,7 +4,7 @@
 the arc-direction guard rejects the backwards endpoint correspondence that
 suppressed the CSG cut. All twelve reconciled comparisons and both native-output
 chains pass the recorded sampled checks. See [validation](FL006-OVERLAP-FIX.md).
-Both FL006 fixes are ported and tested in F#; FL002–FL005 ports remain pending.
+All FL002–FL006 fixes are ported and tested in F# (latest port `c7a6e52`).
 See [the port checklist](FSHARP-PORT-STATUS.md).
 Broader assertion coverage gaps remain separate from these resolved findings.
 
@@ -18,13 +18,13 @@ is in `remaining-*.json`, with executable probes alongside it.
 
 | Classification | Observations | Detail |
 | --- | ---: | --- |
-| Native numerical failures, fixed in Gleam | 6 | FL002 and FL003; F# port pending |
+| Native numerical failures, fixed in Gleam | 6 | FL002 and FL003; F# port validated |
 | Native crossing bug fixed; size-policy limitation remains | 1 | FL004: explicit closure error at default minimum length; success with retained short pieces |
-| Native performance failure, fixed in Gleam | 1 | FL005; all recorded distance cases now pass; F# port pending |
+| Native performance failure, fixed in Gleam | 1 | FL005; all recorded distance cases now pass; F# port validated |
 | Reconciled adapter comparisons, sampled matches | 11 | Exact joins supplied by bounded audit-only reconciliation |
 | Newly confirmed native search miss | 1 | FL006, call 4295; also affects a chained 4296 result |
 | Upstream orientation-contract mismatch | 1 | Oppositely oriented operands in the rectangle subtraction fixture |
-| Unclassified | 0 | F# ports and broader assertion adaptations remain outstanding |
+| Unclassified | 0 | Broader assertion adaptations remain outstanding; F# ports are complete |
 
 These are **failure groups**, not proof of four independent implementation
 mistakes. Some numerical failures may share a cause. No new wrong successful
@@ -572,3 +572,11 @@ figures successfully; all 46 are byte-for-byte unchanged. Formatting and
 and `remaining-fl004-implemented-figures.json`. These checks cover the combined
 worktree, including the pending FL005 changes. F# ports remain pending, and the
 adapter-continuity and assertion-coverage gaps are unchanged.
+
+## F# port closure (2026-10-16)
+
+The historical statements above about pending F# ports describe their respective
+investigation stages. All production fixes are now ported: FL006 in `bbd9d46`
+and `7ee6a3a`, FL002–FL005 in `c7a6e52`. Full F# validation passed 2,036 main
+and 30 slow tests. See `FSHARP-PORT-STATUS.md` for regression mapping and log.
+This does not remove the separate assertion-adaptation gaps.

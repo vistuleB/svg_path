@@ -1,8 +1,7 @@
 # FL006 arc-overlap fix and validation
 
-The remaining FL006 bug is fixed in the Gleam working tree after ranking-fix
-commit `0a67c0a`. The arc guard is now also ported and validated in the F# working tree.
-Neither arc-guard implementation has been committed.
+The remaining FL006 bug is fixed in Gleam commit `efcc3aa`, after ranking-fix
+commit `0a67c0a`. The arc guard is ported and validated in F# commit `7ee6a3a`.
 
 ## Implementation
 
@@ -43,7 +42,7 @@ Formatting, `git diff --check`, and `python3 scripts/flatten/catalog.py` passed.
 No figures were regenerated in this change. The subsequent F# port passed
 `scripts/test-release`: 2,018 main + 30 slow tests, including the three matching
 regressions. See `remaining-fl006-fsharp-arc-release.log` and
-[the remaining F# port checklist](FSHARP-PORT-STATUS.md).
+[the completed F# port checklist](FSHARP-PORT-STATUS.md).
 
 The original replay scripts were copied to `/tmp/fl006-production-replay` with
 imports pointing to the newly compiled production runtime. Copies preserve the
@@ -60,6 +59,6 @@ Records identify the overlap source by SHA-256:
 - `remaining-fl006-overlap-production-short.json`
 
 The audit discrepancy is resolved in Gleam. This does not claim exhaustive
-Flatten.js assertion parity, close the documented coverage gaps, or complete
-pending F# ports. Original failed observations and temporary experiments remain
+Flatten.js assertion parity or close the documented coverage gaps. F# ports
+were subsequently completed in `c7a6e52`. Original failed observations and temporary experiments remain
 available as historical evidence.
