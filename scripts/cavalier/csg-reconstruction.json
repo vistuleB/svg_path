@@ -1,0 +1,1286 @@
+[
+  {
+    "id": "CC00797",
+    "tolerance": 0.000001,
+    "segments": [
+      {
+        "edge_id": 4,
+        "type": "Line",
+        "endpoint_movement": 9.969183262678554e-8,
+        "midpoint_movement": 4.984591631339277e-8
+      },
+      {
+        "edge_id": 5,
+        "type": "Line",
+        "endpoint_movement": 1.1076869973396244e-7,
+        "midpoint_movement": 5.5384348746946264e-8
+      },
+      {
+        "edge_id": 3,
+        "type": "Arc",
+        "endpoint_movement": 1.1076869973396244e-7,
+        "midpoint_movement": 0.0002516031347195228
+      },
+      {
+        "edge_id": 8,
+        "type": "Arc",
+        "endpoint_movement": 0,
+        "midpoint_movement": 0
+      },
+      {
+        "edge_id": 10,
+        "type": "Arc",
+        "endpoint_movement": 9.969183021129555e-8,
+        "midpoint_movement": 0.00025151527366562766
+      }
+    ]
+  },
+  {
+    "id": "CC00801",
+    "tolerance": 0.000001,
+    "segments": [
+      {
+        "edge_id": 8,
+        "type": "Line",
+        "endpoint_movement": 9.969183262678554e-8,
+        "midpoint_movement": 4.984591631339277e-8
+      },
+      {
+        "edge_id": 9,
+        "type": "Line",
+        "endpoint_movement": 1.1076870059800362e-7,
+        "midpoint_movement": 5.538435029900181e-8
+      },
+      {
+        "edge_id": 3,
+        "type": "Arc",
+        "endpoint_movement": 1.1076870059800362e-7,
+        "midpoint_movement": 0.0002515980259178881
+      },
+      {
+        "edge_id": 4,
+        "type": "Arc",
+        "endpoint_movement": 0,
+        "midpoint_movement": 0
+      },
+      {
+        "edge_id": 10,
+        "type": "Arc",
+        "endpoint_movement": 9.969183021129555e-8,
+        "midpoint_movement": 0.00025151527366562766
+      }
+    ]
+  },
+  {
+    "id": "CC00809",
+    "tolerance": 0.000001,
+    "segments": [
+      {
+        "edge_id": 0,
+        "type": "Line",
+        "endpoint_movement": 1.1076870059800362e-7,
+        "midpoint_movement": 5.538435029900181e-8
+      },
+      {
+        "edge_id": 4,
+        "type": "Arc",
+        "endpoint_movement": 1.1076870059800362e-7,
+        "midpoint_movement": 0.0002515980259178881
+      },
+      {
+        "edge_id": 3,
+        "type": "Arc",
+        "endpoint_movement": 0,
+        "midpoint_movement": 0
+      },
+      {
+        "edge_id": 10,
+        "type": "Arc",
+        "endpoint_movement": 9.969183107396981e-8,
+        "midpoint_movement": 0.00025151835174333894
+      },
+      {
+        "edge_id": 9,
+        "type": "Line",
+        "endpoint_movement": 9.969183262678554e-8,
+        "midpoint_movement": 4.984591631339277e-8
+      }
+    ]
+  },
+  {
+    "id": "CC00816",
+    "tolerance": 0.000001,
+    "segments": [
+      {
+        "edge_id": 7,
+        "type": "Line",
+        "endpoint_movement": 6.253421715390176e-8,
+        "midpoint_movement": 3.126710857695088e-8
+      },
+      {
+        "edge_id": 9,
+        "type": "Line",
+        "endpoint_movement": 5.684928970546129e-8,
+        "midpoint_movement": 2.8424645067649667e-8
+      },
+      {
+        "edge_id": 1,
+        "type": "Arc",
+        "endpoint_movement": 5.684928970546129e-8,
+        "midpoint_movement": 0.00013918357738132312
+      },
+      {
+        "edge_id": 4,
+        "type": "Arc",
+        "endpoint_movement": 2.6035047226793366e-12,
+        "midpoint_movement": 1.3015375168897747e-12
+      },
+      {
+        "edge_id": 6,
+        "type": "Arc",
+        "endpoint_movement": 4.509495872765337e-12,
+        "midpoint_movement": 2.2553947468790044e-12
+      },
+      {
+        "edge_id": 8,
+        "type": "Arc",
+        "endpoint_movement": 6.253421758472315e-8,
+        "midpoint_movement": 0.00019759300686278573
+      }
+    ]
+  },
+  {
+    "id": "CC00820",
+    "tolerance": 0.000001,
+    "segments": [
+      {
+        "edge_id": 5,
+        "type": "Line",
+        "endpoint_movement": 6.253421715390176e-8,
+        "midpoint_movement": 3.126710857695088e-8
+      },
+      {
+        "edge_id": 6,
+        "type": "Line",
+        "endpoint_movement": 5.684928970546129e-8,
+        "midpoint_movement": 2.8424645067649667e-8
+      },
+      {
+        "edge_id": 1,
+        "type": "Arc",
+        "endpoint_movement": 5.684928970546129e-8,
+        "midpoint_movement": 0.00013918357738132312
+      },
+      {
+        "edge_id": 8,
+        "type": "Arc",
+        "endpoint_movement": 2.6035047226793366e-12,
+        "midpoint_movement": 1.3015375168897747e-12
+      },
+      {
+        "edge_id": 9,
+        "type": "Arc",
+        "endpoint_movement": 4.509926537936612e-12,
+        "midpoint_movement": 2.253671139854076e-12
+      },
+      {
+        "edge_id": 7,
+        "type": "Arc",
+        "endpoint_movement": 6.253421758472315e-8,
+        "midpoint_movement": 0.00019759292624246038
+      }
+    ]
+  },
+  {
+    "id": "CC00824",
+    "tolerance": 0.000001,
+    "segments": [
+      {
+        "edge_id": 1,
+        "type": "Arc",
+        "endpoint_movement": 4.509495872765337e-12,
+        "midpoint_movement": 2.2571184356995734e-12
+      },
+      {
+        "edge_id": 8,
+        "type": "Arc",
+        "endpoint_movement": 6.253421758472315e-8,
+        "midpoint_movement": 0.00019759300686278573
+      },
+      {
+        "edge_id": 9,
+        "type": "Line",
+        "endpoint_movement": 6.253421715390176e-8,
+        "midpoint_movement": 3.126710857695088e-8
+      },
+      {
+        "edge_id": 2,
+        "type": "Line",
+        "endpoint_movement": 5.684928970546129e-8,
+        "midpoint_movement": 2.8424644637811654e-8
+      },
+      {
+        "edge_id": 4,
+        "type": "Arc",
+        "endpoint_movement": 5.684928970546129e-8,
+        "midpoint_movement": 0.00013918357945361516
+      },
+      {
+        "edge_id": 6,
+        "type": "Arc",
+        "endpoint_movement": 2.604798815376692e-12,
+        "midpoint_movement": 1.3011095404589994e-12
+      }
+    ]
+  },
+  {
+    "id": "CC00828",
+    "tolerance": 0.000001,
+    "segments": [
+      {
+        "edge_id": 1,
+        "type": "Arc",
+        "endpoint_movement": 4.509926537936612e-12,
+        "midpoint_movement": 2.254101640219006e-12
+      },
+      {
+        "edge_id": 7,
+        "type": "Arc",
+        "endpoint_movement": 6.253421758472315e-8,
+        "midpoint_movement": 0.00019759292624246038
+      },
+      {
+        "edge_id": 6,
+        "type": "Line",
+        "endpoint_movement": 6.253421715390176e-8,
+        "midpoint_movement": 3.126710857695088e-8
+      },
+      {
+        "edge_id": 2,
+        "type": "Line",
+        "endpoint_movement": 5.684928970546129e-8,
+        "midpoint_movement": 2.8424644637811654e-8
+      },
+      {
+        "edge_id": 8,
+        "type": "Arc",
+        "endpoint_movement": 5.684928970546129e-8,
+        "midpoint_movement": 0.00013918357945361516
+      },
+      {
+        "edge_id": 9,
+        "type": "Arc",
+        "endpoint_movement": 2.604798815376692e-12,
+        "midpoint_movement": 1.3019677762360383e-12
+      }
+    ]
+  },
+  {
+    "id": "CC00835",
+    "tolerance": 0.000001,
+    "segments": [
+      {
+        "edge_id": 4,
+        "type": "Line",
+        "endpoint_movement": 7.858353526725855e-8,
+        "midpoint_movement": 3.929176763362928e-8
+      },
+      {
+        "edge_id": 5,
+        "type": "Line",
+        "endpoint_movement": 1.0477804557012395e-7,
+        "midpoint_movement": 5.238902528210402e-8
+      },
+      {
+        "edge_id": 1,
+        "type": "Arc",
+        "endpoint_movement": 1.0477804557012395e-7,
+        "midpoint_movement": 0.00022340753333311827
+      },
+      {
+        "edge_id": 8,
+        "type": "Arc",
+        "endpoint_movement": 3.5765029382444892e-12,
+        "midpoint_movement": 1.7899190654062987e-12
+      },
+      {
+        "edge_id": 10,
+        "type": "Arc",
+        "endpoint_movement": 7.858353804146245e-8,
+        "midpoint_movement": 0.00022331268230827686
+      }
+    ]
+  },
+  {
+    "id": "CC00839",
+    "tolerance": 0.000001,
+    "segments": [
+      {
+        "edge_id": 8,
+        "type": "Line",
+        "endpoint_movement": 7.858353526725855e-8,
+        "midpoint_movement": 3.929176485942547e-8
+      },
+      {
+        "edge_id": 9,
+        "type": "Line",
+        "endpoint_movement": 1.0477804834224464e-7,
+        "midpoint_movement": 5.238902528210402e-8
+      },
+      {
+        "edge_id": 1,
+        "type": "Arc",
+        "endpoint_movement": 1.0477804834224464e-7,
+        "midpoint_movement": 0.00022340166673241022
+      },
+      {
+        "edge_id": 4,
+        "type": "Arc",
+        "endpoint_movement": 3.5765029382444892e-12,
+        "midpoint_movement": 1.7899190654062987e-12
+      },
+      {
+        "edge_id": 10,
+        "type": "Arc",
+        "endpoint_movement": 7.858353804146245e-8,
+        "midpoint_movement": 0.00022331268230827686
+      }
+    ]
+  },
+  {
+    "id": "CC00843",
+    "tolerance": 0.000001,
+    "segments": [
+      {
+        "edge_id": 1,
+        "type": "Arc",
+        "endpoint_movement": 3.5765029382444892e-12,
+        "midpoint_movement": 1.7899190654062987e-12
+      },
+      {
+        "edge_id": 10,
+        "type": "Arc",
+        "endpoint_movement": 7.858353804146245e-8,
+        "midpoint_movement": 0.00022331268230827686
+      },
+      {
+        "edge_id": 5,
+        "type": "Line",
+        "endpoint_movement": 7.858353526725855e-8,
+        "midpoint_movement": 3.929176763362928e-8
+      },
+      {
+        "edge_id": 2,
+        "type": "Line",
+        "endpoint_movement": 1.0477804557012395e-7,
+        "midpoint_movement": 5.2389020288019915e-8
+      },
+      {
+        "edge_id": 8,
+        "type": "Arc",
+        "endpoint_movement": 1.0477804557012395e-7,
+        "midpoint_movement": 0.00022340753333311827
+      }
+    ]
+  },
+  {
+    "id": "CC00847",
+    "tolerance": 0.000001,
+    "segments": [
+      {
+        "edge_id": 1,
+        "type": "Arc",
+        "endpoint_movement": 3.5765029382444892e-12,
+        "midpoint_movement": 1.7899190654062987e-12
+      },
+      {
+        "edge_id": 10,
+        "type": "Arc",
+        "endpoint_movement": 7.858353804146245e-8,
+        "midpoint_movement": 0.00022331268230827686
+      },
+      {
+        "edge_id": 9,
+        "type": "Line",
+        "endpoint_movement": 7.858353526725855e-8,
+        "midpoint_movement": 3.929176485942547e-8
+      },
+      {
+        "edge_id": 2,
+        "type": "Line",
+        "endpoint_movement": 1.0477804834224464e-7,
+        "midpoint_movement": 5.238902528210402e-8
+      },
+      {
+        "edge_id": 4,
+        "type": "Arc",
+        "endpoint_movement": 1.0477804834224464e-7,
+        "midpoint_movement": 0.00022340166673241022
+      }
+    ]
+  },
+  {
+    "id": "CC00854",
+    "tolerance": 0.000001,
+    "segments": [
+      {
+        "edge_id": 6,
+        "type": "Line",
+        "endpoint_movement": 1.5033221201665352e-7,
+        "midpoint_movement": 7.516610773164602e-8
+      },
+      {
+        "edge_id": 8,
+        "type": "Line",
+        "endpoint_movement": 1.2160631563826324e-7,
+        "midpoint_movement": 6.080315437205223e-8
+      },
+      {
+        "edge_id": 1,
+        "type": "Arc",
+        "endpoint_movement": 1.2160631563826324e-7,
+        "midpoint_movement": 0.00026728807923951845
+      },
+      {
+        "edge_id": 4,
+        "type": "Arc",
+        "endpoint_movement": 6.291838873711763e-12,
+        "midpoint_movement": 3.1433385915618124e-12
+      },
+      {
+        "edge_id": 7,
+        "type": "Arc",
+        "endpoint_movement": 1.5033221115499392e-7,
+        "midpoint_movement": 0.00047181107850754507
+      }
+    ]
+  },
+  {
+    "id": "CC00858",
+    "tolerance": 0.000001,
+    "segments": [
+      {
+        "edge_id": 5,
+        "type": "Line",
+        "endpoint_movement": 1.5033221201665352e-7,
+        "midpoint_movement": 7.516610773164602e-8
+      },
+      {
+        "edge_id": 6,
+        "type": "Line",
+        "endpoint_movement": 1.2160631563826324e-7,
+        "midpoint_movement": 6.080315781913162e-8
+      },
+      {
+        "edge_id": 1,
+        "type": "Arc",
+        "endpoint_movement": 1.2160631563826324e-7,
+        "midpoint_movement": 0.00026728807923951845
+      },
+      {
+        "edge_id": 8,
+        "type": "Arc",
+        "endpoint_movement": 6.291838873711763e-12,
+        "midpoint_movement": 3.1433385915618124e-12
+      },
+      {
+        "edge_id": 7,
+        "type": "Arc",
+        "endpoint_movement": 1.5033221115499392e-7,
+        "midpoint_movement": 0.00047181107850754507
+      }
+    ]
+  },
+  {
+    "id": "CC00862",
+    "tolerance": 0.000001,
+    "segments": [
+      {
+        "edge_id": 1,
+        "type": "Arc",
+        "endpoint_movement": 6.291838873711763e-12,
+        "midpoint_movement": 3.1433385915618124e-12
+      },
+      {
+        "edge_id": 7,
+        "type": "Arc",
+        "endpoint_movement": 1.5033221201665352e-7,
+        "midpoint_movement": 0.00047181127104281237
+      },
+      {
+        "edge_id": 8,
+        "type": "Line",
+        "endpoint_movement": 1.5033221201665352e-7,
+        "midpoint_movement": 7.516610773164602e-8
+      },
+      {
+        "edge_id": 2,
+        "type": "Line",
+        "endpoint_movement": 1.2160631563826324e-7,
+        "midpoint_movement": 6.080315437205223e-8
+      },
+      {
+        "edge_id": 4,
+        "type": "Arc",
+        "endpoint_movement": 1.2160631563826324e-7,
+        "midpoint_movement": 0.00026728807923951845
+      }
+    ]
+  },
+  {
+    "id": "CC00866",
+    "tolerance": 0.000001,
+    "segments": [
+      {
+        "edge_id": 1,
+        "type": "Arc",
+        "endpoint_movement": 6.291838873711763e-12,
+        "midpoint_movement": 3.1433385915618124e-12
+      },
+      {
+        "edge_id": 7,
+        "type": "Arc",
+        "endpoint_movement": 1.5033221201665352e-7,
+        "midpoint_movement": 0.00047181127104281237
+      },
+      {
+        "edge_id": 6,
+        "type": "Line",
+        "endpoint_movement": 1.5033221201665352e-7,
+        "midpoint_movement": 7.516610773164602e-8
+      },
+      {
+        "edge_id": 2,
+        "type": "Line",
+        "endpoint_movement": 1.2160631563826324e-7,
+        "midpoint_movement": 6.080315781913162e-8
+      },
+      {
+        "edge_id": 8,
+        "type": "Arc",
+        "endpoint_movement": 1.2160631563826324e-7,
+        "midpoint_movement": 0.00026728807923951845
+      }
+    ]
+  },
+  {
+    "id": "CC00930",
+    "tolerance": 0.000001,
+    "segments": [
+      {
+        "edge_id": 4,
+        "type": "Line",
+        "endpoint_movement": 7.858356467381437e-8,
+        "midpoint_movement": 3.9291782336907185e-8
+      },
+      {
+        "edge_id": 5,
+        "type": "Line",
+        "endpoint_movement": 1.0477801921364313e-7,
+        "midpoint_movement": 5.238900891379139e-8
+      },
+      {
+        "edge_id": 1,
+        "type": "Arc",
+        "endpoint_movement": 1.0477801921364313e-7,
+        "midpoint_movement": 0.0002233973738225112
+      },
+      {
+        "edge_id": 8,
+        "type": "Arc",
+        "endpoint_movement": 2.5940284349897232e-14,
+        "midpoint_movement": 2.6645352591003757e-14
+      },
+      {
+        "edge_id": 10,
+        "type": "Arc",
+        "endpoint_movement": 7.858356384155288e-8,
+        "midpoint_movement": 0.0002233842915225095
+      }
+    ]
+  },
+  {
+    "id": "CC00934",
+    "tolerance": 0.000001,
+    "segments": [
+      {
+        "edge_id": 8,
+        "type": "Line",
+        "endpoint_movement": 7.858356467381437e-8,
+        "midpoint_movement": 3.9291782336907185e-8
+      },
+      {
+        "edge_id": 9,
+        "type": "Line",
+        "endpoint_movement": 1.0477802059970349e-7,
+        "midpoint_movement": 5.2389010299851745e-8
+      },
+      {
+        "edge_id": 1,
+        "type": "Arc",
+        "endpoint_movement": 1.0477802059970349e-7,
+        "midpoint_movement": 0.00022339737382375967
+      },
+      {
+        "edge_id": 4,
+        "type": "Arc",
+        "endpoint_movement": 2.5940284349897232e-14,
+        "midpoint_movement": 2.6645352591003757e-14
+      },
+      {
+        "edge_id": 10,
+        "type": "Arc",
+        "endpoint_movement": 7.858356384155288e-8,
+        "midpoint_movement": 0.0002233842915225095
+      }
+    ]
+  },
+  {
+    "id": "CC00938",
+    "tolerance": 0.000001,
+    "segments": [
+      {
+        "edge_id": 1,
+        "type": "Arc",
+        "endpoint_movement": 2.5940284349897232e-14,
+        "midpoint_movement": 2.6645352591003757e-14
+      },
+      {
+        "edge_id": 10,
+        "type": "Arc",
+        "endpoint_movement": 7.858356384155288e-8,
+        "midpoint_movement": 0.0002233842915225095
+      },
+      {
+        "edge_id": 5,
+        "type": "Line",
+        "endpoint_movement": 7.858356384155288e-8,
+        "midpoint_movement": 3.9291782336907185e-8
+      },
+      {
+        "edge_id": 2,
+        "type": "Line",
+        "endpoint_movement": 1.0477801921364313e-7,
+        "midpoint_movement": 5.238900891379139e-8
+      },
+      {
+        "edge_id": 8,
+        "type": "Arc",
+        "endpoint_movement": 1.0477801921364313e-7,
+        "midpoint_movement": 0.0002233973738225112
+      }
+    ]
+  },
+  {
+    "id": "CC00942",
+    "tolerance": 0.000001,
+    "segments": [
+      {
+        "edge_id": 1,
+        "type": "Arc",
+        "endpoint_movement": 2.5940284349897232e-14,
+        "midpoint_movement": 2.6645352591003757e-14
+      },
+      {
+        "edge_id": 10,
+        "type": "Arc",
+        "endpoint_movement": 7.858356384155288e-8,
+        "midpoint_movement": 0.0002233842915225095
+      },
+      {
+        "edge_id": 9,
+        "type": "Line",
+        "endpoint_movement": 7.858356384155288e-8,
+        "midpoint_movement": 3.9291782336907185e-8
+      },
+      {
+        "edge_id": 2,
+        "type": "Line",
+        "endpoint_movement": 1.0477802059970349e-7,
+        "midpoint_movement": 5.2389010299851745e-8
+      },
+      {
+        "edge_id": 4,
+        "type": "Arc",
+        "endpoint_movement": 1.0477802059970349e-7,
+        "midpoint_movement": 0.00022339737382375967
+      }
+    ]
+  },
+  {
+    "id": "CC00949",
+    "tolerance": 0.000001,
+    "segments": [
+      {
+        "edge_id": 4,
+        "type": "Line",
+        "endpoint_movement": 1.0517378897331928e-7,
+        "midpoint_movement": 5.2586894209239405e-8
+      },
+      {
+        "edge_id": 5,
+        "type": "Line",
+        "endpoint_movement": 5.744471574939535e-8,
+        "midpoint_movement": 2.8722358567735214e-8
+      },
+      {
+        "edge_id": 1,
+        "type": "Arc",
+        "endpoint_movement": 5.744471574939535e-8,
+        "midpoint_movement": 0.00010752586014211064
+      },
+      {
+        "edge_id": 8,
+        "type": "Arc",
+        "endpoint_movement": 8.896375629359839e-9,
+        "midpoint_movement": 4.448201168114135e-9
+      },
+      {
+        "edge_id": 10,
+        "type": "Arc",
+        "endpoint_movement": 1.0517378980558077e-7,
+        "midpoint_movement": 0.00022340202958634985
+      }
+    ]
+  },
+  {
+    "id": "CC00953",
+    "tolerance": 0.000001,
+    "segments": [
+      {
+        "edge_id": 8,
+        "type": "Line",
+        "endpoint_movement": 1.0517378897331928e-7,
+        "midpoint_movement": 5.2586894209239405e-8
+      },
+      {
+        "edge_id": 9,
+        "type": "Line",
+        "endpoint_movement": 5.744471574939535e-8,
+        "midpoint_movement": 2.8722358567735214e-8
+      },
+      {
+        "edge_id": 1,
+        "type": "Arc",
+        "endpoint_movement": 5.744471574939535e-8,
+        "midpoint_movement": 0.00010752586014211064
+      },
+      {
+        "edge_id": 4,
+        "type": "Arc",
+        "endpoint_movement": 8.896375629359839e-9,
+        "midpoint_movement": 4.448201168114135e-9
+      },
+      {
+        "edge_id": 10,
+        "type": "Arc",
+        "endpoint_movement": 1.0517378980558077e-7,
+        "midpoint_movement": 0.0002234020305883922
+      }
+    ]
+  },
+  {
+    "id": "CC00957",
+    "tolerance": 0.000001,
+    "segments": [
+      {
+        "edge_id": 1,
+        "type": "Arc",
+        "endpoint_movement": 8.896375629359839e-9,
+        "midpoint_movement": 4.448201168114135e-9
+      },
+      {
+        "edge_id": 10,
+        "type": "Arc",
+        "endpoint_movement": 1.0517379036042125e-7,
+        "midpoint_movement": 0.00022340789618589577
+      },
+      {
+        "edge_id": 5,
+        "type": "Line",
+        "endpoint_movement": 1.0517378897331928e-7,
+        "midpoint_movement": 5.258689282213747e-8
+      },
+      {
+        "edge_id": 2,
+        "type": "Line",
+        "endpoint_movement": 5.744471574939535e-8,
+        "midpoint_movement": 2.8722358567735214e-8
+      },
+      {
+        "edge_id": 8,
+        "type": "Arc",
+        "endpoint_movement": 5.744471574939535e-8,
+        "midpoint_movement": 0.00010752586014211064
+      }
+    ]
+  },
+  {
+    "id": "CC00961",
+    "tolerance": 0.000001,
+    "segments": [
+      {
+        "edge_id": 1,
+        "type": "Arc",
+        "endpoint_movement": 8.896375629359839e-9,
+        "midpoint_movement": 4.448201168114135e-9
+      },
+      {
+        "edge_id": 10,
+        "type": "Arc",
+        "endpoint_movement": 1.0517379036042125e-7,
+        "midpoint_movement": 0.00022340789718793813
+      },
+      {
+        "edge_id": 9,
+        "type": "Line",
+        "endpoint_movement": 1.0517378897331928e-7,
+        "midpoint_movement": 5.258689282213747e-8
+      },
+      {
+        "edge_id": 2,
+        "type": "Line",
+        "endpoint_movement": 5.744471574939535e-8,
+        "midpoint_movement": 2.8722358567735214e-8
+      },
+      {
+        "edge_id": 4,
+        "type": "Arc",
+        "endpoint_movement": 5.744471574939535e-8,
+        "midpoint_movement": 0.00010752586014211064
+      }
+    ]
+  },
+  {
+    "id": "CC00968",
+    "tolerance": 0.000001,
+    "segments": [
+      {
+        "edge_id": 1,
+        "type": "Arc",
+        "endpoint_movement": 6.276759594133692e-12,
+        "midpoint_movement": 3.1351490470788616e-12
+      },
+      {
+        "edge_id": 8,
+        "type": "Arc",
+        "endpoint_movement": 1.5033220124590813e-7,
+        "midpoint_movement": 0.00047180690436187566
+      },
+      {
+        "edge_id": 2,
+        "type": "Arc",
+        "endpoint_movement": 1.5033220124590813e-7,
+        "midpoint_movement": 7.516609998627904e-8
+      },
+      {
+        "edge_id": 6,
+        "type": "Arc",
+        "endpoint_movement": 1.2160632296236915e-7,
+        "midpoint_movement": 6.080315697814174e-8
+      },
+      {
+        "edge_id": 7,
+        "type": "Arc",
+        "endpoint_movement": 1.2160632296236915e-7,
+        "midpoint_movement": 0.0002672881551870604
+      }
+    ]
+  },
+  {
+    "id": "CC00972",
+    "tolerance": 0.000001,
+    "segments": [
+      {
+        "edge_id": 1,
+        "type": "Arc",
+        "endpoint_movement": 6.276759594133692e-12,
+        "midpoint_movement": 3.1351490470788616e-12
+      },
+      {
+        "edge_id": 4,
+        "type": "Arc",
+        "endpoint_movement": 1.503322008150783e-7,
+        "midpoint_movement": 0.0004718068402733533
+      },
+      {
+        "edge_id": 2,
+        "type": "Arc",
+        "endpoint_movement": 1.503322008150783e-7,
+        "midpoint_movement": 7.516609223131485e-8
+      },
+      {
+        "edge_id": 8,
+        "type": "Arc",
+        "endpoint_movement": 1.2160632296236915e-7,
+        "midpoint_movement": 6.080316387232514e-8
+      },
+      {
+        "edge_id": 7,
+        "type": "Arc",
+        "endpoint_movement": 1.2160632296236915e-7,
+        "midpoint_movement": 0.0002672881551870604
+      }
+    ]
+  },
+  {
+    "id": "CC00976",
+    "tolerance": 0.000001,
+    "segments": [
+      {
+        "edge_id": 5,
+        "type": "Arc",
+        "endpoint_movement": 1.2160632296236915e-7,
+        "midpoint_movement": 6.080315697814174e-8
+      },
+      {
+        "edge_id": 7,
+        "type": "Arc",
+        "endpoint_movement": 1.2160632296236915e-7,
+        "midpoint_movement": 0.0002672881551870604
+      },
+      {
+        "edge_id": 8,
+        "type": "Arc",
+        "endpoint_movement": 6.276759594133692e-12,
+        "midpoint_movement": 3.1342873875764077e-12
+      },
+      {
+        "edge_id": 1,
+        "type": "Arc",
+        "endpoint_movement": 1.5033220124590813e-7,
+        "midpoint_movement": 0.00047180709539871614
+      },
+      {
+        "edge_id": 6,
+        "type": "Arc",
+        "endpoint_movement": 1.5033220124590813e-7,
+        "midpoint_movement": 7.516609998627904e-8
+      }
+    ]
+  },
+  {
+    "id": "CC00980",
+    "tolerance": 0.000001,
+    "segments": [
+      {
+        "edge_id": 6,
+        "type": "Arc",
+        "endpoint_movement": 1.2160632296236915e-7,
+        "midpoint_movement": 6.080316387232514e-8
+      },
+      {
+        "edge_id": 7,
+        "type": "Arc",
+        "endpoint_movement": 1.2160632296236915e-7,
+        "midpoint_movement": 0.0002672881551870604
+      },
+      {
+        "edge_id": 4,
+        "type": "Arc",
+        "endpoint_movement": 6.276759594133692e-12,
+        "midpoint_movement": 3.1342873875764077e-12
+      },
+      {
+        "edge_id": 1,
+        "type": "Arc",
+        "endpoint_movement": 1.503322008150783e-7,
+        "midpoint_movement": 0.00047180703130674705
+      },
+      {
+        "edge_id": 8,
+        "type": "Arc",
+        "endpoint_movement": 1.503322008150783e-7,
+        "midpoint_movement": 7.516609223131485e-8
+      }
+    ]
+  },
+  {
+    "id": "CC01006",
+    "tolerance": 0.000001,
+    "segments": [
+      {
+        "edge_id": 4,
+        "type": "Line",
+        "endpoint_movement": 9.969183262678554e-8,
+        "midpoint_movement": 4.984591631339277e-8
+      },
+      {
+        "edge_id": 5,
+        "type": "Line",
+        "endpoint_movement": 1.1076870059800362e-7,
+        "midpoint_movement": 5.538435029900181e-8
+      },
+      {
+        "edge_id": 3,
+        "type": "Arc",
+        "endpoint_movement": 1.1076870059800362e-7,
+        "midpoint_movement": 0.0002515980259196153
+      },
+      {
+        "edge_id": 8,
+        "type": "Arc",
+        "endpoint_movement": 0,
+        "midpoint_movement": 0
+      },
+      {
+        "edge_id": 10,
+        "type": "Arc",
+        "endpoint_movement": 9.969183107396981e-8,
+        "midpoint_movement": 0.0002515183517429075
+      }
+    ]
+  },
+  {
+    "id": "CC01010",
+    "tolerance": 0.000001,
+    "segments": [
+      {
+        "edge_id": 8,
+        "type": "Line",
+        "endpoint_movement": 9.969183262678554e-8,
+        "midpoint_movement": 4.984591631339277e-8
+      },
+      {
+        "edge_id": 9,
+        "type": "Line",
+        "endpoint_movement": 1.1076870059800362e-7,
+        "midpoint_movement": 5.538435029900181e-8
+      },
+      {
+        "edge_id": 3,
+        "type": "Arc",
+        "endpoint_movement": 1.1076870059800362e-7,
+        "midpoint_movement": 0.0002515980259196153
+      },
+      {
+        "edge_id": 4,
+        "type": "Arc",
+        "endpoint_movement": 0,
+        "midpoint_movement": 0
+      },
+      {
+        "edge_id": 10,
+        "type": "Arc",
+        "endpoint_movement": 9.969183107396981e-8,
+        "midpoint_movement": 0.0002515183517429075
+      }
+    ]
+  },
+  {
+    "id": "CC01014",
+    "tolerance": 0.000001,
+    "segments": [
+      {
+        "edge_id": 0,
+        "type": "Line",
+        "endpoint_movement": 1.1076870059800362e-7,
+        "midpoint_movement": 5.538435185105737e-8
+      },
+      {
+        "edge_id": 8,
+        "type": "Arc",
+        "endpoint_movement": 1.1076870059800362e-7,
+        "midpoint_movement": 0.0002515980259196153
+      },
+      {
+        "edge_id": 3,
+        "type": "Arc",
+        "endpoint_movement": 0,
+        "midpoint_movement": 0
+      },
+      {
+        "edge_id": 10,
+        "type": "Arc",
+        "endpoint_movement": 9.969183107396981e-8,
+        "midpoint_movement": 0.0002515183517429075
+      },
+      {
+        "edge_id": 5,
+        "type": "Line",
+        "endpoint_movement": 9.969183262678554e-8,
+        "midpoint_movement": 4.984591631339277e-8
+      }
+    ]
+  },
+  {
+    "id": "CC01018",
+    "tolerance": 0.000001,
+    "segments": [
+      {
+        "edge_id": 0,
+        "type": "Line",
+        "endpoint_movement": 1.1076870059800362e-7,
+        "midpoint_movement": 5.538435185105737e-8
+      },
+      {
+        "edge_id": 4,
+        "type": "Arc",
+        "endpoint_movement": 1.1076870059800362e-7,
+        "midpoint_movement": 0.0002515980259196153
+      },
+      {
+        "edge_id": 3,
+        "type": "Arc",
+        "endpoint_movement": 0,
+        "midpoint_movement": 0
+      },
+      {
+        "edge_id": 10,
+        "type": "Arc",
+        "endpoint_movement": 9.969183107396981e-8,
+        "midpoint_movement": 0.0002515183517429075
+      },
+      {
+        "edge_id": 9,
+        "type": "Line",
+        "endpoint_movement": 9.969183262678554e-8,
+        "midpoint_movement": 4.984591631339277e-8
+      }
+    ]
+  },
+  {
+    "id": "CC01025",
+    "tolerance": 0.000001,
+    "segments": [
+      {
+        "edge_id": 1,
+        "type": "Arc",
+        "endpoint_movement": 2.6035047226793366e-12,
+        "midpoint_movement": 1.3019677762360383e-12
+      },
+      {
+        "edge_id": 8,
+        "type": "Arc",
+        "endpoint_movement": 6.253421715389281e-8,
+        "midpoint_movement": 0.00019921733174641827
+      },
+      {
+        "edge_id": 2,
+        "type": "Arc",
+        "endpoint_movement": 6.253421715389281e-8,
+        "midpoint_movement": 3.1267108145836315e-8
+      },
+      {
+        "edge_id": 6,
+        "type": "Arc",
+        "endpoint_movement": 5.684928798084071e-8,
+        "midpoint_movement": 2.842464302660409e-8
+      },
+      {
+        "edge_id": 7,
+        "type": "Arc",
+        "endpoint_movement": 5.684928798084071e-8,
+        "midpoint_movement": 0.00013918356702061918
+      }
+    ]
+  },
+  {
+    "id": "CC01029",
+    "tolerance": 0.000001,
+    "segments": [
+      {
+        "edge_id": 1,
+        "type": "Arc",
+        "endpoint_movement": 2.6035047226793366e-12,
+        "midpoint_movement": 1.3019677762360383e-12
+      },
+      {
+        "edge_id": 4,
+        "type": "Arc",
+        "endpoint_movement": 6.253421715389281e-8,
+        "midpoint_movement": 0.00019921733174641827
+      },
+      {
+        "edge_id": 2,
+        "type": "Arc",
+        "endpoint_movement": 6.253421715389281e-8,
+        "midpoint_movement": 3.12671072841772e-8
+      },
+      {
+        "edge_id": 8,
+        "type": "Arc",
+        "endpoint_movement": 5.684928798084071e-8,
+        "midpoint_movement": 2.842464388838902e-8
+      },
+      {
+        "edge_id": 7,
+        "type": "Arc",
+        "endpoint_movement": 5.684928798084071e-8,
+        "midpoint_movement": 0.00013918356702051168
+      }
+    ]
+  },
+  {
+    "id": "CC01033",
+    "tolerance": 0.000001,
+    "segments": [
+      {
+        "edge_id": 5,
+        "type": "Arc",
+        "endpoint_movement": 5.684928798084071e-8,
+        "midpoint_movement": 2.842464302660409e-8
+      },
+      {
+        "edge_id": 7,
+        "type": "Arc",
+        "endpoint_movement": 5.684928798084071e-8,
+        "midpoint_movement": 0.00013918356702061918
+      },
+      {
+        "edge_id": 8,
+        "type": "Arc",
+        "endpoint_movement": 2.6035047226793366e-12,
+        "midpoint_movement": 1.3019677762360383e-12
+      },
+      {
+        "edge_id": 1,
+        "type": "Arc",
+        "endpoint_movement": 6.253421715389281e-8,
+        "midpoint_movement": 0.00019921733174641827
+      },
+      {
+        "edge_id": 6,
+        "type": "Arc",
+        "endpoint_movement": 6.253421715389281e-8,
+        "midpoint_movement": 3.1267108145836315e-8
+      }
+    ]
+  },
+  {
+    "id": "CC01037",
+    "tolerance": 0.000001,
+    "segments": [
+      {
+        "edge_id": 6,
+        "type": "Arc",
+        "endpoint_movement": 5.684928798084071e-8,
+        "midpoint_movement": 2.842464432461429e-8
+      },
+      {
+        "edge_id": 7,
+        "type": "Arc",
+        "endpoint_movement": 5.684928798084071e-8,
+        "midpoint_movement": 0.00013918356702051168
+      },
+      {
+        "edge_id": 4,
+        "type": "Arc",
+        "endpoint_movement": 2.6035047226793366e-12,
+        "midpoint_movement": 1.3019677762360383e-12
+      },
+      {
+        "edge_id": 1,
+        "type": "Arc",
+        "endpoint_movement": 6.253421715389281e-8,
+        "midpoint_movement": 0.00019921733174641827
+      },
+      {
+        "edge_id": 8,
+        "type": "Arc",
+        "endpoint_movement": 6.253421715389281e-8,
+        "midpoint_movement": 3.1267108145827666e-8
+      }
+    ]
+  }
+]

@@ -1,0 +1,37 @@
+{
+  "captured_calls": {
+    "pline_seg_intr": 140,
+    "line_line_intr": 52,
+    "line_circle_intr": 25,
+    "circle_circle_intr": 8,
+    "area": 59677,
+    "extents": 59663,
+    "path_length": 58936,
+    "boolean": 21200,
+    "offset": 3102,
+    "contains": 9,
+    "winding_number": 17,
+    "shape_offset": 6
+  },
+  "representatives": 1809,
+  "representatives_by_kind": {
+    "pline_seg_intr": 110,
+    "line_line_intr": 51,
+    "line_circle_intr": 23,
+    "circle_circle_intr": 8,
+    "area": 120,
+    "extents": 116,
+    "path_length": 121,
+    "boolean": 832,
+    "offset": 397,
+    "contains": 9,
+    "winding_number": 17,
+    "shape_offset": 5
+  },
+  "passed": 287,
+  "failed": 0,
+  "raw_log_sha256": "079ed6b7d8cbea759efe63332202d8bbf9092d3b1797e10e8797a8b96e1834a1",
+  "raw_log_local_path": "/tmp/cavalier-capture.log",
+  "rotation_policy": "one representative per closed cyclic-start equivalence; both orientations retained",
+  "helper_policy": "area/length/extents outside basics/view grouped as helper-only, not comparison claims"
+}

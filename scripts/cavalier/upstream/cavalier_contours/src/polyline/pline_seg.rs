@@ -1,0 +1,1051 @@
+use super::PlineVertex;
+use crate::core::{
+    math::{
+        Vector2, angle_from_bulge, dist_squared, line_seg_closest_point, midpoint, min_max,
+        point_within_arc_sweep,
+    },
+    traits::Real,
+};
+use static_aabb2d_index::AABB;
+
+/// Get the arc radius and center of an arc polyline segment defined by `v1` to `v2`.
+/// Behavior undefined (may panic or return without error) if v1.bulge is zero.
+///
+/// # Examples
+///
+/// ```
+/// # use cavalier_contours::polyline::*;
+/// # use cavalier_contours::core::traits::*;
+/// # use cavalier_contours::core::math::*;
+/// // arc half circle arc segment going from (0, 0) to (1, 0) counter clockwise
+/// let v1 = PlineVertex::new(0.0, 0.0, 1.0);
+/// let v2 = PlineVertex::new(1.0, 0.0, 0.0);
+/// let (arc_radius, arc_center) = seg_arc_radius_and_center(v1, v2);
+/// assert!(arc_radius.fuzzy_eq(0.5));
+/// assert!(arc_center.fuzzy_eq(Vector2::new(0.5, 0.0)));
+///```
+pub fn seg_arc_radius_and_center<T>(v1: PlineVertex<T>, v2: PlineVertex<T>) -> (T, Vector2<T>)
+where
+    T: Real,
+{
+    debug_assert!(!v1.bulge_is_zero(), "v1 to v2 must be an arc");
+    debug_assert!(!v1.pos().fuzzy_eq(v2.pos()), "v1 must not be on top of v2");
+
+    let bulge = v1.bulge;
+    let bulge_squared = bulge * bulge;
+    let chord = v2.pos() - v1.pos();
+    let inv_four_bulge = T::one() / (T::four() * bulge);
+    let radius = chord.length() * (T::one() + bulge_squared) * inv_four_bulge.abs();
+    let center = v1.pos()
+        + chord.scale(T::one() / T::two())
+        + chord
+            .perp()
+            .scale((T::one() - bulge) * (T::one() + bulge) * inv_four_bulge);
+
+    (radius, center)
+}
+
+/// Result from splitting a segment using [`seg_split_at_point`].
+#[derive(Debug, Copy, Clone)]
+pub struct SplitResult<T = f64>
+where
+    T: Real,
+{
+    /// Updated start vertex (has same position as start of segment but with updated bulge value).
+    pub updated_start: PlineVertex<T>,
+    /// Vertex at split point (position is equal to split point, bulge set to maintain same curve to
+    /// the next vertex).
+    pub split_vertex: PlineVertex<T>,
+}
+
+/// Splits a polyline segment defined by `v1` to `v2` at the `point_on_seg` given. Assumes the `point_on_seg` lies on the segment.
+///
+/// # Examples
+///
+/// ```
+/// # use cavalier_contours::core::math::*;
+/// # use cavalier_contours::polyline::*;
+/// // arc half circle arc segment going from (0, 0) to (1, 0) counter clockwise
+/// let v1 = PlineVertex::new(0.0, 0.0, 1.0);
+/// let v2 = PlineVertex::new(1.0, 0.0, 0.0);
+/// let point = Vector2::new(0.5, -0.5);
+/// let SplitResult { updated_start, split_vertex } = seg_split_at_point(v1, v2, point, 1e-5);
+/// let quarter_circle_bulge = (std::f64::consts::PI / 8.0).tan();
+/// assert!(updated_start.fuzzy_eq(PlineVertex::new(v1.x, v1.y, quarter_circle_bulge)));
+/// assert!(split_vertex.fuzzy_eq(PlineVertex::new(point.x, point.y, quarter_circle_bulge)));
+/// ```
+pub fn seg_split_at_point<T>(
+    v1: PlineVertex<T>,
+    v2: PlineVertex<T>,
+    point_on_seg: Vector2<T>,
+    pos_equal_eps: T,
+) -> SplitResult<T>
+where
+    T: Real,
+{
+    if v1.bulge_is_zero() {
+        // v1->v2 is a line segment, just use point as end point
+        let updated_start = v1;
+        let split_vertex = PlineVertex::new(point_on_seg.x, point_on_seg.y, T::zero());
+        return SplitResult {
+            updated_start,
+            split_vertex,
+        };
+    }
+
+    if v1.pos().fuzzy_eq_eps(v2.pos(), pos_equal_eps)
+        || v1.pos().fuzzy_eq_eps(point_on_seg, pos_equal_eps)
+    {
+        // v1 == v2 or v1 == point, updated_start is put on top of split_vertex
+        let updated_start = PlineVertex::new(point_on_seg.x, point_on_seg.y, T::zero());
+        let split_vertex = PlineVertex::new(point_on_seg.x, point_on_seg.y, v1.bulge);
+        return SplitResult {
+            updated_start,
+            split_vertex,
+        };
+    }
+
+    if v2.pos().fuzzy_eq_eps(point_on_seg, pos_equal_eps) {
+        // point is at end point of segment
+        let updated_start = v1;
+        let split_vertex = PlineVertex::new(v2.x, v2.y, T::zero());
+        return SplitResult {
+            updated_start,
+            split_vertex,
+        };
+    }
+
+    let abs_bulge = v1.bulge.abs();
+    let chord_length_squared = (v2.pos() - v1.pos()).length_squared();
+    let diameter_ratio = T::two() * abs_bulge / (abs_bulge * abs_bulge + T::one());
+    let diameter_ratio_squared = diameter_ratio * diameter_ratio;
+
+    // chord / diameter = sin(sweep / 2), and tan(sweep / 4) can then be found
+    // from the half-angle identity. Compute the smaller subarc this way because
+    // chord length becomes ill-conditioned as the sweep approaches a half circle.
+    // Derive the larger subarc with the tangent subtraction identity instead.
+    let bulge_from_chord_length_squared = |sub_chord_length_squared: T| {
+        let sin_half_sweep_squared =
+            sub_chord_length_squared / chord_length_squared * diameter_ratio_squared;
+        let sin_half_sweep = if sin_half_sweep_squared > T::one() {
+            T::one()
+        } else {
+            sin_half_sweep_squared.sqrt()
+        };
+        let cos_half_sweep = ((T::one() - sin_half_sweep) * (T::one() + sin_half_sweep)).sqrt();
+        let magnitude = sin_half_sweep / (T::one() + cos_half_sweep);
+        if v1.bulge_is_neg() {
+            -magnitude
+        } else {
+            magnitude
+        }
+    };
+
+    let chord1_length_squared = (point_on_seg - v1.pos()).length_squared();
+    let chord2_length_squared = (v2.pos() - point_on_seg).length_squared();
+    let (bulge1, bulge2) = if chord1_length_squared <= chord2_length_squared {
+        let bulge1 = bulge_from_chord_length_squared(chord1_length_squared);
+        let bulge2 = (v1.bulge - bulge1) / (T::one() + v1.bulge * bulge1);
+        (bulge1, bulge2)
+    } else {
+        let bulge2 = bulge_from_chord_length_squared(chord2_length_squared);
+        let bulge1 = (v1.bulge - bulge2) / (T::one() + v1.bulge * bulge2);
+        (bulge1, bulge2)
+    };
+
+    let updated_start = PlineVertex::new(v1.x, v1.y, bulge1);
+    let split_vertex = PlineVertex::new(point_on_seg.x, point_on_seg.y, bulge2);
+
+    SplitResult {
+        updated_start,
+        split_vertex,
+    }
+}
+
+/// Find the tangent direction vector (*NOT* normalized) on a polyline segment defined by `v1` to
+/// `v2` at `point_on_seg`.
+///
+/// Note: The vector returned is just the direction vector, add the `point_on_seg` position if
+/// you need to offset from that position.
+///
+/// # Examples
+///
+/// ```
+/// # use cavalier_contours::polyline::*;
+/// # use cavalier_contours::core::math::*;
+/// // counter clockwise half circle arc going from (2, 2) to (2, 4)
+/// let v1 = PlineVertex::new(2.0, 2.0, 1.0);
+/// let v2 = PlineVertex::new(4.0, 2.0, 0.0);
+/// let midpoint = Vector2::new(3.0, 1.0);
+/// assert!(seg_tangent_vector(v1, v2, midpoint).normalize().fuzzy_eq(Vector2::new(1.0, 0.0)));
+/// assert!(seg_tangent_vector(v1, v2, v1.pos()).normalize().fuzzy_eq(Vector2::new(0.0, -1.0)));
+/// assert!(seg_tangent_vector(v1, v2, v2.pos()).normalize().fuzzy_eq(Vector2::new(0.0, 1.0)));
+/// ```
+pub fn seg_tangent_vector<T>(
+    v1: PlineVertex<T>,
+    v2: PlineVertex<T>,
+    point_on_seg: Vector2<T>,
+) -> Vector2<T>
+where
+    T: Real,
+{
+    if v1.bulge_is_zero() {
+        return v2.pos() - v1.pos();
+    }
+
+    let bulge = v1.bulge;
+    let chord = v2.pos() - v1.pos();
+    let point_offset = (point_on_seg - v1.pos()).scale(T::two()) - chord;
+    let numerator = chord.scale((T::one() - bulge) * (T::one() + bulge))
+        + point_offset.perp().scale(T::two() * bulge);
+    numerator.scale(T::one() / (T::four() * bulge.abs()))
+}
+
+/// Find the closest point on a polyline segment defined by `v1` to `v2` to `point` given.
+/// If there are multiple closest points then one is chosen (which is chosen is not defined).
+///
+/// `epsilon` is used for fuzzy float comparisons.
+///
+/// # Examples
+///
+/// ```
+/// # use cavalier_contours::core::math::*;
+/// # use cavalier_contours::polyline::*;
+/// // counter clockwise half circle arc going from (2, 2) to (2, 4)
+/// let v1 = PlineVertex::new(2.0, 2.0, 1.0);
+/// let v2 = PlineVertex::new(4.0, 2.0, 0.0);
+/// assert!(
+///     seg_closest_point(v1, v2, Vector2::new(3.0, 0.0), 1e-5).fuzzy_eq(Vector2::new(3.0, 1.0))
+/// );
+/// assert!(
+///     seg_closest_point(v1, v2, Vector2::new(3.0, 1.2), 1e-5).fuzzy_eq(Vector2::new(3.0, 1.0))
+/// );
+/// assert!(seg_closest_point(v1, v2, v1.pos(), 1e-5).fuzzy_eq(v1.pos()));
+/// assert!(seg_closest_point(v1, v2, v2.pos(), 1e-5).fuzzy_eq(v2.pos()));
+/// ```
+pub fn seg_closest_point<T>(
+    v1: PlineVertex<T>,
+    v2: PlineVertex<T>,
+    point: Vector2<T>,
+    epsilon: T,
+) -> Vector2<T>
+where
+    T: Real,
+{
+    if v1.bulge_is_zero() {
+        return line_seg_closest_point(v1.pos(), v2.pos(), point);
+    }
+
+    let bulge = v1.bulge;
+    let bulge_squared = bulge * bulge;
+    let chord = v2.pos() - v1.pos();
+    let inv_four_bulge = T::one() / (T::four() * bulge);
+    let arc_center = v1.pos()
+        + chord.scale(T::one() / T::two())
+        + chord
+            .perp()
+            .scale((T::one() - bulge) * (T::one() + bulge) * inv_four_bulge);
+    if point.fuzzy_eq_eps(arc_center, epsilon) {
+        // avoid normalizing zero length vector (point is at center, just return start point)
+        return v1.pos();
+    }
+
+    if point_within_arc_sweep(
+        arc_center,
+        v1.pos(),
+        v2.pos(),
+        v1.bulge_is_neg(),
+        point,
+        epsilon,
+    ) {
+        // closest point is on the arc
+        let radial = point - arc_center;
+        let radius_to_radial_length = (chord.length_squared() / radial.length_squared()).sqrt()
+            * (T::one() + bulge_squared)
+            * inv_four_bulge.abs();
+        return radial.scale(radius_to_radial_length) + arc_center;
+    }
+
+    // closest point is one of the ends
+    let dist1 = dist_squared(v1.pos(), point);
+    let dist2 = dist_squared(v2.pos(), point);
+    if dist1 < dist2 {
+        return v1.pos();
+    }
+
+    v2.pos()
+}
+
+/// Returns whether the shortest distance from `point` to the segment from `v1` to `v2` is greater
+/// than `distance`.
+///
+/// `epsilon` is used for fuzzy float comparisons when the segment is an arc.
+pub fn seg_distance_is_greater_than<T>(
+    v1: PlineVertex<T>,
+    v2: PlineVertex<T>,
+    point: Vector2<T>,
+    distance: T,
+    epsilon: T,
+) -> bool
+where
+    T: Real,
+{
+    let distance = distance.abs();
+    let distance_squared = distance * distance;
+    if v1.bulge_is_zero() {
+        let chord = v2.pos() - v1.pos();
+        let point_offset = point - v1.pos();
+        let projection = point_offset.dot(chord);
+        if projection < T::fuzzy_epsilon() {
+            return point_offset.length_squared() > distance_squared;
+        }
+
+        let chord_length_squared = chord.length_squared();
+        if chord_length_squared < projection + T::fuzzy_epsilon() {
+            return (point - v2.pos()).length_squared() > distance_squared;
+        }
+
+        let cross = point_offset.perp_dot(chord);
+        return cross * cross > distance_squared * chord_length_squared;
+    }
+
+    let bulge = v1.bulge;
+    let chord = v2.pos() - v1.pos();
+    let inv_four_bulge = T::one() / (T::four() * bulge);
+    let arc_center = v1.pos()
+        + chord.scale(T::one() / T::two())
+        + chord
+            .perp()
+            .scale((T::one() - bulge) * (T::one() + bulge) * inv_four_bulge);
+    if point.fuzzy_eq_eps(arc_center, epsilon) {
+        return dist_squared(v1.pos(), point) > distance_squared;
+    }
+
+    if !point_within_arc_sweep(
+        arc_center,
+        v1.pos(),
+        v2.pos(),
+        v1.bulge_is_neg(),
+        point,
+        epsilon,
+    ) {
+        return dist_squared(v1.pos(), point) > distance_squared
+            && dist_squared(v2.pos(), point) > distance_squared;
+    }
+
+    let radius = chord.length() * (T::one() + bulge * bulge) * inv_four_bulge.abs();
+    let radial_length_squared = (point - arc_center).length_squared();
+    let outer_radius = radius + distance;
+    if radial_length_squared > outer_radius * outer_radius {
+        return true;
+    }
+
+    if radius <= distance {
+        return false;
+    }
+    let inner_radius = radius - distance;
+    radial_length_squared < inner_radius * inner_radius
+}
+
+/// Returns the axis-aligned bounding box of a line segment.
+#[inline]
+pub(crate) fn line_seg_bounding_box<T>(start: Vector2<T>, end: Vector2<T>) -> AABB<T>
+where
+    T: Real,
+{
+    let (min_x, max_x) = min_max(start.x, end.x);
+    let (min_y, max_y) = min_max(start.y, end.y);
+    AABB::new(min_x, min_y, max_x, max_y)
+}
+
+/// Computes a fast approximate axis aligned bounding box of a polyline segment defined by `v1` to `v2`.
+///
+/// The bounding box may be larger than the true bounding box for the segment (but is never smaller).
+/// For the true axis aligned bounding box use [`seg_bounding_box`] but this function is faster for arc
+/// segments.
+pub fn seg_fast_approx_bounding_box<T>(v1: PlineVertex<T>, v2: PlineVertex<T>) -> AABB<T>
+where
+    T: Real,
+{
+    if v1.bulge_is_zero() {
+        return line_seg_bounding_box(v1.pos(), v2.pos());
+    }
+
+    // For arcs we don't compute the actual extents which is slower, instead we create an approximate
+    // bounding box from the rectangle formed by extending the chord by the sagitta, note this
+    // approximate bounding box is always equal to or bigger than the true bounding box
+    let half_bulge = v1.bulge / T::two();
+    let offset_x = half_bulge * (v2.y - v1.y);
+    let offset_y = -half_bulge * (v2.x - v1.x);
+
+    let (mut min_x, mut max_x) = min_max(v1.x, v2.x);
+    if offset_x < T::zero() {
+        min_x = min_x + offset_x;
+    } else {
+        max_x = max_x + offset_x;
+    }
+
+    let (mut min_y, mut max_y) = min_max(v1.y, v2.y);
+    if offset_y < T::zero() {
+        min_y = min_y + offset_y;
+    } else {
+        max_y = max_y + offset_y;
+    }
+
+    AABB::new(min_x, min_y, max_x, max_y)
+}
+
+/// Returns the arc segment bounding box. Assumes `v1` to `v2` is an arc.
+pub(crate) fn arc_seg_bounding_box<T>(v1: PlineVertex<T>, v2: PlineVertex<T>) -> AABB<T>
+where
+    T: Real,
+{
+    debug_assert!(!v1.bulge_is_zero(), "expected arc");
+
+    if v1.pos().fuzzy_eq(v2.pos()) {
+        return AABB::new(v1.x, v1.y, v1.x, v1.y);
+    }
+
+    let bulge = v1.bulge;
+    let bulge_squared = bulge * bulge;
+    let chord = v2.pos() - v1.pos();
+    let perpendicular_chord = chord.perp();
+
+    // These are the start and end radius vectors scaled by `4 * bulge`. A negative scale for a
+    // clockwise arc also reverses the sweep direction, so the same sign tests work for both arc
+    // directions.
+    let scaled_perpendicular_chord = perpendicular_chord.scale(bulge_squared - T::one());
+    let scaled_chord = chord.scale(T::two() * bulge);
+    let start_radius = scaled_perpendicular_chord - scaled_chord;
+    let end_radius = scaled_perpendicular_chord + scaled_chord;
+
+    // Endpoints already include a cardinal extreme at a sweep boundary, so only test strict sign
+    // changes for cardinal directions in the sweep interior.
+    let crosses_right = start_radius.y < T::zero() && end_radius.y > T::zero();
+    let crosses_left = start_radius.y > T::zero() && end_radius.y < T::zero();
+    let crosses_top = start_radius.x > T::zero() && end_radius.x < T::zero();
+    let crosses_bottom = start_radius.x < T::zero() && end_radius.x > T::zero();
+
+    let (end_min_x, end_max_x) = min_max(v1.x, v2.x);
+    let (end_min_y, end_max_y) = min_max(v1.y, v2.y);
+    if !(crosses_right || crosses_left || crosses_top || crosses_bottom) {
+        return AABB::new(end_min_x, end_min_y, end_max_x, end_max_y);
+    }
+
+    let inv_four_bulge = T::one() / (T::four() * bulge);
+    let center = v1.pos()
+        + chord.scale(T::one() / T::two())
+        + perpendicular_chord.scale((T::one() - bulge) * (T::one() + bulge) * inv_four_bulge);
+    let radius = chord.length() * (T::one() + bulge_squared) * inv_four_bulge.abs();
+    AABB::new(
+        if crosses_left {
+            center.x - radius
+        } else {
+            end_min_x
+        },
+        if crosses_bottom {
+            center.y - radius
+        } else {
+            end_min_y
+        },
+        if crosses_right {
+            center.x + radius
+        } else {
+            end_max_x
+        },
+        if crosses_top {
+            center.y + radius
+        } else {
+            end_max_y
+        },
+    )
+}
+
+/// Computes the axis aligned bounding box of a polyline segment defined by `v1` to `v2`.
+///
+/// This function is quite a bit slower than [`seg_fast_approx_bounding_box`] when given an arc.
+pub fn seg_bounding_box<T>(v1: PlineVertex<T>, v2: PlineVertex<T>) -> AABB<T>
+where
+    T: Real,
+{
+    if v1.bulge_is_zero() {
+        line_seg_bounding_box(v1.pos(), v2.pos())
+    } else {
+        arc_seg_bounding_box(v1, v2)
+    }
+}
+
+/// Calculate the path length of the polyline segment defined by `v1` to `v2`.
+///
+/// # Examples
+///
+/// ```
+/// # use cavalier_contours::polyline::*;
+/// # use cavalier_contours::core::traits::*;
+/// // counter clockwise half circle arc going from (2, 2) to (2, 4)
+/// // arc radius = 1 so length should be PI
+/// let v1 = PlineVertex::new(2.0, 2.0, 1.0);
+/// let v2 = PlineVertex::new(4.0, 2.0, 0.0);
+/// assert!(seg_length(v1, v2).fuzzy_eq(std::f64::consts::PI));
+/// ```
+///
+/// Also works with line segments.
+///
+/// ```
+/// # use cavalier_contours::core::traits::*;
+/// # use cavalier_contours::core::math::*;
+/// # use cavalier_contours::polyline::*;
+/// // line segment going from (2, 2) to (4, 4)
+/// let v1 = PlineVertex::new(2.0, 2.0, 0.0);
+/// let v2 = PlineVertex::new(4.0, 4.0, 0.0);
+/// assert!(seg_length(v1, v2).fuzzy_eq(2.0 * 2.0f64.sqrt()));
+/// ```
+pub fn seg_length<T>(v1: PlineVertex<T>, v2: PlineVertex<T>) -> T
+where
+    T: Real,
+{
+    if v1.fuzzy_eq(v2) {
+        return T::zero();
+    }
+
+    if v1.bulge_is_zero() {
+        return dist_squared(v1.pos(), v2.pos()).sqrt();
+    }
+
+    let abs_bulge = v1.bulge.abs();
+    let chord_length = (v2.pos() - v1.pos()).length();
+    let arc_radius = chord_length * (abs_bulge * abs_bulge + T::one()) / (T::four() * abs_bulge);
+    arc_radius * angle_from_bulge(v1.bulge).abs()
+}
+
+/// Returns the forward distance from `v1` to `point` along the segment from `v1` to `v2`.
+///
+/// Assumes `point` lies on the segment from `v1` to `v2`.
+///
+/// Endpoints snap with `pos_equal_eps`. For lines, it uses distance along the line. For arcs, it
+/// uses the radius times the forward angle, which is the smaller radial angle because supported
+/// arcs sweep at most a half circle.
+pub fn dist_from_segment_start<T>(
+    v1: PlineVertex<T>,
+    v2: PlineVertex<T>,
+    point: Vector2<T>,
+    pos_equal_eps: T,
+) -> T
+where
+    T: Real,
+{
+    if point.fuzzy_eq_eps(v1.pos(), pos_equal_eps) {
+        return T::zero();
+    }
+    if point.fuzzy_eq_eps(v2.pos(), pos_equal_eps) {
+        return seg_length(v1, v2);
+    }
+    if v1.bulge_is_zero() {
+        let direction = v2.pos() - v1.pos();
+        let length = direction.length();
+        if length == T::zero() {
+            T::zero()
+        } else {
+            (point - v1.pos()).dot(direction) / length
+        }
+    } else {
+        let bulge = v1.bulge;
+        let bulge_squared = bulge * bulge;
+        let chord = v2.pos() - v1.pos();
+        let radius = chord.length() * (bulge_squared + T::one()) / (T::four() * bulge.abs());
+
+        // These are the start and point radius vectors scaled by `4 * bulge`. Deriving them
+        // directly from the chord avoids constructing a distant center for shallow arcs. Their
+        // common scale does not change the angle between them.
+        let start_radius =
+            chord.perp().scale(bulge_squared - T::one()) - chord.scale(T::two() * bulge);
+        let point_radius = start_radius + (point - v1.pos()).scale(T::four() * bulge);
+        let sweep = T::atan2(
+            start_radius.perp_dot(point_radius).abs(),
+            start_radius.dot(point_radius),
+        );
+        radius * sweep
+    }
+}
+
+/// Find the midpoint for the polyline segment defined by `v1` to `v2`.
+///
+/// # Examples
+///
+/// ```
+/// # use cavalier_contours::polyline::*;
+/// # use cavalier_contours::core::math::*;
+/// // counter clockwise half circle arc going from (2, 2) to (2, 4)
+/// let v1 = PlineVertex::new(2.0, 2.0, 1.0);
+/// let v2 = PlineVertex::new(4.0, 2.0, 0.0);
+/// assert!(seg_midpoint(v1, v2).fuzzy_eq(Vector2::new(3.0, 1.0)));
+/// ```
+///
+/// Also works with line segments.
+///
+/// ```
+/// # use cavalier_contours::polyline::*;
+/// # use cavalier_contours::core::math::*;
+/// // line segment going from (2, 2) to (4, 4)
+/// let v1 = PlineVertex::new(2.0, 2.0, 0.0);
+/// let v2 = PlineVertex::new(4.0, 4.0, 0.0);
+/// assert!(seg_midpoint(v1, v2).fuzzy_eq(Vector2::new(3.0, 3.0)));
+/// ```
+pub fn seg_midpoint<T>(v1: PlineVertex<T>, v2: PlineVertex<T>) -> Vector2<T>
+where
+    T: Real,
+{
+    if v1.bulge_is_zero() {
+        return midpoint(v1.pos(), v2.pos());
+    }
+
+    let chord_midpoint = midpoint(v1.pos(), v2.pos());
+    let half_bulge = v1.bulge / T::two();
+    Vector2::new(
+        chord_midpoint.x + half_bulge * (v2.y - v1.y),
+        chord_midpoint.y - half_bulge * (v2.x - v1.x),
+    )
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::core::traits::FuzzyEq;
+
+    fn arc_vertexes(
+        center: Vector2<f64>,
+        radius: f64,
+        start_angle: f64,
+        sweep: f64,
+    ) -> (PlineVertex<f64>, PlineVertex<f64>) {
+        let point_at_angle = |angle: f64| {
+            let (sin, cos) = angle.sin_cos();
+            center + Vector2::new(radius * cos, radius * sin)
+        };
+        (
+            PlineVertex::from_vector2(point_at_angle(start_angle), (sweep / 4.0).tan()),
+            PlineVertex::from_vector2(point_at_angle(start_angle + sweep), 0.0),
+        )
+    }
+
+    fn assert_aabb_close(actual: AABB<f64>, expected: AABB<f64>, epsilon: f64) {
+        assert!(
+            (actual.min_x - expected.min_x).abs() <= epsilon,
+            "min_x: {actual:?} != {expected:?}"
+        );
+        assert!(
+            (actual.min_y - expected.min_y).abs() <= epsilon,
+            "min_y: {actual:?} != {expected:?}"
+        );
+        assert!(
+            (actual.max_x - expected.max_x).abs() <= epsilon,
+            "max_x: {actual:?} != {expected:?}"
+        );
+        assert!(
+            (actual.max_y - expected.max_y).abs() <= epsilon,
+            "max_y: {actual:?} != {expected:?}"
+        );
+    }
+
+    #[test]
+    fn seg_arc_radius_and_center_returns_expected_geometry() {
+        let quarter_circle_bulge = std::f64::consts::FRAC_PI_8.tan();
+        for (bulge, expected_radius, expected_center_y) in [
+            (1.0, 2.0, 0.0),
+            (-1.0, 2.0, 0.0),
+            (quarter_circle_bulge, 2.0f64.sqrt() * 2.0, 2.0),
+            (-quarter_circle_bulge, 2.0f64.sqrt() * 2.0, -2.0),
+            (1e-7, 10_000_000.0000001, 9_999_999.9999999),
+            (-1e-7, 10_000_000.0000001, -9_999_999.9999999),
+        ] {
+            let v1 = PlineVertex::new(0.0, 0.0, bulge);
+            let v2 = PlineVertex::new(4.0, 0.0, 0.0);
+            let (radius, center) = seg_arc_radius_and_center(v1, v2);
+            assert!((radius - expected_radius).abs() <= expected_radius * 2e-15);
+            assert!(center.fuzzy_eq_eps(
+                Vector2::new(2.0, expected_center_y),
+                expected_radius * 2e-15
+            ));
+        }
+    }
+
+    #[test]
+    fn seg_tangent_vector_preserves_arc_radius_magnitude() {
+        for bulge in [
+            -1.0,
+            -std::f64::consts::FRAC_PI_8.tan(),
+            -1e-7,
+            1e-7,
+            std::f64::consts::FRAC_PI_8.tan(),
+            1.0,
+        ] {
+            let sweep = 4.0 * bulge.atan();
+            let v1 = PlineVertex::new(1.0, 0.0, bulge);
+            let v2 = PlineVertex::new(sweep.cos(), sweep.sin(), 0.0);
+            let point = Vector2::new((sweep / 2.0).cos(), (sweep / 2.0).sin());
+            let tangent = seg_tangent_vector(v1, v2, point);
+            let expected = if bulge < 0.0 {
+                -point.perp()
+            } else {
+                point.perp()
+            };
+            assert!(
+                tangent.fuzzy_eq_eps(expected, 2e-9),
+                "{bulge}: {tangent:?} != {expected:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn seg_fast_approx_bounding_box_extends_chord_by_sagitta() {
+        for (v1, v2, expected) in [
+            (
+                PlineVertex::new(0.0, 0.0, 1.0),
+                PlineVertex::new(4.0, 0.0, 0.0),
+                AABB::new(0.0, -2.0, 4.0, 0.0),
+            ),
+            (
+                PlineVertex::new(0.0, 0.0, -1.0),
+                PlineVertex::new(4.0, 0.0, 0.0),
+                AABB::new(0.0, 0.0, 4.0, 2.0),
+            ),
+            (
+                PlineVertex::new(2.0, -3.0, 0.5),
+                PlineVertex::new(2.0, 5.0, 0.0),
+                AABB::new(2.0, -3.0, 4.0, 5.0),
+            ),
+            (
+                PlineVertex::new(2.0, -3.0, -0.5),
+                PlineVertex::new(2.0, 5.0, 0.0),
+                AABB::new(0.0, -3.0, 2.0, 5.0),
+            ),
+        ] {
+            assert_eq!(seg_fast_approx_bounding_box(v1, v2), expected);
+        }
+    }
+
+    #[test]
+    fn seg_bounding_box_returns_exact_arc_extents() {
+        let cases = [
+            (
+                Vector2::new(0.0, 0.0),
+                2.0,
+                -std::f64::consts::FRAC_PI_4,
+                std::f64::consts::FRAC_PI_2,
+                AABB::new(
+                    std::f64::consts::SQRT_2,
+                    -std::f64::consts::SQRT_2,
+                    2.0,
+                    std::f64::consts::SQRT_2,
+                ),
+            ),
+            (
+                Vector2::new(3.0, -4.0),
+                2.0,
+                std::f64::consts::FRAC_PI_4,
+                std::f64::consts::FRAC_PI_2,
+                AABB::new(
+                    3.0 - std::f64::consts::SQRT_2,
+                    -4.0 + std::f64::consts::SQRT_2,
+                    3.0 + std::f64::consts::SQRT_2,
+                    -2.0,
+                ),
+            ),
+            (
+                Vector2::new(-5.0, 7.0),
+                3.0,
+                std::f64::consts::FRAC_PI_4,
+                -std::f64::consts::PI,
+                AABB::new(
+                    -5.0 - 3.0 / std::f64::consts::SQRT_2,
+                    4.0,
+                    -2.0,
+                    7.0 + 3.0 / std::f64::consts::SQRT_2,
+                ),
+            ),
+        ];
+
+        for (center, radius, start_angle, sweep, expected) in cases {
+            let (v1, v2) = arc_vertexes(center, radius, start_angle, sweep);
+            assert_aabb_close(seg_bounding_box(v1, v2), expected, 2e-14);
+        }
+    }
+
+    #[test]
+    fn seg_bounding_box_matches_angle_based_extents() {
+        use crate::core::math::{angle, arc_sweep_extents, delta_angle_signed};
+
+        for center in [Vector2::zero(), Vector2::new(10_000.0, -20_000.0)] {
+            for radius in [0.001, 1.0, 32.0, 1000.0] {
+                for start_angle in [0.137, 1.013, 2.271, 4.123] {
+                    for sweep in [
+                        -std::f64::consts::PI,
+                        -std::f64::consts::FRAC_PI_2,
+                        -std::f64::consts::FRAC_PI_3,
+                        -4e-7,
+                        4e-7,
+                        std::f64::consts::FRAC_PI_3,
+                        std::f64::consts::FRAC_PI_2,
+                        std::f64::consts::PI,
+                    ] {
+                        let (v1, v2) = arc_vertexes(center, radius, start_angle, sweep);
+                        if v1.pos().fuzzy_eq(v2.pos()) {
+                            assert_eq!(seg_bounding_box(v1, v2), AABB::new(v1.x, v1.y, v1.x, v1.y));
+                            continue;
+                        }
+                        let (computed_radius, computed_center) = seg_arc_radius_and_center(v1, v2);
+                        let computed_start_angle = angle(computed_center, v1.pos());
+                        let computed_end_angle = angle(computed_center, v2.pos());
+                        let computed_sweep = delta_angle_signed(
+                            computed_start_angle,
+                            computed_end_angle,
+                            v1.bulge_is_neg(),
+                        );
+                        let (expected_min, expected_max) = arc_sweep_extents(
+                            v1.pos(),
+                            v2.pos(),
+                            computed_center,
+                            computed_radius,
+                            computed_start_angle,
+                            computed_sweep,
+                        );
+                        let expected = AABB::new(
+                            expected_min.x,
+                            expected_min.y,
+                            expected_max.x,
+                            expected_max.y,
+                        );
+                        assert_aabb_close(
+                            seg_bounding_box(v1, v2),
+                            expected,
+                            2e-9 * radius.max(1.0),
+                        );
+                    }
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn seg_closest_point_returns_arc_projection_or_nearest_endpoint() {
+        for bulge in [
+            -1.0,
+            -std::f64::consts::FRAC_PI_8.tan(),
+            -1e-7,
+            1e-7,
+            std::f64::consts::FRAC_PI_8.tan(),
+            1.0,
+        ] {
+            let sweep = 4.0 * bulge.atan();
+            let v1 = PlineVertex::new(1.0, 0.0, bulge);
+            let v2 = PlineVertex::new(sweep.cos(), sweep.sin(), 0.0);
+            let midpoint = Vector2::new((sweep / 2.0).cos(), (sweep / 2.0).sin());
+            let inward_query = midpoint.scale(0.75);
+            assert!(seg_closest_point(v1, v2, inward_query, 1e-12).fuzzy_eq_eps(midpoint, 2e-9));
+
+            let outside_query = Vector2::new((-sweep).cos(), (-sweep).sin());
+            let expected_endpoint =
+                if dist_squared(v1.pos(), outside_query) < dist_squared(v2.pos(), outside_query) {
+                    v1.pos()
+                } else {
+                    v2.pos()
+                };
+            assert!(
+                seg_closest_point(v1, v2, outside_query, 1e-12)
+                    .fuzzy_eq_eps(expected_endpoint, 2e-9)
+            );
+        }
+    }
+
+    #[test]
+    fn seg_distance_is_greater_than_matches_closest_point_distance() {
+        let segments = [
+            (
+                PlineVertex::new(0.0, 0.0, 0.0),
+                PlineVertex::new(4.0, 0.0, 0.0),
+            ),
+            (
+                PlineVertex::new(0.0, 0.0, 1.0),
+                PlineVertex::new(4.0, 0.0, 0.0),
+            ),
+            (
+                PlineVertex::new(0.0, 0.0, -1.0),
+                PlineVertex::new(4.0, 0.0, 0.0),
+            ),
+            (
+                PlineVertex::new(1.0, 0.0, std::f64::consts::FRAC_PI_8.tan()),
+                PlineVertex::new(0.0, 1.0, 0.0),
+            ),
+            (
+                PlineVertex::new(-123.5, 47.25, 1e-7),
+                PlineVertex::new(891.75, -302.5, 0.0),
+            ),
+        ];
+        let points = [
+            Vector2::new(0.0, 0.0),
+            Vector2::new(1.0, 0.0),
+            Vector2::new(2.0, -2.0),
+            Vector2::new(2.0, 0.0),
+            Vector2::new(2.0, 3.0),
+            Vector2::new(5.0, -1.0),
+            Vector2::new(384.0, -126.0),
+        ];
+
+        for (v1, v2) in segments {
+            for point in points {
+                let closest = seg_closest_point(v1, v2, point, 1e-12);
+                let closest_distance_squared = dist_squared(closest, point);
+                for distance in [0.0, 0.1, 0.5, 1.0, 3.0, 10.0] {
+                    assert_eq!(
+                        seg_distance_is_greater_than(v1, v2, point, distance, 1e-12),
+                        closest_distance_squared > distance * distance,
+                        "{v1:?}, {v2:?}, {point:?}, {distance}"
+                    );
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn seg_midpoint_returns_expected_arc_midpoints() {
+        let quarter_circle_bulge = std::f64::consts::FRAC_PI_8.tan();
+        let sqrt_half = std::f64::consts::FRAC_1_SQRT_2;
+        let cases = [
+            (
+                PlineVertex::new(0.0, 0.0, 1.0),
+                PlineVertex::new(4.0, 0.0, 0.0),
+                Vector2::new(2.0, -2.0),
+            ),
+            (
+                PlineVertex::new(0.0, 0.0, -1.0),
+                PlineVertex::new(4.0, 0.0, 0.0),
+                Vector2::new(2.0, 2.0),
+            ),
+            (
+                PlineVertex::new(1.0, 0.0, quarter_circle_bulge),
+                PlineVertex::new(0.0, 1.0, 0.0),
+                Vector2::new(sqrt_half, sqrt_half),
+            ),
+            (
+                PlineVertex::new(0.0, 0.0, 1e-7),
+                PlineVertex::new(4.0, 0.0, 0.0),
+                Vector2::new(2.0, -2e-7),
+            ),
+        ];
+
+        for (v1, v2, expected) in cases {
+            assert!(seg_midpoint(v1, v2).fuzzy_eq_eps(expected, 1e-14));
+        }
+    }
+
+    #[test]
+    fn seg_split_at_point_returns_expected_subarcs() {
+        for bulge in [
+            -1.0,
+            -std::f64::consts::FRAC_PI_8.tan(),
+            -1e-7,
+            1e-7,
+            std::f64::consts::FRAC_PI_8.tan(),
+            1.0,
+        ] {
+            let sweep = 4.0 * bulge.atan();
+            let v1 = PlineVertex::new(1.0, 0.0, bulge);
+            let v2 = PlineVertex::new(sweep.cos(), sweep.sin(), 0.0);
+            for fraction in [1e-6, 0.1, 0.5, 0.9, 1.0 - 1e-6] {
+                let split_angle = sweep * fraction;
+                let point = Vector2::new(split_angle.cos(), split_angle.sin());
+                let result = seg_split_at_point(v1, v2, point, 1e-15);
+                let expected1 = (split_angle / 4.0).tan();
+                let expected2 = ((sweep - split_angle) / 4.0).tan();
+
+                assert!(
+                    result.updated_start.bulge.fuzzy_eq_eps(expected1, 2e-14),
+                    "{bulge}, {fraction}: {} != {expected1}",
+                    result.updated_start.bulge
+                );
+                assert!(
+                    result.split_vertex.bulge.fuzzy_eq_eps(expected2, 2e-14),
+                    "{bulge}, {fraction}: {} != {expected2}",
+                    result.split_vertex.bulge
+                );
+                assert_eq!(result.updated_start.pos(), v1.pos());
+                assert_eq!(result.split_vertex.pos(), point);
+            }
+        }
+    }
+
+    #[test]
+    fn seg_length_returns_expected_arc_lengths() {
+        for bulge in [
+            -1.0,
+            -std::f64::consts::FRAC_PI_8.tan(),
+            -1e-7,
+            1e-7,
+            std::f64::consts::FRAC_PI_8.tan(),
+            1.0,
+        ] {
+            let sweep = 4.0 * bulge.atan();
+            let v1 = PlineVertex::new(1.0, 0.0, bulge);
+            let v2 = PlineVertex::new(sweep.cos(), sweep.sin(), 0.0);
+            assert!(
+                seg_length(v1, v2).fuzzy_eq_eps(sweep.abs(), 2e-14),
+                "{bulge}: {} != {}",
+                seg_length(v1, v2),
+                sweep.abs()
+            );
+        }
+    }
+
+    #[test]
+    fn dist_from_segment_start_snaps_near_arc_endpoints() {
+        let v1 = PlineVertex::new(-1.0f64, 0.0, -1.0);
+        let v2 = PlineVertex::new(1.0, 0.0, 0.0);
+
+        assert!(dist_from_segment_start(v1, v2, Vector2::new(-1.0, -1e-6), 1e-5).abs() <= 1e-10);
+        assert!(
+            (dist_from_segment_start(v1, v2, Vector2::new(1.0, 1e-6), 1e-5) - std::f64::consts::PI)
+                .abs()
+                <= 1e-10
+        );
+    }
+
+    #[test]
+    fn dist_from_segment_start_matches_arc_fractions_in_both_directions() {
+        let radius = 3.25;
+        let start_angle = 0.37;
+        for bulge in [
+            -1.0,
+            -std::f64::consts::FRAC_PI_8.tan(),
+            -1e-7,
+            1e-7,
+            std::f64::consts::FRAC_PI_8.tan(),
+            1.0,
+        ] {
+            let sweep = 4.0 * bulge.atan();
+            let point_at_angle = |angle: f64| {
+                let (sin, cos) = angle.sin_cos();
+                Vector2::new(radius * cos, radius * sin)
+            };
+            let start = point_at_angle(start_angle);
+            let end = point_at_angle(start_angle + sweep);
+            let v1 = PlineVertex::from_vector2(start, bulge);
+            let v2 = PlineVertex::from_vector2(end, 0.0);
+            let mut previous = 0.0;
+
+            for fraction in [1e-6, 0.1, 0.5, 0.9, 1.0 - 1e-6] {
+                let point = point_at_angle(start_angle + sweep * fraction);
+                let distance = dist_from_segment_start(v1, v2, point, 1e-15);
+                let expected = radius * sweep.abs() * fraction;
+                assert!(
+                    (distance - expected).abs() <= 2e-13 * radius,
+                    "{bulge}, {fraction}: {distance} != {expected}"
+                );
+                assert!(
+                    distance > previous,
+                    "{bulge}, {fraction}: {distance} <= {previous}"
+                );
+                previous = distance;
+            }
+        }
+    }
+}

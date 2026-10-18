@@ -1,0 +1,380 @@
+[
+  {
+    "id": "CC00013",
+    "kind": "pline_seg_intr",
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_intersects::find_intersects_tests::circles_touching",
+    "v1": "PlineVertex { x: 0.0, y: 0.0, bulge: 1.0 }",
+    "v2": "PlineVertex { x: 1.0, y: 0.0, bulge: 1.0 }",
+    "u1": "PlineVertex { x: 1.0, y: 0.0, bulge: 1.0 }",
+    "u2": "PlineVertex { x: 2.0, y: 0.0, bulge: 1.0 }",
+    "pos_equal_eps": "1e-5",
+    "result": "TangentIntersect { point: Vector2 { x: 1.0, y: 0.0 } }",
+    "observations": 1,
+    "references": [
+      {
+        "file": "src/polyline/internal/pline_intersects.rs",
+        "test": "polyline::internal::pline_intersects::find_intersects_tests::circles_touching",
+        "binary": "cavalier_contours"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC00016",
+    "kind": "pline_seg_intr",
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_intersects::find_intersects_tests::circles_touching",
+    "v1": "PlineVertex { x: 1.0, y: 0.0, bulge: 1.0 }",
+    "v2": "PlineVertex { x: 0.0, y: 0.0, bulge: 1.0 }",
+    "u1": "PlineVertex { x: 2.0, y: 0.0, bulge: 1.0 }",
+    "u2": "PlineVertex { x: 1.0, y: 0.0, bulge: 1.0 }",
+    "pos_equal_eps": "1e-5",
+    "result": "TangentIntersect { point: Vector2 { x: 1.0, y: 0.0 } }",
+    "observations": 1,
+    "references": [
+      {
+        "file": "src/polyline/internal/pline_intersects.rs",
+        "test": "polyline::internal::pline_intersects::find_intersects_tests::circles_touching",
+        "binary": "cavalier_contours"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC00020",
+    "kind": "pline_seg_intr",
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_intersects::find_intersects_tests::uses_pos_equal_eps",
+    "v1": "PlineVertex { x: 0.5, y: 0.0, bulge: 0.0 }",
+    "v2": "PlineVertex { x: 0.5, y: 0.9999901, bulge: 0.0 }",
+    "u1": "PlineVertex { x: 0.0, y: 1.0, bulge: 0.0 }",
+    "u2": "PlineVertex { x: 1.0, y: 1.0, bulge: 0.0 }",
+    "pos_equal_eps": "1e-5",
+    "result": "OneIntersect { point: Vector2 { x: 0.5, y: 1.0 } }",
+    "observations": 1,
+    "references": [
+      {
+        "file": "src/polyline/internal/pline_intersects.rs",
+        "test": "polyline::internal::pline_intersects::find_intersects_tests::uses_pos_equal_eps",
+        "binary": "cavalier_contours"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC00057",
+    "kind": "line_line_intr",
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::raw_pline_offset::tests::inner_join_endpoint_tolerance_clamps_the_local_candidate",
+    "v1": "Vector2 { x: 0.0, y: 0.0 }",
+    "v2": "Vector2 { x: 1.0, y: 0.0 }",
+    "u1": "Vector2 { x: 1.000005, y: -1.0 }",
+    "u2": "Vector2 { x: 1.000005, y: 1.0 }",
+    "epsilon": "1e-5",
+    "result": "TrueIntersect { seg1_t: 1.000005, seg2_t: 0.5 }",
+    "observations": 1,
+    "references": [
+      {
+        "file": "src/polyline/internal/raw_pline_offset.rs",
+        "test": "polyline::internal::raw_pline_offset::tests::inner_join_endpoint_tolerance_clamps_the_local_candidate",
+        "binary": "cavalier_contours"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC00070",
+    "kind": "circle_circle_intr",
+    "binary": "test_circle_circle_intersect",
+    "test": "tangent_intersect_inside",
+    "radius1": "3.0",
+    "center1": "Vector2 { x: 0.0, y: 1.0 }",
+    "radius2": "4.0",
+    "center2": "Vector2 { x: 0.0, y: 0.0 }",
+    "epsilon": "1e-5",
+    "result": "TangentIntersect { point: Vector2 { x: 0.0, y: 4.0 } }",
+    "observations": 1,
+    "references": [
+      {
+        "file": "tests/test_circle_circle_intersect.rs",
+        "test": "tangent_intersect_inside",
+        "binary": "test_circle_circle_intersect"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC00071",
+    "kind": "circle_circle_intr",
+    "binary": "test_circle_circle_intersect",
+    "test": "tangent_intersect_outside",
+    "radius1": "1.0",
+    "center1": "Vector2 { x: -1.0, y: 1.0 }",
+    "radius2": "0.5",
+    "center2": "Vector2 { x: 0.5, y: 1.0 }",
+    "epsilon": "1e-5",
+    "result": "TangentIntersect { point: Vector2 { x: 0.0, y: 1.0 } }",
+    "observations": 1,
+    "references": [
+      {
+        "file": "tests/test_circle_circle_intersect.rs",
+        "test": "tangent_intersect_outside",
+        "binary": "test_circle_circle_intersect"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC00073",
+    "kind": "line_circle_intr",
+    "binary": "test_line_circle_intersect",
+    "test": "near_tangent_intersections_snap_when_positions_are_equal",
+    "p0": "Vector2 { x: -1.0, y: 0.0 }",
+    "p1": "Vector2 { x: 1.0, y: 0.0 }",
+    "radius": "0.01",
+    "circle_center": "Vector2 { x: 0.0, y: 0.009999999799999998 }",
+    "epsilon": "1e-5",
+    "result": "TangentIntersect { t0: 0.5 }",
+    "observations": 1,
+    "references": [
+      {
+        "file": "tests/test_line_circle_intersect.rs",
+        "test": "near_tangent_intersections_snap_when_positions_are_equal",
+        "binary": "test_line_circle_intersect"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC00074",
+    "kind": "line_circle_intr",
+    "binary": "test_line_circle_intersect",
+    "test": "near_tangent_intersections_snap_when_positions_are_equal",
+    "p0": "Vector2 { x: -1.0, y: 0.0 }",
+    "p1": "Vector2 { x: 1.0, y: 0.0 }",
+    "radius": "1.0",
+    "circle_center": "Vector2 { x: 0.0, y: 0.9999999999979999 }",
+    "epsilon": "1e-5",
+    "result": "TangentIntersect { t0: 0.5 }",
+    "observations": 1,
+    "references": [
+      {
+        "file": "tests/test_line_circle_intersect.rs",
+        "test": "near_tangent_intersections_snap_when_positions_are_equal",
+        "binary": "test_line_circle_intersect"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC00075",
+    "kind": "line_circle_intr",
+    "binary": "test_line_circle_intersect",
+    "test": "near_tangent_intersections_snap_when_positions_are_equal",
+    "p0": "Vector2 { x: -1.0, y: 0.0 }",
+    "p1": "Vector2 { x: 1.0, y: 0.0 }",
+    "radius": "100.0",
+    "circle_center": "Vector2 { x: 0.0, y: 99.99999999999999 }",
+    "epsilon": "1e-5",
+    "result": "TangentIntersect { t0: 0.5 }",
+    "observations": 1,
+    "references": [
+      {
+        "file": "tests/test_line_circle_intersect.rs",
+        "test": "near_tangent_intersections_snap_when_positions_are_equal",
+        "binary": "test_line_circle_intersect"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC00082",
+    "kind": "line_circle_intr",
+    "binary": "test_line_circle_intersect",
+    "test": "point_segment_uses_position_epsilon",
+    "p0": "Vector2 { x: 0.0, y: 100.001 }",
+    "p1": "Vector2 { x: 0.0, y: 100.001 }",
+    "radius": "100.0",
+    "circle_center": "Vector2 { x: 0.0, y: 0.0 }",
+    "epsilon": "0.01",
+    "result": "TangentIntersect { t0: 0.0 }",
+    "observations": 1,
+    "references": [
+      {
+        "file": "tests/test_line_circle_intersect.rs",
+        "test": "point_segment_uses_position_epsilon",
+        "binary": "test_line_circle_intersect"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01188",
+    "kind": "pline_seg_intr",
+    "binary": "test_pline_parallel_offset",
+    "test": "separate_behavior_splits_tangent_touching_small_loop",
+    "v1": "PlineVertex { x: 23.0, y: 6.499999999999993, bulge: -0.09901951359278587 }",
+    "v2": "PlineVertex { x: 25.500000000000032, y: 6.000000000000008, bulge: -0.10585445447455612 }",
+    "u1": "PlineVertex { x: 25.500000000000032, y: 6.000000000000008, bulge: -0.10585445447455612 }",
+    "u2": "PlineVertex { x: 23.26248753138912, y: 7.549609499183699, bulge: 0.429599590855412 }",
+    "pos_equal_eps": "1e-5",
+    "result": "TangentIntersect { point: Vector2 { x: 25.500000000000032, y: 6.000000000000008 } }",
+    "observations": 1,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "separate_behavior_splits_tangent_touching_small_loop",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01751",
+    "kind": "pline_seg_intr",
+    "binary": "test_pline_seg_intersect",
+    "test": "arc_arc_opposite_direction_touch_at_ends_bug",
+    "v1": "PlineVertex { x: -189.0, y: -196.91384910249, bulge: 0.553407781718062 }",
+    "v2": "PlineVertex { x: -170.999999999999, y: -225.631646989572, bulge: -0.553407781718061 }",
+    "u1": "PlineVertex { x: -153.0, y: -196.91384910249, bulge: -0.553407781718061 }",
+    "u2": "PlineVertex { x: -171.0, y: -225.631646989571, bulge: -0.553407781718061 }",
+    "pos_equal_eps": "1e-5",
+    "result": "OneIntersect { point: Vector2 { x: -171.0, y: -225.631646989571 } }",
+    "observations": 1,
+    "references": [
+      {
+        "file": "tests/test_pline_seg_intersect.rs",
+        "test": "arc_arc_opposite_direction_touch_at_ends_bug",
+        "binary": "test_pline_seg_intersect"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01752",
+    "kind": "pline_seg_intr",
+    "binary": "test_pline_seg_intersect",
+    "test": "arc_arc_opposite_direction_touch_at_ends_bug",
+    "v1": "PlineVertex { x: -153.0, y: -196.91384910249, bulge: -0.553407781718061 }",
+    "v2": "PlineVertex { x: -171.0, y: -225.631646989571, bulge: -0.553407781718061 }",
+    "u1": "PlineVertex { x: -189.0, y: -196.91384910249, bulge: 0.553407781718062 }",
+    "u2": "PlineVertex { x: -170.999999999999, y: -225.631646989572, bulge: -0.553407781718061 }",
+    "pos_equal_eps": "1e-5",
+    "result": "OneIntersect { point: Vector2 { x: -170.999999999999, y: -225.631646989572 } }",
+    "observations": 1,
+    "references": [
+      {
+        "file": "tests/test_pline_seg_intersect.rs",
+        "test": "arc_arc_opposite_direction_touch_at_ends_bug",
+        "binary": "test_pline_seg_intersect"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01753",
+    "kind": "pline_seg_intr",
+    "binary": "test_pline_seg_intersect",
+    "test": "arc_arc_opposite_direction_touch_at_ends_bug",
+    "v1": "PlineVertex { x: -189.0, y: -196.91384910249, bulge: 0.553407781718062 }",
+    "v2": "PlineVertex { x: -170.999999999999, y: -225.631646989572, bulge: -0.553407781718061 }",
+    "u1": "PlineVertex { x: -171.0, y: -225.631646989571, bulge: 0.553407781718062 }",
+    "u2": "PlineVertex { x: -153.0, y: -196.91384910249, bulge: -0.553407781718061 }",
+    "pos_equal_eps": "1e-5",
+    "result": "OneIntersect { point: Vector2 { x: -171.0, y: -225.631646989571 } }",
+    "observations": 1,
+    "references": [
+      {
+        "file": "tests/test_pline_seg_intersect.rs",
+        "test": "arc_arc_opposite_direction_touch_at_ends_bug",
+        "binary": "test_pline_seg_intersect"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01761",
+    "kind": "pline_seg_intr",
+    "binary": "test_pline_seg_intersect",
+    "test": "line_arc_intersect_sticks_to_fuzzy_circle_endpoint",
+    "v1": "PlineVertex { x: 0.0, y: -1.000005, bulge: 0.0 }",
+    "v2": "PlineVertex { x: 0.0, y: -2.0, bulge: 0.0 }",
+    "u1": "PlineVertex { x: -1.0, y: 1.2246467991473532e-16, bulge: 0.9999999999999999 }",
+    "u2": "PlineVertex { x: 1.0, y: -2.4492935982947064e-16, bulge: 0.0 }",
+    "pos_equal_eps": "1e-5",
+    "result": "OneIntersect { point: Vector2 { x: 0.0, y: -1.000005 } }",
+    "observations": 1,
+    "references": [
+      {
+        "file": "tests/test_pline_seg_intersect.rs",
+        "test": "line_arc_intersect_sticks_to_fuzzy_circle_endpoint",
+        "binary": "test_pline_seg_intersect"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01763",
+    "kind": "pline_seg_intr",
+    "binary": "test_pline_seg_intersect",
+    "test": "overlapping_arc_endpoint_touch_uses_position_tolerance",
+    "v1": "PlineVertex { x: 0.001, y: 0.0, bulge: 0.12565513657513097 }",
+    "v2": "PlineVertex { x: 0.0008775825618903728, y: 0.000479425538604203, bulge: 0.0 }",
+    "u1": "PlineVertex { x: 0.0008775801647517099, y: 0.0004794299265110196, bulge: 0.12565513657513097 }",
+    "u2": "PlineVertex { x: 0.0005402980985064618, y: 0.0008414736863089075, bulge: 0.0 }",
+    "pos_equal_eps": "1e-8",
+    "result": "OneIntersect { point: Vector2 { x: 0.0008775801647517099, y: 0.0004794299265110196 } }",
+    "observations": 1,
+    "references": [
+      {
+        "file": "tests/test_pline_seg_intersect.rs",
+        "test": "overlapping_arc_endpoint_touch_uses_position_tolerance",
+        "binary": "test_pline_seg_intersect"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01765",
+    "kind": "pline_seg_intr",
+    "binary": "test_pline_seg_intersect",
+    "test": "overlapping_arc_endpoint_touch_uses_position_tolerance",
+    "v1": "PlineVertex { x: 1.0, y: 0.0, bulge: 0.12565513657513097 }",
+    "v2": "PlineVertex { x: 0.8775825618903728, y: 0.479425538604203, bulge: 0.0 }",
+    "u1": "PlineVertex { x: 0.8775801647517099, y: 0.4794299265110196, bulge: 0.12565513657513097 }",
+    "u2": "PlineVertex { x: 0.5402980985064618, y: 0.8414736863089075, bulge: 0.0 }",
+    "pos_equal_eps": "1e-5",
+    "result": "OneIntersect { point: Vector2 { x: 0.8775801647517099, y: 0.4794299265110196 } }",
+    "observations": 1,
+    "references": [
+      {
+        "file": "tests/test_pline_seg_intersect.rs",
+        "test": "overlapping_arc_endpoint_touch_uses_position_tolerance",
+        "binary": "test_pline_seg_intersect"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01767",
+    "kind": "pline_seg_intr",
+    "binary": "test_pline_seg_intersect",
+    "test": "overlapping_arc_endpoint_touch_uses_position_tolerance",
+    "v1": "PlineVertex { x: 1000.0, y: 0.0, bulge: 0.12565513657513097 }",
+    "v2": "PlineVertex { x: 877.5825618903727, y: 479.425538604203, bulge: 0.0 }",
+    "u1": "PlineVertex { x: 877.5801647517098, y: 479.42992651101963, bulge: 0.12565513657513097 }",
+    "u2": "PlineVertex { x: 540.2980985064618, y: 841.4736863089075, bulge: 0.0 }",
+    "pos_equal_eps": "0.01",
+    "result": "OneIntersect { point: Vector2 { x: 877.5801647517098, y: 479.42992651101963 } }",
+    "observations": 1,
+    "references": [
+      {
+        "file": "tests/test_pline_seg_intersect.rs",
+        "test": "overlapping_arc_endpoint_touch_uses_position_tolerance",
+        "binary": "test_pline_seg_intersect"
+      }
+    ],
+    "helper_only": false
+  }
+]

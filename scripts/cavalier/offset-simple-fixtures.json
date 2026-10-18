@@ -1,0 +1,541 @@
+[
+  {
+    "name": "empty_returns_empty",
+    "closed": false,
+    "vertices": [],
+    "offset": 5,
+    "expected": []
+  },
+  {
+    "name": "circle_collapsed_into_point",
+    "closed": true,
+    "vertices": [
+      [
+        0.0,
+        0.0,
+        1.0
+      ],
+      [
+        2.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "offset": 1.0,
+    "expected": []
+  },
+  {
+    "name": "square_collapsed_into_point",
+    "closed": true,
+    "vertices": [
+      [
+        -1.0,
+        -1.0,
+        0.0
+      ],
+      [
+        1.0,
+        -1.0,
+        0.0
+      ],
+      [
+        1.0,
+        1.0,
+        0.0
+      ],
+      [
+        -1.0,
+        1.0,
+        0.0
+      ]
+    ],
+    "offset": 1.0,
+    "expected": []
+  },
+  {
+    "name": "circle_collapsed",
+    "closed": true,
+    "vertices": [
+      [
+        0.0,
+        0.0,
+        1.0
+      ],
+      [
+        2.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "offset": 2.0,
+    "expected": []
+  },
+  {
+    "name": "square_collapsed",
+    "closed": true,
+    "vertices": [
+      [
+        -1.0,
+        -1.0,
+        0.0
+      ],
+      [
+        1.0,
+        -1.0,
+        0.0
+      ],
+      [
+        1.0,
+        1.0,
+        0.0
+      ],
+      [
+        -1.0,
+        1.0,
+        0.0
+      ]
+    ],
+    "offset": 2.0,
+    "expected": []
+  },
+  {
+    "name": "closed_rectangle_inward",
+    "closed": true,
+    "vertices": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        20.0,
+        0.0,
+        0.0
+      ],
+      [
+        20.0,
+        10.0,
+        0.0
+      ],
+      [
+        0.0,
+        10.0,
+        0.0
+      ]
+    ],
+    "offset": 2.0,
+    "expected": [
+      {
+        "vertex_count": 4,
+        "area": 96.0,
+        "length": 44.0,
+        "bounds": [
+          2.0,
+          2.0,
+          18.0,
+          8.0
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_rectangle_outward",
+    "closed": true,
+    "vertices": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        20.0,
+        0.0,
+        0.0
+      ],
+      [
+        20.0,
+        10.0,
+        0.0
+      ],
+      [
+        0.0,
+        10.0,
+        0.0
+      ]
+    ],
+    "offset": -2.0,
+    "expected": [
+      {
+        "vertex_count": 8,
+        "area": 332.56637061436,
+        "length": 72.566370614359,
+        "bounds": [
+          -2.0,
+          -2.0,
+          22.0,
+          12.0
+        ]
+      }
+    ]
+  },
+  {
+    "name": "open_rectangle_inward",
+    "closed": false,
+    "vertices": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        20.0,
+        0.0,
+        0.0
+      ],
+      [
+        20.0,
+        10.0,
+        0.0
+      ],
+      [
+        0.0,
+        10.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "offset": 2.0,
+    "expected": [
+      {
+        "vertex_count": 5,
+        "area": 0.0,
+        "length": 44.0,
+        "bounds": [
+          2.0,
+          2.0,
+          18.0,
+          8.0
+        ]
+      }
+    ]
+  },
+  {
+    "name": "open_rectangle_outward",
+    "closed": false,
+    "vertices": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        20.0,
+        0.0,
+        0.0
+      ],
+      [
+        20.0,
+        10.0,
+        0.0
+      ],
+      [
+        0.0,
+        10.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "offset": -2.0,
+    "expected": [
+      {
+        "vertex_count": 8,
+        "area": 0.0,
+        "length": 69.424777960769,
+        "bounds": [
+          -2.0,
+          -2.0,
+          22.0,
+          12.0
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_rectangle_into_overlapping_line",
+    "closed": true,
+    "vertices": [
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        20.0,
+        0.0,
+        0.0
+      ],
+      [
+        20.0,
+        10.0,
+        0.0
+      ],
+      [
+        0.0,
+        10.0,
+        0.0
+      ]
+    ],
+    "offset": 5.0,
+    "expected": [
+      {
+        "vertex_count": 2,
+        "area": 0.0,
+        "length": 20.0,
+        "bounds": [
+          5.0,
+          5.0,
+          15.0,
+          5.0
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_diamond_offset_inward",
+    "closed": true,
+    "vertices": [
+      [
+        -10.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        10.0,
+        0.0
+      ],
+      [
+        10.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        -10.0,
+        0.0
+      ]
+    ],
+    "offset": -5.0,
+    "expected": [
+      {
+        "vertex_count": 4,
+        "area": -17.157287525381,
+        "length": 16.568542494924,
+        "bounds": [
+          -2.9289321881345,
+          -2.9289321881345,
+          2.9289321881345,
+          2.9289321881345
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_diamond_offset_outward",
+    "closed": true,
+    "vertices": [
+      [
+        -10.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        10.0,
+        0.0
+      ],
+      [
+        10.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        -10.0,
+        0.0
+      ]
+    ],
+    "offset": 5.0,
+    "expected": [
+      {
+        "vertex_count": 8,
+        "area": -561.38252881436,
+        "length": 87.984469030822,
+        "bounds": [
+          -15.0,
+          -15.0,
+          15.0,
+          15.0
+        ]
+      }
+    ]
+  },
+  {
+    "name": "open_diamond_offset_inward",
+    "closed": false,
+    "vertices": [
+      [
+        -10.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        10.0,
+        0.0
+      ],
+      [
+        10.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        -10.0,
+        0.0
+      ],
+      [
+        -10.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "offset": -5.0,
+    "expected": [
+      {
+        "vertex_count": 5,
+        "area": 0.0,
+        "length": 16.568542494924,
+        "bounds": [
+          -2.9289321881345,
+          -2.9289321881345,
+          2.9289321881345,
+          2.9289321881345
+        ]
+      }
+    ]
+  },
+  {
+    "name": "open_diamond_offset_outward",
+    "closed": false,
+    "vertices": [
+      [
+        -10.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        10.0,
+        0.0
+      ],
+      [
+        10.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        -10.0,
+        0.0
+      ],
+      [
+        -10.0,
+        0.0,
+        0.0
+      ]
+    ],
+    "offset": 5.0,
+    "expected": [
+      {
+        "vertex_count": 8,
+        "area": 0.0,
+        "length": 80.130487396847,
+        "bounds": [
+          -13.535533905933,
+          -15.0,
+          15.0,
+          15.0
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_circle_offset_inward",
+    "closed": true,
+    "vertices": [
+      [
+        -5.0,
+        0.0,
+        1.0
+      ],
+      [
+        5.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "offset": 3.0,
+    "expected": [
+      {
+        "vertex_count": 2,
+        "area": 12.566370614359,
+        "length": 12.566370614359,
+        "bounds": [
+          -2.0,
+          -2.0,
+          2.0,
+          2.0
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_circle_offset_outward",
+    "closed": true,
+    "vertices": [
+      [
+        -5.0,
+        0.0,
+        1.0
+      ],
+      [
+        5.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "offset": -3.0,
+    "expected": [
+      {
+        "vertex_count": 2,
+        "area": 201.06192982975,
+        "length": 50.265482457437,
+        "bounds": [
+          -8.0,
+          -8.0,
+          8.0,
+          8.0
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,11 @@
+  Compiling gleam_stdlib
+  Compiling svg_path
+  Compiling cavalier_audit_probe
+   Compiled in 0.45s
+    Running cavalier_audit_probe.main
+radius 1e6 control
+Ok(Projection(at: 0.29999980000779025, point: Point(x: 2.9999980000492976, y: -0.000010500079952180386), distance: 1.000010500081952))
+radius 1e7 default
+Error(DistanceMaxIterationsReached(estimate: 0.2999999802063109, value: 1.825134034865738e-8))
+radius 1e7 with 1000 iterations
+Error(DistanceMaxIterationsReached(estimate: 0.2999999802063109, value: 1.825134034865738e-8))

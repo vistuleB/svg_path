@@ -1,0 +1,6243 @@
+[
+  {
+    "binary": "cavalier_contours",
+    "test": "core::math::vector2::tests::ops",
+    "source": "src/core/math/vector2.rs",
+    "cases": [],
+    "statuses": {},
+    "coverage": "not adapted"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "core::math::base_math::tests::small_arc_sweep_excludes_opposite_point_at_different_scales",
+    "source": "src/core/math/base_math.rs",
+    "cases": [],
+    "statuses": {},
+    "coverage": "not adapted"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "core::math::base_math::tests::arc_sweep_uses_position_tolerance_at_both_boundaries",
+    "source": "src/core/math/base_math.rs",
+    "cases": [],
+    "statuses": {},
+    "coverage": "not adapted"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_intersects::find_intersects_tests::filters_two_polyline_segment_pairs",
+    "source": "src/polyline/internal/pline_intersects.rs",
+    "cases": [
+      "CX00007"
+    ],
+    "statuses": {
+      "scope": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_intersects::find_intersects_tests::open_polylines_end_touch_start",
+    "source": "src/polyline/internal/pline_intersects.rs",
+    "cases": [
+      "CC00017",
+      "CX00008",
+      "CX00009"
+    ],
+    "statuses": {
+      "match": 1,
+      "scope": 2
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_intersects::find_intersects_tests::open_polylines_end_touch_start_flipped",
+    "source": "src/polyline/internal/pline_intersects.rs",
+    "cases": [
+      "CC00018",
+      "CX00008",
+      "CX00009"
+    ],
+    "statuses": {
+      "match": 1,
+      "scope": 2
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_intersects::find_intersects_tests::open_polylines_start_points_touch",
+    "source": "src/polyline/internal/pline_intersects.rs",
+    "cases": [
+      "CC00019",
+      "CX00008",
+      "CX00010"
+    ],
+    "statuses": {
+      "match": 1,
+      "scope": 2
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_intersects::find_intersects_tests::circles_touching",
+    "source": "src/polyline/internal/pline_intersects.rs",
+    "cases": [
+      "CC00013",
+      "CC00014",
+      "CC00015",
+      "CC00016",
+      "CX00001",
+      "CX00002",
+      "CX00005",
+      "CX00006"
+    ],
+    "statuses": {
+      "discrepancy": 2,
+      "match": 2,
+      "scope": 4
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_intersects::find_intersects_tests::circles_overlapping_opposing_direction_flipped",
+    "source": "src/polyline/internal/pline_intersects.rs",
+    "cases": [
+      "CC00005",
+      "CC00006",
+      "CC00007",
+      "CC00008",
+      "CX00001",
+      "CX00002",
+      "CX00003",
+      "CX00004"
+    ],
+    "statuses": {
+      "match": 2,
+      "contract-difference": 2,
+      "scope": 4
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_intersects::find_intersects_tests::circles_overlapping_opposing_direction",
+    "source": "src/polyline/internal/pline_intersects.rs",
+    "cases": [
+      "CC00001",
+      "CC00002",
+      "CC00003",
+      "CC00004",
+      "CX00001",
+      "CX00002",
+      "CX00003",
+      "CX00004"
+    ],
+    "statuses": {
+      "match": 2,
+      "contract-difference": 2,
+      "scope": 4
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_intersects::find_intersects_tests::circles_overlapping_same_direction",
+    "source": "src/polyline/internal/pline_intersects.rs",
+    "cases": [
+      "CC00009",
+      "CC00010",
+      "CC00011",
+      "CC00012",
+      "CX00001",
+      "CX00002"
+    ],
+    "statuses": {
+      "contract-difference": 2,
+      "match": 2,
+      "scope": 2
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_intersects::find_intersects_tests::uses_pos_equal_eps",
+    "source": "src/polyline/internal/pline_intersects.rs",
+    "cases": [
+      "CC00020",
+      "CX00011",
+      "CX00012"
+    ],
+    "statuses": {
+      "discrepancy": 1,
+      "scope": 2
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_intersects::global_self_intersect_tests::circle_no_intersects",
+    "source": "src/polyline/internal/pline_intersects.rs",
+    "cases": [
+      "CX00013",
+      "CX00014",
+      "CX00015",
+      "CX00016",
+      "CX00017",
+      "CX00018",
+      "CX00019",
+      "CX00020",
+      "CX00021",
+      "CX00022",
+      "CX00023",
+      "CX00024",
+      "CX00025",
+      "CX00026",
+      "CX00027",
+      "CX00028",
+      "CX00029",
+      "CX00030",
+      "CX00031",
+      "CX00032",
+      "CX00033",
+      "CX00034",
+      "CX00035",
+      "CX00036",
+      "CX00037",
+      "CX00038",
+      "CX00039",
+      "CX00040"
+    ],
+    "statuses": {
+      "scope": 26,
+      "match": 2
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_intersects::global_self_intersect_tests::filters_global_segment_pairs",
+    "source": "src/polyline/internal/pline_intersects.rs",
+    "cases": [
+      "CX00007",
+      "CX00041",
+      "CX00042",
+      "CX00043"
+    ],
+    "statuses": {
+      "scope": 4
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_intersects::global_self_intersect_tests::half_circle_overlapping_self",
+    "source": "src/polyline/internal/pline_intersects.rs",
+    "cases": [
+      "CX00044",
+      "CX00045"
+    ],
+    "statuses": {
+      "scope": 2
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_intersects::global_self_intersect_tests::long_open_polyline_circle",
+    "source": "src/polyline/internal/pline_intersects.rs",
+    "cases": [
+      "CC00021",
+      "CC00022",
+      "CC00023",
+      "CX00046",
+      "CX00047",
+      "CX00048",
+      "CX00049"
+    ],
+    "statuses": {
+      "match": 3,
+      "scope": 4
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_intersects::global_self_intersect_tests::short_open_polyline_circle",
+    "source": "src/polyline/internal/pline_intersects.rs",
+    "cases": [
+      "CC00024",
+      "CX00013",
+      "CX00015",
+      "CX00017",
+      "CX00018",
+      "CX00019",
+      "CX00020",
+      "CX00021",
+      "CX00022",
+      "CX00023",
+      "CX00024",
+      "CX00025",
+      "CX00026",
+      "CX00027",
+      "CX00028",
+      "CX00029",
+      "CX00030",
+      "CX00031",
+      "CX00032",
+      "CX00033",
+      "CX00034",
+      "CX00035",
+      "CX00036",
+      "CX00037",
+      "CX00038",
+      "CX00039",
+      "CX00040",
+      "CX00050",
+      "CX00051"
+    ],
+    "statuses": {
+      "match": 3,
+      "scope": 26
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_intersects::local_self_intersect_tests::circle_no_intersects",
+    "source": "src/polyline/internal/pline_intersects.rs",
+    "cases": [],
+    "statuses": {},
+    "coverage": "not adapted"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_intersects::local_self_intersect_tests::empty_polyline",
+    "source": "src/polyline/internal/pline_intersects.rs",
+    "cases": [],
+    "statuses": {},
+    "coverage": "not adapted"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_intersects::local_self_intersect_tests::filters_local_segment_pairs",
+    "source": "src/polyline/internal/pline_intersects.rs",
+    "cases": [],
+    "statuses": {},
+    "coverage": "not adapted"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_intersects::local_self_intersect_tests::half_circle_overlapping_self",
+    "source": "src/polyline/internal/pline_intersects.rs",
+    "cases": [],
+    "statuses": {},
+    "coverage": "not adapted"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_intersects::local_self_intersect_tests::long_open_polyline_circle",
+    "source": "src/polyline/internal/pline_intersects.rs",
+    "cases": [
+      "CC00025",
+      "CC00026",
+      "CC00027"
+    ],
+    "statuses": {
+      "match": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_intersects::local_self_intersect_tests::short_open_polyline_circle",
+    "source": "src/polyline/internal/pline_intersects.rs",
+    "cases": [
+      "CC00028"
+    ],
+    "statuses": {
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_intersects::local_self_intersect_tests::single_vertex",
+    "source": "src/polyline/internal/pline_intersects.rs",
+    "cases": [],
+    "statuses": {},
+    "coverage": "not adapted"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_intersects::sort_and_join_overlapping_intersects_tests::overlapping_arcs",
+    "source": "src/polyline/internal/pline_intersects.rs",
+    "cases": [
+      "CC00029",
+      "CC00030",
+      "CC00031",
+      "CC00032",
+      "CC00033",
+      "CC00034",
+      "CC00035",
+      "CX00052",
+      "CX00053",
+      "CX00054",
+      "CX00055",
+      "CX00056",
+      "CX00057",
+      "CX00058",
+      "CX00059",
+      "CX00060",
+      "CX00061",
+      "CX00062",
+      "CX00063",
+      "CX00064",
+      "CX00065",
+      "CX00066"
+    ],
+    "statuses": {
+      "match": 6,
+      "contract-difference": 5,
+      "scope": 11
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_intersects::sort_and_join_overlapping_intersects_tests::overlapping_arcs_flipped",
+    "source": "src/polyline/internal/pline_intersects.rs",
+    "cases": [
+      "CC00036",
+      "CC00037",
+      "CC00038",
+      "CC00039",
+      "CC00040",
+      "CC00041",
+      "CC00042",
+      "CX00052",
+      "CX00053",
+      "CX00054",
+      "CX00055",
+      "CX00056",
+      "CX00057",
+      "CX00058",
+      "CX00059",
+      "CX00060",
+      "CX00061",
+      "CX00062",
+      "CX00067",
+      "CX00068",
+      "CX00069",
+      "CX00070",
+      "CX00071"
+    ],
+    "statuses": {
+      "match": 7,
+      "contract-difference": 5,
+      "scope": 11
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_intersects::sort_and_join_overlapping_intersects_tests::overlapping_circles_opposing_dir",
+    "source": "src/polyline/internal/pline_intersects.rs",
+    "cases": [
+      "CC00001",
+      "CC00002",
+      "CC00003",
+      "CC00004",
+      "CX00001",
+      "CX00002",
+      "CX00003",
+      "CX00004",
+      "CX00072",
+      "CX00073"
+    ],
+    "statuses": {
+      "match": 4,
+      "contract-difference": 2,
+      "scope": 4
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_intersects::sort_and_join_overlapping_intersects_tests::overlapping_circles_perpendicular_vertexes",
+    "source": "src/polyline/internal/pline_intersects.rs",
+    "cases": [
+      "CC00043",
+      "CC00044",
+      "CC00045",
+      "CC00046",
+      "CX00001",
+      "CX00002",
+      "CX00074",
+      "CX00075",
+      "CX00076",
+      "CX00077"
+    ],
+    "statuses": {
+      "contract-difference": 4,
+      "scope": 4,
+      "match": 2
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_intersects::sort_and_join_overlapping_intersects_tests::overlapping_circles_same_dir",
+    "source": "src/polyline/internal/pline_intersects.rs",
+    "cases": [
+      "CC00009",
+      "CC00010",
+      "CC00011",
+      "CC00012",
+      "CX00001",
+      "CX00002",
+      "CX00078"
+    ],
+    "statuses": {
+      "contract-difference": 2,
+      "match": 3,
+      "scope": 2
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_intersects::sort_and_join_overlapping_intersects_tests::overlapping_circles_same_dir_flipped_index",
+    "source": "src/polyline/internal/pline_intersects.rs",
+    "cases": [
+      "CC00009",
+      "CC00010",
+      "CC00011",
+      "CC00012",
+      "CX00001",
+      "CX00002",
+      "CX00079"
+    ],
+    "statuses": {
+      "contract-difference": 2,
+      "match": 3,
+      "scope": 2
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_offset::tests::ambiguous_multiway_touch_falls_back_to_preserve_order",
+    "source": "src/polyline/internal/pline_offset.rs",
+    "cases": [],
+    "statuses": {},
+    "coverage": "not adapted"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_offset::tests::coincident_coverage_can_span_lines_and_arcs",
+    "source": "src/polyline/internal/pline_offset.rs",
+    "cases": [
+      "CX00080",
+      "CX00081",
+      "CX00082",
+      "CX00083",
+      "CX00084",
+      "CX00085",
+      "CX00086",
+      "CX00087",
+      "CX00088",
+      "CX00089",
+      "CX00090",
+      "CX00091"
+    ],
+    "statuses": {
+      "match": 12
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_offset::tests::discarded_overlap_blocks_preserve_touch_routing_at_shared_boundary",
+    "source": "src/polyline/internal/pline_offset.rs",
+    "cases": [],
+    "statuses": {},
+    "coverage": "not adapted"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_offset::tests::dissection_points_sort_into_segment_ranges",
+    "source": "src/polyline/internal/pline_offset.rs",
+    "cases": [],
+    "statuses": {},
+    "coverage": "not adapted"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_offset::tests::indexed_node_lookup_handles_unbucketed_coordinates",
+    "source": "src/polyline/internal/pline_offset.rs",
+    "cases": [],
+    "statuses": {},
+    "coverage": "not adapted"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_offset::tests::indexed_node_lookup_uses_bucket_probe_order_for_multiple_matches",
+    "source": "src/polyline/internal/pline_offset.rs",
+    "cases": [],
+    "statuses": {},
+    "coverage": "not adapted"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_offset::tests::one_occurrence_can_participate_in_several_relations",
+    "source": "src/polyline/internal/pline_offset.rs",
+    "cases": [
+      "CX00092",
+      "CX00093",
+      "CX00094",
+      "CX00095",
+      "CX00096",
+      "CX00097"
+    ],
+    "statuses": {
+      "match": 6
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_offset::tests::one_segment_pair_can_have_two_distinct_contact_nodes",
+    "source": "src/polyline/internal/pline_offset.rs",
+    "cases": [
+      "CX00098",
+      "CX00099",
+      "CX00100",
+      "CX00101",
+      "CX00102",
+      "CX00103",
+      "CX00104",
+      "CX00105"
+    ],
+    "statuses": {
+      "match": 8
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_offset::tests::preserve_collection_records_overlap_boundaries_without_coverage",
+    "source": "src/polyline/internal/pline_offset.rs",
+    "cases": [
+      "CC00047",
+      "CC00048",
+      "CC00049",
+      "CX00106",
+      "CX00107",
+      "CX00108",
+      "CX00109",
+      "CX00110",
+      "CX00111",
+      "CX00112",
+      "CX00113"
+    ],
+    "statuses": {
+      "match": 8,
+      "contract-difference": 1,
+      "scope": 2
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_offset::tests::preserve_routing_visits_related_slice_before_closing",
+    "source": "src/polyline/internal/pline_offset.rs",
+    "cases": [],
+    "statuses": {},
+    "coverage": "not adapted"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_offset::tests::repeated_clip_reports_share_one_occurrence",
+    "source": "src/polyline/internal/pline_offset.rs",
+    "cases": [
+      "CX00114"
+    ],
+    "statuses": {
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_offset::tests::repeated_self_contact_reports_share_one_relation",
+    "source": "src/polyline/internal/pline_offset.rs",
+    "cases": [
+      "CX00092",
+      "CX00093",
+      "CX00094",
+      "CX00095"
+    ],
+    "statuses": {
+      "match": 4
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_offset::tests::reversed_relation_reports_merge_and_strengthen_one_pair",
+    "source": "src/polyline/internal/pline_offset.rs",
+    "cases": [],
+    "statuses": {},
+    "coverage": "not adapted"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_offset::tests::segment_end_occurrences_are_canonicalized_to_outgoing_segment",
+    "source": "src/polyline/internal/pline_offset.rs",
+    "cases": [
+      "CX00115",
+      "CX00116",
+      "CX00117",
+      "CX00118"
+    ],
+    "statuses": {
+      "match": 4
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_offset::tests::segment_index_compacts_only_for_dense_invalidity",
+    "source": "src/polyline/internal/pline_offset.rs",
+    "cases": [
+      "CX00119",
+      "CX00120",
+      "CX00121",
+      "CX00122",
+      "CX00123"
+    ],
+    "statuses": {
+      "scope": 5
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_offset::tests::self_intersection_collection_records_full_arc_overlap",
+    "source": "src/polyline/internal/pline_offset.rs",
+    "cases": [
+      "CC00047",
+      "CC00048",
+      "CC00049",
+      "CX00106",
+      "CX00107",
+      "CX00108",
+      "CX00109",
+      "CX00110",
+      "CX00111",
+      "CX00112",
+      "CX00113"
+    ],
+    "statuses": {
+      "match": 8,
+      "contract-difference": 1,
+      "scope": 2
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_offset::tests::separate_behavior_keeps_crossing_closure_order",
+    "source": "src/polyline/internal/pline_offset.rs",
+    "cases": [],
+    "statuses": {},
+    "coverage": "not adapted"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_offset::tests::separate_routing_prioritizes_relation_to_initial_occurrence",
+    "source": "src/polyline/internal/pline_offset.rs",
+    "cases": [],
+    "statuses": {},
+    "coverage": "not adapted"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_offset::tests::shared_endpoint_reports_use_one_occurrence_in_both_directions",
+    "source": "src/polyline/internal/pline_offset.rs",
+    "cases": [
+      "CX00124",
+      "CX00125"
+    ],
+    "statuses": {
+      "match": 2
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_offset::tests::short_tangent_is_classified_as_crossing",
+    "source": "src/polyline/internal/pline_offset.rs",
+    "cases": [
+      "CX00126",
+      "CX00127"
+    ],
+    "statuses": {
+      "match": 2
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_offset::tests::slices_with_invalid_indexes_are_rejected",
+    "source": "src/polyline/internal/pline_offset.rs",
+    "cases": [],
+    "statuses": {},
+    "coverage": "not adapted"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_offset::tests::unrelated_nodes_do_not_connect_by_position",
+    "source": "src/polyline/internal/pline_offset.rs",
+    "cases": [],
+    "statuses": {},
+    "coverage": "not adapted"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::raw_pline_offset::tests::closed_raw_offsets_have_segment_aligned_validity",
+    "source": "src/polyline/internal/raw_pline_offset.rs",
+    "cases": [
+      "CC00050",
+      "CC00051",
+      "CC00052",
+      "CC00053",
+      "CC00054",
+      "CC00055",
+      "CX00128",
+      "CX00129"
+    ],
+    "statuses": {
+      "match": 8
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::raw_pline_offset::tests::collapsed_arc_spans_are_invalid",
+    "source": "src/polyline/internal/raw_pline_offset.rs",
+    "cases": [
+      "CX00130"
+    ],
+    "statuses": {
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::raw_pline_offset::tests::failed_inner_join_connector_is_recorded_as_invalid",
+    "source": "src/polyline/internal/raw_pline_offset.rs",
+    "cases": [
+      "CC00056"
+    ],
+    "statuses": {
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::raw_pline_offset::tests::inner_join_endpoint_tolerance_clamps_the_local_candidate",
+    "source": "src/polyline/internal/raw_pline_offset.rs",
+    "cases": [
+      "CC00057"
+    ],
+    "statuses": {
+      "discrepancy": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::raw_pline_offset::tests::line_line_joins_have_explicit_local_classes",
+    "source": "src/polyline/internal/raw_pline_offset.rs",
+    "cases": [
+      "CC00056",
+      "CC00058"
+    ],
+    "statuses": {
+      "match": 2
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::raw_pline_offset::tests::mixed_and_arc_joins_have_explicit_local_classes",
+    "source": "src/polyline/internal/raw_pline_offset.rs",
+    "cases": [
+      "CC00059",
+      "CC00060",
+      "CC00061",
+      "CC00062",
+      "CC00063",
+      "CX00131",
+      "CX00132",
+      "CX00133",
+      "CX00134"
+    ],
+    "statuses": {
+      "match": 9
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::raw_pline_offset::tests::near_collinear_corner_uses_normalized_angular_tolerance",
+    "source": "src/polyline/internal/raw_pline_offset.rs",
+    "cases": [],
+    "statuses": {},
+    "coverage": "not adapted"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::raw_pline_offset::tests::normal_raw_offsets_have_no_invalid_segments",
+    "source": "src/polyline/internal/raw_pline_offset.rs",
+    "cases": [],
+    "statuses": {},
+    "coverage": "not adapted"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::raw_pline_offset::tests::raw_arc_span_bulge_uses_cached_sweep_and_trim_parameters",
+    "source": "src/polyline/internal/raw_pline_offset.rs",
+    "cases": [
+      "CX00130"
+    ],
+    "statuses": {
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::raw_pline_offset::tests::raw_offset_segments_cache_line_arc_and_collapsed_geometry",
+    "source": "src/polyline/internal/raw_pline_offset.rs",
+    "cases": [
+      "CX00135"
+    ],
+    "statuses": {
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::raw_pline_offset::tests::reported_raw_offset_has_an_invalid_source_span",
+    "source": "src/polyline/internal/raw_pline_offset.rs",
+    "cases": [
+      "CC00064",
+      "CC00065"
+    ],
+    "statuses": {
+      "match": 2
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::raw_pline_offset::tests::round_join_bulge_matches_sweep_and_offset_direction",
+    "source": "src/polyline/internal/raw_pline_offset.rs",
+    "cases": [],
+    "statuses": {},
+    "coverage": "not adapted"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::raw_pline_offset::tests::unusable_nearest_line_arc_candidate_does_not_select_farther_crossing",
+    "source": "src/polyline/internal/raw_pline_offset.rs",
+    "cases": [
+      "CC00066",
+      "CX00131"
+    ],
+    "statuses": {
+      "match": 2
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::raw_pline_offset::tests::zero_raw_offset_is_an_exact_copy",
+    "source": "src/polyline/internal/raw_pline_offset.rs",
+    "cases": [],
+    "statuses": {},
+    "coverage": "not adapted"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::pline_seg::tests::dist_from_segment_start_matches_arc_fractions_in_both_directions",
+    "source": "src/polyline/pline_seg.rs",
+    "cases": [
+      "CX00136",
+      "CX00137",
+      "CX00138",
+      "CX00139",
+      "CX00140",
+      "CX00141",
+      "CX00142",
+      "CX00143",
+      "CX00144",
+      "CX00145",
+      "CX00146",
+      "CX00147",
+      "CX00148",
+      "CX00149",
+      "CX00150",
+      "CX00151",
+      "CX00152",
+      "CX00153",
+      "CX00154",
+      "CX00155",
+      "CX00156",
+      "CX00157",
+      "CX00158",
+      "CX00159",
+      "CX00160",
+      "CX00161",
+      "CX00162",
+      "CX00163",
+      "CX00164",
+      "CX00165"
+    ],
+    "statuses": {
+      "match": 30
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::pline_seg::tests::dist_from_segment_start_snaps_near_arc_endpoints",
+    "source": "src/polyline/pline_seg.rs",
+    "cases": [
+      "CX00166",
+      "CX00167"
+    ],
+    "statuses": {
+      "match": 1,
+      "discrepancy": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::pline_seg::tests::seg_arc_radius_and_center_returns_expected_geometry",
+    "source": "src/polyline/pline_seg.rs",
+    "cases": [
+      "CX00168",
+      "CX00169",
+      "CX00170",
+      "CX00171",
+      "CX00172",
+      "CX00173"
+    ],
+    "statuses": {
+      "match": 6
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::pline_seg::tests::seg_bounding_box_returns_exact_arc_extents",
+    "source": "src/polyline/pline_seg.rs",
+    "cases": [
+      "CX00670",
+      "CX00671",
+      "CX00672"
+    ],
+    "statuses": {
+      "match": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::pline_seg::tests::seg_closest_point_returns_arc_projection_or_nearest_endpoint",
+    "source": "src/polyline/pline_seg.rs",
+    "cases": [
+      "CX00673",
+      "CX00674",
+      "CX00675",
+      "CX00676",
+      "CX00677",
+      "CX00678",
+      "CX00679",
+      "CX00680",
+      "CX00681",
+      "CX00682",
+      "CX00683",
+      "CX00684"
+    ],
+    "statuses": {
+      "match": 12
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::pline_seg::tests::seg_bounding_box_matches_angle_based_extents",
+    "source": "src/polyline/pline_seg.rs",
+    "cases": [
+      "CX00174",
+      "CX00175",
+      "CX00176",
+      "CX00177",
+      "CX00178",
+      "CX00179",
+      "CX00180",
+      "CX00181",
+      "CX00182",
+      "CX00183",
+      "CX00184",
+      "CX00185",
+      "CX00186",
+      "CX00187",
+      "CX00188",
+      "CX00189",
+      "CX00190",
+      "CX00191",
+      "CX00192",
+      "CX00193",
+      "CX00194",
+      "CX00195",
+      "CX00196",
+      "CX00197",
+      "CX00198",
+      "CX00199",
+      "CX00200",
+      "CX00201",
+      "CX00202",
+      "CX00203",
+      "CX00204",
+      "CX00205",
+      "CX00206",
+      "CX00207",
+      "CX00208",
+      "CX00209",
+      "CX00210",
+      "CX00211",
+      "CX00212",
+      "CX00213",
+      "CX00214",
+      "CX00215",
+      "CX00216",
+      "CX00217",
+      "CX00218",
+      "CX00219",
+      "CX00220",
+      "CX00221",
+      "CX00222",
+      "CX00223",
+      "CX00224",
+      "CX00225",
+      "CX00226",
+      "CX00227",
+      "CX00228",
+      "CX00229",
+      "CX00230",
+      "CX00231",
+      "CX00232",
+      "CX00233",
+      "CX00234",
+      "CX00235",
+      "CX00236",
+      "CX00237",
+      "CX00238",
+      "CX00239",
+      "CX00240",
+      "CX00241",
+      "CX00242",
+      "CX00243",
+      "CX00244",
+      "CX00245",
+      "CX00246",
+      "CX00247",
+      "CX00248",
+      "CX00249",
+      "CX00250",
+      "CX00251",
+      "CX00252",
+      "CX00253",
+      "CX00254",
+      "CX00255",
+      "CX00256",
+      "CX00257",
+      "CX00258",
+      "CX00259",
+      "CX00260",
+      "CX00261",
+      "CX00262",
+      "CX00263",
+      "CX00264",
+      "CX00265",
+      "CX00266",
+      "CX00267",
+      "CX00268",
+      "CX00269",
+      "CX00270",
+      "CX00271",
+      "CX00272",
+      "CX00273",
+      "CX00274",
+      "CX00275",
+      "CX00276",
+      "CX00277",
+      "CX00278",
+      "CX00279",
+      "CX00280",
+      "CX00281",
+      "CX00282",
+      "CX00283",
+      "CX00284",
+      "CX00285",
+      "CX00286",
+      "CX00287",
+      "CX00288",
+      "CX00289",
+      "CX00290",
+      "CX00291",
+      "CX00292",
+      "CX00293",
+      "CX00294",
+      "CX00295",
+      "CX00296",
+      "CX00297",
+      "CX00298",
+      "CX00299",
+      "CX00300",
+      "CX00301",
+      "CX00302",
+      "CX00303",
+      "CX00304",
+      "CX00305",
+      "CX00306",
+      "CX00307",
+      "CX00308",
+      "CX00309",
+      "CX00310",
+      "CX00311",
+      "CX00312",
+      "CX00313",
+      "CX00314",
+      "CX00315",
+      "CX00316",
+      "CX00317",
+      "CX00318",
+      "CX00319",
+      "CX00320",
+      "CX00321",
+      "CX00322",
+      "CX00323",
+      "CX00324",
+      "CX00325",
+      "CX00326",
+      "CX00327",
+      "CX00328",
+      "CX00329",
+      "CX00330",
+      "CX00331",
+      "CX00332",
+      "CX00333",
+      "CX00334",
+      "CX00335",
+      "CX00336",
+      "CX00337",
+      "CX00338",
+      "CX00339",
+      "CX00340",
+      "CX00341",
+      "CX00342",
+      "CX00343",
+      "CX00344",
+      "CX00345",
+      "CX00346",
+      "CX00347",
+      "CX00348",
+      "CX00349",
+      "CX00350",
+      "CX00351",
+      "CX00352",
+      "CX00353",
+      "CX00354",
+      "CX00355",
+      "CX00356",
+      "CX00357",
+      "CX00358",
+      "CX00359",
+      "CX00360",
+      "CX00361",
+      "CX00362",
+      "CX00363",
+      "CX00364",
+      "CX00365",
+      "CX00366",
+      "CX00367",
+      "CX00368",
+      "CX00369",
+      "CX00370",
+      "CX00371",
+      "CX00372",
+      "CX00373",
+      "CX00374",
+      "CX00375",
+      "CX00376",
+      "CX00377",
+      "CX00378",
+      "CX00379",
+      "CX00380",
+      "CX00381",
+      "CX00382",
+      "CX00383",
+      "CX00384",
+      "CX00385",
+      "CX00386",
+      "CX00387",
+      "CX00388",
+      "CX00389",
+      "CX00390",
+      "CX00391",
+      "CX00392",
+      "CX00393",
+      "CX00394",
+      "CX00395",
+      "CX00396",
+      "CX00397",
+      "CX00398",
+      "CX00399",
+      "CX00400",
+      "CX00401",
+      "CX00402",
+      "CX00403",
+      "CX00404",
+      "CX00405",
+      "CX00406",
+      "CX00407",
+      "CX00408",
+      "CX00409",
+      "CX00410",
+      "CX00411",
+      "CX00412",
+      "CX00413",
+      "CX00414",
+      "CX00415",
+      "CX00416",
+      "CX00417",
+      "CX00418",
+      "CX00419",
+      "CX00420",
+      "CX00421",
+      "CX00422",
+      "CX00423",
+      "CX00424",
+      "CX00425",
+      "CX00426",
+      "CX00427",
+      "CX00428",
+      "CX00429",
+      "CX00430",
+      "CX00431",
+      "CX00432",
+      "CX00433",
+      "CX00434",
+      "CX00435",
+      "CX00436",
+      "CX00437",
+      "CX00438",
+      "CX00439",
+      "CX00440",
+      "CX00441",
+      "CX00442",
+      "CX00443",
+      "CX00444",
+      "CX00445",
+      "CX00446",
+      "CX00447",
+      "CX00448",
+      "CX00449",
+      "CX00450",
+      "CX00451",
+      "CX00452",
+      "CX00453",
+      "CX00454",
+      "CX00455",
+      "CX00456",
+      "CX00457",
+      "CX00458",
+      "CX00459",
+      "CX00460",
+      "CX00461",
+      "CX00462",
+      "CX00463",
+      "CX00464",
+      "CX00465",
+      "CX00466",
+      "CX00467",
+      "CX00468",
+      "CX00469",
+      "CX00470",
+      "CX00471",
+      "CX00472",
+      "CX00473",
+      "CX00474",
+      "CX00475",
+      "CX00476",
+      "CX00477",
+      "CX00478",
+      "CX00479",
+      "CX00480",
+      "CX00481",
+      "CX00482",
+      "CX00483",
+      "CX00484",
+      "CX00485",
+      "CX00486",
+      "CX00487",
+      "CX00488",
+      "CX00489",
+      "CX00490",
+      "CX00491",
+      "CX00492",
+      "CX00493",
+      "CX00494",
+      "CX00495",
+      "CX00496",
+      "CX00497",
+      "CX00498",
+      "CX00499",
+      "CX00500",
+      "CX00501",
+      "CX00502",
+      "CX00503",
+      "CX00504",
+      "CX00505",
+      "CX00506",
+      "CX00507",
+      "CX00508",
+      "CX00509",
+      "CX00510",
+      "CX00511",
+      "CX00512",
+      "CX00513",
+      "CX00514",
+      "CX00515",
+      "CX00516",
+      "CX00517",
+      "CX00518",
+      "CX00519",
+      "CX00520",
+      "CX00521",
+      "CX00522",
+      "CX00523",
+      "CX00524",
+      "CX00525",
+      "CX00526",
+      "CX00527",
+      "CX00528",
+      "CX00529",
+      "CX00530",
+      "CX00531",
+      "CX00532",
+      "CX00533",
+      "CX00534",
+      "CX00535",
+      "CX00536",
+      "CX00537",
+      "CX00538",
+      "CX00539",
+      "CX00540",
+      "CX00541",
+      "CX00542",
+      "CX00543",
+      "CX00544",
+      "CX00545",
+      "CX00546",
+      "CX00547",
+      "CX00548",
+      "CX00549",
+      "CX00550",
+      "CX00551",
+      "CX00552",
+      "CX00553",
+      "CX00554",
+      "CX00555",
+      "CX00556",
+      "CX00557",
+      "CX00558",
+      "CX00559",
+      "CX00560",
+      "CX00561",
+      "CX00562",
+      "CX00563",
+      "CX00564",
+      "CX00565",
+      "CX00566",
+      "CX00567",
+      "CX00568",
+      "CX00569",
+      "CX00570",
+      "CX00571",
+      "CX00572",
+      "CX00573",
+      "CX00574",
+      "CX00575",
+      "CX00576",
+      "CX00577",
+      "CX00578",
+      "CX00579",
+      "CX00580",
+      "CX00581",
+      "CX00582",
+      "CX00583",
+      "CX00584",
+      "CX00585",
+      "CX00586",
+      "CX00587",
+      "CX00588",
+      "CX00589",
+      "CX00590",
+      "CX00591",
+      "CX00592",
+      "CX00593",
+      "CX00594",
+      "CX00595",
+      "CX00596",
+      "CX00597",
+      "CX00598",
+      "CX00599",
+      "CX00600",
+      "CX00601",
+      "CX00602",
+      "CX00603",
+      "CX00604",
+      "CX00605",
+      "CX00606",
+      "CX00607",
+      "CX00608",
+      "CX00609",
+      "CX00610",
+      "CX00611",
+      "CX00612",
+      "CX00613",
+      "CX00614",
+      "CX00615",
+      "CX00616",
+      "CX00617",
+      "CX00618",
+      "CX00619",
+      "CX00620",
+      "CX00621",
+      "CX00622",
+      "CX00623",
+      "CX00624",
+      "CX00625",
+      "CX00626",
+      "CX00627",
+      "CX00628",
+      "CX00629",
+      "CX00630",
+      "CX00631",
+      "CX00632",
+      "CX00633",
+      "CX00634",
+      "CX00635",
+      "CX00636",
+      "CX00637",
+      "CX00638",
+      "CX00639",
+      "CX00640",
+      "CX00641",
+      "CX00642",
+      "CX00643",
+      "CX00644",
+      "CX00645",
+      "CX00646",
+      "CX00647",
+      "CX00648",
+      "CX00649",
+      "CX00650",
+      "CX00651",
+      "CX00652",
+      "CX00653",
+      "CX00654",
+      "CX00655",
+      "CX00656",
+      "CX00657",
+      "CX00658",
+      "CX00659",
+      "CX00660",
+      "CX00661",
+      "CX00662",
+      "CX00663",
+      "CX00664",
+      "CX00665",
+      "CX00666",
+      "CX00667",
+      "CX00668",
+      "CX00669"
+    ],
+    "statuses": {
+      "match": 490,
+      "discrepancy": 6
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::pline_seg::tests::seg_fast_approx_bounding_box_extends_chord_by_sagitta",
+    "source": "src/polyline/pline_seg.rs",
+    "cases": [
+      "CX00930",
+      "CX00931",
+      "CX00932",
+      "CX00933"
+    ],
+    "statuses": {
+      "scope": 4
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::pline_seg::tests::seg_distance_is_greater_than_matches_closest_point_distance",
+    "source": "src/polyline/pline_seg.rs",
+    "cases": [
+      "CX00685",
+      "CX00686",
+      "CX00687",
+      "CX00688",
+      "CX00689",
+      "CX00690",
+      "CX00691",
+      "CX00692",
+      "CX00693",
+      "CX00694",
+      "CX00695",
+      "CX00696",
+      "CX00697",
+      "CX00698",
+      "CX00699",
+      "CX00700",
+      "CX00701",
+      "CX00702",
+      "CX00703",
+      "CX00704",
+      "CX00705",
+      "CX00706",
+      "CX00707",
+      "CX00708",
+      "CX00709",
+      "CX00710",
+      "CX00711",
+      "CX00712",
+      "CX00713",
+      "CX00714",
+      "CX00715",
+      "CX00716",
+      "CX00717",
+      "CX00718",
+      "CX00719",
+      "CX00720",
+      "CX00721",
+      "CX00722",
+      "CX00723",
+      "CX00724",
+      "CX00725",
+      "CX00726",
+      "CX00727",
+      "CX00728",
+      "CX00729",
+      "CX00730",
+      "CX00731",
+      "CX00732",
+      "CX00733",
+      "CX00734",
+      "CX00735",
+      "CX00736",
+      "CX00737",
+      "CX00738",
+      "CX00739",
+      "CX00740",
+      "CX00741",
+      "CX00742",
+      "CX00743",
+      "CX00744",
+      "CX00745",
+      "CX00746",
+      "CX00747",
+      "CX00748",
+      "CX00749",
+      "CX00750",
+      "CX00751",
+      "CX00752",
+      "CX00753",
+      "CX00754",
+      "CX00755",
+      "CX00756",
+      "CX00757",
+      "CX00758",
+      "CX00759",
+      "CX00760",
+      "CX00761",
+      "CX00762",
+      "CX00763",
+      "CX00764",
+      "CX00765",
+      "CX00766",
+      "CX00767",
+      "CX00768",
+      "CX00769",
+      "CX00770",
+      "CX00771",
+      "CX00772",
+      "CX00773",
+      "CX00774",
+      "CX00775",
+      "CX00776",
+      "CX00777",
+      "CX00778",
+      "CX00779",
+      "CX00780",
+      "CX00781",
+      "CX00782",
+      "CX00783",
+      "CX00784",
+      "CX00785",
+      "CX00786",
+      "CX00787",
+      "CX00788",
+      "CX00789",
+      "CX00790",
+      "CX00791",
+      "CX00792",
+      "CX00793",
+      "CX00794",
+      "CX00795",
+      "CX00796",
+      "CX00797",
+      "CX00798",
+      "CX00799",
+      "CX00800",
+      "CX00801",
+      "CX00802",
+      "CX00803",
+      "CX00804",
+      "CX00805",
+      "CX00806",
+      "CX00807",
+      "CX00808",
+      "CX00809",
+      "CX00810",
+      "CX00811",
+      "CX00812",
+      "CX00813",
+      "CX00814",
+      "CX00815",
+      "CX00816",
+      "CX00817",
+      "CX00818",
+      "CX00819",
+      "CX00820",
+      "CX00821",
+      "CX00822",
+      "CX00823",
+      "CX00824",
+      "CX00825",
+      "CX00826",
+      "CX00827",
+      "CX00828",
+      "CX00829",
+      "CX00830",
+      "CX00831",
+      "CX00832",
+      "CX00833",
+      "CX00834",
+      "CX00835",
+      "CX00836",
+      "CX00837",
+      "CX00838",
+      "CX00839",
+      "CX00840",
+      "CX00841",
+      "CX00842",
+      "CX00843",
+      "CX00844",
+      "CX00845",
+      "CX00846",
+      "CX00847",
+      "CX00848",
+      "CX00849",
+      "CX00850",
+      "CX00851",
+      "CX00852",
+      "CX00853",
+      "CX00854",
+      "CX00855",
+      "CX00856",
+      "CX00857",
+      "CX00858",
+      "CX00859",
+      "CX00860",
+      "CX00861",
+      "CX00862",
+      "CX00863",
+      "CX00864",
+      "CX00865",
+      "CX00866",
+      "CX00867",
+      "CX00868",
+      "CX00869",
+      "CX00870",
+      "CX00871",
+      "CX00872",
+      "CX00873",
+      "CX00874",
+      "CX00875",
+      "CX00876",
+      "CX00877",
+      "CX00878",
+      "CX00879",
+      "CX00880",
+      "CX00881",
+      "CX00882",
+      "CX00883",
+      "CX00884",
+      "CX00885",
+      "CX00886",
+      "CX00887",
+      "CX00888",
+      "CX00889",
+      "CX00890",
+      "CX00891",
+      "CX00892",
+      "CX00893",
+      "CX00894",
+      "CX00895",
+      "CX00896",
+      "CX00897",
+      "CX00898",
+      "CX00899",
+      "CX00900",
+      "CX00901",
+      "CX00902",
+      "CX00903",
+      "CX00904",
+      "CX00905",
+      "CX00906",
+      "CX00907",
+      "CX00908",
+      "CX00909",
+      "CX00910",
+      "CX00911",
+      "CX00912",
+      "CX00913",
+      "CX00914",
+      "CX00915",
+      "CX00916",
+      "CX00917",
+      "CX00918",
+      "CX00919",
+      "CX00920",
+      "CX00921",
+      "CX00922",
+      "CX00923",
+      "CX00924",
+      "CX00925",
+      "CX00926",
+      "CX00927",
+      "CX00928",
+      "CX00929"
+    ],
+    "statuses": {
+      "match": 207,
+      "discrepancy": 3,
+      "error": 35
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::pline_seg::tests::seg_length_returns_expected_arc_lengths",
+    "source": "src/polyline/pline_seg.rs",
+    "cases": [
+      "CX00934",
+      "CX00935",
+      "CX00936",
+      "CX00937",
+      "CX00938",
+      "CX00939"
+    ],
+    "statuses": {
+      "match": 6
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::pline_seg::tests::seg_midpoint_returns_expected_arc_midpoints",
+    "source": "src/polyline/pline_seg.rs",
+    "cases": [
+      "CX00940",
+      "CX00941",
+      "CX00942",
+      "CX00943"
+    ],
+    "statuses": {
+      "match": 4
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::pline_seg::tests::seg_split_at_point_returns_expected_subarcs",
+    "source": "src/polyline/pline_seg.rs",
+    "cases": [
+      "CX00944",
+      "CX00945",
+      "CX00946",
+      "CX00947",
+      "CX00948",
+      "CX00949",
+      "CX00950",
+      "CX00951",
+      "CX00952",
+      "CX00953",
+      "CX00954",
+      "CX00955",
+      "CX00956",
+      "CX00957",
+      "CX00958",
+      "CX00959",
+      "CX00960",
+      "CX00961",
+      "CX00962",
+      "CX00963",
+      "CX00964",
+      "CX00965",
+      "CX00966",
+      "CX00967",
+      "CX00968",
+      "CX00969",
+      "CX00970",
+      "CX00971",
+      "CX00972",
+      "CX00973"
+    ],
+    "statuses": {
+      "match": 30
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::pline_seg::tests::seg_tangent_vector_preserves_arc_radius_magnitude",
+    "source": "src/polyline/pline_seg.rs",
+    "cases": [
+      "CX00974",
+      "CX00975",
+      "CX00976",
+      "CX00977",
+      "CX00978",
+      "CX00979"
+    ],
+    "statuses": {
+      "match": 6
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "cavalier_contours",
+    "test": "polyline::internal::pline_offset::tests::topology_builder_indexes_large_contact_sets",
+    "source": "src/polyline/internal/pline_offset.rs",
+    "cases": [],
+    "statuses": {},
+    "coverage": "not adapted"
+  },
+  {
+    "binary": "test_circle_circle_intersect",
+    "test": "no_intersect_outside",
+    "source": "tests/test_circle_circle_intersect.rs",
+    "cases": [
+      "CC00068"
+    ],
+    "statuses": {
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_circle_circle_intersect",
+    "test": "overlapping",
+    "source": "tests/test_circle_circle_intersect.rs",
+    "cases": [
+      "CC00069"
+    ],
+    "statuses": {
+      "contract-difference": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_circle_circle_intersect",
+    "test": "no_intersect_inside",
+    "source": "tests/test_circle_circle_intersect.rs",
+    "cases": [
+      "CC00067"
+    ],
+    "statuses": {
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_circle_circle_intersect",
+    "test": "tangent_intersect_outside",
+    "source": "tests/test_circle_circle_intersect.rs",
+    "cases": [
+      "CC00071"
+    ],
+    "statuses": {
+      "discrepancy": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_circle_circle_intersect",
+    "test": "tangent_intersect_inside",
+    "source": "tests/test_circle_circle_intersect.rs",
+    "cases": [
+      "CC00070"
+    ],
+    "statuses": {
+      "discrepancy": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_circle_circle_intersect",
+    "test": "two_intersects",
+    "source": "tests/test_circle_circle_intersect.rs",
+    "cases": [
+      "CC00072"
+    ],
+    "statuses": {
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_line_circle_intersect",
+    "test": "near_tangent_intersections_snap_when_positions_are_equal",
+    "source": "tests/test_line_circle_intersect.rs",
+    "cases": [
+      "CC00073",
+      "CC00074",
+      "CC00075"
+    ],
+    "statuses": {
+      "discrepancy": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_line_circle_intersect",
+    "test": "no_intersect",
+    "source": "tests/test_line_circle_intersect.rs",
+    "cases": [
+      "CC00079"
+    ],
+    "statuses": {
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_line_circle_intersect",
+    "test": "near_tangent_intersections_use_position_epsilon_at_different_radii",
+    "source": "tests/test_line_circle_intersect.rs",
+    "cases": [
+      "CC00076",
+      "CC00077",
+      "CC00078"
+    ],
+    "statuses": {
+      "match": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_line_circle_intersect",
+    "test": "tangent_intersect_horizontal",
+    "source": "tests/test_line_circle_intersect.rs",
+    "cases": [
+      "CC00084"
+    ],
+    "statuses": {
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_line_circle_intersect",
+    "test": "tangent_intersect_vertical",
+    "source": "tests/test_line_circle_intersect.rs",
+    "cases": [
+      "CC00085"
+    ],
+    "statuses": {
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_line_circle_intersect",
+    "test": "no_intersect_vertical",
+    "source": "tests/test_line_circle_intersect.rs",
+    "cases": [
+      "CC00081"
+    ],
+    "statuses": {
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_line_circle_intersect",
+    "test": "no_intersect_horizontal",
+    "source": "tests/test_line_circle_intersect.rs",
+    "cases": [
+      "CC00080"
+    ],
+    "statuses": {
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_line_circle_intersect",
+    "test": "point_segment_uses_position_epsilon",
+    "source": "tests/test_line_circle_intersect.rs",
+    "cases": [
+      "CC00082"
+    ],
+    "statuses": {
+      "error": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_line_circle_intersect",
+    "test": "tangent_at_start_point",
+    "source": "tests/test_line_circle_intersect.rs",
+    "cases": [
+      "CC00083"
+    ],
+    "statuses": {
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_line_circle_intersect",
+    "test": "two_intersects_seg_inside_horizontal",
+    "source": "tests/test_line_circle_intersect.rs",
+    "cases": [
+      "CC00086"
+    ],
+    "statuses": {
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_line_circle_intersect",
+    "test": "two_intersects_seg_inside_vertical",
+    "source": "tests/test_line_circle_intersect.rs",
+    "cases": [
+      "CC00087"
+    ],
+    "statuses": {
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_line_circle_intersect",
+    "test": "two_intersects_seg_touching",
+    "source": "tests/test_line_circle_intersect.rs",
+    "cases": [
+      "CC00087"
+    ],
+    "statuses": {
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_line_circle_intersect",
+    "test": "two_intersects_true",
+    "source": "tests/test_line_circle_intersect.rs",
+    "cases": [
+      "CC00088"
+    ],
+    "statuses": {
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_line_line_intersect",
+    "test": "end_point_start_point_touch_same_direction",
+    "source": "tests/test_line_line_intersect.rs",
+    "cases": [
+      "CC00089",
+      "CC00090",
+      "CC00091",
+      "CC00092",
+      "CC00093",
+      "CC00094",
+      "CC00095"
+    ],
+    "statuses": {
+      "match": 7
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_line_line_intersect",
+    "test": "entirely_overlapping_opposing_direction",
+    "source": "tests/test_line_line_intersect.rs",
+    "cases": [
+      "CC00096",
+      "CC00097",
+      "CC00098",
+      "CC00099",
+      "CC00100",
+      "CC00101",
+      "CC00102"
+    ],
+    "statuses": {
+      "contract-difference": 7
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_line_line_intersect",
+    "test": "entirely_overlapping_same_direction",
+    "source": "tests/test_line_line_intersect.rs",
+    "cases": [
+      "CC00103",
+      "CC00104",
+      "CC00105",
+      "CC00106",
+      "CC00107",
+      "CC00108"
+    ],
+    "statuses": {
+      "contract-difference": 6
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_line_line_intersect",
+    "test": "false_intersect",
+    "source": "tests/test_line_line_intersect.rs",
+    "cases": [
+      "CC00109"
+    ],
+    "statuses": {
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_line_line_intersect",
+    "test": "no_intersect",
+    "source": "tests/test_line_line_intersect.rs",
+    "cases": [
+      "CC00110"
+    ],
+    "statuses": {
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_line_line_intersect",
+    "test": "no_intersect_vertical",
+    "source": "tests/test_line_line_intersect.rs",
+    "cases": [
+      "CC00112"
+    ],
+    "statuses": {
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_line_line_intersect",
+    "test": "no_intersect_horizontal",
+    "source": "tests/test_line_line_intersect.rs",
+    "cases": [
+      "CC00111"
+    ],
+    "statuses": {
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_line_line_intersect",
+    "test": "overlapping_intersect",
+    "source": "tests/test_line_line_intersect.rs",
+    "cases": [
+      "CC00113"
+    ],
+    "statuses": {
+      "contract-difference": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_line_line_intersect",
+    "test": "point_intersect",
+    "source": "tests/test_line_line_intersect.rs",
+    "cases": [
+      "CC00114",
+      "CC00115"
+    ],
+    "statuses": {
+      "match": 2
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_line_line_intersect",
+    "test": "point_intersect_at_end",
+    "source": "tests/test_line_line_intersect.rs",
+    "cases": [
+      "CC00116",
+      "CC00117",
+      "CC00118",
+      "CC00119"
+    ],
+    "statuses": {
+      "match": 4
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_line_line_intersect",
+    "test": "point_intersect_horizontal",
+    "source": "tests/test_line_line_intersect.rs",
+    "cases": [
+      "CC00120",
+      "CC00121"
+    ],
+    "statuses": {
+      "match": 2
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_line_line_intersect",
+    "test": "point_intersect_vertical",
+    "source": "tests/test_line_line_intersect.rs",
+    "cases": [
+      "CC00122",
+      "CC00123"
+    ],
+    "statuses": {
+      "match": 2
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_line_line_intersect",
+    "test": "start_points_touch_opposing_direction",
+    "source": "tests/test_line_line_intersect.rs",
+    "cases": [
+      "CC00124",
+      "CC00125",
+      "CC00126",
+      "CC00127",
+      "CC00128",
+      "CC00129",
+      "CC00130"
+    ],
+    "statuses": {
+      "match": 7
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_line_line_intersect",
+    "test": "true_intersect",
+    "source": "tests/test_line_line_intersect.rs",
+    "cases": [
+      "CC00131"
+    ],
+    "statuses": {
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_basics",
+    "test": "area",
+    "source": "tests/test_pline_basics.rs",
+    "cases": [
+      "CC00132",
+      "CC00133",
+      "CC00134",
+      "CC00135",
+      "CC00136",
+      "CC00137",
+      "CC00138",
+      "CC00139",
+      "CC00140",
+      "CC00141",
+      "CC00142",
+      "CC00143"
+    ],
+    "statuses": {
+      "match": 7,
+      "scope": 5
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_basics",
+    "test": "iter_segments",
+    "source": "tests/test_pline_basics.rs",
+    "cases": [],
+    "statuses": {},
+    "coverage": "not adapted"
+  },
+  {
+    "binary": "test_pline_basics",
+    "test": "find_point_at_path_length",
+    "source": "tests/test_pline_basics.rs",
+    "cases": [
+      "CC00153",
+      "CX00980",
+      "CX00981",
+      "CX00982",
+      "CX00983",
+      "CX00984",
+      "CX00985",
+      "CX00986",
+      "CX00987",
+      "CX00988",
+      "CX00989",
+      "CX00990",
+      "CX00991",
+      "CX00992",
+      "CX00993"
+    ],
+    "statuses": {
+      "match": 13,
+      "error": 1,
+      "scope": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_basics",
+    "test": "create_from_remove_repeat",
+    "source": "tests/test_pline_basics.rs",
+    "cases": [],
+    "statuses": {},
+    "coverage": "not adapted"
+  },
+  {
+    "binary": "test_pline_basics",
+    "test": "invert_direction_mut",
+    "source": "tests/test_pline_basics.rs",
+    "cases": [],
+    "statuses": {},
+    "coverage": "not adapted"
+  },
+  {
+    "binary": "test_pline_basics",
+    "test": "extents",
+    "source": "tests/test_pline_basics.rs",
+    "cases": [
+      "CC00144",
+      "CC00145",
+      "CC00146",
+      "CC00147",
+      "CC00148",
+      "CC00149",
+      "CC00150",
+      "CC00151",
+      "CC00152"
+    ],
+    "statuses": {
+      "scope": 3,
+      "match": 6
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_basics",
+    "test": "iter_segment_indexes",
+    "source": "tests/test_pline_basics.rs",
+    "cases": [],
+    "statuses": {},
+    "coverage": "not adapted"
+  },
+  {
+    "binary": "test_pline_basics",
+    "test": "path_length",
+    "source": "tests/test_pline_basics.rs",
+    "cases": [
+      "CC00154",
+      "CC00155",
+      "CC00156",
+      "CC00157",
+      "CC00158",
+      "CC00159",
+      "CC00160",
+      "CC00161",
+      "CC00162",
+      "CC00163",
+      "CC00164"
+    ],
+    "statuses": {
+      "scope": 1,
+      "match": 10
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_basics",
+    "test": "iter_vertexes",
+    "source": "tests/test_pline_basics.rs",
+    "cases": [],
+    "statuses": {},
+    "coverage": "not adapted"
+  },
+  {
+    "binary": "test_pline_basics",
+    "test": "remove_redundant",
+    "source": "tests/test_pline_basics.rs",
+    "cases": [
+      "CX00994",
+      "CX00995",
+      "CX00996",
+      "CX00997",
+      "CX00998",
+      "CX00999",
+      "CX01000",
+      "CX01001",
+      "CX01002",
+      "CX01003",
+      "CX01004",
+      "CX01005",
+      "CX01006",
+      "CX01007",
+      "CX01008",
+      "CX01009",
+      "CX01010",
+      "CX01011",
+      "CX01012",
+      "CX01013",
+      "CX01014",
+      "CX01015",
+      "CX01016",
+      "CX01017",
+      "CX01018",
+      "CX01019",
+      "CX01020",
+      "CX01021",
+      "CX01022",
+      "CX01023",
+      "CX01024",
+      "CX01025"
+    ],
+    "statuses": {
+      "match": 32
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_basics",
+    "test": "remove_redundant_removes_repeat_pos",
+    "source": "tests/test_pline_basics.rs",
+    "cases": [
+      "CX01026",
+      "CX01027",
+      "CX01028"
+    ],
+    "statuses": {
+      "match": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_basics",
+    "test": "remove_repeat",
+    "source": "tests/test_pline_basics.rs",
+    "cases": [],
+    "statuses": {},
+    "coverage": "not adapted"
+  },
+  {
+    "binary": "test_pline_basics",
+    "test": "rotate_start",
+    "source": "tests/test_pline_basics.rs",
+    "cases": [
+      "CX01029",
+      "CX01030"
+    ],
+    "statuses": {
+      "match": 2
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_boolean",
+    "test": "test_same::origin_circle",
+    "source": "tests/test_pline_boolean.rs",
+    "cases": [
+      "CC00413",
+      "CC00414",
+      "CC00415",
+      "CC00416",
+      "CC00417",
+      "CC00418",
+      "CC00419",
+      "CC00420",
+      "CC00421",
+      "CC00422",
+      "CC00423",
+      "CC00424",
+      "CC00425",
+      "CC00426",
+      "CC00427",
+      "CC00428",
+      "CC00429",
+      "CC00430",
+      "CC00431",
+      "CC00432",
+      "CC00433",
+      "CC00434",
+      "CC00435",
+      "CC00436",
+      "CC00437",
+      "CC00438",
+      "CC00439",
+      "CC00440",
+      "CC00441",
+      "CC00442",
+      "CC00443",
+      "CC00444",
+      "CC00445",
+      "CC00446",
+      "CC00447",
+      "CC00448",
+      "CC00449",
+      "CC00450",
+      "CC00451",
+      "CC00452",
+      "CC00453",
+      "CC00454",
+      "CC00455",
+      "CC00456",
+      "CC00457",
+      "CC00458",
+      "CC00459",
+      "CC00460",
+      "CC00461",
+      "CC00462",
+      "CC00463",
+      "CC00464",
+      "CC00465",
+      "CC00466",
+      "CC00467",
+      "CC00468",
+      "CC00469"
+    ],
+    "statuses": {
+      "helper-only": 3,
+      "match": 54
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_boolean",
+    "test": "test_same::origin_circle2",
+    "source": "tests/test_pline_boolean.rs",
+    "cases": [
+      "CC00470",
+      "CC00471",
+      "CC00472",
+      "CC00473",
+      "CC00474",
+      "CC00475",
+      "CC00476",
+      "CC00477",
+      "CC00478",
+      "CC00479",
+      "CC00480",
+      "CC00481",
+      "CC00482",
+      "CC00483",
+      "CC00484",
+      "CC00485",
+      "CC00486",
+      "CC00487",
+      "CC00488",
+      "CC00489",
+      "CC00490",
+      "CC00491",
+      "CC00492",
+      "CC00493",
+      "CC00494",
+      "CC00495",
+      "CC00496",
+      "CC00497",
+      "CC00498",
+      "CC00499",
+      "CC00500",
+      "CC00501",
+      "CC00502",
+      "CC00503",
+      "CC00504",
+      "CC00505",
+      "CC00506",
+      "CC00507",
+      "CC00508",
+      "CC00509",
+      "CC00510",
+      "CC00511",
+      "CC00512",
+      "CC00513",
+      "CC00514",
+      "CC00515",
+      "CC00516",
+      "CC00517",
+      "CC00518",
+      "CC00519",
+      "CC00520",
+      "CC00521",
+      "CC00522",
+      "CC00523",
+      "CC00524",
+      "CC00525",
+      "CC00526"
+    ],
+    "statuses": {
+      "helper-only": 3,
+      "match": 54
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_boolean",
+    "test": "test_same::rectangle",
+    "source": "tests/test_pline_boolean.rs",
+    "cases": [
+      "CC00527",
+      "CC00528",
+      "CC00529",
+      "CC00530",
+      "CC00531",
+      "CC00532",
+      "CC00533",
+      "CC00534",
+      "CC00535",
+      "CC00536",
+      "CC00537",
+      "CC00538",
+      "CC00539",
+      "CC00540",
+      "CC00541",
+      "CC00542",
+      "CC00543",
+      "CC00544",
+      "CC00545",
+      "CC00546",
+      "CC00547",
+      "CC00548",
+      "CC00549",
+      "CC00550",
+      "CC00551",
+      "CC00552",
+      "CC00553",
+      "CC00554",
+      "CC00555",
+      "CC00556",
+      "CC00557",
+      "CC00558",
+      "CC00559",
+      "CC00560",
+      "CC00561",
+      "CC00562",
+      "CC00563",
+      "CC00564",
+      "CC00565",
+      "CC00566",
+      "CC00567",
+      "CC00568",
+      "CC00569",
+      "CC00570",
+      "CC00571",
+      "CC00572",
+      "CC00573",
+      "CC00574",
+      "CC00575",
+      "CC00576",
+      "CC00577",
+      "CC00578",
+      "CC00579",
+      "CC00580",
+      "CC00581",
+      "CC00582",
+      "CC00583"
+    ],
+    "statuses": {
+      "helper-only": 3,
+      "match": 54
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_boolean",
+    "test": "test_simple::rectangle_in_rectangle_two_edge_overlap",
+    "source": "tests/test_pline_boolean.rs",
+    "cases": [
+      "CC00622",
+      "CC00623",
+      "CC00624",
+      "CC00625",
+      "CC00626",
+      "CC00627",
+      "CC00628",
+      "CC00629",
+      "CC00630",
+      "CC00631",
+      "CC00632",
+      "CC00633",
+      "CC00634",
+      "CC00635",
+      "CC00636",
+      "CC00637",
+      "CC00638",
+      "CC00639",
+      "CC00640"
+    ],
+    "statuses": {
+      "match": 16,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_boolean",
+    "test": "test_same::diamond",
+    "source": "tests/test_pline_boolean.rs",
+    "cases": [
+      "CC00356",
+      "CC00357",
+      "CC00358",
+      "CC00359",
+      "CC00360",
+      "CC00361",
+      "CC00362",
+      "CC00363",
+      "CC00364",
+      "CC00365",
+      "CC00366",
+      "CC00367",
+      "CC00368",
+      "CC00369",
+      "CC00370",
+      "CC00371",
+      "CC00372",
+      "CC00373",
+      "CC00374",
+      "CC00375",
+      "CC00376",
+      "CC00377",
+      "CC00378",
+      "CC00379",
+      "CC00380",
+      "CC00381",
+      "CC00382",
+      "CC00383",
+      "CC00384",
+      "CC00385",
+      "CC00386",
+      "CC00387",
+      "CC00388",
+      "CC00389",
+      "CC00390",
+      "CC00391",
+      "CC00392",
+      "CC00393",
+      "CC00394",
+      "CC00395",
+      "CC00396",
+      "CC00397",
+      "CC00398",
+      "CC00399",
+      "CC00400",
+      "CC00401",
+      "CC00402",
+      "CC00403",
+      "CC00404",
+      "CC00405",
+      "CC00406",
+      "CC00407",
+      "CC00408",
+      "CC00409",
+      "CC00410",
+      "CC00411",
+      "CC00412"
+    ],
+    "statuses": {
+      "helper-only": 3,
+      "match": 54
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_boolean",
+    "test": "test_simple::rectangle_in_rectangle_one_edge_overlap_flipped_order",
+    "source": "tests/test_pline_boolean.rs",
+    "cases": [
+      "CC00603",
+      "CC00604",
+      "CC00605",
+      "CC00606",
+      "CC00607",
+      "CC00608",
+      "CC00609",
+      "CC00610",
+      "CC00611",
+      "CC00612",
+      "CC00613",
+      "CC00614",
+      "CC00615",
+      "CC00616",
+      "CC00617",
+      "CC00618",
+      "CC00619",
+      "CC00620",
+      "CC00621"
+    ],
+    "statuses": {
+      "match": 16,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_boolean",
+    "test": "test_simple::rectangle_in_rectangle_one_edge_overlap",
+    "source": "tests/test_pline_boolean.rs",
+    "cases": [
+      "CC00584",
+      "CC00585",
+      "CC00586",
+      "CC00587",
+      "CC00588",
+      "CC00589",
+      "CC00590",
+      "CC00591",
+      "CC00592",
+      "CC00593",
+      "CC00594",
+      "CC00595",
+      "CC00596",
+      "CC00597",
+      "CC00598",
+      "CC00599",
+      "CC00600",
+      "CC00601",
+      "CC00602"
+    ],
+    "statuses": {
+      "match": 16,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_boolean",
+    "test": "test_same::case3",
+    "source": "tests/test_pline_boolean.rs",
+    "cases": [
+      "CC00299",
+      "CC00300",
+      "CC00301",
+      "CC00302",
+      "CC00303",
+      "CC00304",
+      "CC00305",
+      "CC00306",
+      "CC00307",
+      "CC00308",
+      "CC00309",
+      "CC00310",
+      "CC00311",
+      "CC00312",
+      "CC00313",
+      "CC00314",
+      "CC00315",
+      "CC00316",
+      "CC00317",
+      "CC00318",
+      "CC00319",
+      "CC00320",
+      "CC00321",
+      "CC00322",
+      "CC00323",
+      "CC00324",
+      "CC00325",
+      "CC00326",
+      "CC00327",
+      "CC00328",
+      "CC00329",
+      "CC00330",
+      "CC00331",
+      "CC00332",
+      "CC00333",
+      "CC00334",
+      "CC00335",
+      "CC00336",
+      "CC00337",
+      "CC00338",
+      "CC00339",
+      "CC00340",
+      "CC00341",
+      "CC00342",
+      "CC00343",
+      "CC00344",
+      "CC00345",
+      "CC00346",
+      "CC00347",
+      "CC00348",
+      "CC00349",
+      "CC00350",
+      "CC00351",
+      "CC00352",
+      "CC00353",
+      "CC00354",
+      "CC00355"
+    ],
+    "statuses": {
+      "helper-only": 3,
+      "match": 54
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_boolean",
+    "test": "test_simple::rectangle_over_half_of_circle",
+    "source": "tests/test_pline_boolean.rs",
+    "cases": [
+      "CC00660",
+      "CC00661",
+      "CC00662",
+      "CC00663",
+      "CC00664",
+      "CC00665",
+      "CC00666",
+      "CC00667",
+      "CC00668",
+      "CC00669",
+      "CC00670",
+      "CC00671",
+      "CC00672",
+      "CC00673",
+      "CC00674",
+      "CC00675",
+      "CC00676",
+      "CC00677",
+      "CC00678"
+    ],
+    "statuses": {
+      "match": 12,
+      "helper-only": 3,
+      "discrepancy": 4
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_boolean",
+    "test": "test_simple::rectangle_slicing_circle",
+    "source": "tests/test_pline_boolean.rs",
+    "cases": [
+      "CC00679",
+      "CC00680",
+      "CC00681",
+      "CC00682",
+      "CC00683",
+      "CC00684",
+      "CC00685",
+      "CC00686",
+      "CC00687",
+      "CC00688",
+      "CC00689",
+      "CC00690",
+      "CC00691",
+      "CC00692",
+      "CC00693",
+      "CC00694",
+      "CC00695",
+      "CC00696",
+      "CC00697"
+    ],
+    "statuses": {
+      "match": 12,
+      "helper-only": 3,
+      "discrepancy": 4
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_boolean",
+    "test": "test_simple::rectangle_in_rectangle_two_edge_overlap_flipped_order",
+    "source": "tests/test_pline_boolean.rs",
+    "cases": [
+      "CC00641",
+      "CC00642",
+      "CC00643",
+      "CC00644",
+      "CC00645",
+      "CC00646",
+      "CC00647",
+      "CC00648",
+      "CC00649",
+      "CC00650",
+      "CC00651",
+      "CC00652",
+      "CC00653",
+      "CC00654",
+      "CC00655",
+      "CC00656",
+      "CC00657",
+      "CC00658",
+      "CC00659"
+    ],
+    "statuses": {
+      "match": 16,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_boolean",
+    "test": "test_specific::overlapping_pill_shaped_ends_reported",
+    "source": "tests/test_pline_boolean.rs",
+    "cases": [
+      "CC00774",
+      "CC00775",
+      "CC00776",
+      "CC00777",
+      "CC00778",
+      "CC00779",
+      "CC00780",
+      "CC00781",
+      "CC00782",
+      "CC00783",
+      "CC00784",
+      "CC00785",
+      "CC00786",
+      "CC00787",
+      "CC00788",
+      "CC00789",
+      "CC00790",
+      "CC00791",
+      "CC00792"
+    ],
+    "statuses": {
+      "match": 12,
+      "helper-only": 3,
+      "discrepancy": 4
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_boolean",
+    "test": "test_specific::overlapping_pill_shaped_ends_reported11",
+    "source": "tests/test_pline_boolean.rs",
+    "cases": [
+      "CC00812",
+      "CC00813",
+      "CC00814",
+      "CC00815",
+      "CC00816",
+      "CC00817",
+      "CC00818",
+      "CC00819",
+      "CC00820",
+      "CC00821",
+      "CC00822",
+      "CC00823",
+      "CC00824",
+      "CC00825",
+      "CC00826",
+      "CC00827",
+      "CC00828",
+      "CC00829",
+      "CC00830"
+    ],
+    "statuses": {
+      "match": 4,
+      "helper-only": 3,
+      "discrepancy": 12
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_boolean",
+    "test": "test_specific::overlapping_pill_shaped_ends_reported10",
+    "source": "tests/test_pline_boolean.rs",
+    "cases": [
+      "CC00793",
+      "CC00794",
+      "CC00795",
+      "CC00796",
+      "CC00797",
+      "CC00798",
+      "CC00799",
+      "CC00800",
+      "CC00801",
+      "CC00802",
+      "CC00803",
+      "CC00804",
+      "CC00805",
+      "CC00806",
+      "CC00807",
+      "CC00808",
+      "CC00809",
+      "CC00810",
+      "CC00811"
+    ],
+    "statuses": {
+      "match": 3,
+      "helper-only": 3,
+      "discrepancy": 9,
+      "error": 4
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_boolean",
+    "test": "test_specific::debug_assert_stitching_slices_reported",
+    "source": "tests/test_pline_boolean.rs",
+    "cases": [
+      "CC00698",
+      "CC00699",
+      "CC00700",
+      "CC00701",
+      "CC00702",
+      "CC00703",
+      "CC00704",
+      "CC00705",
+      "CC00706",
+      "CC00707",
+      "CC00708",
+      "CC00709",
+      "CC00710",
+      "CC00711",
+      "CC00712",
+      "CC00713",
+      "CC00714",
+      "CC00715",
+      "CC00716"
+    ],
+    "statuses": {
+      "match": 12,
+      "helper-only": 3,
+      "discrepancy": 4
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_boolean",
+    "test": "test_specific::overlapping_pill_shaped_ends_reported12",
+    "source": "tests/test_pline_boolean.rs",
+    "cases": [
+      "CC00831",
+      "CC00832",
+      "CC00833",
+      "CC00834",
+      "CC00835",
+      "CC00836",
+      "CC00837",
+      "CC00838",
+      "CC00839",
+      "CC00840",
+      "CC00841",
+      "CC00842",
+      "CC00843",
+      "CC00844",
+      "CC00845",
+      "CC00846",
+      "CC00847",
+      "CC00848",
+      "CC00849"
+    ],
+    "statuses": {
+      "match": 4,
+      "helper-only": 3,
+      "discrepancy": 12
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_boolean",
+    "test": "test_specific::overlapping_pill_shaped_ends_reported13",
+    "source": "tests/test_pline_boolean.rs",
+    "cases": [
+      "CC00850",
+      "CC00851",
+      "CC00852",
+      "CC00853",
+      "CC00854",
+      "CC00855",
+      "CC00856",
+      "CC00857",
+      "CC00858",
+      "CC00859",
+      "CC00860",
+      "CC00861",
+      "CC00862",
+      "CC00863",
+      "CC00864",
+      "CC00865",
+      "CC00866",
+      "CC00867",
+      "CC00868"
+    ],
+    "statuses": {
+      "match": 4,
+      "helper-only": 3,
+      "discrepancy": 12
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_boolean",
+    "test": "test_specific::overlapping_pill_shaped_ends_reported2",
+    "source": "tests/test_pline_boolean.rs",
+    "cases": [
+      "CC00869",
+      "CC00870",
+      "CC00871",
+      "CC00872",
+      "CC00873",
+      "CC00874",
+      "CC00875",
+      "CC00876",
+      "CC00877",
+      "CC00878",
+      "CC00879",
+      "CC00880",
+      "CC00881",
+      "CC00882",
+      "CC00883",
+      "CC00884",
+      "CC00885",
+      "CC00886",
+      "CC00887"
+    ],
+    "statuses": {
+      "match": 12,
+      "helper-only": 3,
+      "discrepancy": 4
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_boolean",
+    "test": "test_specific::overlapping_pill_shaped_ends_reported3",
+    "source": "tests/test_pline_boolean.rs",
+    "cases": [
+      "CC00888",
+      "CC00889",
+      "CC00890",
+      "CC00891",
+      "CC00892",
+      "CC00893",
+      "CC00894",
+      "CC00895",
+      "CC00896",
+      "CC00897",
+      "CC00898",
+      "CC00899",
+      "CC00900",
+      "CC00901",
+      "CC00902",
+      "CC00903",
+      "CC00904",
+      "CC00905",
+      "CC00906"
+    ],
+    "statuses": {
+      "match": 12,
+      "helper-only": 3,
+      "discrepancy": 4
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_boolean",
+    "test": "test_specific::overlapping_pill_shaped_ends_reported4",
+    "source": "tests/test_pline_boolean.rs",
+    "cases": [
+      "CC00907",
+      "CC00908",
+      "CC00909",
+      "CC00910",
+      "CC00911",
+      "CC00912",
+      "CC00913",
+      "CC00914",
+      "CC00915",
+      "CC00916",
+      "CC00917",
+      "CC00918",
+      "CC00919",
+      "CC00920",
+      "CC00921",
+      "CC00922",
+      "CC00923",
+      "CC00924",
+      "CC00925"
+    ],
+    "statuses": {
+      "match": 12,
+      "helper-only": 3,
+      "discrepancy": 4
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_boolean",
+    "test": "test_specific::overlapping_pill_shaped_ends_reported5_modified",
+    "source": "tests/test_pline_boolean.rs",
+    "cases": [
+      "CC00945",
+      "CC00946",
+      "CC00947",
+      "CC00948",
+      "CC00949",
+      "CC00950",
+      "CC00951",
+      "CC00952",
+      "CC00953",
+      "CC00954",
+      "CC00955",
+      "CC00956",
+      "CC00957",
+      "CC00958",
+      "CC00959",
+      "CC00960",
+      "CC00961",
+      "CC00962",
+      "CC00963"
+    ],
+    "statuses": {
+      "match": 4,
+      "helper-only": 3,
+      "discrepancy": 12
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_boolean",
+    "test": "test_specific::overlapping_pill_shaped_ends_reported5",
+    "source": "tests/test_pline_boolean.rs",
+    "cases": [
+      "CC00926",
+      "CC00927",
+      "CC00928",
+      "CC00929",
+      "CC00930",
+      "CC00931",
+      "CC00932",
+      "CC00933",
+      "CC00934",
+      "CC00935",
+      "CC00936",
+      "CC00937",
+      "CC00938",
+      "CC00939",
+      "CC00940",
+      "CC00941",
+      "CC00942",
+      "CC00943",
+      "CC00944"
+    ],
+    "statuses": {
+      "match": 4,
+      "helper-only": 3,
+      "discrepancy": 12
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_boolean",
+    "test": "test_specific::overlapping_pill_shaped_ends_reported6",
+    "source": "tests/test_pline_boolean.rs",
+    "cases": [
+      "CC00964",
+      "CC00965",
+      "CC00966",
+      "CC00967",
+      "CC00968",
+      "CC00969",
+      "CC00970",
+      "CC00971",
+      "CC00972",
+      "CC00973",
+      "CC00974",
+      "CC00975",
+      "CC00976",
+      "CC00977",
+      "CC00978",
+      "CC00979",
+      "CC00980",
+      "CC00981",
+      "CC00982"
+    ],
+    "statuses": {
+      "match": 4,
+      "helper-only": 3,
+      "discrepancy": 12
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_boolean",
+    "test": "test_specific::overlapping_pill_shaped_ends_reported7",
+    "source": "tests/test_pline_boolean.rs",
+    "cases": [
+      "CC00983",
+      "CC00984",
+      "CC00985",
+      "CC00986",
+      "CC00987",
+      "CC00988",
+      "CC00989",
+      "CC00990",
+      "CC00991",
+      "CC00992",
+      "CC00993",
+      "CC00994",
+      "CC00995",
+      "CC00996",
+      "CC00997",
+      "CC00998",
+      "CC00999",
+      "CC01000",
+      "CC01001"
+    ],
+    "statuses": {
+      "match": 12,
+      "helper-only": 3,
+      "discrepancy": 4
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_boolean",
+    "test": "test_specific::parametric_from_point_debug_assert_reported1",
+    "source": "tests/test_pline_boolean.rs",
+    "cases": [
+      "CC01040",
+      "CC01041",
+      "CC01042",
+      "CC01043",
+      "CC01044",
+      "CC01045",
+      "CC01046",
+      "CC01047",
+      "CC01048",
+      "CC01049",
+      "CC01050",
+      "CC01051",
+      "CC01052",
+      "CC01053",
+      "CC01054",
+      "CC01055",
+      "CC01056",
+      "CC01057",
+      "CC01058"
+    ],
+    "statuses": {
+      "match": 12,
+      "helper-only": 3,
+      "discrepancy": 4
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_boolean",
+    "test": "test_specific::overlapping_pill_shaped_ends_reported8",
+    "source": "tests/test_pline_boolean.rs",
+    "cases": [
+      "CC01002",
+      "CC01003",
+      "CC01004",
+      "CC01005",
+      "CC01006",
+      "CC01007",
+      "CC01008",
+      "CC01009",
+      "CC01010",
+      "CC01011",
+      "CC01012",
+      "CC01013",
+      "CC01014",
+      "CC01015",
+      "CC01016",
+      "CC01017",
+      "CC01018",
+      "CC01019",
+      "CC01020"
+    ],
+    "statuses": {
+      "match": 4,
+      "helper-only": 3,
+      "discrepancy": 12
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_boolean",
+    "test": "test_specific::overlapping_pill_shaped_ends_reported9",
+    "source": "tests/test_pline_boolean.rs",
+    "cases": [
+      "CC01021",
+      "CC01022",
+      "CC01023",
+      "CC01024",
+      "CC01025",
+      "CC01026",
+      "CC01027",
+      "CC01028",
+      "CC01029",
+      "CC01030",
+      "CC01031",
+      "CC01032",
+      "CC01033",
+      "CC01034",
+      "CC01035",
+      "CC01036",
+      "CC01037",
+      "CC01038",
+      "CC01039"
+    ],
+    "statuses": {
+      "match": 4,
+      "helper-only": 3,
+      "discrepancy": 12
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_boolean",
+    "test": "test_specific::parametric_from_point_debug_assert_reported2",
+    "source": "tests/test_pline_boolean.rs",
+    "cases": [
+      "CC01059",
+      "CC01060",
+      "CC01061",
+      "CC01062",
+      "CC01063",
+      "CC01064",
+      "CC01065",
+      "CC01066",
+      "CC01067",
+      "CC01068",
+      "CC01069",
+      "CC01070",
+      "CC01071",
+      "CC01072",
+      "CC01073",
+      "CC01074",
+      "CC01075",
+      "CC01076",
+      "CC01077"
+    ],
+    "statuses": {
+      "error": 16,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_boolean",
+    "test": "test_same::case2",
+    "source": "tests/test_pline_boolean.rs",
+    "cases": [
+      "CC00242",
+      "CC00243",
+      "CC00244",
+      "CC00245",
+      "CC00246",
+      "CC00247",
+      "CC00248",
+      "CC00249",
+      "CC00250",
+      "CC00251",
+      "CC00252",
+      "CC00253",
+      "CC00254",
+      "CC00255",
+      "CC00256",
+      "CC00257",
+      "CC00258",
+      "CC00259",
+      "CC00260",
+      "CC00261",
+      "CC00262",
+      "CC00263",
+      "CC00264",
+      "CC00265",
+      "CC00266",
+      "CC00267",
+      "CC00268",
+      "CC00269",
+      "CC00270",
+      "CC00271",
+      "CC00272",
+      "CC00273",
+      "CC00274",
+      "CC00275",
+      "CC00276",
+      "CC00277",
+      "CC00278",
+      "CC00279",
+      "CC00280",
+      "CC00281",
+      "CC00282",
+      "CC00283",
+      "CC00284",
+      "CC00285",
+      "CC00286",
+      "CC00287",
+      "CC00288",
+      "CC00289",
+      "CC00290",
+      "CC00291",
+      "CC00292",
+      "CC00293",
+      "CC00294",
+      "CC00295",
+      "CC00296",
+      "CC00297",
+      "CC00298"
+    ],
+    "statuses": {
+      "helper-only": 3,
+      "match": 54
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_boolean",
+    "test": "test_specific::pill_shapes_overlapping_at_ends_at_acute_angle",
+    "source": "tests/test_pline_boolean.rs",
+    "cases": [
+      "CC01097",
+      "CC01098",
+      "CC01099",
+      "CC01100",
+      "CC01101",
+      "CC01102",
+      "CC01103",
+      "CC01104",
+      "CC01105",
+      "CC01106",
+      "CC01107",
+      "CC01108",
+      "CC01109",
+      "CC01110",
+      "CC01111",
+      "CC01112",
+      "CC01113",
+      "CC01114",
+      "CC01115"
+    ],
+    "statuses": {
+      "match": 8,
+      "helper-only": 3,
+      "discrepancy": 8
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_boolean",
+    "test": "test_specific::pill_shapes_overlapping_at_ends_90_deg",
+    "source": "tests/test_pline_boolean.rs",
+    "cases": [
+      "CC01078",
+      "CC01079",
+      "CC01080",
+      "CC01081",
+      "CC01082",
+      "CC01083",
+      "CC01084",
+      "CC01085",
+      "CC01086",
+      "CC01087",
+      "CC01088",
+      "CC01089",
+      "CC01090",
+      "CC01091",
+      "CC01092",
+      "CC01093",
+      "CC01094",
+      "CC01095",
+      "CC01096"
+    ],
+    "statuses": {
+      "match": 12,
+      "helper-only": 3,
+      "discrepancy": 4
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_boolean",
+    "test": "test_specific::mostly_overlapping_case1",
+    "source": "tests/test_pline_boolean.rs",
+    "cases": [
+      "CC00717",
+      "CC00718",
+      "CC00719",
+      "CC00720",
+      "CC00721",
+      "CC00722",
+      "CC00723",
+      "CC00724",
+      "CC00725",
+      "CC00726",
+      "CC00727",
+      "CC00728",
+      "CC00729",
+      "CC00730",
+      "CC00731",
+      "CC00732",
+      "CC00733",
+      "CC00734",
+      "CC00735"
+    ],
+    "statuses": {
+      "match": 16,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_boolean",
+    "test": "test_same::case1",
+    "source": "tests/test_pline_boolean.rs",
+    "cases": [
+      "CC00165",
+      "CC00166",
+      "CC00167",
+      "CC00168",
+      "CC00169",
+      "CC00170",
+      "CC00171",
+      "CC00172",
+      "CC00173",
+      "CC00174",
+      "CC00175",
+      "CC00176",
+      "CC00177",
+      "CC00178",
+      "CC00179",
+      "CC00180",
+      "CC00181",
+      "CC00182",
+      "CC00183",
+      "CC00184",
+      "CC00185",
+      "CC00186",
+      "CC00187",
+      "CC00188",
+      "CC00189",
+      "CC00190",
+      "CC00191",
+      "CC00192",
+      "CC00193",
+      "CC00194",
+      "CC00195",
+      "CC00196",
+      "CC00197",
+      "CC00198",
+      "CC00199",
+      "CC00200",
+      "CC00201",
+      "CC00202",
+      "CC00203",
+      "CC00204",
+      "CC00205",
+      "CC00206",
+      "CC00207",
+      "CC00208",
+      "CC00209",
+      "CC00210",
+      "CC00211",
+      "CC00212",
+      "CC00213",
+      "CC00214",
+      "CC00215",
+      "CC00216",
+      "CC00217",
+      "CC00218",
+      "CC00219",
+      "CC00220",
+      "CC00221",
+      "CC00222",
+      "CC00223",
+      "CC00224",
+      "CC00225",
+      "CC00226",
+      "CC00227",
+      "CC00228",
+      "CC00229",
+      "CC00230",
+      "CC00231",
+      "CC00232",
+      "CC00233",
+      "CC00234",
+      "CC00235",
+      "CC00236",
+      "CC00237",
+      "CC00238",
+      "CC00239",
+      "CC00240",
+      "CC00241"
+    ],
+    "statuses": {
+      "helper-only": 3,
+      "match": 74
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_boolean",
+    "test": "test_specific::mostly_overlapping_case2",
+    "source": "tests/test_pline_boolean.rs",
+    "cases": [
+      "CC00736",
+      "CC00737",
+      "CC00738",
+      "CC00739",
+      "CC00740",
+      "CC00741",
+      "CC00742",
+      "CC00743",
+      "CC00744",
+      "CC00745",
+      "CC00746",
+      "CC00747",
+      "CC00748",
+      "CC00749",
+      "CC00750",
+      "CC00751",
+      "CC00752",
+      "CC00753",
+      "CC00754"
+    ],
+    "statuses": {
+      "match": 12,
+      "helper-only": 3,
+      "discrepancy": 4
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_boolean",
+    "test": "test_specific::opposite_direction_arc_arc_endpoints_intersect_bug_reported",
+    "source": "tests/test_pline_boolean.rs",
+    "cases": [
+      "CC00755",
+      "CC00756",
+      "CC00757",
+      "CC00758",
+      "CC00759",
+      "CC00760",
+      "CC00761",
+      "CC00762",
+      "CC00763",
+      "CC00764",
+      "CC00765",
+      "CC00766",
+      "CC00767",
+      "CC00768",
+      "CC00769",
+      "CC00770",
+      "CC00771",
+      "CC00772",
+      "CC00773"
+    ],
+    "statuses": {
+      "match": 12,
+      "helper-only": 3,
+      "discrepancy": 4
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_contains",
+    "test": "test_pline_contains::test_copy",
+    "source": "tests/test_pline_contains.rs",
+    "cases": [
+      "CC01116"
+    ],
+    "statuses": {
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_contains",
+    "test": "test_pline_contains::test_invalid",
+    "source": "tests/test_pline_contains.rs",
+    "cases": [
+      "CC01119",
+      "CC01120"
+    ],
+    "statuses": {
+      "scope": 2
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_contains",
+    "test": "test_pline_contains::test_self_intersect_scan",
+    "source": "tests/test_pline_contains.rs",
+    "cases": [
+      "CC01125",
+      "CC01126",
+      "CC01127",
+      "CC01128",
+      "CC01129"
+    ],
+    "statuses": {
+      "match": 5
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_contains",
+    "test": "test_pline_contains::test_rectangle_contains_circle",
+    "source": "tests/test_pline_contains.rs",
+    "cases": [
+      "CC01121",
+      "CC01122"
+    ],
+    "statuses": {
+      "match": 2
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_contains",
+    "test": "test_pline_contains::test_rectangle_intersects_circle",
+    "source": "tests/test_pline_contains.rs",
+    "cases": [
+      "CC01123",
+      "CC01124"
+    ],
+    "statuses": {
+      "match": 2
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_contains",
+    "test": "test_pline_contains::test_disjoint",
+    "source": "tests/test_pline_contains.rs",
+    "cases": [
+      "CC01117",
+      "CC01118"
+    ],
+    "statuses": {
+      "match": 2
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "exact_zero_offset_returns_an_unchanged_copy",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01152",
+      "CC01153",
+      "CC01154",
+      "CC01155",
+      "CC01156",
+      "CC01157",
+      "CC01158",
+      "CC01159"
+    ],
+    "statuses": {
+      "scope": 4,
+      "match": 4
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "closed_inward_offset_collapsed_returns_no_result",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01130"
+    ],
+    "statuses": {
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "repeat_position_input_ignores_external_aabb_after_sanitize",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01171",
+      "CC01172",
+      "CC01173",
+      "CC01174"
+    ],
+    "statuses": {
+      "match": 1,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "default_behavior_preserves_tangent_touching_small_loop",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01132",
+      "CC01133",
+      "CC01134",
+      "CC01135",
+      "CC01136",
+      "CC01137",
+      "CC01138",
+      "CC01139",
+      "CC01140",
+      "CC01141",
+      "CC01151"
+    ],
+    "statuses": {
+      "match": 10,
+      "discrepancy": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "repeat_position_input_is_sanitized_before_offset",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01175",
+      "CC01176",
+      "CC01177",
+      "CC01178"
+    ],
+    "statuses": {
+      "match": 1,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "coincident_discard_does_not_remove_a_point_only_tangent",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01131",
+      "CC01132",
+      "CC01133",
+      "CC01134",
+      "CC01135",
+      "CC01136",
+      "CC01137",
+      "CC01138",
+      "CC01139",
+      "CC01140",
+      "CC01141"
+    ],
+    "statuses": {
+      "discrepancy": 1,
+      "match": 10
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "offset_does_not_self_intersect",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01167",
+      "CC01168",
+      "CC01169",
+      "CC01170"
+    ],
+    "statuses": {
+      "discrepancy": 1,
+      "match": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "collapsed_rectangle_preserves_or_discards_coincident_centerline",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01147",
+      "CC01148",
+      "CC01149",
+      "CC01150"
+    ],
+    "statuses": {
+      "match": 1,
+      "helper-only": 2,
+      "discrepancy": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "next_offset_removes_collapsed_small_loop",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01151",
+      "CC01160",
+      "CC01161",
+      "CC01162",
+      "CC01163",
+      "CC01164",
+      "CC01165",
+      "CC01166"
+    ],
+    "statuses": {
+      "discrepancy": 1,
+      "error": 1,
+      "match": 6
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "repeat_position_real_world_input_is_sanitized_before_offset",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01179",
+      "CC01180",
+      "CC01181",
+      "CC01182"
+    ],
+    "statuses": {
+      "discrepancy": 1,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "coincident_discard_removes_same_direction_and_opposing_partial_spans",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01142",
+      "CC01143",
+      "CC01144",
+      "CC01145",
+      "CC01146"
+    ],
+    "statuses": {
+      "discrepancy": 3,
+      "helper-only": 1,
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "separate_behavior_splits_tangent_touching_small_loop",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01132",
+      "CC01135",
+      "CC01136",
+      "CC01137",
+      "CC01138",
+      "CC01183",
+      "CC01184",
+      "CC01185",
+      "CC01186",
+      "CC01187",
+      "CC01188",
+      "CC01189",
+      "CC01190",
+      "CC01191"
+    ],
+    "statuses": {
+      "match": 8,
+      "discrepancy": 2,
+      "helper-only": 3,
+      "error": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_past_failures::closed_pline8",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01241",
+      "CC01242",
+      "CC01243",
+      "CC01244",
+      "CC01245",
+      "CC01246",
+      "CC01247"
+    ],
+    "statuses": {
+      "match": 4,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_past_failures::closed_pline1",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01192",
+      "CC01193",
+      "CC01194",
+      "CC01195",
+      "CC01196",
+      "CC01197",
+      "CC01198"
+    ],
+    "statuses": {
+      "discrepancy": 2,
+      "helper-only": 3,
+      "match": 2
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_past_failures::closed_pline2",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01199",
+      "CC01200",
+      "CC01201",
+      "CC01202",
+      "CC01203",
+      "CC01204",
+      "CC01205"
+    ],
+    "statuses": {
+      "match": 4,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_past_failures::issue82_small_joining_arc",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01262",
+      "CC01263",
+      "CC01264",
+      "CC01265",
+      "CC01266"
+    ],
+    "statuses": {
+      "match": 2,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_past_failures::closed_pline3",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01206",
+      "CC01207",
+      "CC01208",
+      "CC01209",
+      "CC01210",
+      "CC01211",
+      "CC01212"
+    ],
+    "statuses": {
+      "match": 4,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_past_failures::near_tangent_line_arc_joins",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01267",
+      "CC01268",
+      "CC01269",
+      "CC01270",
+      "CC01271"
+    ],
+    "statuses": {
+      "error": 2,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_past_failures::open_pline1",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01272",
+      "CC01273",
+      "CC01274",
+      "CC01275",
+      "CC01276"
+    ],
+    "statuses": {
+      "match": 2,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_past_failures::closed_pline7",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01234",
+      "CC01235",
+      "CC01236",
+      "CC01237",
+      "CC01238",
+      "CC01239",
+      "CC01240"
+    ],
+    "statuses": {
+      "match": 4,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_past_failures::open_pline2",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01277",
+      "CC01278",
+      "CC01279",
+      "CC01280",
+      "CC01281"
+    ],
+    "statuses": {
+      "match": 2,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_past_failures::open_pline3",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01282",
+      "CC01283",
+      "CC01284",
+      "CC01285",
+      "CC01286"
+    ],
+    "statuses": {
+      "match": 2,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_past_failures::issue77_repeated_offset",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01255",
+      "CC01256",
+      "CC01257",
+      "CC01258",
+      "CC01259",
+      "CC01260",
+      "CC01261"
+    ],
+    "statuses": {
+      "match": 4,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_past_failures::open_pline5",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01292",
+      "CC01293",
+      "CC01294",
+      "CC01295",
+      "CC01296"
+    ],
+    "statuses": {
+      "error": 2,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_past_failures::small_bulge_arc_line_transition",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01297",
+      "CC01298",
+      "CC01299",
+      "CC01300"
+    ],
+    "statuses": {
+      "discrepancy": 1,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_past_failures::sub_tolerance_raw_offset_arc_does_not_panic",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01301",
+      "CC01302",
+      "CC01303",
+      "CC01304"
+    ],
+    "statuses": {
+      "discrepancy": 1,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_past_failures::open_pline4",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01287",
+      "CC01288",
+      "CC01289",
+      "CC01290",
+      "CC01291"
+    ],
+    "statuses": {
+      "discrepancy": 2,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_simple::circle_collapsed",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01305",
+      "CC01306",
+      "CC01307",
+      "CC01308"
+    ],
+    "statuses": {
+      "discrepancy": 4
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_past_failures::closed_pline6",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01227",
+      "CC01228",
+      "CC01229",
+      "CC01230",
+      "CC01231",
+      "CC01232",
+      "CC01233"
+    ],
+    "statuses": {
+      "match": 4,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_simple::circle_collapsed_into_point",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01309",
+      "CC01310",
+      "CC01311",
+      "CC01312"
+    ],
+    "statuses": {
+      "error": 4
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_past_failures::closed_pline4",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01213",
+      "CC01214",
+      "CC01215",
+      "CC01216",
+      "CC01217",
+      "CC01218",
+      "CC01219"
+    ],
+    "statuses": {
+      "match": 4,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_simple::closed_circle_offset_inward",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01313",
+      "CC01314",
+      "CC01315",
+      "CC01316",
+      "CC01317",
+      "CC01318",
+      "CC01319"
+    ],
+    "statuses": {
+      "match": 4,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_simple::closed_circle_offset_outward",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01320",
+      "CC01321",
+      "CC01322",
+      "CC01323",
+      "CC01324",
+      "CC01325",
+      "CC01326"
+    ],
+    "statuses": {
+      "match": 4,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_simple::empty_returns_empty",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01361",
+      "CC01362"
+    ],
+    "statuses": {
+      "scope": 2
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_simple::closed_diamond_offset_inward",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01327",
+      "CC01328",
+      "CC01329",
+      "CC01330",
+      "CC01331",
+      "CC01332",
+      "CC01333"
+    ],
+    "statuses": {
+      "match": 4,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_simple::open_diamond_offset_outward",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01368",
+      "CC01369",
+      "CC01370",
+      "CC01371",
+      "CC01372"
+    ],
+    "statuses": {
+      "match": 2,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_simple::closed_rectangle_into_overlapping_line",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01147",
+      "CC01341",
+      "CC01342",
+      "CC01343",
+      "CC01344",
+      "CC01345",
+      "CC01346"
+    ],
+    "statuses": {
+      "match": 4,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_simple::open_rectangle_inward",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01373",
+      "CC01374",
+      "CC01375",
+      "CC01376",
+      "CC01377"
+    ],
+    "statuses": {
+      "match": 2,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_simple::closed_rectangle_inward",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01347",
+      "CC01348",
+      "CC01349",
+      "CC01350",
+      "CC01351",
+      "CC01352",
+      "CC01353"
+    ],
+    "statuses": {
+      "match": 4,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_simple::open_diamond_offset_inward",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01363",
+      "CC01364",
+      "CC01365",
+      "CC01366",
+      "CC01367"
+    ],
+    "statuses": {
+      "match": 2,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_simple::closed_diamond_offset_outward",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01334",
+      "CC01335",
+      "CC01336",
+      "CC01337",
+      "CC01338",
+      "CC01339",
+      "CC01340"
+    ],
+    "statuses": {
+      "match": 4,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_simple::open_rectangle_outward",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01378",
+      "CC01379",
+      "CC01380",
+      "CC01381",
+      "CC01382"
+    ],
+    "statuses": {
+      "match": 2,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_simple::closed_rectangle_outward",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01354",
+      "CC01355",
+      "CC01356",
+      "CC01357",
+      "CC01358",
+      "CC01359",
+      "CC01360"
+    ],
+    "statuses": {
+      "match": 4,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_simple::square_collapsed",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01383",
+      "CC01384",
+      "CC01385",
+      "CC01386"
+    ],
+    "statuses": {
+      "discrepancy": 4
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_simple::square_collapsed_into_point",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01387",
+      "CC01388",
+      "CC01389",
+      "CC01390"
+    ],
+    "statuses": {
+      "match": 4
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_specific::case15",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01433",
+      "CC01434",
+      "CC01435",
+      "CC01436",
+      "CC01437",
+      "CC01438",
+      "CC01439"
+    ],
+    "statuses": {
+      "match": 2,
+      "helper-only": 3,
+      "discrepancy": 2
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_specific::case14",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01426",
+      "CC01427",
+      "CC01428",
+      "CC01429",
+      "CC01430",
+      "CC01431",
+      "CC01432"
+    ],
+    "statuses": {
+      "discrepancy": 2,
+      "helper-only": 3,
+      "match": 2
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_specific::case10",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01398",
+      "CC01399",
+      "CC01400",
+      "CC01401",
+      "CC01402",
+      "CC01403",
+      "CC01404"
+    ],
+    "statuses": {
+      "discrepancy": 2,
+      "helper-only": 3,
+      "match": 2
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_past_failures::closed_pline9",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01248",
+      "CC01249",
+      "CC01250",
+      "CC01251",
+      "CC01252",
+      "CC01253",
+      "CC01254"
+    ],
+    "statuses": {
+      "discrepancy": 4,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_specific::case1",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01391",
+      "CC01392",
+      "CC01393",
+      "CC01394",
+      "CC01395",
+      "CC01396",
+      "CC01397"
+    ],
+    "statuses": {
+      "match": 4,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_specific::case3",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01461",
+      "CC01462",
+      "CC01463",
+      "CC01464"
+    ],
+    "statuses": {
+      "match": 4
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_specific::case13",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01419",
+      "CC01420",
+      "CC01421",
+      "CC01422",
+      "CC01423",
+      "CC01424",
+      "CC01425"
+    ],
+    "statuses": {
+      "match": 4,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_specific::case4",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01465",
+      "CC01466",
+      "CC01467",
+      "CC01468",
+      "CC01469"
+    ],
+    "statuses": {
+      "match": 2,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_specific::case5",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01470",
+      "CC01471",
+      "CC01472",
+      "CC01473",
+      "CC01474"
+    ],
+    "statuses": {
+      "discrepancy": 2,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_specific::case6",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01475",
+      "CC01476",
+      "CC01477",
+      "CC01478",
+      "CC01479"
+    ],
+    "statuses": {
+      "error": 2,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_specific::case7",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01480",
+      "CC01481",
+      "CC01482",
+      "CC01483",
+      "CC01484"
+    ],
+    "statuses": {
+      "match": 2,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_specific::case2",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01454",
+      "CC01455",
+      "CC01456",
+      "CC01457",
+      "CC01458",
+      "CC01459",
+      "CC01460"
+    ],
+    "statuses": {
+      "match": 4,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_specific::self_intersecting_case1",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01499",
+      "CC01500",
+      "CC01501",
+      "CC01502",
+      "CC01503"
+    ],
+    "statuses": {
+      "discrepancy": 2,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_specific::case9",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01492",
+      "CC01493",
+      "CC01494",
+      "CC01495",
+      "CC01496",
+      "CC01497",
+      "CC01498"
+    ],
+    "statuses": {
+      "discrepancy": 2,
+      "helper-only": 3,
+      "match": 2
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_specific::self_intersecting_case2",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01504",
+      "CC01505",
+      "CC01506",
+      "CC01507",
+      "CC01508"
+    ],
+    "statuses": {
+      "discrepancy": 2,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_specific::case16",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01440",
+      "CC01441",
+      "CC01442",
+      "CC01443",
+      "CC01444",
+      "CC01445",
+      "CC01446"
+    ],
+    "statuses": {
+      "match": 4,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_specific::case8",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01485",
+      "CC01486",
+      "CC01487",
+      "CC01488",
+      "CC01489",
+      "CC01490",
+      "CC01491"
+    ],
+    "statuses": {
+      "discrepancy": 2,
+      "helper-only": 3,
+      "match": 2
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_specific::case17",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01447",
+      "CC01448",
+      "CC01449",
+      "CC01450",
+      "CC01451",
+      "CC01452",
+      "CC01453"
+    ],
+    "statuses": {
+      "match": 4,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::non_tangent_open_endpoint_clip",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01558",
+      "CC01559",
+      "CC01560",
+      "CC01561",
+      "CC01562",
+      "CC01563",
+      "CC01564",
+      "CC01565",
+      "CC01566",
+      "CC01567",
+      "CC01568"
+    ],
+    "statuses": {
+      "error": 8,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::disjoint_same_direction_coincident_spans",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01547",
+      "CC01548",
+      "CC01549",
+      "CC01550",
+      "CC01551",
+      "CC01552",
+      "CC01553",
+      "CC01554",
+      "CC01555",
+      "CC01556",
+      "CC01557"
+    ],
+    "statuses": {
+      "discrepancy": 8,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::opposing_coincident_arcs_vertex_boundaries",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01588",
+      "CC01589",
+      "CC01590",
+      "CC01591",
+      "CC01592",
+      "CC01593",
+      "CC01594",
+      "CC01595",
+      "CC01596",
+      "CC01597",
+      "CC01598",
+      "CC01599",
+      "CC01600",
+      "CC01601",
+      "CC01602",
+      "CC01603",
+      "CC01604",
+      "CC01605",
+      "CC01606"
+    ],
+    "statuses": {
+      "match": 4,
+      "helper-only": 3,
+      "discrepancy": 12
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::same_direction_coincident_open_arcs",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01607",
+      "CC01608",
+      "CC01609",
+      "CC01610",
+      "CC01611",
+      "CC01612",
+      "CC01613",
+      "CC01614",
+      "CC01615",
+      "CC01616",
+      "CC01617"
+    ],
+    "statuses": {
+      "discrepancy": 8,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::same_direction_coincident_open_lines",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01629",
+      "CC01630",
+      "CC01631",
+      "CC01632",
+      "CC01633",
+      "CC01634",
+      "CC01635",
+      "CC01636",
+      "CC01637",
+      "CC01638",
+      "CC01639"
+    ],
+    "statuses": {
+      "discrepancy": 8,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::same_direction_coincident_open_line_arc",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01618",
+      "CC01619",
+      "CC01620",
+      "CC01621",
+      "CC01622",
+      "CC01623",
+      "CC01624",
+      "CC01625",
+      "CC01626",
+      "CC01627",
+      "CC01628"
+    ],
+    "statuses": {
+      "discrepancy": 8,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::opposing_coincident_arcs_segment_interior_boundaries",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01569",
+      "CC01570",
+      "CC01571",
+      "CC01572",
+      "CC01573",
+      "CC01574",
+      "CC01575",
+      "CC01576",
+      "CC01577",
+      "CC01578",
+      "CC01579",
+      "CC01580",
+      "CC01581",
+      "CC01582",
+      "CC01583",
+      "CC01584",
+      "CC01585",
+      "CC01586",
+      "CC01587"
+    ],
+    "statuses": {
+      "match": 4,
+      "helper-only": 3,
+      "discrepancy": 12
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_past_failures::closed_pline5",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01220",
+      "CC01221",
+      "CC01222",
+      "CC01223",
+      "CC01224",
+      "CC01225",
+      "CC01226"
+    ],
+    "statuses": {
+      "match": 4,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::three_way_coincident_lines",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01697",
+      "CC01698",
+      "CC01699",
+      "CC01700",
+      "CC01701",
+      "CC01702",
+      "CC01703",
+      "CC01704",
+      "CC01705",
+      "CC01706",
+      "CC01707"
+    ],
+    "statuses": {
+      "discrepancy": 8,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::touch_at_coincident_overlap_boundary",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01727",
+      "CC01728",
+      "CC01729",
+      "CC01730",
+      "CC01731",
+      "CC01732",
+      "CC01733",
+      "CC01734",
+      "CC01735",
+      "CC01736",
+      "CC01737"
+    ],
+    "statuses": {
+      "discrepancy": 8,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "touching_loop_behavior_does_not_change_crossing_routing",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01738",
+      "CC01739",
+      "CC01740",
+      "CC01741",
+      "CC01742"
+    ],
+    "statuses": {
+      "discrepancy": 2,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::tangent_arc_arc_segment_interiors",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01640",
+      "CC01641",
+      "CC01642",
+      "CC01643",
+      "CC01644",
+      "CC01645",
+      "CC01646",
+      "CC01647",
+      "CC01648",
+      "CC01649",
+      "CC01650",
+      "CC01651",
+      "CC01652",
+      "CC01653",
+      "CC01654",
+      "CC01655",
+      "CC01656",
+      "CC01657",
+      "CC01658"
+    ],
+    "statuses": {
+      "error": 16,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::tangent_line_arc_segment_interiors",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01659",
+      "CC01660",
+      "CC01661",
+      "CC01662",
+      "CC01663",
+      "CC01664",
+      "CC01665",
+      "CC01666",
+      "CC01667",
+      "CC01668",
+      "CC01669",
+      "CC01670",
+      "CC01671",
+      "CC01672",
+      "CC01673",
+      "CC01674",
+      "CC01675",
+      "CC01676",
+      "CC01677"
+    ],
+    "statuses": {
+      "match": 8,
+      "helper-only": 3,
+      "discrepancy": 8
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::coincident_line_dumbbell_vertex_boundaries",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01528",
+      "CC01529",
+      "CC01530",
+      "CC01531",
+      "CC01532",
+      "CC01533",
+      "CC01534",
+      "CC01535",
+      "CC01536",
+      "CC01537",
+      "CC01538",
+      "CC01539",
+      "CC01540",
+      "CC01541",
+      "CC01542",
+      "CC01543",
+      "CC01544",
+      "CC01545",
+      "CC01546"
+    ],
+    "statuses": {
+      "match": 8,
+      "helper-only": 3,
+      "discrepancy": 8
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::coincident_line_dumbbell_segment_interior_boundaries",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01509",
+      "CC01510",
+      "CC01511",
+      "CC01512",
+      "CC01513",
+      "CC01514",
+      "CC01515",
+      "CC01516",
+      "CC01517",
+      "CC01518",
+      "CC01519",
+      "CC01520",
+      "CC01521",
+      "CC01522",
+      "CC01523",
+      "CC01524",
+      "CC01525",
+      "CC01526",
+      "CC01527"
+    ],
+    "statuses": {
+      "match": 8,
+      "helper-only": 3,
+      "discrepancy": 8
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::tangent_line_endpoints",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01678",
+      "CC01679",
+      "CC01680",
+      "CC01681",
+      "CC01682",
+      "CC01683",
+      "CC01684",
+      "CC01685",
+      "CC01686",
+      "CC01687",
+      "CC01688",
+      "CC01689",
+      "CC01690",
+      "CC01691",
+      "CC01692",
+      "CC01693",
+      "CC01694",
+      "CC01695",
+      "CC01696"
+    ],
+    "statuses": {
+      "match": 8,
+      "helper-only": 3,
+      "discrepancy": 8
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::three_way_point_contact_keeps_paths_separate",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01708",
+      "CC01709",
+      "CC01710",
+      "CC01711",
+      "CC01712",
+      "CC01713",
+      "CC01714",
+      "CC01715",
+      "CC01716",
+      "CC01717",
+      "CC01718",
+      "CC01719",
+      "CC01720",
+      "CC01721",
+      "CC01722",
+      "CC01723",
+      "CC01724",
+      "CC01725",
+      "CC01726"
+    ],
+    "statuses": {
+      "match": 16,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_specific::case11",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01405",
+      "CC01406",
+      "CC01407",
+      "CC01408",
+      "CC01409",
+      "CC01410",
+      "CC01411"
+    ],
+    "statuses": {
+      "discrepancy": 4,
+      "helper-only": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_parallel_offset",
+    "test": "test_specific::case12",
+    "source": "tests/test_pline_parallel_offset.rs",
+    "cases": [
+      "CC01412",
+      "CC01413",
+      "CC01414",
+      "CC01415",
+      "CC01416",
+      "CC01417",
+      "CC01418"
+    ],
+    "statuses": {
+      "discrepancy": 2,
+      "helper-only": 3,
+      "match": 2
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_seg_intersect",
+    "test": "arc_arc_end_points_touch",
+    "source": "tests/test_pline_seg_intersect.rs",
+    "cases": [
+      "CC01747"
+    ],
+    "statuses": {
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_seg_intersect",
+    "test": "arc1_within_arc2_overlapping",
+    "source": "tests/test_pline_seg_intersect.rs",
+    "cases": [
+      "CC01743"
+    ],
+    "statuses": {
+      "contract-difference": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_seg_intersect",
+    "test": "arc2_within_arc1_overlapping_reverse_dir",
+    "source": "tests/test_pline_seg_intersect.rs",
+    "cases": [
+      "CC01746"
+    ],
+    "statuses": {
+      "contract-difference": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_seg_intersect",
+    "test": "arc2_within_arc1_overlapping",
+    "source": "tests/test_pline_seg_intersect.rs",
+    "cases": [
+      "CC01745"
+    ],
+    "statuses": {
+      "contract-difference": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_seg_intersect",
+    "test": "arc_arc_end_points_touch_reverse_dir",
+    "source": "tests/test_pline_seg_intersect.rs",
+    "cases": [
+      "CC01748",
+      "CC01749",
+      "CC01750"
+    ],
+    "statuses": {
+      "match": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_seg_intersect",
+    "test": "arc_arc_opposite_direction_touch_at_ends_bug",
+    "source": "tests/test_pline_seg_intersect.rs",
+    "cases": [
+      "CC01751",
+      "CC01752",
+      "CC01753"
+    ],
+    "statuses": {
+      "discrepancy": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_seg_intersect",
+    "test": "arc1_within_arc2_overlapping_reverse_dir",
+    "source": "tests/test_pline_seg_intersect.rs",
+    "cases": [
+      "CC01744"
+    ],
+    "statuses": {
+      "contract-difference": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_seg_intersect",
+    "test": "arc_arc_partial_overlap",
+    "source": "tests/test_pline_seg_intersect.rs",
+    "cases": [
+      "CC01754"
+    ],
+    "statuses": {
+      "contract-difference": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_seg_intersect",
+    "test": "arc_arc_partial_overlap_arc1_reverse_dir",
+    "source": "tests/test_pline_seg_intersect.rs",
+    "cases": [
+      "CC01755"
+    ],
+    "statuses": {
+      "contract-difference": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_seg_intersect",
+    "test": "arc_arc_partial_overlap_arc1_reverse_dir_flipped",
+    "source": "tests/test_pline_seg_intersect.rs",
+    "cases": [
+      "CC01756"
+    ],
+    "statuses": {
+      "contract-difference": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_seg_intersect",
+    "test": "arc_arc_partial_overlap_arc2_reverse_dir",
+    "source": "tests/test_pline_seg_intersect.rs",
+    "cases": [
+      "CC01757"
+    ],
+    "statuses": {
+      "contract-difference": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_seg_intersect",
+    "test": "arc_arc_partial_overlap_arc2_reverse_dir_flipped",
+    "source": "tests/test_pline_seg_intersect.rs",
+    "cases": [
+      "CC01758"
+    ],
+    "statuses": {
+      "contract-difference": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_seg_intersect",
+    "test": "arc_arc_partial_overlap_flipped",
+    "source": "tests/test_pline_seg_intersect.rs",
+    "cases": [
+      "CC01759"
+    ],
+    "statuses": {
+      "contract-difference": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_seg_intersect",
+    "test": "arc_line_no_intersect",
+    "source": "tests/test_pline_seg_intersect.rs",
+    "cases": [
+      "CC01760"
+    ],
+    "statuses": {
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_seg_intersect",
+    "test": "line_arc_intersect_sticks_to_fuzzy_circle_endpoint",
+    "source": "tests/test_pline_seg_intersect.rs",
+    "cases": [
+      "CC01761"
+    ],
+    "statuses": {
+      "discrepancy": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_seg_intersect",
+    "test": "line_arc_no_intersect",
+    "source": "tests/test_pline_seg_intersect.rs",
+    "cases": [
+      "CC01762"
+    ],
+    "statuses": {
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_seg_intersect",
+    "test": "overlapping_arc_endpoint_touch_uses_position_tolerance",
+    "source": "tests/test_pline_seg_intersect.rs",
+    "cases": [
+      "CC01763",
+      "CC01764",
+      "CC01765",
+      "CC01766",
+      "CC01767",
+      "CC01768"
+    ],
+    "statuses": {
+      "discrepancy": 3,
+      "match": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_seg_intersect",
+    "test": "overlapping_arcs_handle_angle_wrap_at_different_scales",
+    "source": "tests/test_pline_seg_intersect.rs",
+    "cases": [
+      "CC01769",
+      "CC01770",
+      "CC01771"
+    ],
+    "statuses": {
+      "contract-difference": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_seg_intersect",
+    "test": "overlapping_lines",
+    "source": "tests/test_pline_seg_intersect.rs",
+    "cases": [
+      "CC01772"
+    ],
+    "statuses": {
+      "contract-difference": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_seg_intersect",
+    "test": "overlapping_lines_reverse_dir",
+    "source": "tests/test_pline_seg_intersect.rs",
+    "cases": [
+      "CC01773"
+    ],
+    "statuses": {
+      "contract-difference": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_seg_intersect",
+    "test": "overlapping_same_arcs",
+    "source": "tests/test_pline_seg_intersect.rs",
+    "cases": [
+      "CC01774"
+    ],
+    "statuses": {
+      "contract-difference": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_seg_intersect",
+    "test": "overlapping_same_arcs_reverse_dir",
+    "source": "tests/test_pline_seg_intersect.rs",
+    "cases": [
+      "CC01775"
+    ],
+    "statuses": {
+      "contract-difference": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_view",
+    "test": "from_new_start",
+    "source": "tests/test_pline_view.rs",
+    "cases": [
+      "CX01031",
+      "CX01032",
+      "CX01033",
+      "CX01034",
+      "CX01035",
+      "CX01036",
+      "CX01037",
+      "CX01038",
+      "CX01039",
+      "CX01040"
+    ],
+    "statuses": {
+      "match": 10
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_view",
+    "test": "from_slice_points_single_seg",
+    "source": "tests/test_pline_view.rs",
+    "cases": [
+      "CX01033",
+      "CX01042",
+      "CX01044",
+      "CX01045",
+      "CX01046",
+      "CX01047",
+      "CX01052",
+      "CX01053",
+      "CX01054",
+      "CX01055",
+      "CX01056",
+      "CX01057"
+    ],
+    "statuses": {
+      "match": 12
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_view",
+    "test": "from_slice_points_collapsed_across_near_vertex",
+    "source": "tests/test_pline_view.rs",
+    "cases": [
+      "CX01041"
+    ],
+    "statuses": {
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_view",
+    "test": "from_slice_points_multi_seg",
+    "source": "tests/test_pline_view.rs",
+    "cases": [
+      "CX01042",
+      "CX01043",
+      "CX01044",
+      "CX01045",
+      "CX01046",
+      "CX01047",
+      "CX01048",
+      "CX01049",
+      "CX01050",
+      "CX01051"
+    ],
+    "statuses": {
+      "match": 10
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_view",
+    "test": "attempting_to_wrap_slice_on_open_pline - should panic",
+    "source": "tests/test_pline_view.rs",
+    "cases": [],
+    "statuses": {},
+    "coverage": "not adapted"
+  },
+  {
+    "binary": "test_pline_winding_number",
+    "test": "point_and_circle",
+    "source": "tests/test_pline_winding_number.rs",
+    "cases": [
+      "CC01780",
+      "CC01781",
+      "CC01782",
+      "CC01783"
+    ],
+    "statuses": {
+      "match": 4
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_winding_number",
+    "test": "point_and_circle_with_quarter_arcs",
+    "source": "tests/test_pline_winding_number.rs",
+    "cases": [
+      "CC01784",
+      "CC01785",
+      "CC01786"
+    ],
+    "statuses": {
+      "match": 3
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_winding_number",
+    "test": "multiple_windings",
+    "source": "tests/test_pline_winding_number.rs",
+    "cases": [
+      "CC01776",
+      "CC01777",
+      "CC01778",
+      "CC01779"
+    ],
+    "statuses": {
+      "match": 2,
+      "contract-difference": 2
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_winding_number",
+    "test": "point_outside_aligned_with_direction_vectors2",
+    "source": "tests/test_pline_winding_number.rs",
+    "cases": [
+      "CC01792"
+    ],
+    "statuses": {
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_winding_number",
+    "test": "point_outside_aligned_with_direction_vectors1",
+    "source": "tests/test_pline_winding_number.rs",
+    "cases": [
+      "CC01791"
+    ],
+    "statuses": {
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_pline_winding_number",
+    "test": "point_and_rectangle",
+    "source": "tests/test_pline_winding_number.rs",
+    "cases": [
+      "CC01787",
+      "CC01788",
+      "CC01789",
+      "CC01790"
+    ],
+    "statuses": {
+      "match": 4
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_shape_parallel_offset",
+    "test": "test_simple::set_of_empty_returns_empty",
+    "source": "tests/test_shape_parallel_offset.rs",
+    "cases": [
+      "CC01793"
+    ],
+    "statuses": {
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_shape_parallel_offset",
+    "test": "test_simple::empty_returns_empty",
+    "source": "tests/test_shape_parallel_offset.rs",
+    "cases": [
+      "CC01793"
+    ],
+    "statuses": {
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_shape_parallel_offset",
+    "test": "test_specific::case1",
+    "source": "tests/test_shape_parallel_offset.rs",
+    "cases": [
+      "CC01798",
+      "CC01799",
+      "CC01800",
+      "CC01801"
+    ],
+    "statuses": {
+      "helper-only": 3,
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_shape_parallel_offset",
+    "test": "test_simple::rectangle_inside_shape",
+    "source": "tests/test_shape_parallel_offset.rs",
+    "cases": [
+      "CC01794",
+      "CC01795",
+      "CC01796",
+      "CC01797"
+    ],
+    "statuses": {
+      "helper-only": 3,
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_shape_parallel_offset",
+    "test": "test_specific::case2",
+    "source": "tests/test_shape_parallel_offset.rs",
+    "cases": [
+      "CC01802",
+      "CC01803",
+      "CC01804",
+      "CC01805"
+    ],
+    "statuses": {
+      "helper-only": 3,
+      "match": 1
+    },
+    "coverage": "selected-operation comparisons"
+  },
+  {
+    "binary": "test_shape_parallel_offset",
+    "test": "test_specific::case3",
+    "source": "tests/test_shape_parallel_offset.rs",
+    "cases": [
+      "CC01806",
+      "CC01807",
+      "CC01808",
+      "CC01809"
+    ],
+    "statuses": {
+      "helper-only": 3,
+      "error": 1
+    },
+    "coverage": "selected-operation comparisons"
+  }
+]

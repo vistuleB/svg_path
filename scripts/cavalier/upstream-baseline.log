@@ -1,0 +1,476 @@
+    Updating crates.io index
+ Downloading crates ...
+  Downloaded cfg-if v1.0.3
+  Downloaded cast v0.3.0
+  Downloaded ciborium-io v0.2.2
+  Downloaded alloca v0.4.0
+  Downloaded ciborium-ll v0.2.2
+  Downloaded clap_lex v1.1.0
+  Downloaded plotters-backend v0.3.7
+  Downloaded same-file v1.0.6
+  Downloaded itoa v1.0.15
+  Downloaded plotters-svg v0.3.7
+  Downloaded version_check v0.9.5
+  Downloaded page_size v0.6.0
+  Downloaded autocfg v1.5.0
+  Downloaded anstyle v1.0.13
+  Downloaded anes v0.1.6
+  Downloaded crossbeam-deque v0.8.7
+  Downloaded criterion-plot v0.8.2
+  Downloaded tinytemplate v1.2.1
+  Downloaded walkdir v2.5.0
+  Downloaded find-msvc-tools v0.1.4
+  Downloaded shlex v1.3.0
+  Downloaded quote v1.0.41
+  Downloaded crossbeam-epoch v0.9.20
+  Downloaded ahash v0.8.12
+  Downloaded static_aabb2d_index v2.1.0
+  Downloaded smallvec v1.15.1
+  Downloaded crossbeam-utils v0.8.21
+  Downloaded oorandom v11.1.5
+  Downloaded either v1.17.0
+  Downloaded unicode-ident v1.0.19
+  Downloaded once_cell v1.21.4
+  Downloaded ciborium v0.2.2
+  Downloaded ryu v1.0.20
+  Downloaded half v2.7.0
+  Downloaded serde_core v1.0.228
+  Downloaded proc-macro2 v1.0.101
+  Downloaded clap v4.6.1
+  Downloaded serde_derive v1.0.228
+  Downloaded serde v1.0.228
+  Downloaded cc v1.2.41
+  Downloaded rayon-core v1.13.0
+  Downloaded num-traits v0.2.19
+  Downloaded zerocopy-derive v0.8.27
+  Downloaded memchr v2.7.6
+  Downloaded regex v1.12.1
+  Downloaded rayon v1.12.0
+  Downloaded clap_builder v4.6.0
+  Downloaded serde_json v1.0.145
+  Downloaded aho-corasick v1.1.3
+  Downloaded plotters v0.3.7
+  Downloaded zerocopy v0.8.27
+  Downloaded itertools v0.13.0
+  Downloaded syn v2.0.106
+  Downloaded criterion v0.8.2
+  Downloaded regex-syntax v0.8.7
+  Downloaded regex-automata v0.4.12
+  Downloaded libc v0.2.177
+   Compiling proc-macro2 v1.0.101
+   Compiling unicode-ident v1.0.19
+   Compiling quote v1.0.41
+   Compiling zerocopy v0.8.27
+   Compiling crossbeam-utils v0.8.21
+   Compiling serde_core v1.0.228
+   Compiling autocfg v1.5.0
+   Compiling cfg-if v1.0.3
+   Compiling crossbeam-epoch v0.9.20
+   Compiling serde v1.0.228
+   Compiling shlex v1.3.0
+   Compiling find-msvc-tools v0.1.4
+   Compiling crossbeam-deque v0.8.7
+   Compiling cc v1.2.41
+   Compiling num-traits v0.2.19
+   Compiling libc v0.2.177
+   Compiling version_check v0.9.5
+   Compiling either v1.17.0
+   Compiling rayon-core v1.13.0
+   Compiling serde_json v1.0.145
+   Compiling anstyle v1.0.13
+   Compiling itoa v1.0.15
+   Compiling syn v2.0.106
+   Compiling clap_lex v1.1.0
+   Compiling ryu v1.0.20
+   Compiling regex-syntax v0.8.7
+   Compiling plotters-backend v0.3.7
+   Compiling ahash v0.8.12
+   Compiling ciborium-io v0.2.2
+   Compiling memchr v2.7.6
+   Compiling plotters-svg v0.3.7
+   Compiling clap_builder v4.6.0
+   Compiling regex-automata v0.4.12
+   Compiling itertools v0.13.0
+   Compiling cast v0.3.0
+   Compiling once_cell v1.21.4
+   Compiling same-file v1.0.6
+   Compiling walkdir v2.5.0
+   Compiling rayon v1.12.0
+   Compiling regex v1.12.1
+   Compiling criterion-plot v0.8.2
+   Compiling clap v4.6.1
+   Compiling alloca v0.4.0
+   Compiling page_size v0.6.0
+   Compiling plotters v0.3.7
+   Compiling static_aabb2d_index v2.1.0
+   Compiling smallvec v1.15.1
+   Compiling oorandom v11.1.5
+   Compiling anes v0.1.6
+   Compiling zerocopy-derive v0.8.27
+   Compiling serde_derive v1.0.228
+   Compiling half v2.7.0
+   Compiling cavalier_contours v0.9.0 (/Users/jpsteinb/github.com/vistuleB/svg_path/scripts/cavalier/upstream/cavalier_contours)
+   Compiling ciborium-ll v0.2.2
+   Compiling tinytemplate v1.2.1
+   Compiling ciborium v0.2.2
+   Compiling criterion v0.8.2
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 29.54s
+     Running unittests src/lib.rs (/tmp/cavalier-audit-target/debug/deps/cavalier_contours-24c663d8859b5974)
+
+running 79 tests
+test core::math::vector2::tests::ops ... ok
+test core::math::base_math::tests::small_arc_sweep_excludes_opposite_point_at_different_scales ... ok
+test core::math::base_math::tests::arc_sweep_uses_position_tolerance_at_both_boundaries ... ok
+test polyline::internal::pline_intersects::find_intersects_tests::filters_two_polyline_segment_pairs ... ok
+test polyline::internal::pline_intersects::find_intersects_tests::open_polylines_end_touch_start ... ok
+test polyline::internal::pline_intersects::find_intersects_tests::open_polylines_end_touch_start_flipped ... ok
+test polyline::internal::pline_intersects::find_intersects_tests::open_polylines_start_points_touch ... ok
+test polyline::internal::pline_intersects::find_intersects_tests::circles_touching ... ok
+test polyline::internal::pline_intersects::find_intersects_tests::circles_overlapping_opposing_direction_flipped ... ok
+test polyline::internal::pline_intersects::find_intersects_tests::circles_overlapping_opposing_direction ... ok
+test polyline::internal::pline_intersects::find_intersects_tests::circles_overlapping_same_direction ... ok
+test polyline::internal::pline_intersects::find_intersects_tests::uses_pos_equal_eps ... ok
+test polyline::internal::pline_intersects::global_self_intersect_tests::circle_no_intersects ... ok
+test polyline::internal::pline_intersects::global_self_intersect_tests::filters_global_segment_pairs ... ok
+test polyline::internal::pline_intersects::global_self_intersect_tests::half_circle_overlapping_self ... ok
+test polyline::internal::pline_intersects::global_self_intersect_tests::long_open_polyline_circle ... ok
+test polyline::internal::pline_intersects::global_self_intersect_tests::short_open_polyline_circle ... ok
+test polyline::internal::pline_intersects::local_self_intersect_tests::circle_no_intersects ... ok
+test polyline::internal::pline_intersects::local_self_intersect_tests::empty_polyline ... ok
+test polyline::internal::pline_intersects::local_self_intersect_tests::filters_local_segment_pairs ... ok
+test polyline::internal::pline_intersects::local_self_intersect_tests::half_circle_overlapping_self ... ok
+test polyline::internal::pline_intersects::local_self_intersect_tests::long_open_polyline_circle ... ok
+test polyline::internal::pline_intersects::local_self_intersect_tests::short_open_polyline_circle ... ok
+test polyline::internal::pline_intersects::local_self_intersect_tests::single_vertex ... ok
+test polyline::internal::pline_intersects::sort_and_join_overlapping_intersects_tests::overlapping_arcs ... ok
+test polyline::internal::pline_intersects::sort_and_join_overlapping_intersects_tests::overlapping_arcs_flipped ... ok
+test polyline::internal::pline_intersects::sort_and_join_overlapping_intersects_tests::overlapping_circles_opposing_dir ... ok
+test polyline::internal::pline_intersects::sort_and_join_overlapping_intersects_tests::overlapping_circles_perpendicular_vertexes ... ok
+test polyline::internal::pline_intersects::sort_and_join_overlapping_intersects_tests::overlapping_circles_same_dir ... ok
+test polyline::internal::pline_intersects::sort_and_join_overlapping_intersects_tests::overlapping_circles_same_dir_flipped_index ... ok
+test polyline::internal::pline_offset::tests::ambiguous_multiway_touch_falls_back_to_preserve_order ... ok
+test polyline::internal::pline_offset::tests::coincident_coverage_can_span_lines_and_arcs ... ok
+test polyline::internal::pline_offset::tests::discarded_overlap_blocks_preserve_touch_routing_at_shared_boundary ... ok
+test polyline::internal::pline_offset::tests::dissection_points_sort_into_segment_ranges ... ok
+test polyline::internal::pline_offset::tests::indexed_node_lookup_handles_unbucketed_coordinates ... ok
+test polyline::internal::pline_offset::tests::indexed_node_lookup_uses_bucket_probe_order_for_multiple_matches ... ok
+test polyline::internal::pline_offset::tests::one_occurrence_can_participate_in_several_relations ... ok
+test polyline::internal::pline_offset::tests::one_segment_pair_can_have_two_distinct_contact_nodes ... ok
+test polyline::internal::pline_offset::tests::preserve_collection_records_overlap_boundaries_without_coverage ... ok
+test polyline::internal::pline_offset::tests::preserve_routing_visits_related_slice_before_closing ... ok
+test polyline::internal::pline_offset::tests::repeated_clip_reports_share_one_occurrence ... ok
+test polyline::internal::pline_offset::tests::repeated_self_contact_reports_share_one_relation ... ok
+test polyline::internal::pline_offset::tests::reversed_relation_reports_merge_and_strengthen_one_pair ... ok
+test polyline::internal::pline_offset::tests::segment_end_occurrences_are_canonicalized_to_outgoing_segment ... ok
+test polyline::internal::pline_offset::tests::segment_index_compacts_only_for_dense_invalidity ... ok
+test polyline::internal::pline_offset::tests::self_intersection_collection_records_full_arc_overlap ... ok
+test polyline::internal::pline_offset::tests::separate_behavior_keeps_crossing_closure_order ... ok
+test polyline::internal::pline_offset::tests::separate_routing_prioritizes_relation_to_initial_occurrence ... ok
+test polyline::internal::pline_offset::tests::shared_endpoint_reports_use_one_occurrence_in_both_directions ... ok
+test polyline::internal::pline_offset::tests::short_tangent_is_classified_as_crossing ... ok
+test polyline::internal::pline_offset::tests::slices_with_invalid_indexes_are_rejected ... ok
+test polyline::internal::pline_offset::tests::unrelated_nodes_do_not_connect_by_position ... ok
+test polyline::internal::raw_pline_offset::tests::closed_raw_offsets_have_segment_aligned_validity ... ok
+test polyline::internal::raw_pline_offset::tests::collapsed_arc_spans_are_invalid ... ok
+test polyline::internal::raw_pline_offset::tests::failed_inner_join_connector_is_recorded_as_invalid ... ok
+test polyline::internal::raw_pline_offset::tests::inner_join_endpoint_tolerance_clamps_the_local_candidate ... ok
+test polyline::internal::raw_pline_offset::tests::line_line_joins_have_explicit_local_classes ... ok
+test polyline::internal::raw_pline_offset::tests::mixed_and_arc_joins_have_explicit_local_classes ... ok
+test polyline::internal::raw_pline_offset::tests::near_collinear_corner_uses_normalized_angular_tolerance ... ok
+test polyline::internal::raw_pline_offset::tests::normal_raw_offsets_have_no_invalid_segments ... ok
+test polyline::internal::raw_pline_offset::tests::raw_arc_span_bulge_uses_cached_sweep_and_trim_parameters ... ok
+test polyline::internal::raw_pline_offset::tests::raw_offset_segments_cache_line_arc_and_collapsed_geometry ... ok
+test polyline::internal::raw_pline_offset::tests::reported_raw_offset_has_an_invalid_source_span ... ok
+test polyline::internal::raw_pline_offset::tests::round_join_bulge_matches_sweep_and_offset_direction ... ok
+test polyline::internal::raw_pline_offset::tests::unusable_nearest_line_arc_candidate_does_not_select_farther_crossing ... ok
+test polyline::internal::raw_pline_offset::tests::zero_raw_offset_is_an_exact_copy ... ok
+test polyline::pline_seg::tests::dist_from_segment_start_matches_arc_fractions_in_both_directions ... ok
+test polyline::pline_seg::tests::dist_from_segment_start_snaps_near_arc_endpoints ... ok
+test polyline::pline_seg::tests::seg_arc_radius_and_center_returns_expected_geometry ... ok
+test polyline::pline_seg::tests::seg_bounding_box_returns_exact_arc_extents ... ok
+test polyline::pline_seg::tests::seg_closest_point_returns_arc_projection_or_nearest_endpoint ... ok
+test polyline::pline_seg::tests::seg_bounding_box_matches_angle_based_extents ... ok
+test polyline::pline_seg::tests::seg_fast_approx_bounding_box_extends_chord_by_sagitta ... ok
+test polyline::pline_seg::tests::seg_distance_is_greater_than_matches_closest_point_distance ... ok
+test polyline::pline_seg::tests::seg_length_returns_expected_arc_lengths ... ok
+test polyline::pline_seg::tests::seg_midpoint_returns_expected_arc_midpoints ... ok
+test polyline::pline_seg::tests::seg_split_at_point_returns_expected_subarcs ... ok
+test polyline::pline_seg::tests::seg_tangent_vector_preserves_arc_radius_magnitude ... ok
+test polyline::internal::pline_offset::tests::topology_builder_indexes_large_contact_sets ... ok
+
+test result: ok. 79 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/test_circle_circle_intersect.rs (/tmp/cavalier-audit-target/debug/deps/test_circle_circle_intersect-abe29500a0d9baac)
+
+running 6 tests
+test no_intersect_outside ... ok
+test overlapping ... ok
+test no_intersect_inside ... ok
+test tangent_intersect_outside ... ok
+test tangent_intersect_inside ... ok
+test two_intersects ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/test_line_circle_intersect.rs (/tmp/cavalier-audit-target/debug/deps/test_line_circle_intersect-90b1d35708d729d4)
+
+running 13 tests
+test near_tangent_intersections_snap_when_positions_are_equal ... ok
+test no_intersect ... ok
+test near_tangent_intersections_use_position_epsilon_at_different_radii ... ok
+test tangent_intersect_horizontal ... ok
+test tangent_intersect_vertical ... ok
+test no_intersect_vertical ... ok
+test no_intersect_horizontal ... ok
+test point_segment_uses_position_epsilon ... ok
+test tangent_at_start_point ... ok
+test two_intersects_seg_inside_horizontal ... ok
+test two_intersects_seg_inside_vertical ... ok
+test two_intersects_seg_touching ... ok
+test two_intersects_true ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/test_line_line_intersect.rs (/tmp/cavalier-audit-target/debug/deps/test_line_line_intersect-f8cc88d299f57983)
+
+running 14 tests
+test end_point_start_point_touch_same_direction ... ok
+test entirely_overlapping_opposing_direction ... ok
+test entirely_overlapping_same_direction ... ok
+test false_intersect ... ok
+test no_intersect ... ok
+test no_intersect_vertical ... ok
+test no_intersect_horizontal ... ok
+test overlapping_intersect ... ok
+test point_intersect ... ok
+test point_intersect_at_end ... ok
+test point_intersect_horizontal ... ok
+test point_intersect_vertical ... ok
+test start_points_touch_opposing_direction ... ok
+test true_intersect ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/test_pline_basics.rs (/tmp/cavalier-audit-target/debug/deps/test_pline_basics-5f91582fbb800c6f)
+
+running 13 tests
+test area ... ok
+test iter_segments ... ok
+test find_point_at_path_length ... ok
+test create_from_remove_repeat ... ok
+test invert_direction_mut ... ok
+test extents ... ok
+test iter_segment_indexes ... ok
+test path_length ... ok
+test iter_vertexes ... ok
+test remove_redundant ... ok
+test remove_redundant_removes_repeat_pos ... ok
+test remove_repeat ... ok
+test rotate_start ... ok
+
+test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/test_pline_boolean.rs (/tmp/cavalier-audit-target/debug/deps/test_pline_boolean-c142a3442d2f8d66)
+
+running 35 tests
+test test_same::origin_circle ... ok
+test test_same::origin_circle2 ... ok
+test test_same::rectangle ... ok
+test test_simple::rectangle_in_rectangle_two_edge_overlap ... ok
+test test_same::diamond ... ok
+test test_simple::rectangle_in_rectangle_one_edge_overlap_flipped_order ... ok
+test test_simple::rectangle_in_rectangle_one_edge_overlap ... ok
+test test_same::case3 ... ok
+test test_simple::rectangle_over_half_of_circle ... ok
+test test_simple::rectangle_slicing_circle ... ok
+test test_simple::rectangle_in_rectangle_two_edge_overlap_flipped_order ... ok
+test test_specific::overlapping_pill_shaped_ends_reported ... ok
+test test_specific::overlapping_pill_shaped_ends_reported11 ... ok
+test test_specific::overlapping_pill_shaped_ends_reported10 ... ok
+test test_specific::debug_assert_stitching_slices_reported ... ok
+test test_specific::overlapping_pill_shaped_ends_reported12 ... ok
+test test_specific::overlapping_pill_shaped_ends_reported13 ... ok
+test test_specific::overlapping_pill_shaped_ends_reported2 ... ok
+test test_specific::overlapping_pill_shaped_ends_reported3 ... ok
+test test_specific::overlapping_pill_shaped_ends_reported4 ... ok
+test test_specific::overlapping_pill_shaped_ends_reported5_modified ... ok
+test test_specific::overlapping_pill_shaped_ends_reported5 ... ok
+test test_specific::overlapping_pill_shaped_ends_reported6 ... ok
+test test_specific::overlapping_pill_shaped_ends_reported7 ... ok
+test test_specific::parametric_from_point_debug_assert_reported1 ... ok
+test test_specific::overlapping_pill_shaped_ends_reported8 ... ok
+test test_specific::overlapping_pill_shaped_ends_reported9 ... ok
+test test_specific::parametric_from_point_debug_assert_reported2 ... ok
+test test_same::case2 ... ok
+test test_specific::pill_shapes_overlapping_at_ends_at_acute_angle ... ok
+test test_specific::pill_shapes_overlapping_at_ends_90_deg ... ok
+test test_specific::mostly_overlapping_case1 ... ok
+test test_same::case1 ... ok
+test test_specific::mostly_overlapping_case2 ... ok
+test test_specific::opposite_direction_arc_arc_endpoints_intersect_bug_reported ... ok
+
+test result: ok. 35 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.23s
+
+     Running tests/test_pline_contains.rs (/tmp/cavalier-audit-target/debug/deps/test_pline_contains-65085035385eadc3)
+
+running 6 tests
+test test_pline_contains::test_copy ... ok
+test test_pline_contains::test_invalid ... ok
+test test_pline_contains::test_self_intersect_scan ... ok
+test test_pline_contains::test_rectangle_contains_circle ... ok
+test test_pline_contains::test_rectangle_intersects_circle ... ok
+test test_pline_contains::test_disjoint ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/test_pline_parallel_offset.rs (/tmp/cavalier-audit-target/debug/deps/test_pline_parallel_offset-bc6d35e42d605ffe)
+
+running 82 tests
+test exact_zero_offset_returns_an_unchanged_copy ... ok
+test closed_inward_offset_collapsed_returns_no_result ... ok
+test repeat_position_input_ignores_external_aabb_after_sanitize ... ok
+test default_behavior_preserves_tangent_touching_small_loop ... ok
+test repeat_position_input_is_sanitized_before_offset ... ok
+test coincident_discard_does_not_remove_a_point_only_tangent ... ok
+test offset_does_not_self_intersect ... ok
+test collapsed_rectangle_preserves_or_discards_coincident_centerline ... ok
+test next_offset_removes_collapsed_small_loop ... ok
+test repeat_position_real_world_input_is_sanitized_before_offset ... ok
+test coincident_discard_removes_same_direction_and_opposing_partial_spans ... ok
+test separate_behavior_splits_tangent_touching_small_loop ... ok
+test test_past_failures::closed_pline8 ... ok
+test test_past_failures::closed_pline1 ... ok
+test test_past_failures::closed_pline2 ... ok
+test test_past_failures::issue82_small_joining_arc ... ok
+test test_past_failures::closed_pline3 ... ok
+test test_past_failures::near_tangent_line_arc_joins ... ok
+test test_past_failures::open_pline1 ... ok
+test test_past_failures::closed_pline7 ... ok
+test test_past_failures::open_pline2 ... ok
+test test_past_failures::open_pline3 ... ok
+test test_past_failures::issue77_repeated_offset ... ok
+test test_past_failures::open_pline5 ... ok
+test test_past_failures::small_bulge_arc_line_transition ... ok
+test test_past_failures::sub_tolerance_raw_offset_arc_does_not_panic ... ok
+test test_past_failures::open_pline4 ... ok
+test test_simple::circle_collapsed ... ok
+test test_past_failures::closed_pline6 ... ok
+test test_simple::circle_collapsed_into_point ... ok
+test test_past_failures::closed_pline4 ... ok
+test test_simple::closed_circle_offset_inward ... ok
+test test_simple::closed_circle_offset_outward ... ok
+test test_simple::empty_returns_empty ... ok
+test test_simple::closed_diamond_offset_inward ... ok
+test test_simple::open_diamond_offset_outward ... ok
+test test_simple::closed_rectangle_into_overlapping_line ... ok
+test test_simple::open_rectangle_inward ... ok
+test test_simple::closed_rectangle_inward ... ok
+test test_simple::open_diamond_offset_inward ... ok
+test test_simple::closed_diamond_offset_outward ... ok
+test test_simple::open_rectangle_outward ... ok
+test test_simple::closed_rectangle_outward ... ok
+test test_simple::square_collapsed ... ok
+test test_simple::square_collapsed_into_point ... ok
+test test_specific::case15 ... ok
+test test_specific::case14 ... ok
+test test_specific::case10 ... ok
+test test_past_failures::closed_pline9 ... ok
+test test_specific::case1 ... ok
+test test_specific::case3 ... ok
+test test_specific::case13 ... ok
+test test_specific::case4 ... ok
+test test_specific::case5 ... ok
+test test_specific::case6 ... ok
+test test_specific::case7 ... ok
+test test_specific::case2 ... ok
+test test_specific::self_intersecting_case1 ... ok
+test test_specific::case9 ... ok
+test test_specific::self_intersecting_case2 ... ok
+test test_specific::case16 ... ok
+test test_specific::case8 ... ok
+test test_specific::case17 ... ok
+test test_topology_stitching::non_tangent_open_endpoint_clip ... ok
+test test_topology_stitching::disjoint_same_direction_coincident_spans ... ok
+test test_topology_stitching::opposing_coincident_arcs_vertex_boundaries ... ok
+test test_topology_stitching::same_direction_coincident_open_arcs ... ok
+test test_topology_stitching::same_direction_coincident_open_lines ... ok
+test test_topology_stitching::same_direction_coincident_open_line_arc ... ok
+test test_topology_stitching::opposing_coincident_arcs_segment_interior_boundaries ... ok
+test test_past_failures::closed_pline5 ... ok
+test test_topology_stitching::three_way_coincident_lines ... ok
+test test_topology_stitching::touch_at_coincident_overlap_boundary ... ok
+test touching_loop_behavior_does_not_change_crossing_routing ... ok
+test test_topology_stitching::tangent_arc_arc_segment_interiors ... ok
+test test_topology_stitching::tangent_line_arc_segment_interiors ... ok
+test test_topology_stitching::coincident_line_dumbbell_vertex_boundaries ... ok
+test test_topology_stitching::coincident_line_dumbbell_segment_interior_boundaries ... ok
+test test_topology_stitching::tangent_line_endpoints ... ok
+test test_topology_stitching::three_way_point_contact_keeps_paths_separate ... ok
+test test_specific::case11 ... ok
+test test_specific::case12 ... ok
+
+test result: ok. 82 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+     Running tests/test_pline_seg_intersect.rs (/tmp/cavalier-audit-target/debug/deps/test_pline_seg_intersect-d91b02d00fa5fb33)
+
+running 22 tests
+test arc_arc_end_points_touch ... ok
+test arc1_within_arc2_overlapping ... ok
+test arc2_within_arc1_overlapping_reverse_dir ... ok
+test arc2_within_arc1_overlapping ... ok
+test arc_arc_end_points_touch_reverse_dir ... ok
+test arc_arc_opposite_direction_touch_at_ends_bug ... ok
+test arc1_within_arc2_overlapping_reverse_dir ... ok
+test arc_arc_partial_overlap ... ok
+test arc_arc_partial_overlap_arc1_reverse_dir ... ok
+test arc_arc_partial_overlap_arc1_reverse_dir_flipped ... ok
+test arc_arc_partial_overlap_arc2_reverse_dir ... ok
+test arc_arc_partial_overlap_arc2_reverse_dir_flipped ... ok
+test arc_arc_partial_overlap_flipped ... ok
+test arc_line_no_intersect ... ok
+test line_arc_intersect_sticks_to_fuzzy_circle_endpoint ... ok
+test line_arc_no_intersect ... ok
+test overlapping_arc_endpoint_touch_uses_position_tolerance ... ok
+test overlapping_arcs_handle_angle_wrap_at_different_scales ... ok
+test overlapping_lines ... ok
+test overlapping_lines_reverse_dir ... ok
+test overlapping_same_arcs ... ok
+test overlapping_same_arcs_reverse_dir ... ok
+
+test result: ok. 22 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/test_pline_view.rs (/tmp/cavalier-audit-target/debug/deps/test_pline_view-4a3b33a69e37efc5)
+
+running 5 tests
+test from_new_start ... ok
+test from_slice_points_single_seg ... ok
+test from_slice_points_collapsed_across_near_vertex ... ok
+test from_slice_points_multi_seg ... ok
+test attempting_to_wrap_slice_on_open_pline - should panic ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/test_pline_winding_number.rs (/tmp/cavalier-audit-target/debug/deps/test_pline_winding_number-f896fd0e70ef5453)
+
+running 6 tests
+test point_and_circle ... ok
+test point_and_circle_with_quarter_arcs ... ok
+test multiple_windings ... ok
+test point_outside_aligned_with_direction_vectors2 ... ok
+test point_outside_aligned_with_direction_vectors1 ... ok
+test point_and_rectangle ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/test_shape_parallel_offset.rs (/tmp/cavalier-audit-target/debug/deps/test_shape_parallel_offset-b15b84b08f64a7c2)
+
+running 6 tests
+test test_simple::set_of_empty_returns_empty ... ok
+test test_simple::empty_returns_empty ... ok
+test test_specific::case1 ... ok
+test test_simple::rectangle_inside_shape ... ok
+test test_specific::case2 ... ok
+test test_specific::case3 ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

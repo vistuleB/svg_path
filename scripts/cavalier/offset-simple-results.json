@@ -1,0 +1,2244 @@
+[
+  {
+    "name": "empty_returns_empty",
+    "reverse": false,
+    "cycle": 0,
+    "status": "scope",
+    "reason": "Empty polyline has no start position; native empty subpath requires one."
+  },
+  {
+    "name": "empty_returns_empty",
+    "reverse": true,
+    "cycle": 0,
+    "status": "scope",
+    "reason": "Empty polyline has no start position; native empty subpath requires one."
+  },
+  {
+    "name": "circle_collapsed_into_point",
+    "reverse": false,
+    "cycle": 0,
+    "status": "error",
+    "phase": "offset",
+    "error": {
+      "type": "DegenerateTangent",
+      "t": 0
+    }
+  },
+  {
+    "name": "circle_collapsed_into_point",
+    "reverse": false,
+    "cycle": 1,
+    "status": "error",
+    "phase": "offset",
+    "error": {
+      "type": "DegenerateTangent",
+      "t": 0
+    }
+  },
+  {
+    "name": "circle_collapsed_into_point",
+    "reverse": true,
+    "cycle": 0,
+    "status": "error",
+    "phase": "offset",
+    "error": {
+      "type": "DegenerateTangent",
+      "t": 0
+    }
+  },
+  {
+    "name": "circle_collapsed_into_point",
+    "reverse": true,
+    "cycle": 1,
+    "status": "error",
+    "phase": "offset",
+    "error": {
+      "type": "DegenerateTangent",
+      "t": 0
+    }
+  },
+  {
+    "name": "square_collapsed_into_point",
+    "reverse": false,
+    "cycle": 0,
+    "status": "match",
+    "actual": [],
+    "expected": []
+  },
+  {
+    "name": "square_collapsed_into_point",
+    "reverse": false,
+    "cycle": 1,
+    "status": "match",
+    "actual": [],
+    "expected": []
+  },
+  {
+    "name": "square_collapsed_into_point",
+    "reverse": false,
+    "cycle": 2,
+    "status": "match",
+    "actual": [],
+    "expected": []
+  },
+  {
+    "name": "square_collapsed_into_point",
+    "reverse": false,
+    "cycle": 3,
+    "status": "match",
+    "actual": [],
+    "expected": []
+  },
+  {
+    "name": "square_collapsed_into_point",
+    "reverse": true,
+    "cycle": 0,
+    "status": "match",
+    "actual": [],
+    "expected": []
+  },
+  {
+    "name": "square_collapsed_into_point",
+    "reverse": true,
+    "cycle": 1,
+    "status": "match",
+    "actual": [],
+    "expected": []
+  },
+  {
+    "name": "square_collapsed_into_point",
+    "reverse": true,
+    "cycle": 2,
+    "status": "match",
+    "actual": [],
+    "expected": []
+  },
+  {
+    "name": "square_collapsed_into_point",
+    "reverse": true,
+    "cycle": 3,
+    "status": "match",
+    "actual": [],
+    "expected": []
+  },
+  {
+    "name": "circle_collapsed",
+    "reverse": false,
+    "cycle": 0,
+    "status": "discrepancy",
+    "actual": [
+      {
+        "area": 3.141592653589793,
+        "length": 6.283185307179586,
+        "bounds": [
+          0,
+          -1,
+          2,
+          1
+        ],
+        "closed": true
+      }
+    ],
+    "expected": []
+  },
+  {
+    "name": "circle_collapsed",
+    "reverse": false,
+    "cycle": 1,
+    "status": "discrepancy",
+    "actual": [
+      {
+        "area": 3.141592653589793,
+        "length": 6.283185307179586,
+        "bounds": [
+          0,
+          -1,
+          2,
+          1
+        ],
+        "closed": true
+      }
+    ],
+    "expected": []
+  },
+  {
+    "name": "circle_collapsed",
+    "reverse": true,
+    "cycle": 0,
+    "status": "discrepancy",
+    "actual": [
+      {
+        "area": 3.141592653589793,
+        "length": 6.283185307179586,
+        "bounds": [
+          0,
+          -1,
+          2,
+          1
+        ],
+        "closed": true
+      }
+    ],
+    "expected": []
+  },
+  {
+    "name": "circle_collapsed",
+    "reverse": true,
+    "cycle": 1,
+    "status": "discrepancy",
+    "actual": [
+      {
+        "area": 3.141592653589793,
+        "length": 6.283185307179586,
+        "bounds": [
+          0,
+          -1,
+          2,
+          1
+        ],
+        "closed": true
+      }
+    ],
+    "expected": []
+  },
+  {
+    "name": "square_collapsed",
+    "reverse": false,
+    "cycle": 0,
+    "status": "discrepancy",
+    "actual": [
+      {
+        "area": -4,
+        "length": 8,
+        "bounds": [
+          -1,
+          -1,
+          1,
+          1
+        ],
+        "closed": true
+      },
+      {
+        "area": 1.2605869745108833,
+        "length": 4.188790204786392,
+        "bounds": [
+          -0.732050807568878,
+          -0.7320508075688781,
+          0.7320508075688776,
+          0.7320508075688775
+        ],
+        "closed": true
+      }
+    ],
+    "expected": []
+  },
+  {
+    "name": "square_collapsed",
+    "reverse": false,
+    "cycle": 1,
+    "status": "discrepancy",
+    "actual": [
+      {
+        "area": -4,
+        "length": 8,
+        "bounds": [
+          -1,
+          -1,
+          1,
+          1
+        ],
+        "closed": true
+      },
+      {
+        "area": 1.2605869745108822,
+        "length": 4.188790204786391,
+        "bounds": [
+          -0.7320508075688777,
+          -0.7320508075688779,
+          0.7320508075688772,
+          0.7320508075688776
+        ],
+        "closed": true
+      }
+    ],
+    "expected": []
+  },
+  {
+    "name": "square_collapsed",
+    "reverse": false,
+    "cycle": 2,
+    "status": "discrepancy",
+    "actual": [
+      {
+        "area": -4,
+        "length": 8,
+        "bounds": [
+          -1,
+          -1,
+          1,
+          1
+        ],
+        "closed": true
+      },
+      {
+        "area": 1.2605869745108818,
+        "length": 4.188790204786391,
+        "bounds": [
+          -0.7320508075688776,
+          -0.7320508075688774,
+          0.7320508075688774,
+          0.7320508075688774
+        ],
+        "closed": true
+      }
+    ],
+    "expected": []
+  },
+  {
+    "name": "square_collapsed",
+    "reverse": false,
+    "cycle": 3,
+    "status": "discrepancy",
+    "actual": [
+      {
+        "area": -4,
+        "length": 8,
+        "bounds": [
+          -1,
+          -1,
+          1,
+          1
+        ],
+        "closed": true
+      },
+      {
+        "area": 1.2605869745108826,
+        "length": 4.188790204786392,
+        "bounds": [
+          -0.7320508075688777,
+          -0.7320508075688781,
+          0.7320508075688776,
+          0.7320508075688774
+        ],
+        "closed": true
+      }
+    ],
+    "expected": []
+  },
+  {
+    "name": "square_collapsed",
+    "reverse": true,
+    "cycle": 0,
+    "status": "discrepancy",
+    "actual": [
+      {
+        "area": -4,
+        "length": 8,
+        "bounds": [
+          -1,
+          -1,
+          1,
+          1
+        ],
+        "closed": true
+      },
+      {
+        "area": 1.260586974510882,
+        "length": 4.188790204786391,
+        "bounds": [
+          -0.7320508075688779,
+          -0.7320508075688774,
+          0.7320508075688776,
+          0.7320508075688776
+        ],
+        "closed": true
+      }
+    ],
+    "expected": []
+  },
+  {
+    "name": "square_collapsed",
+    "reverse": true,
+    "cycle": 1,
+    "status": "discrepancy",
+    "actual": [
+      {
+        "area": -4,
+        "length": 8,
+        "bounds": [
+          -1,
+          -1,
+          1,
+          1
+        ],
+        "closed": true
+      },
+      {
+        "area": 1.2605869745108813,
+        "length": 4.188790204786391,
+        "bounds": [
+          -0.7320508075688774,
+          -0.7320508075688774,
+          0.7320508075688774,
+          0.7320508075688776
+        ],
+        "closed": true
+      }
+    ],
+    "expected": []
+  },
+  {
+    "name": "square_collapsed",
+    "reverse": true,
+    "cycle": 2,
+    "status": "discrepancy",
+    "actual": [
+      {
+        "area": -4,
+        "length": 8,
+        "bounds": [
+          -1,
+          -1,
+          1,
+          1
+        ],
+        "closed": true
+      },
+      {
+        "area": 1.2605869745108818,
+        "length": 4.188790204786391,
+        "bounds": [
+          -0.7320508075688779,
+          -0.7320508075688775,
+          0.7320508075688772,
+          0.7320508075688774
+        ],
+        "closed": true
+      }
+    ],
+    "expected": []
+  },
+  {
+    "name": "square_collapsed",
+    "reverse": true,
+    "cycle": 3,
+    "status": "discrepancy",
+    "actual": [
+      {
+        "area": -4,
+        "length": 8,
+        "bounds": [
+          -1,
+          -1,
+          1,
+          1
+        ],
+        "closed": true
+      },
+      {
+        "area": 1.260586974510883,
+        "length": 4.188790204786392,
+        "bounds": [
+          -0.7320508075688779,
+          -0.7320508075688775,
+          0.7320508075688776,
+          0.7320508075688779
+        ],
+        "closed": true
+      }
+    ],
+    "expected": []
+  },
+  {
+    "name": "closed_rectangle_inward",
+    "reverse": false,
+    "cycle": 0,
+    "status": "match",
+    "actual": [
+      {
+        "area": 96,
+        "length": 44,
+        "bounds": [
+          2,
+          2,
+          18,
+          8
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 4,
+        "area": 96,
+        "length": 44,
+        "bounds": [
+          2,
+          2,
+          18,
+          8
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_rectangle_inward",
+    "reverse": false,
+    "cycle": 1,
+    "status": "match",
+    "actual": [
+      {
+        "area": 96,
+        "length": 44,
+        "bounds": [
+          2,
+          2,
+          18,
+          8
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 4,
+        "area": 96,
+        "length": 44,
+        "bounds": [
+          2,
+          2,
+          18,
+          8
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_rectangle_inward",
+    "reverse": false,
+    "cycle": 2,
+    "status": "match",
+    "actual": [
+      {
+        "area": 96,
+        "length": 44,
+        "bounds": [
+          2,
+          2,
+          18,
+          8
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 4,
+        "area": 96,
+        "length": 44,
+        "bounds": [
+          2,
+          2,
+          18,
+          8
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_rectangle_inward",
+    "reverse": false,
+    "cycle": 3,
+    "status": "match",
+    "actual": [
+      {
+        "area": 96,
+        "length": 44,
+        "bounds": [
+          2,
+          2,
+          18,
+          8
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 4,
+        "area": 96,
+        "length": 44,
+        "bounds": [
+          2,
+          2,
+          18,
+          8
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_rectangle_inward",
+    "reverse": true,
+    "cycle": 0,
+    "status": "match",
+    "actual": [
+      {
+        "area": 96,
+        "length": 44,
+        "bounds": [
+          2,
+          2,
+          18,
+          8
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 4,
+        "area": 96,
+        "length": 44,
+        "bounds": [
+          2,
+          2,
+          18,
+          8
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_rectangle_inward",
+    "reverse": true,
+    "cycle": 1,
+    "status": "match",
+    "actual": [
+      {
+        "area": 96,
+        "length": 44,
+        "bounds": [
+          2,
+          2,
+          18,
+          8
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 4,
+        "area": 96,
+        "length": 44,
+        "bounds": [
+          2,
+          2,
+          18,
+          8
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_rectangle_inward",
+    "reverse": true,
+    "cycle": 2,
+    "status": "match",
+    "actual": [
+      {
+        "area": 96,
+        "length": 44,
+        "bounds": [
+          2,
+          2,
+          18,
+          8
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 4,
+        "area": 96,
+        "length": 44,
+        "bounds": [
+          2,
+          2,
+          18,
+          8
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_rectangle_inward",
+    "reverse": true,
+    "cycle": 3,
+    "status": "match",
+    "actual": [
+      {
+        "area": 96,
+        "length": 44,
+        "bounds": [
+          2,
+          2,
+          18,
+          8
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 4,
+        "area": 96,
+        "length": 44,
+        "bounds": [
+          2,
+          2,
+          18,
+          8
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_rectangle_outward",
+    "reverse": false,
+    "cycle": 0,
+    "status": "match",
+    "actual": [
+      {
+        "area": 332.56637061435913,
+        "length": 72.56637061435919,
+        "bounds": [
+          -2,
+          -2,
+          22,
+          12
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 8,
+        "area": 332.56637061436,
+        "length": 72.566370614359,
+        "bounds": [
+          -2,
+          -2,
+          22,
+          12
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_rectangle_outward",
+    "reverse": false,
+    "cycle": 1,
+    "status": "match",
+    "actual": [
+      {
+        "area": 332.56637061435913,
+        "length": 72.56637061435919,
+        "bounds": [
+          -2,
+          -2,
+          22,
+          12
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 8,
+        "area": 332.56637061436,
+        "length": 72.566370614359,
+        "bounds": [
+          -2,
+          -2,
+          22,
+          12
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_rectangle_outward",
+    "reverse": false,
+    "cycle": 2,
+    "status": "match",
+    "actual": [
+      {
+        "area": 332.56637061435913,
+        "length": 72.56637061435919,
+        "bounds": [
+          -2,
+          -2,
+          22,
+          12
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 8,
+        "area": 332.56637061436,
+        "length": 72.566370614359,
+        "bounds": [
+          -2,
+          -2,
+          22,
+          12
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_rectangle_outward",
+    "reverse": false,
+    "cycle": 3,
+    "status": "match",
+    "actual": [
+      {
+        "area": 332.56637061435913,
+        "length": 72.56637061435919,
+        "bounds": [
+          -2,
+          -2,
+          22,
+          12
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 8,
+        "area": 332.56637061436,
+        "length": 72.566370614359,
+        "bounds": [
+          -2,
+          -2,
+          22,
+          12
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_rectangle_outward",
+    "reverse": true,
+    "cycle": 0,
+    "status": "match",
+    "actual": [
+      {
+        "area": 332.56637061435913,
+        "length": 72.56637061435919,
+        "bounds": [
+          -2,
+          -2,
+          22,
+          12
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 8,
+        "area": 332.56637061436,
+        "length": 72.566370614359,
+        "bounds": [
+          -2,
+          -2,
+          22,
+          12
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_rectangle_outward",
+    "reverse": true,
+    "cycle": 1,
+    "status": "match",
+    "actual": [
+      {
+        "area": 332.56637061435913,
+        "length": 72.56637061435919,
+        "bounds": [
+          -2,
+          -2,
+          22,
+          12
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 8,
+        "area": 332.56637061436,
+        "length": 72.566370614359,
+        "bounds": [
+          -2,
+          -2,
+          22,
+          12
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_rectangle_outward",
+    "reverse": true,
+    "cycle": 2,
+    "status": "match",
+    "actual": [
+      {
+        "area": 332.56637061435913,
+        "length": 72.56637061435919,
+        "bounds": [
+          -2,
+          -2,
+          22,
+          12
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 8,
+        "area": 332.56637061436,
+        "length": 72.566370614359,
+        "bounds": [
+          -2,
+          -2,
+          22,
+          12
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_rectangle_outward",
+    "reverse": true,
+    "cycle": 3,
+    "status": "match",
+    "actual": [
+      {
+        "area": 332.56637061435913,
+        "length": 72.56637061435919,
+        "bounds": [
+          -2,
+          -2,
+          22,
+          12
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 8,
+        "area": 332.56637061436,
+        "length": 72.566370614359,
+        "bounds": [
+          -2,
+          -2,
+          22,
+          12
+        ]
+      }
+    ]
+  },
+  {
+    "name": "open_rectangle_inward",
+    "reverse": false,
+    "cycle": 0,
+    "status": "match",
+    "actual": [
+      {
+        "area": 0,
+        "length": 44,
+        "bounds": [
+          2,
+          2,
+          18,
+          8
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 5,
+        "area": 0,
+        "length": 44,
+        "bounds": [
+          2,
+          2,
+          18,
+          8
+        ]
+      }
+    ]
+  },
+  {
+    "name": "open_rectangle_inward",
+    "reverse": true,
+    "cycle": 0,
+    "status": "match",
+    "actual": [
+      {
+        "area": 0,
+        "length": 44,
+        "bounds": [
+          2,
+          2,
+          18,
+          8
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 5,
+        "area": 0,
+        "length": 44,
+        "bounds": [
+          2,
+          2,
+          18,
+          8
+        ]
+      }
+    ]
+  },
+  {
+    "name": "open_rectangle_outward",
+    "reverse": false,
+    "cycle": 0,
+    "status": "match",
+    "actual": [
+      {
+        "area": 0,
+        "length": 69.42477796076939,
+        "bounds": [
+          -2,
+          -2,
+          22,
+          12
+        ],
+        "closed": false
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 8,
+        "area": 0,
+        "length": 69.424777960769,
+        "bounds": [
+          -2,
+          -2,
+          22,
+          12
+        ]
+      }
+    ]
+  },
+  {
+    "name": "open_rectangle_outward",
+    "reverse": true,
+    "cycle": 0,
+    "status": "match",
+    "actual": [
+      {
+        "area": 0,
+        "length": 69.42477796076939,
+        "bounds": [
+          -2,
+          -2,
+          22,
+          12
+        ],
+        "closed": false
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 8,
+        "area": 0,
+        "length": 69.424777960769,
+        "bounds": [
+          -2,
+          -2,
+          22,
+          12
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_rectangle_into_overlapping_line",
+    "reverse": false,
+    "cycle": 0,
+    "status": "match",
+    "actual": [
+      {
+        "area": 0,
+        "length": 20,
+        "bounds": [
+          5,
+          5,
+          15,
+          5
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 2,
+        "area": 0,
+        "length": 20,
+        "bounds": [
+          5,
+          5,
+          15,
+          5
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_rectangle_into_overlapping_line",
+    "reverse": false,
+    "cycle": 1,
+    "status": "match",
+    "actual": [
+      {
+        "area": 0,
+        "length": 20,
+        "bounds": [
+          5,
+          5,
+          15,
+          5
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 2,
+        "area": 0,
+        "length": 20,
+        "bounds": [
+          5,
+          5,
+          15,
+          5
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_rectangle_into_overlapping_line",
+    "reverse": false,
+    "cycle": 2,
+    "status": "match",
+    "actual": [
+      {
+        "area": 0,
+        "length": 20,
+        "bounds": [
+          5,
+          5,
+          15,
+          5
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 2,
+        "area": 0,
+        "length": 20,
+        "bounds": [
+          5,
+          5,
+          15,
+          5
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_rectangle_into_overlapping_line",
+    "reverse": false,
+    "cycle": 3,
+    "status": "match",
+    "actual": [
+      {
+        "area": 0,
+        "length": 20,
+        "bounds": [
+          5,
+          5,
+          15,
+          5
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 2,
+        "area": 0,
+        "length": 20,
+        "bounds": [
+          5,
+          5,
+          15,
+          5
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_rectangle_into_overlapping_line",
+    "reverse": true,
+    "cycle": 0,
+    "status": "match",
+    "actual": [
+      {
+        "area": 0,
+        "length": 20,
+        "bounds": [
+          5,
+          5,
+          15,
+          5
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 2,
+        "area": 0,
+        "length": 20,
+        "bounds": [
+          5,
+          5,
+          15,
+          5
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_rectangle_into_overlapping_line",
+    "reverse": true,
+    "cycle": 1,
+    "status": "match",
+    "actual": [
+      {
+        "area": 0,
+        "length": 20,
+        "bounds": [
+          5,
+          5,
+          15,
+          5
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 2,
+        "area": 0,
+        "length": 20,
+        "bounds": [
+          5,
+          5,
+          15,
+          5
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_rectangle_into_overlapping_line",
+    "reverse": true,
+    "cycle": 2,
+    "status": "match",
+    "actual": [
+      {
+        "area": 0,
+        "length": 20,
+        "bounds": [
+          5,
+          5,
+          15,
+          5
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 2,
+        "area": 0,
+        "length": 20,
+        "bounds": [
+          5,
+          5,
+          15,
+          5
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_rectangle_into_overlapping_line",
+    "reverse": true,
+    "cycle": 3,
+    "status": "match",
+    "actual": [
+      {
+        "area": 0,
+        "length": 20,
+        "bounds": [
+          5,
+          5,
+          15,
+          5
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 2,
+        "area": 0,
+        "length": 20,
+        "bounds": [
+          5,
+          5,
+          15,
+          5
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_diamond_offset_inward",
+    "reverse": false,
+    "cycle": 0,
+    "status": "match",
+    "actual": [
+      {
+        "area": -17.157287525380994,
+        "length": 16.568542494923804,
+        "bounds": [
+          -2.928932188134525,
+          -2.928932188134525,
+          2.9289321881345254,
+          2.9289321881345245
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 4,
+        "area": -17.157287525381,
+        "length": 16.568542494924,
+        "bounds": [
+          -2.9289321881345,
+          -2.9289321881345,
+          2.9289321881345,
+          2.9289321881345
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_diamond_offset_inward",
+    "reverse": false,
+    "cycle": 1,
+    "status": "match",
+    "actual": [
+      {
+        "area": -17.157287525380994,
+        "length": 16.568542494923804,
+        "bounds": [
+          -2.928932188134525,
+          -2.9289321881345254,
+          2.9289321881345245,
+          2.928932188134525
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 4,
+        "area": -17.157287525381,
+        "length": 16.568542494924,
+        "bounds": [
+          -2.9289321881345,
+          -2.9289321881345,
+          2.9289321881345,
+          2.9289321881345
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_diamond_offset_inward",
+    "reverse": false,
+    "cycle": 2,
+    "status": "match",
+    "actual": [
+      {
+        "area": -17.157287525380994,
+        "length": 16.568542494923804,
+        "bounds": [
+          -2.9289321881345254,
+          -2.9289321881345245,
+          2.928932188134525,
+          2.928932188134525
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 4,
+        "area": -17.157287525381,
+        "length": 16.568542494924,
+        "bounds": [
+          -2.9289321881345,
+          -2.9289321881345,
+          2.9289321881345,
+          2.9289321881345
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_diamond_offset_inward",
+    "reverse": false,
+    "cycle": 3,
+    "status": "match",
+    "actual": [
+      {
+        "area": -17.157287525380994,
+        "length": 16.568542494923804,
+        "bounds": [
+          -2.9289321881345245,
+          -2.928932188134525,
+          2.928932188134525,
+          2.9289321881345254
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 4,
+        "area": -17.157287525381,
+        "length": 16.568542494924,
+        "bounds": [
+          -2.9289321881345,
+          -2.9289321881345,
+          2.9289321881345,
+          2.9289321881345
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_diamond_offset_inward",
+    "reverse": true,
+    "cycle": 0,
+    "status": "match",
+    "actual": [
+      {
+        "area": -17.157287525380994,
+        "length": 16.568542494923804,
+        "bounds": [
+          -2.928932188134525,
+          -2.9289321881345245,
+          2.9289321881345254,
+          2.928932188134525
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 4,
+        "area": -17.157287525381,
+        "length": 16.568542494924,
+        "bounds": [
+          -2.9289321881345,
+          -2.9289321881345,
+          2.9289321881345,
+          2.9289321881345
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_diamond_offset_inward",
+    "reverse": true,
+    "cycle": 1,
+    "status": "match",
+    "actual": [
+      {
+        "area": -17.157287525380994,
+        "length": 16.568542494923804,
+        "bounds": [
+          -2.9289321881345245,
+          -2.9289321881345254,
+          2.928932188134525,
+          2.928932188134525
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 4,
+        "area": -17.157287525381,
+        "length": 16.568542494924,
+        "bounds": [
+          -2.9289321881345,
+          -2.9289321881345,
+          2.9289321881345,
+          2.9289321881345
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_diamond_offset_inward",
+    "reverse": true,
+    "cycle": 2,
+    "status": "match",
+    "actual": [
+      {
+        "area": -17.157287525380994,
+        "length": 16.568542494923804,
+        "bounds": [
+          -2.9289321881345254,
+          -2.928932188134525,
+          2.928932188134525,
+          2.9289321881345245
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 4,
+        "area": -17.157287525381,
+        "length": 16.568542494924,
+        "bounds": [
+          -2.9289321881345,
+          -2.9289321881345,
+          2.9289321881345,
+          2.9289321881345
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_diamond_offset_inward",
+    "reverse": true,
+    "cycle": 3,
+    "status": "match",
+    "actual": [
+      {
+        "area": -17.157287525380994,
+        "length": 16.568542494923804,
+        "bounds": [
+          -2.928932188134525,
+          -2.928932188134525,
+          2.9289321881345245,
+          2.9289321881345254
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 4,
+        "area": -17.157287525381,
+        "length": 16.568542494924,
+        "bounds": [
+          -2.9289321881345,
+          -2.9289321881345,
+          2.9289321881345,
+          2.9289321881345
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_diamond_offset_outward",
+    "reverse": false,
+    "cycle": 0,
+    "status": "match",
+    "actual": [
+      {
+        "area": -561.3825288143638,
+        "length": 87.98446903082174,
+        "bounds": [
+          -15,
+          -15,
+          15,
+          15
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 8,
+        "area": -561.38252881436,
+        "length": 87.984469030822,
+        "bounds": [
+          -15,
+          -15,
+          15,
+          15
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_diamond_offset_outward",
+    "reverse": false,
+    "cycle": 1,
+    "status": "match",
+    "actual": [
+      {
+        "area": -561.3825288143638,
+        "length": 87.98446903082174,
+        "bounds": [
+          -15,
+          -15,
+          15,
+          15
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 8,
+        "area": -561.38252881436,
+        "length": 87.984469030822,
+        "bounds": [
+          -15,
+          -15,
+          15,
+          15
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_diamond_offset_outward",
+    "reverse": false,
+    "cycle": 2,
+    "status": "match",
+    "actual": [
+      {
+        "area": -561.3825288143638,
+        "length": 87.98446903082174,
+        "bounds": [
+          -15,
+          -15,
+          15,
+          15
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 8,
+        "area": -561.38252881436,
+        "length": 87.984469030822,
+        "bounds": [
+          -15,
+          -15,
+          15,
+          15
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_diamond_offset_outward",
+    "reverse": false,
+    "cycle": 3,
+    "status": "match",
+    "actual": [
+      {
+        "area": -561.3825288143638,
+        "length": 87.98446903082174,
+        "bounds": [
+          -15,
+          -15,
+          15,
+          15
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 8,
+        "area": -561.38252881436,
+        "length": 87.984469030822,
+        "bounds": [
+          -15,
+          -15,
+          15,
+          15
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_diamond_offset_outward",
+    "reverse": true,
+    "cycle": 0,
+    "status": "match",
+    "actual": [
+      {
+        "area": -561.3825288143638,
+        "length": 87.98446903082174,
+        "bounds": [
+          -15,
+          -15,
+          15,
+          15
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 8,
+        "area": -561.38252881436,
+        "length": 87.984469030822,
+        "bounds": [
+          -15,
+          -15,
+          15,
+          15
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_diamond_offset_outward",
+    "reverse": true,
+    "cycle": 1,
+    "status": "match",
+    "actual": [
+      {
+        "area": -561.3825288143638,
+        "length": 87.98446903082174,
+        "bounds": [
+          -15,
+          -15,
+          15,
+          15
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 8,
+        "area": -561.38252881436,
+        "length": 87.984469030822,
+        "bounds": [
+          -15,
+          -15,
+          15,
+          15
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_diamond_offset_outward",
+    "reverse": true,
+    "cycle": 2,
+    "status": "match",
+    "actual": [
+      {
+        "area": -561.3825288143638,
+        "length": 87.98446903082174,
+        "bounds": [
+          -15,
+          -15,
+          15,
+          15
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 8,
+        "area": -561.38252881436,
+        "length": 87.984469030822,
+        "bounds": [
+          -15,
+          -15,
+          15,
+          15
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_diamond_offset_outward",
+    "reverse": true,
+    "cycle": 3,
+    "status": "match",
+    "actual": [
+      {
+        "area": -561.3825288143638,
+        "length": 87.98446903082174,
+        "bounds": [
+          -15,
+          -15,
+          15,
+          15
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 8,
+        "area": -561.38252881436,
+        "length": 87.984469030822,
+        "bounds": [
+          -15,
+          -15,
+          15,
+          15
+        ]
+      }
+    ]
+  },
+  {
+    "name": "open_diamond_offset_inward",
+    "reverse": false,
+    "cycle": 0,
+    "status": "match",
+    "actual": [
+      {
+        "area": 0,
+        "length": 16.568542494923804,
+        "bounds": [
+          -2.928932188134525,
+          -2.928932188134525,
+          2.9289321881345254,
+          2.9289321881345245
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 5,
+        "area": 0,
+        "length": 16.568542494924,
+        "bounds": [
+          -2.9289321881345,
+          -2.9289321881345,
+          2.9289321881345,
+          2.9289321881345
+        ]
+      }
+    ]
+  },
+  {
+    "name": "open_diamond_offset_inward",
+    "reverse": true,
+    "cycle": 0,
+    "status": "match",
+    "actual": [
+      {
+        "area": 0,
+        "length": 16.568542494923804,
+        "bounds": [
+          -2.928932188134525,
+          -2.9289321881345245,
+          2.9289321881345254,
+          2.928932188134525
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 5,
+        "area": 0,
+        "length": 16.568542494924,
+        "bounds": [
+          -2.9289321881345,
+          -2.9289321881345,
+          2.9289321881345,
+          2.9289321881345
+        ]
+      }
+    ]
+  },
+  {
+    "name": "open_diamond_offset_outward",
+    "reverse": false,
+    "cycle": 0,
+    "status": "match",
+    "actual": [
+      {
+        "area": 0,
+        "length": 80.13048739684726,
+        "bounds": [
+          -13.535533905932738,
+          -15,
+          15,
+          15
+        ],
+        "closed": false
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 8,
+        "area": 0,
+        "length": 80.130487396847,
+        "bounds": [
+          -13.535533905933,
+          -15,
+          15,
+          15
+        ]
+      }
+    ]
+  },
+  {
+    "name": "open_diamond_offset_outward",
+    "reverse": true,
+    "cycle": 0,
+    "status": "match",
+    "actual": [
+      {
+        "area": 0,
+        "length": 80.13048739684726,
+        "bounds": [
+          -13.535533905932738,
+          -15,
+          15,
+          15
+        ],
+        "closed": false
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 8,
+        "area": 0,
+        "length": 80.130487396847,
+        "bounds": [
+          -13.535533905933,
+          -15,
+          15,
+          15
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_circle_offset_inward",
+    "reverse": false,
+    "cycle": 0,
+    "status": "match",
+    "actual": [
+      {
+        "area": 12.566370614359172,
+        "length": 12.566370614359172,
+        "bounds": [
+          -2,
+          -2,
+          2,
+          2
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 2,
+        "area": 12.566370614359,
+        "length": 12.566370614359,
+        "bounds": [
+          -2,
+          -2,
+          2,
+          2
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_circle_offset_inward",
+    "reverse": false,
+    "cycle": 1,
+    "status": "match",
+    "actual": [
+      {
+        "area": 12.566370614359172,
+        "length": 12.566370614359172,
+        "bounds": [
+          -2,
+          -2,
+          2,
+          2
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 2,
+        "area": 12.566370614359,
+        "length": 12.566370614359,
+        "bounds": [
+          -2,
+          -2,
+          2,
+          2
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_circle_offset_inward",
+    "reverse": true,
+    "cycle": 0,
+    "status": "match",
+    "actual": [
+      {
+        "area": 12.566370614359172,
+        "length": 12.566370614359172,
+        "bounds": [
+          -2,
+          -2,
+          2,
+          2
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 2,
+        "area": 12.566370614359,
+        "length": 12.566370614359,
+        "bounds": [
+          -2,
+          -2,
+          2,
+          2
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_circle_offset_inward",
+    "reverse": true,
+    "cycle": 1,
+    "status": "match",
+    "actual": [
+      {
+        "area": 12.566370614359172,
+        "length": 12.566370614359172,
+        "bounds": [
+          -2,
+          -2,
+          2,
+          2
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 2,
+        "area": 12.566370614359,
+        "length": 12.566370614359,
+        "bounds": [
+          -2,
+          -2,
+          2,
+          2
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_circle_offset_outward",
+    "reverse": false,
+    "cycle": 0,
+    "status": "match",
+    "actual": [
+      {
+        "area": 201.06192982974676,
+        "length": 50.26548245743669,
+        "bounds": [
+          -8,
+          -8,
+          8,
+          8
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 2,
+        "area": 201.06192982975,
+        "length": 50.265482457437,
+        "bounds": [
+          -8,
+          -8,
+          8,
+          8
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_circle_offset_outward",
+    "reverse": false,
+    "cycle": 1,
+    "status": "match",
+    "actual": [
+      {
+        "area": 201.06192982974676,
+        "length": 50.26548245743669,
+        "bounds": [
+          -8,
+          -8,
+          8,
+          8
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 2,
+        "area": 201.06192982975,
+        "length": 50.265482457437,
+        "bounds": [
+          -8,
+          -8,
+          8,
+          8
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_circle_offset_outward",
+    "reverse": true,
+    "cycle": 0,
+    "status": "match",
+    "actual": [
+      {
+        "area": 201.06192982974676,
+        "length": 50.26548245743669,
+        "bounds": [
+          -8,
+          -8,
+          8,
+          8
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 2,
+        "area": 201.06192982975,
+        "length": 50.265482457437,
+        "bounds": [
+          -8,
+          -8,
+          8,
+          8
+        ]
+      }
+    ]
+  },
+  {
+    "name": "closed_circle_offset_outward",
+    "reverse": true,
+    "cycle": 1,
+    "status": "match",
+    "actual": [
+      {
+        "area": 201.06192982974676,
+        "length": 50.26548245743669,
+        "bounds": [
+          -8,
+          -8,
+          8,
+          8
+        ],
+        "closed": true
+      }
+    ],
+    "expected": [
+      {
+        "vertex_count": 2,
+        "area": 201.06192982975,
+        "length": 50.265482457437,
+        "bounds": [
+          -8,
+          -8,
+          8,
+          8
+        ]
+      }
+    ]
+  }
+]

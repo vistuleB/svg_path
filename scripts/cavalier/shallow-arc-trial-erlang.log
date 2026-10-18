@@ -1,0 +1,10 @@
+  Compiling svg_path
+  Compiling cavalier_audit_probe
+   Compiled in 1.91s
+    Running cavalier_audit_probe.main
+radius 1e6 control
+Ok(Projection(0.2999997999891638, Point(2.9999979998846387, -1.04999959998434e-5), 1.000010499998))
+radius 1e7 default
+Ok(Projection(0.2999999799951911, Point(2.9999997999518415, -1.0499999599904425e-6), 1.00000104999998))
+radius 1e7 with 1000 iterations
+Ok(Projection(0.2999999799951911, Point(2.9999997999518415, -1.0499999599904425e-6), 1.00000104999998))

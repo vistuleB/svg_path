@@ -1,0 +1,43 @@
+[workspace.package]
+authors = ["Buck McCready <jbuckmccready@gmail.com>"]
+categories = ["algorithms", "data-structures", "graphics", "mathematics"]
+edition = "2024"
+homepage = "https://www.cavaliercontours.dev"
+keywords = ["algorithm", "2d", "computational", "geometry", "spatial"]
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+rust-version = "1.88"
+repository = "https://github.com/jbuckmccready/cavalier_contours"
+version = "0.9.0"
+
+[workspace]
+members = [
+  "cavalier_contours",
+  "cavalier_contours_ffi",
+  "cavalier_contours_ui",
+  "examples",
+]
+resolver = "2"
+
+[workspace.lints.clippy]
+# TODO: Address these remaining Clippy lints.
+too_many_lines = "allow"
+
+# Overly pedantic, has valid use.
+inline_always = "allow"
+# Pendantic naming better left to judgement with context.
+many_single_char_names = "allow"
+similar_names = "allow"
+# Digit separators make dense regression fixtures less compact.
+unreadable_literal = "allow"
+# TODO: api refactor all panics to errors (bad inputs and bugs currently can panic)
+missing_panics_doc = "allow"
+pedantic = { level = "warn", priority = -1 }
+
+[profile.web-release]
+inherits = "release"
+opt-level = 2 # fast and small wasm
+
+# Optimize all dependencies even in debug builds:
+[profile.dev.package."*"]
+opt-level = 2

@@ -1,0 +1,9 @@
+{
+  "command": "cargo +1.95.0 test --locked -p cavalier_contours --lib --tests",
+  "toolchain": "rustc 1.95.0 (59807616e 2026-04-14)",
+  "groups": 12,
+  "passed": 287,
+  "failed": 0,
+  "ignored": 0,
+  "scope": "core unit and integration tests; excludes doctests, FFI, UI and examples"
+}

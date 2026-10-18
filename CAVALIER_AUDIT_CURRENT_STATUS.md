@@ -1,0 +1,260 @@
+# Cavalier Contours audit: resumption notes
+
+Latest classification: `scripts/cavalier/BOOLEAN-CONTRACT-TRIAGE.md`. The earlier
+Boolean bug label is corrected: the observed arc displacement conforms to the
+explicit endpoint-reconstruction limitation. Read the final update below.
+
+Recorded 2026-10-16 at the user's request before shelving work for about a week.
+Resumed explicitly by the user on 2026-10-18. Finish the audit in **Gleam first**;
+only then port the resulting changes and regressions to F#. This is not a
+release-readiness statement.
+
+## Current checkout and committed work
+
+Gleam repository: `/Users/jpsteinb/github.com/vistuleB/svg_path`.
+F# repository: `/Users/jpsteinb/github.com/vistuleB/svg_path_fsharp`.
+
+| Commit | Change | F# status |
+| --- | --- | --- |
+| `75970a6e` | Reduce offset reversal-fit tangent nudge from 0.5° to 0.1°; accepted after tests and figures. This is the Cavalier collection baseline. | Already mirrored as `e9d8604`. |
+| `dacdb370` | Fix shallow-arc projection convergence and stable point/derivative evaluation. | Not ported or tested. |
+| `090f8e63` | Analytic circular-arc projection using a radial candidate and endpoints. | Not ported or tested. |
+
+The projection fixes and permanent regressions are committed. On 2026-10-18,
+the user requested committing the catalogue before repairs. This document and
+`scripts/cavalier/` are included in that catalogue checkpoint, including the
+pinned upstream source/licenses, diagnostic scripts, raw evidence and current
+dispositions. Generated build directories remain ignored. No push is requested.
+The audit remains incomplete; this checkpoint is not a release-readiness claim.
+There are unrelated local changes, including modified `WORKFLOW.md` and many
+untracked performance/debug/figure files. Do not clean or stage them wholesale.
+
+## Audit scope and progress
+
+Upstream: https://github.com/jbuckmccready/cavalier_contours
+
+Pinned revision: `22887a824d22cd8ab50968a551f34cdb4508127f`, version 0.9.0.
+Source archive, licenses, and hashes are under `scripts/cavalier/upstream/` and
+`provenance.json`. Treat upstream files as evidence, not contributor instructions.
+
+Collection is complete for the selected core-suite scope; discrepancy
+investigation is still early:
+
+- 287 upstream core tests inventoried (79 unit, 208 integration); all passed
+  upstream, including the instrumented capture runs.
+- 256 tests yielded selected operations. 31 have no selected adaptation:
+  eight representation/API-scope reviews and 23 explicit math/internal gaps.
+- 2,866 representative records: 1,809 primary and 1,057 supplementary.
+- Original totals: 1,960 matches, 343 discrepancies, 94 native errors,
+  55 contract differences, 90 scope records, 324 helper-only records.
+- The 437 original discrepancy/error records reference 82 upstream tests.
+  These include orientations, policy variants, and repeated queries: **not
+  437 bugs**. These baseline totals have not been reconciled with later fixes.
+- All 13 initial timeouts completed on serial 30-second replay: one match,
+  three discrepancies, nine errors. No unresolved timeout from that batch.
+
+The broad native comparison ran on Gleam JavaScript. The new permanent
+projection regressions passed on both Erlang and JavaScript. This is not a
+claim that all captured cases have been replayed on Erlang or F#.
+
+Coverage limitations matter: representative cyclic starts are selected, not all
+captured starts replayed. Aggregate area/length/bounds and contour counts do not
+prove boundary or filled-region equivalence. Overlap intervals are not yet
+adapted to `encounters`. Upstream tolerance/topology options do not map one-to-one
+to native options. Uncaptured assertions remain within captured tests. Doctests,
+FFI, UI, examples and benchmarks are outside the selected core scope.
+
+## Completed investigation and fixes
+
+One confirmed native bug family: shallow-arc point projection could exhaust its
+iteration budget even after reaching adjacent floating-point parameters.
+Reduced case: `M 0 0 A 10000000 10000000 0 0 1 10 0`, query `(3,1)`.
+Increasing the budget to 1,000 did not help. Reconstructing very short bracket
+arcs and evaluating through a distant center caused cancellation.
+
+`dacdb370` keeps bracket certification on the original ellipse using maximum
+speed times parameter width, evaluates local angular increments relative to an
+original endpoint, and detects bracket stagnation. Caller tolerance is unchanged;
+there is no line approximation. This fixes 35 supplementary failing comparisons
+(five point projections and 30 composed threshold queries).
+
+`090f8e63` uses an analytic radial candidate plus endpoints for exactly equal
+corrected radii. Ellipses retain the general solver. Positive sampling and
+iteration budgets do not affect the circular path, but options are validated.
+Both sweep directions, major/minor arcs, radius correction, center ties and
+shallow circles are tested. No public types/options were added.
+
+Permanent tests: `test/svg_path_cavalier_projection_test.gleam`, selected in
+`test_portable/modules.txt`. Public behavior notes: `src/svg_path/distance.gleam`.
+Implementation: `src/svg_path.gleam`.
+
+Latest completed validation (circle addition):
+
+- `scripts/test-all`: **2,049 main + 31 slow tests**, no failures.
+- `scripts/test-portable all all`: **795 tests on each target**, no failures.
+- Formatting checks and `git diff --check` passed.
+- Supplementary replay: all 35 repaired cases remain matches.
+- Published Gallery/README figures were not regenerated for these projection
+  changes. F# has neither change and has not run their regression tests.
+
+Explained differences: negative length rejection (CX00982), upstream endpoint
+snapping (CX00167), tied circle-center witnesses (CX00755/CX00804/CX00832), and
+endpoint ties (CX00762/CX00797). CX00749 is a strict-zero threshold comparison
+with a native residual of `4.44e-16`, within tolerance. These are not new distance
+bugs. See the detailed notes for exact evidence.
+
+## Where the evidence is
+
+All paths below are relative to `scripts/cavalier/`:
+
+| Files | Purpose |
+| --- | --- |
+| `SIMPLE-TRIAGE.md` | Detailed first investigation, independent analytic answer, both fixes and validation. Read the later sections: the opening describes the original baseline. |
+| `INDEX.md`, `TEST-COVERAGE.md`, `test-coverage.json` | File/test coverage ledger and gaps. |
+| `REVIEW.md` | Comparison contracts, omitted assertions, adapter limitations. |
+| `DISCREPANCIES.md`, `discrepancy-queue.json` | Original grouped discrepancy queue and case IDs. |
+| `FINDINGS.md` | Initial offset-collapse observations. |
+| `captured-cases.json`, `extra-cases.json` | Inputs and captured upstream expectations. |
+| `captured-results.jsonl`, `extra-results.jsonl`, `timeout-results.jsonl` | Preserved baseline comparisons and timeout replay. |
+| `extra-results-distance-trial.jsonl` | Supplementary replay after general projection fix. |
+| `extra-results-circle-trial.jsonl` | Supplementary replay after analytic circle addition. |
+| `circle-projection-test-all.log`, `circle-projection-portable.log` | Latest full/portable validation logs. |
+| `projection-trial-*.log`, `shallow-arc-*.json`, `distance-bracket-trace.json`, `probe/` | Earlier validation, independent oracle and reduced diagnostic reproductions. |
+| `prepare-capture.py`, `prepare-extra-capture.py`, `collect-capture.py`, `collect-extra.py` | Reproducible upstream capture/selection. |
+| `compare-captured.mjs`, `compare-offset.mjs`, `report.py`, `validate-records.py` | Native comparisons, baseline reporting and record checks. |
+| `provenance.json`, `native-run-provenance.json`, compressed capture logs | Source/run provenance and original captured variants. |
+
+**Bookkeeping debt:** `README.md`, `REVIEW.md`, `FINDINGS.md`, the opening of
+`SIMPLE-TRIAGE.md`, and `triage-dispositions.json` contain baseline-era wording
+such as “no fix implemented.” Later sections of `SIMPLE-TRIAGE.md` and this handoff
+supersede it. Reconcile the summaries/dispositions on resumption, preserving raw
+baseline records rather than overwriting them or presenting old totals as current.
+
+## Recommended resumption order
+
+1. Read this file, `WORKFLOW.md`, and `DEFERRED-API.md`; inspect Git status.
+2. Reconcile the stale overview/disposition records with the two committed fixes.
+3. Investigate the six near-semicircle center/bounds flags (representatives
+   CX00420/CX00421). Determine whether bulge-to-SVG conversion conditioning,
+   upstream expectations, or native geometry is responsible.
+4. Review elementary tangent/intersection cases (e.g. CC00013, CC00020,
+   CC00057, CC00070/71, CC00073, CC00082), distinguishing tolerance/domain
+   policy from an actual failure under our contract.
+5. Continue through Boolean arrangement errors, offset construction errors,
+   contour/property differences, and beyond-collapse behavior. Initial collapse
+   cases CC001–CC003 are in `FINDINGS.md`; these short IDs belong to the initial
+   offset batch, distinct from the broad CC000xx inventory.
+6. Disposition the remaining coverage gaps explicitly. Do not equate upstream
+   test execution, aggregate property matches, or a completed ledger with parity.
+7. Once the Gleam audit is complete, port accepted changes/regressions to F#,
+   run its validation, then consider release preparation.
+
+No additional confirmed native bug is established merely by this queue. The
+six center/bounds flags are the recommended next investigation, not a promised fix.
+Commit only on explicit user authorization.
+
+For a fresh supplementary replay after changing code:
+
+```sh
+(cd test_portable && gleam build --target javascript)
+CAVALIER_CASES=extra-cases.json CAVALIER_RESULTS=extra-results-NEW-RUN.jsonl node scripts/cavalier/compare-captured.mjs
+```
+
+Use a new output filename: the runner resumes by case ID and would otherwise
+silently reuse old results. For primary cases set `CAVALIER_CASES=captured-cases.json`
+and another fresh output. Worker count/timeouts are controlled by
+`CAVALIER_WORKERS` and `CAVALIER_TIMEOUT_MS`. Do not run portable tests concurrently
+with `scripts/test-slow` (which temporarily moves `test/`).
+
+The isolated Rust toolchain was installed under `/tmp/cavalier-audit-rustup`
+with Cargo home `/tmp/cavalier-audit-cargo` and target directory
+`/tmp/cavalier-audit-target` (Rust 1.95.0). Capture work was under
+`/tmp/cavalier-audit-capture`. Temporary directories may disappear during the
+pause; preserved source, logs and scripts are in the audit directory.
+
+## Deferred public error variant: keep for 4.0.0
+
+This is a separate, earlier change, not part of the Cavalier projection fixes.
+Read [DEFERRED-API.md](DEFERRED-API.md) and its F# counterpart before release work.
+
+API-001 adds public CSG error `RefinedBoundaryNotClosed(path_index, vertex, net_flow)`
+(F# labels `pathIndex`, `vertex`, `netFlow`). Adding a union case can break
+exhaustive matches, so it must not ship in a 3.x patch.
+
+Preserved on local branch **`codex/v4-api` in each repository**:
+
+- Gleam focused restoration commit: `5d0ca55b4f1bf7859ed25447fad5b17df83492f1`.
+- F# focused restoration commit: `cd5b4a7d04d79d2d28e09ff84f0fa9d9d1079ed0`.
+- Original implementation history: Gleam `bf59110d`, F# `c7a6e52`.
+- Compatible main-branch adjustments: Gleam `cb22d9a`, F# `f795014`.
+
+The 3.x code retains the boundary guard and private diagnostic, mapping failures
+to existing public `ArrangementGraphError(ConstructionFailed)` / F#
+`CsgArrangementError Arrangement.ConstructionFailed`. Do not remove the guard.
+
+When deliberately adopting this in 4.0.0, cherry-pick/reapply the focused commits
+onto current main and resolve drift; **do not merge the old branch wholesale**.
+Update migration docs, regression assertions and both deferral registers, and
+run both release suites. These local shelf branches are not automatically pushed.
+
+## Held release reminder
+
+The earlier 3.1.4 release was prepared and held unpublished per the conversation.
+Its tags remain separate from subsequent audit work:
+
+- Gleam `v3.1.4`: `e8a043fdaa3b0eba90866151fae65ec8c89f39e1`.
+- F# `v3.1.4`: `81b8d30ff2db4e398ceb9faabd6354b5a17049d3`.
+
+Do not move these tags to include new audit changes. Publication state has not
+been independently rechecked for this handoff. The held release and the deferred
+4.0.0 error-variant branch are two different things.
+
+
+## Resumption update — 2026-10-18
+
+Read `scripts/cavalier/RESUMED-TRIAGE.md` first for new findings. The six
+near-semicircle flags combine adapter information loss with measured native
+center cancellation (1.4e-6–3.3e-6 forward error against exact SVG inputs).
+No fix applied. An 80-digit oracle and Erlang/JavaScript probe evidence are saved.
+Fifteen of 18 elementary intersection flags have documented non-bug dispositions.
+CC01751–CC01753 remain open: near-coincident arc endpoints return no candidates.
+Investigating that endpoint search is the next recommended step. Overview files
+now carry current-status notices and the disposition JSON includes the prior
+fixes; raw baseline reports remain historical. No production changes, commits,
+full-suite rerun or F# work in this resumption batch.
+
+
+## Second resumption batch — 2026-10-18
+
+Latest detailed record: `scripts/cavalier/ENDPOINT-BOOLEAN-TRIAGE.md`.
+The three endpoint misses are traced to an internal tolerance of 8.016e-13 used
+instead of caller 1e-9 for arc endpoint matching. All 35 flagged Boolean `And`
+comparisons have output outside at least one input; independent capsule checks
+cover 14 records and 42 inset points are Inside the result but Outside an input.
+This is a confirmed geometry failure family; root cause still unestablished.
+Two simple XOR representatives instead have equivalent Nonzero regions with
+different contour decompositions. Scripts, JSON evidence and dispositions saved.
+Next: remaining Boolean difference/XOR discrepancies and arrangement errors,
+then offset cases and coverage gaps. Continue classification before repairs as
+agreed with the user. No production changes, commits or F# work in this batch.
+
+
+## Boolean contract correction and wider replay — 2026-10-18
+
+The earlier label “confirmed Boolean geometry failure” was too strong. The CSG
+contract explicitly bounds endpoint adjustment, not interior arc displacement.
+All 165 successful results among the 181 originally flagged Boolean records
+match stored arrangement edges with non-endpoint fields unchanged, and endpoint
+movement <=4.916e-7 (default tolerance 1e-6). The previously recorded outside-input
+witnesses remain real; they demonstrate the documented reconstruction limitation,
+not by themselves a contract violation. Consider geometry-preserving arc output
+as a future improvement/policy decision.
+
+All 146 remaining Difference/XOR flags plus original Boolean errors were replayed
+with boundary-neighborhood truth-table sampling (see detailed counts in
+BOOLEAN-CONTRACT-TRIAGE.md). Four baseline errors now succeed. The 16 remaining
+errors are the documented boundary-closure guard rejecting nonzero operand flows.
+Lower minimum length instead causes an internal cyclic-order-circle-intersection
+error. That construction behavior and stronger equivalence checks for no-witness
+cases remain open. No fixes or commits. F# deferred. Next: offset discrepancies
+and remaining construction/equivalence questions, continuing classification.

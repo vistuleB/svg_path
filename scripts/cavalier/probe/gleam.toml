@@ -1,0 +1,5 @@
+name = "cavalier_audit_probe"
+version = "0.1.0"
+[dependencies]
+svg_path = { path = "../../.." }
+gleam_stdlib = ">= 1.0.0 and < 2.0.0"

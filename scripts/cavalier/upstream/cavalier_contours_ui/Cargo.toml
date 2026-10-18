@@ -1,0 +1,47 @@
+[package]
+name = "cavalier_contours_ui"
+description = "UI app for debugging and demonstrating the cavalier_contours crate"
+# Just used for development, not published to crates.io.
+publish = false
+authors.workspace = true
+categories.workspace = true
+edition.workspace = true
+homepage.workspace = true
+keywords.workspace = true
+license.workspace = true
+rust-version = "1.95"
+repository.workspace = true
+version.workspace = true
+
+[lints]
+workspace = true
+
+[package.metadata.docs.rs]
+all-features = true
+targets = ["x86_64-unknown-linux-gnu", "wasm32-unknown-unknown"]
+
+[dependencies]
+cavalier_contours = {version = "0.9", path = "../cavalier_contours", features = ["serde"]}
+egui = "0.36.1"
+egui_plot = "0.37.0"
+egui_extras = "0.36.1"
+eframe = { version = "0.36.1", default-features = false, features = [
+    "accesskit",     # Make egui compatible with screen readers. NOTE: adds a lot of dependencies.
+    "default_fonts", # Embed the default egui fonts.
+    "glow",          # Use the glow rendering backend. Alternative: "wgpu".
+    "persistence",   # Enable restoring app state when restarting the app.
+    "wayland",       # To support Linux (and CI)
+] }
+log = "0.4"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1.0"
+lyon = "1.0.16"
+
+# native:
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+env_logger = "0.11"
+
+# web:
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen-futures = "0.4"
+web-sys = "0.3.81"           # to access the DOM (to hide the loading text)

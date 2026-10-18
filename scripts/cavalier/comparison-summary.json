@@ -1,0 +1,117 @@
+{
+  "cases": 2866,
+  "completed": 2866,
+  "by_kind": {
+    "area": {
+      "match": 7,
+      "scope": 5,
+      "helper-only": 108
+    },
+    "boolean": {
+      "match": 651,
+      "discrepancy": 161,
+      "error": 20
+    },
+    "circle_circle_intr": {
+      "match": 5,
+      "contract-difference": 1,
+      "discrepancy": 2
+    },
+    "contains": {
+      "match": 7,
+      "scope": 2
+    },
+    "dist_from_segment_start": {
+      "match": 54,
+      "discrepancy": 1
+    },
+    "extents": {
+      "scope": 3,
+      "match": 6,
+      "helper-only": 107
+    },
+    "find_point_at_path_length": {
+      "match": 8,
+      "error": 1,
+      "scope": 1
+    },
+    "line_circle_intr": {
+      "match": 19,
+      "discrepancy": 3,
+      "error": 1
+    },
+    "line_line_intr": {
+      "match": 36,
+      "discrepancy": 1,
+      "contract-difference": 14
+    },
+    "offset": {
+      "match": 200,
+      "discrepancy": 155,
+      "scope": 6,
+      "error": 36
+    },
+    "path_length": {
+      "match": 11,
+      "scope": 1,
+      "helper-only": 109
+    },
+    "pline_seg_intr": {
+      "match": 61,
+      "contract-difference": 38,
+      "discrepancy": 11
+    },
+    "seg_arc_radius_and_center": {
+      "match": 289,
+      "discrepancy": 3
+    },
+    "seg_bounding_box": {
+      "match": 256,
+      "discrepancy": 3
+    },
+    "seg_closest_point": {
+      "match": 48,
+      "discrepancy": 3,
+      "error": 5
+    },
+    "seg_distance_is_greater_than": {
+      "match": 180,
+      "error": 30
+    },
+    "seg_fast_approx_bounding_box": {
+      "scope": 72
+    },
+    "seg_length": {
+      "match": 9
+    },
+    "seg_midpoint": {
+      "match": 4
+    },
+    "seg_split_at_point": {
+      "match": 60
+    },
+    "seg_tangent_vector": {
+      "match": 30
+    },
+    "shape_offset": {
+      "match": 4,
+      "error": 1
+    },
+    "winding_number": {
+      "match": 15,
+      "contract-difference": 2
+    }
+  },
+  "totals": {
+    "match": 1960,
+    "contract-difference": 55,
+    "discrepancy": 343,
+    "error": 94,
+    "scope": 90,
+    "helper-only": 324
+  },
+  "test_coverage": {
+    "not adapted": 31,
+    "selected-operation comparisons": 256
+  }
+}
