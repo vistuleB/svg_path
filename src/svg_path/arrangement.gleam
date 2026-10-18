@@ -887,6 +887,15 @@ fn circle_sample_for_oriented_edge(
     |> segment_relative_to(vertex)
   let radius_squared = radius *. radius
   let residual_tolerance = tolerance *. { 2.0 *. radius +. tolerance }
+  let start = svg_path.segment_start(segment)
+  let start_gap = radius_squared -. point.dot(start, start)
+  // A clustered endpoint can differ from the vertex center. When it is inside
+  // the circle, do not let the crossing solver accept it instead of refining
+  // the positive crossing. Keep the clustering/angular tolerance unchanged.
+  let residual_tolerance = case start_gap >. 0.0 {
+    True -> float.min(residual_tolerance, start_gap /. 4.0)
+    False -> residual_tolerance
+  }
   use roots <- result.try(
     containment.segment_crossings_with(
       segment,

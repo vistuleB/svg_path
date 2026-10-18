@@ -1,0 +1,9 @@
+  Compiling cavalier_audit_probe
+   Compiled in 0.36s
+    Running cyclic_order_audit_probe.main
+two perpendicular lines, minimum_length 1e-8, vertex tolerance 1e-6
+Error(InternalCyclicOrderCircleIntersectionFailed(0, 0, 1.5360000000000002e-6))
+long-edge circle roots, radius 2.4e-6
+Ok([0.0])
+control: short line length 3.1e-6
+Ok

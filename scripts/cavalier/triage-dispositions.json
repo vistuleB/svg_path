@@ -348,5 +348,12 @@
     ],
     "status": "baseline-error-no-longer-reproduced",
     "reason": "All four operations now return results at current revision; geometry checked separately, no individual fix attribution isolated."
+  },
+  {
+    "ids": [
+      "CC01059"
+    ],
+    "status": "confirmed-native-cyclic-circle-sampling-defect-at-smaller-minimum-length",
+    "reason": "With minimum_length 1e-8, loose circle residual tolerance accepts t=0 then cyclic sampling rejects it. Reduced to two perpendicular lines, reproduced Erlang/JS. The local repair now makes all 16 affected arrangements build at minimum_length 1e-8 on JS (cyclic-repaired-original.json); the default boundary guard remains a separate disposition. See CYCLIC-ORDER-TRIAGE.md."
   }
 ]

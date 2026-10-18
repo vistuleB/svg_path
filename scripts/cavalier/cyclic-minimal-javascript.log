@@ -1,0 +1,8 @@
+   Compiled in 0.04s
+    Running cyclic_order_audit_probe.main
+two perpendicular lines, minimum_length 1e-8, vertex tolerance 1e-6
+Error(InternalCyclicOrderCircleIntersectionFailed(vertex: 0, edge: 0, radius: 0.0000015360000000000002))
+long-edge circle roots, radius 2.4e-6
+Ok([0])
+control: short line length 3.1e-6
+Ok

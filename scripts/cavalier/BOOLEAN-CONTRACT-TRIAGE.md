@@ -110,3 +110,14 @@ production code and permanent tests are unchanged. Preserve the baseline raw
 comparison results. Remaining work includes stronger equivalence checks for
 unresolved Boolean decomposition flags, the smaller-threshold cyclic-order
 failure, offset construction/collapse discrepancies, and coverage gaps.
+
+
+## Subsequent cyclic-order investigation
+
+The smaller-threshold failure is now explained in
+[CYCLIC-ORDER-TRIAGE.md](CYCLIC-ORDER-TRIAGE.md). A circle-sampling tolerance
+mismatch is confirmed, reduced to two perpendicular lines and reproduced on
+both targets. The original CC01059 trace has the same mechanism. The subsequent local repair
+experiment makes all 16 affected arrangements build at minimum length 1e-8; see
+`cyclic-repaired-original.json` and the cyclic-order report.
+This does not change the default minimum-length boundary-guard disposition.

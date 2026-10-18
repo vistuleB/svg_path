@@ -258,3 +258,25 @@ Lower minimum length instead causes an internal cyclic-order-circle-intersection
 error. That construction behavior and stronger equivalence checks for no-witness
 cases remain open. No fixes or commits. F# deferred. Next: offset discrepancies
 and remaining construction/equivalence questions, continuing classification.
+
+
+## Cyclic-order investigation — 2026-10-18
+
+Read `scripts/cavalier/CYCLIC-ORDER-TRIAGE.md`. The smaller-minimum-length
+failure is a confirmed native circle-sampling tolerance mismatch: the scalar
+crossing helper accepts t=0 within residual tolerance, and cyclic sampling then
+rejects t=0. A minimal pair of perpendicular lines (lengths 1 and 3e-6; vertex
+tolerance 1e-6; minimum length 1e-8) fails on both targets; length 3.1e-6 succeeds.
+Copied-build tracing confirms the same cause in CC01059. Candidate desired
+regressions live under `scripts/cavalier/regressions/`, not the default suite.
+No production repair or commit. Continue remaining catalogue classification;
+when repairs are authorized, keep this fix local to circle sampling and validate
+centered/offset endpoints, line/arc edges, scales and original geometry.
+
+### Authorized cyclic-order repair experiment
+
+The local residual-tolerance cap is implemented in Gleam. Four permanent tests
+cover centered and offset endpoints, lines/arcs, reversed traversal and scales.
+All 16 original affected arrangements now build with minimum length 1e-8 on JS;
+see `scripts/cavalier/cyclic-repaired-original.json` and `CYCLIC-ORDER-TRIAGE.md`.
+Default CSG boundary-guard dispositions remain separate. F# and commit deferred.

@@ -1,0 +1,84 @@
+[
+  {
+    "length": 0.000002,
+    "radius": 0.0000016,
+    "residual_tolerance": 4.199999999999999e-12,
+    "origin_residual": -2.5599999999999996e-12,
+    "roots": [
+      0
+    ],
+    "build": {
+      "ok": true
+    }
+  },
+  {
+    "length": 0.0000025,
+    "radius": 0.0000020000000000000003,
+    "residual_tolerance": 5.0000000000000005e-12,
+    "origin_residual": -4.0000000000000015e-12,
+    "roots": [
+      0
+    ],
+    "build": {
+      "error": {
+        "type": "InternalCyclicOrderCircleIntersectionFailed",
+        "vertex": 0,
+        "edge": 0,
+        "radius": 0.0000012800000000000005
+      }
+    }
+  },
+  {
+    "length": 0.000003,
+    "radius": 0.0000024000000000000003,
+    "residual_tolerance": 5.8e-12,
+    "origin_residual": -5.760000000000001e-12,
+    "roots": [
+      0
+    ],
+    "build": {
+      "error": {
+        "type": "InternalCyclicOrderCircleIntersectionFailed",
+        "vertex": 0,
+        "edge": 0,
+        "radius": 0.0000015360000000000002
+      }
+    }
+  },
+  {
+    "length": 0.0000031,
+    "radius": 0.00000248,
+    "residual_tolerance": 5.96e-12,
+    "origin_residual": -6.1504e-12,
+    "roots": [
+      0.00000244140625
+    ],
+    "build": {
+      "ok": true
+    }
+  },
+  {
+    "length": 0.000004,
+    "radius": 0.0000032,
+    "residual_tolerance": 7.399999999999998e-12,
+    "origin_residual": -1.0239999999999998e-11,
+    "roots": [
+      0.00000244140625
+    ],
+    "build": {
+      "ok": true
+    }
+  },
+  {
+    "length": 0.00001,
+    "radius": 0.000008000000000000001,
+    "residual_tolerance": 1.7000000000000003e-11,
+    "origin_residual": -6.400000000000002e-11,
+    "roots": [
+      0.00000732421875
+    ],
+    "build": {
+      "ok": true
+    }
+  }
+]
