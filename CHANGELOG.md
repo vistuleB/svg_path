@@ -11,6 +11,9 @@ rather than only the tag object.
 
 ## Unreleased
 
+- Retain intact offset cycles when clipping turns an original open endpoint into
+  a cycle seam, instead of rejecting the result with a parity construction error.
+
 - Preserve existing vertex ownership when an exact arrangement endpoint repeats,
   preventing identical endpoints from being assigned to different clusters.
 - Solve circular-arc pairs with a shared endpoint analytically when their centers

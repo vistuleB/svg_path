@@ -1,0 +1,63 @@
+[
+  {
+    "mode": "untrimmed",
+    "result": {
+      "ok": true
+    },
+    "trace": [],
+    "arcs": [],
+    "between": [],
+    "vertices": []
+  },
+  {
+    "mode": "none",
+    "result": {
+      "ok": true
+    },
+    "trace": [],
+    "arcs": [],
+    "between": [],
+    "vertices": []
+  },
+  {
+    "mode": "cusp",
+    "result": {
+      "ok": true
+    },
+    "trace": [],
+    "arcs": [],
+    "between": [],
+    "vertices": []
+  },
+  {
+    "mode": "in-band",
+    "result": {
+      "ok": false,
+      "error": {
+        "type": "ConstructionFailed"
+      }
+    },
+    "trace": [
+      {
+        "type": "Object",
+        "module": "offset",
+        "error": {
+          "type": "InternalForcedParityPruningError",
+          "error": {
+            "type": "ForcedParityAmbiguous",
+            "vertices": {
+              "type": "NonEmpty",
+              "head": 9,
+              "tail": {
+                "type": "Empty"
+              }
+            }
+          }
+        }
+      }
+    ],
+    "arcs": [],
+    "between": [],
+    "vertices": []
+  }
+]

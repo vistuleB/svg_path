@@ -4164,8 +4164,9 @@ fn arrangement_split_segments_from_i_contamination_edges(
 /// Only offset-image edges are eligible to survive. Winding-mismatched edges
 /// receive zero initial capacity, forced parity reduction removes necessarily
 /// dangling capacity, and reconstruction consumes the remaining capacities in
-/// source order. Open input endpoints are preferred parity-one vertices while
-/// attached, but complete deletion of an endpoint component is permitted.
+/// source order. Open input endpoints outside intact unit-capacity cycles are
+/// preferred parity-one vertices while attached, but complete deletion of an
+/// endpoint component is permitted.
 fn forced_parity_reduce_trim_graph(
   graph: OffsetTrimGraph,
   protected_vertices: List(Int),
@@ -4173,29 +4174,34 @@ fn forced_parity_reduce_trim_graph(
   let OffsetTrimGraph(vertices:, edges:, edge_capacities:) = graph
   let arrangement =
     arrangement_graph.ArrangementGraph(vertices:, edges:, cyclic_orders: [])
+  let initial = case edge_capacities {
+    None ->
+      list.map(edges, fn(edge) {
+        EdgeCapacityAssignment(
+          edge.id,
+          edge.forward_multiplicity + edge.reverse_multiplicity,
+        )
+      })
+    Some(capacities) ->
+      capacities
+      |> list.filter(fn(entry) {
+        list.any(edges, fn(edge) { edge.id == entry.0 })
+      })
+      |> list.map(fn(entry) { EdgeCapacityAssignment(entry.0, entry.1) })
+  }
+  // Clipping can turn an original open endpoint into the seam of an intact
+  // cycle. Such a component has no terminal at which to require odd parity.
+  // Keep the original rules for open, branched, and repeated-capacity graphs.
+  let terminal_vertices =
+    list.filter(protected_vertices, fn(vertex) {
+      !unit_capacity_cycle_component(edges, initial, [vertex], [])
+    })
   use assignments <- result.try(
-    case edge_capacities {
-      None ->
-        forced_parity_capacities(
-          arrangement,
-          vertex_parities: protected_vertex_parities(protected_vertices),
-        )
-      Some(capacities) -> {
-        // Submerged edges have been removed from this pruning view. Retain
-        // explicit occurrence counts only for its remaining geometric edges.
-        let initial =
-          capacities
-          |> list.filter(fn(entry) {
-            list.any(edges, fn(edge) { edge.id == entry.0 })
-          })
-          |> list.map(fn(entry) { EdgeCapacityAssignment(entry.0, entry.1) })
-        forced_parity_capacities_with(
-          arrangement,
-          initial,
-          vertex_parities: protected_vertex_parities(protected_vertices),
-        )
-      }
-    }
+    forced_parity_capacities_with(
+      arrangement,
+      initial,
+      vertex_parities: protected_vertex_parities(terminal_vertices),
+    )
     |> result.map_error(InternalForcedParityPruningError),
   )
   let edge_capacities =
@@ -4219,6 +4225,59 @@ fn forced_parity_reduce_trim_graph(
       }
     })
   Ok(OffsetTrimGraph(vertices:, edges:, edge_capacities: Some(edge_capacities)))
+}
+
+// Recognize only a complete simple cycle, without choosing a branch or
+// discarding any surviving occurrence. Isolated vertices are not cycles.
+fn unit_capacity_cycle_component(
+  edges: List(arrangement_graph.ArrangementEdge),
+  capacities: List(EdgeCapacityAssignment),
+  pending: List(Int),
+  visited: List(Int),
+) -> Bool {
+  case pending {
+    [] -> True
+    [vertex, ..rest] ->
+      case list.contains(visited, vertex) {
+        True -> unit_capacity_cycle_component(edges, capacities, rest, visited)
+        False -> {
+          let incident =
+            list.filter(edges, fn(edge) {
+              { edge.start_vertex == vertex || edge.end_vertex == vertex }
+              && list.any(capacities, fn(entry) {
+                entry.edge_id == edge.id && entry.capacity > 0
+              })
+            })
+          case incident {
+            [first, second] -> {
+              let unit =
+                list.all(incident, fn(edge) {
+                  edge.start_vertex != edge.end_vertex
+                  && list.any(capacities, fn(entry) {
+                    entry.edge_id == edge.id && entry.capacity == 1
+                  })
+                })
+              let first_next = case first.start_vertex == vertex {
+                True -> first.end_vertex
+                False -> first.start_vertex
+              }
+              let second_next = case second.start_vertex == vertex {
+                True -> second.end_vertex
+                False -> second.start_vertex
+              }
+              unit
+              && unit_capacity_cycle_component(
+                edges,
+                capacities,
+                [first_next, second_next, ..rest],
+                [vertex, ..visited],
+              )
+            }
+            _ -> False
+          }
+        }
+      }
+  }
 }
 
 fn protected_vertex_parities(vertices: List(Int)) -> List(VertexParityRequest) {

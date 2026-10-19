@@ -373,5 +373,19 @@
     ],
     "status": "fixed-native-construction-defect",
     "reason": "Shared-endpoint circular intersection calculation avoids repeated near-tangent cuts; exact endpoint vertex ownership and arc-interval witness fallback also repaired. Both default-offset replays now match captured aggregate properties. See NEAR-TANGENT-REPAIR.md."
+  },
+  {
+    "ids": [
+      "CC01558",
+      "CC01562",
+      "CC01563",
+      "CC01564",
+      "CC01565",
+      "CC01566",
+      "CC01567",
+      "CC01568"
+    ],
+    "status": "fixed-native-construction-defect",
+    "reason": "Repair omits stale preferred odd parity at an intact unit-capacity cycle. All eight offsets now match aggregate properties; native cycle is closed whereas upstream is open with coincident endpoints. See ENDPOINT-CLIP-PARITY-TRIAGE.md."
   }
 ]

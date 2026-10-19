@@ -1,0 +1,10 @@
+Running slow test profile (stress tests and expensive regressions).
+Downloading packages
+ Downloaded 2 packages in 0.01s
+  Compiling gleam_stdlib
+  Compiling gleeunit
+  Compiling svg_path
+   Compiled in 2.17s
+    Running svg_path_test.main
+[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m.[39m[32m
+31 passed, no failures[39m

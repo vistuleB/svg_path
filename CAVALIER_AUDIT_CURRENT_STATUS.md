@@ -1,8 +1,9 @@
 # Cavalier Contours audit: resumption notes
 
-Latest repair: `scripts/cavalier/NEAR-TANGENT-REPAIR.md`; CC01267 and CC01271
-now complete and match captured aggregate properties. Broader discrepancy
-classification remains open. Read the final updates below.
+Latest repair: `scripts/cavalier/ENDPOINT-CLIP-PARITY-TRIAGE.md`; all eight
+open-endpoint clipping variants now match aggregate properties. The preceding
+near-tangent repair is in `scripts/cavalier/NEAR-TANGENT-REPAIR.md`.
+Broader discrepancy classification remains open. Read the final updates below.
 
 Recorded 2026-10-16 at the user's request before shelving work for about a week.
 Resumed explicitly by the user on 2026-10-18. Finish the audit in **Gleam first**;
@@ -424,3 +425,35 @@ Final `scripts/test-release` passed: 2,067 ordinary + 31 slow + 813 portable on
 each target. Log `scripts/cavalier/shared-circle-final-test-release.log`.
 Both targeted originals match recorded aggregate properties. No figures or F#
 port in this turn; no commit requested or made.
+
+### Near-tangent commit and next endpoint investigation — 2026-10-19
+
+Committed the tested near-tangent repairs and evidence as `f2ccd80`.
+Next: `scripts/cavalier/ENDPOINT-CLIP-PARITY-TRIAGE.md`. All eight original
+non-tangent open-endpoint offset variants still fail on current JS. CC01558's
+arrangement and winding pruning produce the expected complete square, but a
+stale odd-parity request at its original open endpoint rejects that cycle.
+Repair direction: derive terminal roles from surviving source traversal rather
+than attachment alone. No additional production change; F# deferred.
+
+### Endpoint-cycle candidate tested — 2026-10-19
+
+The candidate exempts original open endpoints from preferred odd parity only
+when their retained component is an intact unit-capacity cycle. General parity
+solver and reconstruction guards are unchanged. All eight CC01558/CC01562–68
+variants now complete and match aggregate properties (native output explicitly
+closed, upstream open with coincident endpoints). Two permanent portable tests
+cover forward/reverse cycle geometry and preserved open terminals.
+Validation: `gleam test` 2,069; `scripts/test-portable all all` 815 each target;
+`scripts/test-slow` 31, all passing. Details and raw logs in
+`scripts/cavalier/ENDPOINT-CLIP-PARITY-TRIAGE.md`. Retained uncommitted; figures and
+F# not updated.
+
+### Remaining-work inventory for endpoint-cycle commit
+
+See `scripts/cavalier/REMAINING-INVESTIGATIONS.md`: seven open work groups,
+not seven confirmed bugs. Fresh replay of the nine outstanding tangent-arc/
+shape-offset construction-error records now gives four matches and five
+aggregate discrepancies, with no construction errors. Root-cause attribution
+across the recent repairs is not isolated. These differences still require
+classification; the entire audit remains incomplete.

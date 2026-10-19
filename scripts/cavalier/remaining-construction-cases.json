@@ -1,0 +1,857 @@
+[
+  {
+    "id": "CC01645",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::tangent_arc_arc_segment_interiors",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          0.0,
+          12.0,
+          -0.0
+        ],
+        [
+          10.0,
+          12.0,
+          -0.0
+        ],
+        [
+          10.0,
+          22.0,
+          -0.0
+        ],
+        [
+          22.0,
+          22.0,
+          -0.0
+        ],
+        [
+          22.0,
+          10.0,
+          -0.0
+        ],
+        [
+          12.0,
+          10.0,
+          -0.0
+        ],
+        [
+          12.0,
+          0.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -0.0
+        ]
+      ]
+    },
+    "offset": -1.4142135623730951,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": -168.40761385757781,
+        "length": 75.47232018968123,
+        "bounds": [
+          1.4142135623730951,
+          1.4142135623730951,
+          20.585786437626904,
+          20.585786437626904
+        ],
+        "closed": true,
+        "vertices": 12
+      }
+    ],
+    "observations": 8,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::tangent_arc_arc_segment_interiors",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01646",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::tangent_arc_arc_segment_interiors",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          0.0,
+          12.0,
+          -0.0
+        ],
+        [
+          10.0,
+          12.0,
+          -0.0
+        ],
+        [
+          10.0,
+          22.0,
+          -0.0
+        ],
+        [
+          22.0,
+          22.0,
+          -0.0
+        ],
+        [
+          22.0,
+          10.0,
+          -0.0
+        ],
+        [
+          12.0,
+          10.0,
+          -0.0
+        ],
+        [
+          12.0,
+          0.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -0.0
+        ]
+      ]
+    },
+    "offset": -1.4142135623730951,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: true, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": -168.40761385757781,
+        "length": 75.47232018968123,
+        "bounds": [
+          1.4142135623730951,
+          1.4142135623730951,
+          20.585786437626904,
+          20.585786437626904
+        ],
+        "closed": true,
+        "vertices": 12
+      }
+    ],
+    "observations": 8,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::tangent_arc_arc_segment_interiors",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01649",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::tangent_arc_arc_segment_interiors",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          0.0,
+          12.0,
+          -0.0
+        ],
+        [
+          10.0,
+          12.0,
+          -0.0
+        ],
+        [
+          10.0,
+          22.0,
+          -0.0
+        ],
+        [
+          22.0,
+          22.0,
+          -0.0
+        ],
+        [
+          22.0,
+          10.0,
+          -0.0
+        ],
+        [
+          12.0,
+          10.0,
+          -0.0
+        ],
+        [
+          12.0,
+          0.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -0.0
+        ]
+      ]
+    },
+    "offset": -1.4142135623730951,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Discard }",
+    "result": [
+      {
+        "area": -168.40761385757781,
+        "length": 75.47232018968123,
+        "bounds": [
+          1.4142135623730951,
+          1.4142135623730951,
+          20.585786437626904,
+          20.585786437626904
+        ],
+        "closed": true,
+        "vertices": 12
+      }
+    ],
+    "observations": 8,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::tangent_arc_arc_segment_interiors",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01650",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::tangent_arc_arc_segment_interiors",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          0.0,
+          12.0,
+          -0.0
+        ],
+        [
+          10.0,
+          12.0,
+          -0.0
+        ],
+        [
+          10.0,
+          22.0,
+          -0.0
+        ],
+        [
+          22.0,
+          22.0,
+          -0.0
+        ],
+        [
+          22.0,
+          10.0,
+          -0.0
+        ],
+        [
+          12.0,
+          10.0,
+          -0.0
+        ],
+        [
+          12.0,
+          0.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -0.0
+        ]
+      ]
+    },
+    "offset": -1.4142135623730951,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: true, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Discard }",
+    "result": [
+      {
+        "area": -168.40761385757781,
+        "length": 75.47232018968123,
+        "bounds": [
+          1.4142135623730951,
+          1.4142135623730951,
+          20.585786437626904,
+          20.585786437626904
+        ],
+        "closed": true,
+        "vertices": 12
+      }
+    ],
+    "observations": 8,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::tangent_arc_arc_segment_interiors",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01653",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::tangent_arc_arc_segment_interiors",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          0.0,
+          12.0,
+          -0.0
+        ],
+        [
+          10.0,
+          12.0,
+          -0.0
+        ],
+        [
+          10.0,
+          22.0,
+          -0.0
+        ],
+        [
+          22.0,
+          22.0,
+          -0.0
+        ],
+        [
+          22.0,
+          10.0,
+          -0.0
+        ],
+        [
+          12.0,
+          10.0,
+          -0.0
+        ],
+        [
+          12.0,
+          0.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -0.0
+        ]
+      ]
+    },
+    "offset": -1.4142135623730951,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Separate, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": -84.20380692878891,
+        "length": 37.73616017913431,
+        "bounds": [
+          10.999999970197678,
+          10.999999970197678,
+          20.585786437626904,
+          20.585786437626904
+        ],
+        "closed": true,
+        "vertices": 6
+      },
+      {
+        "area": -84.2038069287889,
+        "length": 37.73616001054691,
+        "bounds": [
+          1.4142135623730951,
+          1.4142135623730951,
+          10.999999970197678,
+          10.999999970197678
+        ],
+        "closed": true,
+        "vertices": 6
+      }
+    ],
+    "observations": 8,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::tangent_arc_arc_segment_interiors",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01654",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::tangent_arc_arc_segment_interiors",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          0.0,
+          12.0,
+          -0.0
+        ],
+        [
+          10.0,
+          12.0,
+          -0.0
+        ],
+        [
+          10.0,
+          22.0,
+          -0.0
+        ],
+        [
+          22.0,
+          22.0,
+          -0.0
+        ],
+        [
+          22.0,
+          10.0,
+          -0.0
+        ],
+        [
+          12.0,
+          10.0,
+          -0.0
+        ],
+        [
+          12.0,
+          0.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -0.0
+        ]
+      ]
+    },
+    "offset": -1.4142135623730951,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: true, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Separate, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": -84.20380692878891,
+        "length": 37.73616017913431,
+        "bounds": [
+          10.999999970197678,
+          10.999999970197678,
+          20.585786437626904,
+          20.585786437626904
+        ],
+        "closed": true,
+        "vertices": 6
+      },
+      {
+        "area": -84.2038069287889,
+        "length": 37.73616001054691,
+        "bounds": [
+          1.4142135623730951,
+          1.4142135623730951,
+          10.999999970197678,
+          10.999999970197678
+        ],
+        "closed": true,
+        "vertices": 6
+      }
+    ],
+    "observations": 8,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::tangent_arc_arc_segment_interiors",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01657",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::tangent_arc_arc_segment_interiors",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          0.0,
+          12.0,
+          -0.0
+        ],
+        [
+          10.0,
+          12.0,
+          -0.0
+        ],
+        [
+          10.0,
+          22.0,
+          -0.0
+        ],
+        [
+          22.0,
+          22.0,
+          -0.0
+        ],
+        [
+          22.0,
+          10.0,
+          -0.0
+        ],
+        [
+          12.0,
+          10.0,
+          -0.0
+        ],
+        [
+          12.0,
+          0.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -0.0
+        ]
+      ]
+    },
+    "offset": -1.4142135623730951,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Separate, coincident_segment_behavior: Discard }",
+    "result": [
+      {
+        "area": -84.20380692878891,
+        "length": 37.73616017913431,
+        "bounds": [
+          10.999999970197678,
+          10.999999970197678,
+          20.585786437626904,
+          20.585786437626904
+        ],
+        "closed": true,
+        "vertices": 6
+      },
+      {
+        "area": -84.2038069287889,
+        "length": 37.73616001054691,
+        "bounds": [
+          1.4142135623730951,
+          1.4142135623730951,
+          10.999999970197678,
+          10.999999970197678
+        ],
+        "closed": true,
+        "vertices": 6
+      }
+    ],
+    "observations": 8,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::tangent_arc_arc_segment_interiors",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01658",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::tangent_arc_arc_segment_interiors",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          0.0,
+          12.0,
+          -0.0
+        ],
+        [
+          10.0,
+          12.0,
+          -0.0
+        ],
+        [
+          10.0,
+          22.0,
+          -0.0
+        ],
+        [
+          22.0,
+          22.0,
+          -0.0
+        ],
+        [
+          22.0,
+          10.0,
+          -0.0
+        ],
+        [
+          12.0,
+          10.0,
+          -0.0
+        ],
+        [
+          12.0,
+          0.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -0.0
+        ]
+      ]
+    },
+    "offset": -1.4142135623730951,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: true, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Separate, coincident_segment_behavior: Discard }",
+    "result": [
+      {
+        "area": -84.20380692878891,
+        "length": 37.73616017913431,
+        "bounds": [
+          10.999999970197678,
+          10.999999970197678,
+          20.585786437626904,
+          20.585786437626904
+        ],
+        "closed": true,
+        "vertices": 6
+      },
+      {
+        "area": -84.2038069287889,
+        "length": 37.73616001054691,
+        "bounds": [
+          1.4142135623730951,
+          1.4142135623730951,
+          10.999999970197678,
+          10.999999970197678
+        ],
+        "closed": true,
+        "vertices": 6
+      }
+    ],
+    "observations": 8,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::tangent_arc_arc_segment_interiors",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01807",
+    "kind": "shape_offset",
+    "binary": "test_shape_parallel_offset",
+    "test": "test_specific::case3",
+    "inputs": [
+      {
+        "closed": true,
+        "vertices": [
+          [
+            511.25220437557994,
+            328.84948025435654,
+            0.0
+          ],
+          [
+            561.2119896118824,
+            328.84948025435654,
+            0.0
+          ],
+          [
+            561.2119896118824,
+            363.8703101013724,
+            0.0
+          ],
+          [
+            511.25220437557994,
+            363.8703101013724,
+            0.0
+          ]
+        ]
+      },
+      {
+        "closed": true,
+        "vertices": [
+          [
+            540.0335350561843,
+            343.6169427142472,
+            -0.2382488851276809
+          ],
+          [
+            537.4421349268171,
+            345.12517844750175,
+            -0.009889532389405053
+          ],
+          [
+            537.3232102367999,
+            345.3220639672001,
+            0.0
+          ],
+          [
+            535.3578079577983,
+            348.7262405716385,
+            0.0
+          ],
+          [
+            535.32462892643,
+            348.7834560296831,
+            -0.011646639385887355
+          ],
+          [
+            535.2271073347746,
+            348.9562631479,
+            -0.25910007835503845
+          ],
+          [
+            535.2805330874,
+            352.1843242602999,
+            0.0
+          ],
+          [
+            537.0000084336,
+            355.1625429223,
+            0.0
+          ],
+          [
+            543.6691202685,
+            343.6113023833,
+            0.0
+          ],
+          [
+            540.2257285374734,
+            343.6113053474554,
+            0.0
+          ],
+          [
+            540.16153451323,
+            343.6120105305873,
+            0.0
+          ]
+        ]
+      },
+      {
+        "closed": true,
+        "vertices": [
+          [
+            535.4816659760771,
+            346.2417647657877,
+            -0.23822264248219718
+          ],
+          [
+            535.4722003945319,
+            343.2448614622984,
+            -0.009951542143624231
+          ],
+          [
+            535.3601905012999,
+            343.0416179385001,
+            0.0
+          ],
+          [
+            533.3951100416035,
+            339.6379987413748,
+            0.0
+          ],
+          [
+            533.3623248097243,
+            339.5809609408148,
+            -0.011710653864622287
+          ],
+          [
+            533.2619655102294,
+            339.4110081813505,
+            -0.11747560444569163
+          ],
+          [
+            532.1675755117166,
+            338.3268271911126,
+            -0.13757287100703242
+          ],
+          [
+            530.4835288827071,
+            337.8423335382348,
+            0.0
+          ],
+          [
+            530.438959126,
+            337.8420348466,
+            0.0
+          ],
+          [
+            527.0000084336,
+            337.8420348466,
+            0.0
+          ],
+          [
+            533.6691202683,
+            349.3932753857,
+            0.0
+          ],
+          [
+            535.3908302312102,
+            346.4111802353502,
+            0.0
+          ],
+          [
+            535.4223097645596,
+            346.3552449203639,
+            0.0
+          ]
+        ]
+      }
+    ],
+    "offset": 0.8,
+    "result": [
+      {
+        "area": 1616.2241538207163,
+        "length": 163.56123016663673,
+        "bounds": [
+          512.0522043755799,
+          329.64948025435655,
+          560.4119896118824,
+          363.0703101013724
+        ],
+        "closed": true,
+        "vertices": 4
+      },
+      {
+        "area": -148.47470067296538,
+        "length": 61.01805560001197,
+        "bounds": [
+          526.2000084335999,
+          337.04203484659996,
+          544.4691202685001,
+          355.96254292230003
+        ],
+        "closed": true,
+        "vertices": 28
+      }
+    ],
+    "observations": 1,
+    "references": [
+      {
+        "file": "tests/test_shape_parallel_offset.rs",
+        "test": "test_specific::case3",
+        "binary": "test_shape_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  }
+]

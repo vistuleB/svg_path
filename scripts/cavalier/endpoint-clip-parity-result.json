@@ -1,0 +1,33 @@
+[
+  {
+    "mode": "in-band",
+    "result": {
+      "ok": false,
+      "error": {
+        "type": "ConstructionFailed"
+      }
+    },
+    "trace": [
+      {
+        "type": "Object",
+        "module": "offset",
+        "error": {
+          "type": "InternalForcedParityPruningError",
+          "error": {
+            "type": "ForcedParityAmbiguous",
+            "vertices": {
+              "type": "NonEmpty",
+              "head": 9,
+              "tail": {
+                "type": "Empty"
+              }
+            }
+          }
+        }
+      }
+    ],
+    "arcs": [],
+    "between": [],
+    "vertices": []
+  }
+]
