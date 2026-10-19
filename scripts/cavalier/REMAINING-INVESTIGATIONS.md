@@ -4,11 +4,13 @@ After the endpoint-cycle repair, the remaining work is organized into seven
 groups. This is a work breakdown, not seven confirmed bugs or a count of all
 individual fixture discrepancies. Original baseline totals remain historical.
 
-1. **Tangent arc interiors:** CC01645/46/49/50/53/54/57/58, eight offset variants.
-   Current replay: four aggregate matches and four discrepancies; all eight
-   construct successfully. The first differing case splits one touching contour
-   into two, with agreeing total area/length. Region equivalence is not yet
-   proven. See `remaining-construction-after-endpoint-cycle.jsonl`.
+1. **Tangent arc efficiency follow-up:** original contour discrepancies are
+   explained by Cavalier Preserve versus Separate policy. Independent analytic
+   boundary check accounts for all ideal pieces with calculated deviation below
+   6.7e-7. Construction still takes about 15 seconds and returns 25 additional
+   short seam pieces. Investigate cost/output complexity separately; see
+   `TANGENT-ARC-CONTOUR-TRIAGE.md`. This replaces the original geometry question,
+   rather than silently treating it as an unresolved contour bug.
 2. **Shape offset case3:** CC01807 now constructs but remains an aggregate
    discrepancy. Same current replay file.
 3. **Other offset geometry and trimming policies:** remaining contour/length/

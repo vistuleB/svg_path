@@ -387,5 +387,25 @@
     ],
     "status": "fixed-native-construction-defect",
     "reason": "Repair omits stale preferred odd parity at an intact unit-capacity cycle. All eight offsets now match aggregate properties; native cycle is closed whereas upstream is open with coincident endpoints. See ENDPOINT-CLIP-PARITY-TRIAGE.md."
+  },
+  {
+    "ids": [
+      "CC01645",
+      "CC01646",
+      "CC01649",
+      "CC01650"
+    ],
+    "status": "different-touching-contour-policy",
+    "reason": "Cavalier Preserve requires one self-touching walk; native has no such option and returns two lobes. Independent analytic boundary comparison accounts for all substantial pieces, calculated deviation <6.7e-7. Separate efficiency concern remains: ~15s, 37 segments including 25 short seam pieces. See TANGENT-ARC-CONTOUR-TRIAGE.md."
+  },
+  {
+    "ids": [
+      "CC01653",
+      "CC01654",
+      "CC01657",
+      "CC01658"
+    ],
+    "status": "current-aggregate-match",
+    "reason": "Cavalier Separate matches native two-contour output. See TANGENT-ARC-CONTOUR-TRIAGE.md for independent geometry check and separate efficiency follow-up."
   }
 ]

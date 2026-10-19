@@ -457,3 +457,14 @@ shape-offset construction-error records now gives four matches and five
 aggregate discrepancies, with no construction errors. Root-cause attribution
 across the recent repairs is not isolated. These differences still require
 classification; the entire audit remains incomplete.
+
+### Tangent-arc contour investigation — 2026-10-19
+
+See `scripts/cavalier/TANGENT-ARC-CONTOUR-TRIAGE.md`. The four remaining
+CC01645-family contour mismatches are Preserve/Separate policy differences.
+Independent analytic boundary checking accounts for all 12 ideal pieces with
+calculated deviation <6.7e-7. The other four cases already match. No production
+changes. A separate efficiency concern remains: roughly 15 seconds for this
+8-edge source and 37 output segments, including 25 short seam pieces. This is
+not yet a measured historical regression; the remaining-work register now
+tracks that concern instead of the explained contour-policy discrepancy.
