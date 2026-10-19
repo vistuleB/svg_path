@@ -1,0 +1,14 @@
+{
+  "errors": [
+    {
+      "module": "offset",
+      "type": "InternalArrangementGraphError",
+      "inner_error_type": "InternalCyclicOrderCircleIntersectionFailed",
+      "error": {
+        "vertex": 11,
+        "edge": 10,
+        "radius": 1.126974491590287e-9
+      }
+    }
+  ]
+}

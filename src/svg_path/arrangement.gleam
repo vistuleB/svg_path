@@ -1168,9 +1168,10 @@ type DualWalkCandidate {
 /// Derive the planar dual without modifying the arrangement graph.
 ///
 /// The existing clockwise cyclic orders determine face successors. Boundary
-/// walks from disconnected components are grouped using accepted infinite-line
-/// sweeps. For a connected graph, walks already identify the faces; only its
-/// exterior needs geometric certification.
+/// walks from disconnected components are grouped by locating each component
+/// relative to the others with accepted infinite-line sweeps. Local faces do
+/// not require interior witnesses. For a connected graph, only its exterior
+/// needs geometric certification.
 /// Vertex hits, tangencies, overlaps and inseparable crossings are rejected.
 /// Independent accepted lines must agree. Exhausting the search budget returns
 /// `DualCertificationFailed`; contradictory accepted results return
@@ -1376,6 +1377,8 @@ type DualSweepEdge {
   DualSweepEdge(
     id: Int,
     component: Int,
+    start_vertex: Int,
+    end_vertex: Int,
     left_walk: Int,
     right_walk: Int,
     segment: svg_path.Segment,
@@ -1487,6 +1490,8 @@ fn dual_sweep_edges(
     Ok(DualSweepEdge(
       edge.id,
       component.1,
+      edge.start_vertex,
+      edge.end_vertex,
       left_walk,
       right_walk,
       edge.segment,
@@ -1593,44 +1598,6 @@ fn dual_outer_line(
       degrees: int.to_float(dual_random(seed) % 360_000) /. 1000.0,
     )
   Ok(DualSweepLine(origin, direction))
-}
-
-fn dual_pair_line(
-  edges: List(DualSweepEdge),
-  walk: Int,
-  seed: Int,
-) -> Result(DualSweepLine, InternalError) {
-  let own =
-    list.filter(edges, fn(e) { e.left_walk == walk || e.right_walk == walk })
-  let assert [first, ..] = own
-  let others = list.filter(edges, fn(e) { e.component != first.component })
-  case others == [] || seed % 3 == 0 {
-    True -> {
-      use origin <- result.try(dual_random_point(own, seed))
-      Ok(DualSweepLine(
-        origin,
-        point.direction(
-          degrees: int.to_float(dual_random(seed) % 360_000) /. 1000.0,
-        ),
-      ))
-    }
-    False -> {
-      // Target a second boundary walk in a disjoint component; all other
-      // relationships encountered by this line are still evaluated.
-      let assert [other, ..] =
-        list.drop(others, dual_random(seed) % list.length(others))
-      let target =
-        list.filter(others, fn(e) {
-          e.left_walk == other.left_walk || e.right_walk == other.left_walk
-        })
-      use origin <- result.try(dual_random_point(own, seed))
-      use end <- result.try(dual_random_point(target, dual_random(seed)))
-      let direction =
-        point.normalize(point.subtract(end, origin))
-        |> result.unwrap(point.direction(degrees: 37.0))
-      Ok(DualSweepLine(origin, direction))
-    }
-  }
 }
 
 fn dual_signed_line_distance(p: svg_path.Point, line: DualSweepLine) -> Float {
@@ -1891,45 +1858,53 @@ fn dual_signature(
   })
 }
 
-fn dual_line_placements(
+// A connected component lies in one local face of every other component.
+// Locate an actual point on its boundary against only those other components;
+// its own local faces are already known from the cyclic edge order. In
+// particular, a narrow local face never needs an interior sweep witness.
+fn dual_component_placements(
   hits: List(DualSweepHit),
-  states: List(#(Int, Int)),
+  component: Int,
+  edges: List(DualSweepEdge),
   exteriors: List(DualExterior),
   walks: List(ArrangementFaceWalk),
-  found: List(DualPlacement),
-) -> Result(List(DualPlacement), InternalError) {
-  // A boundary walk cannot change its position relative to a disjoint
-  // component without intersecting that component. Thus the states beside
-  // any of its crossed edges must agree. Record at most one confirmation per
-  // walk per line, however many of its edges the line crosses.
-  case hits {
-    [] -> Ok(found)
-    [hit, ..rest] -> {
-      let before =
-        DualPlacement(hit.before, dual_signature(states, exteriors, walks), 1)
-      let states =
-        list.map(states, fn(s) {
-          case s.0 == hit.component {
-            True -> #(s.0, hit.after)
-            False -> s
+) -> List(DualPlacement) {
+  let states =
+    list.fold(
+      list.take_while(hits, fn(hit) { hit.position <. 0.0 }),
+      list.map(exteriors, fn(e) { #(e.component, e.walk) }),
+      fn(states, hit) {
+        list.map(states, fn(state) {
+          case state.0 == hit.component {
+            True -> #(state.0, hit.after)
+            False -> state
           }
         })
-      let after =
-        DualPlacement(hit.after, dual_signature(states, exteriors, walks), 1)
-      use found <- result.try(dual_merge_placements(
-        [before, after],
-        found,
-        False,
-      ))
-      dual_line_placements(rest, states, exteriors, walks, found)
-    }
-  }
+      },
+    )
+  walks
+  |> list.index_map(fn(_, id) { id })
+  |> list.filter(fn(id) {
+    list.any(edges, fn(edge) {
+      edge.component == component
+      && { edge.left_walk == id || edge.right_walk == id }
+    })
+  })
+  |> list.map(fn(id) {
+    let states =
+      list.map(states, fn(state) {
+        case state.0 == component {
+          True -> #(component, id)
+          False -> state
+        }
+      })
+    DualPlacement(id, dual_signature(states, exteriors, walks), 1)
+  })
 }
 
 fn dual_merge_placements(
   new: List(DualPlacement),
   old: List(DualPlacement),
-  confirm: Bool,
 ) -> Result(List(DualPlacement), InternalError) {
   case new {
     [] -> Ok(old)
@@ -1942,7 +1917,7 @@ fn dual_merge_placements(
             True ->
               Ok(
                 list.map(old, fn(q) {
-                  case q.walk == p.walk && confirm {
+                  case q.walk == p.walk {
                     True ->
                       DualPlacement(..q, confirmations: q.confirmations + 1)
                     False -> q
@@ -1951,7 +1926,7 @@ fn dual_merge_placements(
               )
           }
       })
-      dual_merge_placements(rest, merged, confirm)
+      dual_merge_placements(rest, merged)
     }
   }
 }
@@ -1979,23 +1954,49 @@ fn dual_find_placements(
       case remaining <= 0 {
         True -> Error(InternalDualSweepExhausted(list.length(unresolved)))
         False -> {
-          use line <- result.try(dual_pair_line(edges, walk, seed))
+          let assert Ok(owner) =
+            list.find(edges, fn(edge) {
+              edge.left_walk == walk || edge.right_walk == walk
+            })
+          let others =
+            list.filter(edges, fn(edge) { edge.component != owner.component })
+          let other_vertices =
+            list.filter(vertices, fn(vertex) {
+              list.any(others, fn(edge) {
+                edge.start_vertex == vertex.id || edge.end_vertex == vertex.id
+              })
+            })
+          use line <- result.try(dual_outer_line(edges, owner.component, seed))
           use next <- result.try(
-            case dual_sweep_intersections(edges, vertices, line, tolerance) {
+            case
+              dual_sweep_intersections(others, other_vertices, line, tolerance)
+            {
               Error(_) -> Ok(found)
               Ok(hits) -> {
-                use claims <- result.try(dual_line_exteriors(hits))
-                use _ <- result.try(dual_merge_exteriors(claims, exteriors))
-                use placements <- result.try(
-                  dual_line_placements(
-                    hits,
-                    list.map(exteriors, fn(e) { #(e.component, e.walk) }),
-                    exteriors,
-                    walks,
-                    [],
-                  ),
-                )
-                dual_merge_placements(placements, found, True)
+                // The witness must be separated from every other boundary,
+                // including its crossing uncertainty. Agreement between
+                // repeated witnesses cannot make an ambiguous one usable.
+                case
+                  list.any(hits, fn(hit) {
+                    float.absolute_value(hit.position)
+                    <=. float.max(tolerance, hit.uncertainty)
+                  })
+                {
+                  True -> Ok(found)
+                  False -> {
+                    use claims <- result.try(dual_line_exteriors(hits))
+                    use _ <- result.try(dual_merge_exteriors(claims, exteriors))
+                    let placements =
+                      dual_component_placements(
+                        hits,
+                        owner.component,
+                        edges,
+                        exteriors,
+                        walks,
+                      )
+                    dual_merge_placements(placements, found)
+                  }
+                }
               }
             },
           )

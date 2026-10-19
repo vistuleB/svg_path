@@ -500,3 +500,40 @@ contours; the extra zero-area out-and-back contour is consistent with existing
 retrace preservation tests. No new geometry bug established. Documentation
 clarification suggested. See `scripts/cavalier/SHAPE-CASE3-TRIAGE.md`. Five open
 investigation groups remain. No production changes; new findings uncommitted.
+
+### Remaining offset detail investigation
+
+Committed CC01807 findings as `d3b2eca`. CC01160 and CC01292 now have targeted
+replays explaining their property discrepancies through existing detail
+controls. CC01189 defaults normalize to a retraced line; at tighter tolerance,
+it fails dual placement with five unresolved walks. Captured graph has 26
+vertices/33 edges, with several chords below sweep tolerance; causal diagnosis
+still open. See `scripts/cavalier/REMAINING-OFFSET-DETAIL-TRIAGE.md`. No production
+changes. New findings uncommitted; five broad investigation groups remain.
+
+### CC01189 dual-placement diagnosis
+
+Direct graph replay identifies 830 hit-separation rejections while placing a
+narrow arc/line face. Reduced to a five-edge connected triangle/lens which dual
+accepts; adding one distant line makes dual fail. Reproduced Erlang and JS.
+Disconnected placement unnecessarily requires a certified sweep through every
+local face, unlike the existing connected-graph shortcut. Recommended direction:
+certify component placement relative to other components, then combine known
+local faces. No production implementation yet. See
+`scripts/cavalier/DUAL-NARROW-FACE-TRIAGE.md`. Findings remain uncommitted.
+
+### CC01189 component-placement repair validated
+
+Implemented component placement relative to other components, retaining local
+face topology, existing sweep uncertainty, and two agreeing accepted witnesses.
+Three portable regressions cover narrow faces with exterior/interior bridges,
+enclosing contours, and reversed directions. Captured graph now gives ten
+faces; actual CC01189 at fitting tolerance 1e-6 returns the expected empty path.
+Final `scripts/test-release` passed: 2,076 ordinary + 31 slow + 822 on each
+portable target. See `scripts/cavalier/DUAL-NARROW-FACE-TRIAGE.md` for logs.
+
+CC01189 is still only partially resolved: 1e-5 fails in cyclic-order circle
+intersection before dual construction. A reversed/reordered reduced 1e-4 case
+also exposes a pre-existing JS cyclic-order construction limitation, recorded
+separately. Default collapse/erosion semantics are unchanged. Five broad audit
+groups remain; audit not complete. Changes uncommitted; F# remains deferred.

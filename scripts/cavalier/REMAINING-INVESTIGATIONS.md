@@ -13,10 +13,14 @@ Completed CC01807: source-normalization tolerance explains the main property
 mismatch; the tighter run's zero-area retrace follows existing preservation
 behavior. Documentation clarification suggested; see `SHAPE-CASE3-TRIAGE.md`.
 
-1. **Other offset geometry and trimming policies:** remaining contour/length/
-   bounds differences, including CC01160, CC01189 and CC01292 after endpoint-loss
-   repair, square extra contours, and collapse semantics. Circle normal extrusion
-   is understood and must not simply be treated as filled-region erosion.
+1. **Other offset geometry and trimming policies:** CC01160/CC01292 are now
+   explained by detail tolerance. CC01189 dual-placement exhaustion is repaired
+   at tolerance 1e-6; the original call now returns the expected empty offset.
+   Its 1e-5 call still fails earlier, during cyclic-order circle intersection.
+   A reversed/reordered size-1e-4 reduced input exposes another pre-existing JS
+   cyclic-order construction failure. See `DUAL-NARROW-FACE-TRIAGE.md`.
+   Square extra contours, collapse policy and the remaining broader offset
+   catalogue still need review. See `REMAINING-OFFSET-DETAIL-TRIAGE.md`.
 2. **Boolean closure and geometry classification:** earlier construction choices
    behind the 16 default boundary-guard cases, stronger equivalence checks for
    decomposition differences, and earlier-stage correctness in cases where final

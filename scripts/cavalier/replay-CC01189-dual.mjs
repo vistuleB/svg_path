@@ -1,0 +1,12 @@
+import fs from 'node:fs';
+const build = process.env.AUDIT_JS_BUILD ?? '/tmp/cavalier-dual-replay';
+const g = await import(`${build}/svg_path/svg_path.mjs`);
+const a = await import(`${build}/svg_path/svg_path/arrangement.mjs`);
+const {toList} = await import(`${build}/prelude.mjs`);
+const raw=JSON.parse(fs.readFileSync(new URL('./offset-CC01189-dual-trace.json',import.meta.url))).graph;
+const list=x=>{const out=[];while('head' in x){out.push(x.head);x=x.tail;}return out;};
+const p=x=>new g.Point(x.x,x.y);
+const seg=s=>s.radius?new g.Arc(p(s.start),p(s.radius),s.x_axis_rotation,s.large_arc,s.sweep,p(s.end)):new g.Line(p(s.start),p(s.end));
+const graph=new a.ArrangementGraph(toList(raw.vertices.map(v=>new a.ArrangementVertex(v.id,p(v.point),toList(list(v.endpoint_samples).map(p))))),toList(raw.edges.map(e=>new a.ArrangementEdge(e.id,seg(e.segment),new g.BoundingBox(p(e.bounds.min),p(e.bounds.max)),e.start_vertex,e.end_vertex,e.forward_multiplicity,e.reverse_multiplicity))),toList(raw.cyclic_orders.map(([id,groups])=>[id,toList(list(groups).map(group=>toList(list(group).map(e=>new a.OrientedArrangementEdge(e.edge_id,e.reversed)))))])));
+const start=performance.now(),r=a.dual(graph);
+console.log(JSON.stringify({milliseconds:performance.now()-start,result:r.isOk()?'Ok':r[0].constructor.name,faces:r.isOk()?[...r[0].faces].length:undefined,counts:globalThis.auditSweepCounts,samples:globalThis.auditSweepSamples,walkEdges:globalThis.auditWalkEdges},null,2));

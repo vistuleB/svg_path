@@ -1,0 +1,38 @@
+Portable numerical tests (fast, all): Erlang
+  Compiling svg_path
+  Compiling svg_path_portable_tests
+   Compiled in 1.29s
+    Running svg_path_portable_tests_test.main
+.................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................
+817 passed, no failures
+Portable numerical tests (fast, all): JavaScript
+  Compiling svg_path
+  Compiling svg_path_portable_tests
+   Compiled in 0.25s
+    Running svg_path_portable_tests_test.main
+..........................................................................................................................................
+let assert test/svg_path_dual_component_placement_test.gleam:25
+ test: svg_path_dual_component_placement_test.enclosed_bridge_uses_correct_local_face_test
+ code: let assert Ok(built) =
+        arrangement.build_with(
+          segments,
+          vertex_tolerance: 0.000000000001,
+          minimum_length: 0.000000000001,
+          endpoint_sliver_tolerance: 0.0,
+        )
+value: Error(InternalCyclicOrderCircleIntersectionFailed(vertex: 0, edge: 0, radius: 5.85355592232908e-13))
+ info: Pattern match failed, no pattern matched the value.
+.
+let assert test/svg_path_dual_component_placement_test.gleam:25
+ test: svg_path_dual_component_placement_test.remote_bridge_preserves_narrow_local_face_test
+ code: let assert Ok(built) =
+        arrangement.build_with(
+          segments,
+          vertex_tolerance: 0.000000000001,
+          minimum_length: 0.000000000001,
+          endpoint_sliver_tolerance: 0.0,
+        )
+value: Error(InternalCyclicOrderCircleIntersectionFailed(vertex: 0, edge: 0, radius: 5.85355592232908e-13))
+ info: Pattern match failed, no pattern matched the value.
+....................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................
+815 passed, 2 failures

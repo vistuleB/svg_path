@@ -414,5 +414,27 @@
     ],
     "status": "understood-source-normalization-and-retrace-policy",
     "reason": "Default fitting tolerance also coarsens source line-degenerate windows. Tightening only normalization to 1e-4 reproduces upstream main contour properties; extra zero-area reversed-arc contour follows existing retrace preservation. See SHAPE-CASE3-TRIAGE.md. Clarify tolerance documentation; no confirmed geometry bug."
+  },
+  {
+    "ids": [
+      "CC01160",
+      "CC01292"
+    ],
+    "status": "understood-offset-detail-difference",
+    "reason": "Existing fitting tolerance 1e-4 brings area/length (CC01160) and open length/bounds (CC01292) within comparison thresholds. Source normalization depends on this option. See REMAINING-OFFSET-DETAIL-TRIAGE.md."
+  },
+  {
+    "ids": [
+      "CC01189"
+    ],
+    "status": "collapse-policy-and-open-dual-placement-failure",
+    "reason": "Default normalization yields a retraced line and nonempty extrusion; erosion equivalence not promised. At tolerance 1e-6, captured 26-vertex/33-edge arrangement exhausts dual placement sweeps with five unresolved walks. Numerical robustness remains open; see REMAINING-OFFSET-DETAIL-TRIAGE.md."
+  },
+  {
+    "ids": [
+      "CC01189"
+    ],
+    "status": "dual-placement-repaired-other-construction-and-collapse-open",
+    "reason": "Component-based placement repairs the captured graph (ten faces) and actual 1e-6 offset (empty result). The 1e-5 offset fails earlier in cyclic-order circle intersection and remains open; default normalization/collapse policy is unchanged. See DUAL-NARROW-FACE-TRIAGE.md."
   }
 ]

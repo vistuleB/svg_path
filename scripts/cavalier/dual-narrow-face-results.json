@@ -1,0 +1,60 @@
+[
+  {
+    "size": 0.001,
+    "remote": false,
+    "vertices": 4,
+    "edges": 5,
+    "milliseconds": 20.381667,
+    "result": {
+      "faces": 3
+    }
+  },
+  {
+    "size": 0.001,
+    "remote": true,
+    "vertices": 6,
+    "edges": 6,
+    "milliseconds": 6.341666000000004,
+    "result": {
+      "faces": 3
+    }
+  },
+  {
+    "size": 0.0001,
+    "remote": false,
+    "vertices": 4,
+    "edges": 5,
+    "milliseconds": 7.597832999999994,
+    "result": {
+      "faces": 3
+    }
+  },
+  {
+    "size": 0.0001,
+    "remote": true,
+    "vertices": 6,
+    "edges": 6,
+    "milliseconds": 7.0014579999999995,
+    "result": {
+      "faces": 3
+    }
+  },
+  {
+    "size": 0.00001,
+    "remote": false,
+    "vertices": 4,
+    "edges": 5,
+    "milliseconds": 4.119291000000004,
+    "result": {
+      "faces": 3
+    }
+  },
+  {
+    "size": 0.00001,
+    "remote": true,
+    "vertices": 6,
+    "edges": 6,
+    "milliseconds": 19.367542,
+    "result": "DualCertificationFailed"
+  }
+]
