@@ -537,3 +537,41 @@ intersection before dual construction. A reversed/reordered reduced 1e-4 case
 also exposes a pre-existing JS cyclic-order construction limitation, recorded
 separately. Default collapse/erosion semantics are unchanged. Five broad audit
 groups remain; audit not complete. Changes uncommitted; F# remains deferred.
+
+### CC01189 remaining cyclic-order failure isolated
+
+Committed the component-placement repair and accumulated investigation records
+as `e7c1581`. The 1e-5 failure is now traced to clustered endpoint geometry:
+no circle about vertex 11 can intersect both outward arc 10 and cubic 14.
+A 70-digit radial calculation verifies the arc's minimum distance exceeds the
+cubic control-hull radius bound. Changing radius or root precision cannot fix
+that stored geometry. Investigate creation/ownership of the short cubic and its
+arc overlap next; do not silently change the edge geometry or tolerance policy.
+See `scripts/cavalier/CYCLIC-CLUSTER-RADIUS-TRIAGE.md`. No new production changes;
+these follow-up findings are uncommitted.
+
+### CC01189 endpoint-owner inconsistency found
+
+Source mapping traces the problematic cubic to an ordinary fitted offset source.
+Both endpoints uniquely match vertex 11 during incoming comparison, but insertion
+recomputes ownership by smallest enclosing circle and assigns its start to 13.
+A copied-JS experiment retaining unique existing-center ownership returns the
+expected empty CC01189 offset at 1e-5 and repairs all 24 direction/order/size
+controls, including the prior reversed JS failure. Only two attachment choices
+change in the original offset. Minimal insertion reproducer saved. Recommend
+unifying owner selection with exact-sample precedence retained, then full tests.
+See CYCLIC-CLUSTER-RADIUS-TRIAGE.md. Production code remains unchanged; new
+investigation records are uncommitted.
+
+### Endpoint ownership repair validated
+
+Implemented exact-sample precedence, then admissible unique existing-center
+ownership, then the previous enclosing-circle fallback. Four new portable
+regressions and restored reversed-list-order controls pass. Actual CC01189
+replays at 1e-5 and 1e-6 both return the expected empty offset. Canonical
+`scripts/test-release` (Gleam 1.18.1) passed: 2,080 ordinary + 31 slow + 826 on
+each portable target. See CYCLIC-CLUSTER-RADIUS-TRIAGE.md and
+`owner-repair-test-release.log`. The numerical failures are repaired; default
+normalization/collapse policy is unchanged. No new public API or edge-geometry
+rewriting. Changes uncommitted; F# remains deferred. Five broader investigation
+groups still remain; the overall audit is not complete.

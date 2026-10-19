@@ -1,0 +1,1052 @@
+[
+  {
+    "vertex": {
+      "x": 25.42188141850867,
+      "y": 6.034334917276807
+    },
+    "id": 4,
+    "radius": 1.3186390209937906e-9,
+    "tolerance": 2e-9,
+    "oriented": {
+      "edge_id": 23,
+      "reversed": true
+    },
+    "edge": {
+      "id": 23,
+      "segment": {
+        "start": {
+          "x": 25.421881420967974,
+          "y": 6.034334922912982
+        },
+        "radius": {
+          "x": 0.1,
+          "y": 0.1
+        },
+        "x_axis_rotation": 0,
+        "large_arc": false,
+        "sweep": true,
+        "end": {
+          "x": 25.421881419056433,
+          "y": 6.034334918532155
+        }
+      },
+      "bounds": {
+        "min": {
+          "x": 25.421881419056437,
+          "y": 6.034334918532155
+        },
+        "max": {
+          "x": 25.421881420967978,
+          "y": 6.034334922912982
+        }
+      },
+      "start_vertex": 20,
+      "end_vertex": 4,
+      "forward_multiplicity": 1,
+      "reverse_multiplicity": 1
+    },
+    "segment": {
+      "start": {
+        "x": 5.477645004248188e-10,
+        "y": 1.2553478256904782e-9
+      },
+      "radius": {
+        "x": 0.1,
+        "y": 0.1
+      },
+      "x_axis_rotation": 0,
+      "large_arc": false,
+      "sweep": false,
+      "end": {
+        "x": 2.459305648017107e-9,
+        "y": 5.636175082202044e-9
+      }
+    },
+    "incident": [
+      {
+        "id": 23,
+        "segment": {
+          "start": {
+            "x": 25.421881420967974,
+            "y": 6.034334922912982
+          },
+          "radius": {
+            "x": 0.1,
+            "y": 0.1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 25.421881419056433,
+            "y": 6.034334918532155
+          }
+        },
+        "bounds": {
+          "min": {
+            "x": 25.421881419056437,
+            "y": 6.034334918532155
+          },
+          "max": {
+            "x": 25.421881420967978,
+            "y": 6.034334922912982
+          }
+        },
+        "start_vertex": 20,
+        "end_vertex": 4,
+        "forward_multiplicity": 1,
+        "reverse_multiplicity": 1
+      },
+      {
+        "id": 3,
+        "segment": {
+          "start": {
+            "x": 25.421881417960904,
+            "y": 6.03433491602146
+          },
+          "radius": {
+            "x": 0.1,
+            "y": 0.1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 25.4218814166295,
+            "y": 6.034334912970181
+          }
+        },
+        "bounds": {
+          "min": {
+            "x": 25.4218814166295,
+            "y": 6.0343349129701815
+          },
+          "max": {
+            "x": 25.421881417960904,
+            "y": 6.034334916021461
+          }
+        },
+        "start_vertex": 4,
+        "end_vertex": 16,
+        "forward_multiplicity": 1,
+        "reverse_multiplicity": 0
+      },
+      {
+        "id": 19,
+        "segment": {
+          "start": {
+            "x": 25.421881417478648,
+            "y": 6.03433491491628
+          },
+          "control1": {
+            "x": 25.421881418004567,
+            "y": 6.034334916121575
+          },
+          "control2": {
+            "x": 25.421881418530486,
+            "y": 6.034334917326871
+          },
+          "end": {
+            "x": 25.421881419056405,
+            "y": 6.034334918532166
+          }
+        },
+        "bounds": {
+          "min": {
+            "x": 25.421881417478648,
+            "y": 6.03433491491628
+          },
+          "max": {
+            "x": 25.421881419056405,
+            "y": 6.034334918532166
+          }
+        },
+        "start_vertex": 16,
+        "end_vertex": 4,
+        "forward_multiplicity": 1,
+        "reverse_multiplicity": 0
+      }
+    ],
+    "error": {
+      "type": "InternalCyclicOrderCircleIntersectionFailed",
+      "vertex": 4,
+      "edge": 23,
+      "radius": 1.3186390209937906e-9
+    }
+  },
+  {
+    "vertex": {
+      "x": 25.42188141850867,
+      "y": 6.034334917276807
+    },
+    "id": 4,
+    "radius": 1.3186390209937906e-9,
+    "tolerance": 2e-9,
+    "oriented": {
+      "edge_id": 3,
+      "reversed": false
+    },
+    "edge": {
+      "id": 3,
+      "segment": {
+        "start": {
+          "x": 25.421881417960904,
+          "y": 6.03433491602146
+        },
+        "radius": {
+          "x": 0.1,
+          "y": 0.1
+        },
+        "x_axis_rotation": 0,
+        "large_arc": false,
+        "sweep": true,
+        "end": {
+          "x": 25.4218814166295,
+          "y": 6.034334912970181
+        }
+      },
+      "bounds": {
+        "min": {
+          "x": 25.4218814166295,
+          "y": 6.0343349129701815
+        },
+        "max": {
+          "x": 25.421881417960904,
+          "y": 6.034334916021461
+        }
+      },
+      "start_vertex": 4,
+      "end_vertex": 16,
+      "forward_multiplicity": 1,
+      "reverse_multiplicity": 0
+    },
+    "segment": {
+      "start": {
+        "x": -5.477645004248188e-10,
+        "y": -1.2553469375120585e-9
+      },
+      "radius": {
+        "x": 0.1,
+        "y": 0.1
+      },
+      "x_axis_rotation": 0,
+      "large_arc": false,
+      "sweep": true,
+      "end": {
+        "x": -1.879168820551058e-9,
+        "y": -4.306626166794558e-9
+      }
+    },
+    "incident": [
+      {
+        "id": 23,
+        "segment": {
+          "start": {
+            "x": 25.421881420967974,
+            "y": 6.034334922912982
+          },
+          "radius": {
+            "x": 0.1,
+            "y": 0.1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 25.421881419056433,
+            "y": 6.034334918532155
+          }
+        },
+        "bounds": {
+          "min": {
+            "x": 25.421881419056437,
+            "y": 6.034334918532155
+          },
+          "max": {
+            "x": 25.421881420967978,
+            "y": 6.034334922912982
+          }
+        },
+        "start_vertex": 20,
+        "end_vertex": 4,
+        "forward_multiplicity": 1,
+        "reverse_multiplicity": 1
+      },
+      {
+        "id": 3,
+        "segment": {
+          "start": {
+            "x": 25.421881417960904,
+            "y": 6.03433491602146
+          },
+          "radius": {
+            "x": 0.1,
+            "y": 0.1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 25.4218814166295,
+            "y": 6.034334912970181
+          }
+        },
+        "bounds": {
+          "min": {
+            "x": 25.4218814166295,
+            "y": 6.0343349129701815
+          },
+          "max": {
+            "x": 25.421881417960904,
+            "y": 6.034334916021461
+          }
+        },
+        "start_vertex": 4,
+        "end_vertex": 16,
+        "forward_multiplicity": 1,
+        "reverse_multiplicity": 0
+      },
+      {
+        "id": 19,
+        "segment": {
+          "start": {
+            "x": 25.421881417478648,
+            "y": 6.03433491491628
+          },
+          "control1": {
+            "x": 25.421881418004567,
+            "y": 6.034334916121575
+          },
+          "control2": {
+            "x": 25.421881418530486,
+            "y": 6.034334917326871
+          },
+          "end": {
+            "x": 25.421881419056405,
+            "y": 6.034334918532166
+          }
+        },
+        "bounds": {
+          "min": {
+            "x": 25.421881417478648,
+            "y": 6.03433491491628
+          },
+          "max": {
+            "x": 25.421881419056405,
+            "y": 6.034334918532166
+          }
+        },
+        "start_vertex": 16,
+        "end_vertex": 4,
+        "forward_multiplicity": 1,
+        "reverse_multiplicity": 0
+      }
+    ],
+    "error": {
+      "type": "InternalCyclicOrderCircleIntersectionFailed",
+      "vertex": 4,
+      "edge": 3,
+      "radius": 1.3186390209937906e-9
+    }
+  },
+  {
+    "vertex": {
+      "x": 25.42188140611414,
+      "y": 6.034334888871326
+    },
+    "id": 11,
+    "radius": 1.4087181144878586e-9,
+    "tolerance": 2e-9,
+    "oriented": {
+      "edge_id": 10,
+      "reversed": true
+    },
+    "edge": {
+      "id": 10,
+      "segment": {
+        "start": {
+          "x": 25.421881408639944,
+          "y": 6.0343348946599065
+        },
+        "radius": {
+          "x": 0.1,
+          "y": 0.1
+        },
+        "x_axis_rotation": 0,
+        "large_arc": false,
+        "sweep": true,
+        "end": {
+          "x": 25.421881406818372,
+          "y": 6.034334890485271
+        }
+      },
+      "bounds": {
+        "min": {
+          "x": 25.421881406818375,
+          "y": 6.034334890485271
+        },
+        "max": {
+          "x": 25.421881408639948,
+          "y": 6.0343348946599065
+        }
+      },
+      "start_vertex": 10,
+      "end_vertex": 11,
+      "forward_multiplicity": 1,
+      "reverse_multiplicity": 1
+    },
+    "segment": {
+      "start": {
+        "x": 7.042331162665505e-10,
+        "y": 1.6139445335738856e-9
+      },
+      "radius": {
+        "x": 0.1,
+        "y": 0.1
+      },
+      "x_axis_rotation": 0,
+      "large_arc": false,
+      "sweep": false,
+      "end": {
+        "x": 2.525805342656895e-9,
+        "y": 5.7885802817736476e-9
+      }
+    },
+    "incident": [
+      {
+        "id": 10,
+        "segment": {
+          "start": {
+            "x": 25.421881408639944,
+            "y": 6.0343348946599065
+          },
+          "radius": {
+            "x": 0.1,
+            "y": 0.1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 25.421881406818372,
+            "y": 6.034334890485271
+          }
+        },
+        "bounds": {
+          "min": {
+            "x": 25.421881406818375,
+            "y": 6.034334890485271
+          },
+          "max": {
+            "x": 25.421881408639948,
+            "y": 6.0343348946599065
+          }
+        },
+        "start_vertex": 10,
+        "end_vertex": 11,
+        "forward_multiplicity": 1,
+        "reverse_multiplicity": 1
+      },
+      {
+        "id": 11,
+        "segment": {
+          "start": {
+            "x": 25.421881405409906,
+            "y": 6.0343348872573825
+          },
+          "radius": {
+            "x": 0.1,
+            "y": 0.1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 25.42188140453115,
+            "y": 6.0343348852434655
+          }
+        },
+        "bounds": {
+          "min": {
+            "x": 25.42188140453115,
+            "y": 6.0343348852434655
+          },
+          "max": {
+            "x": 25.421881405409906,
+            "y": 6.0343348872573825
+          }
+        },
+        "start_vertex": 11,
+        "end_vertex": 13,
+        "forward_multiplicity": 1,
+        "reverse_multiplicity": 1
+      },
+      {
+        "id": 14,
+        "segment": {
+          "start": {
+            "x": 25.421881405409902,
+            "y": 6.034334887257383
+          },
+          "control1": {
+            "x": 25.42188140587939,
+            "y": 6.034334888333345
+          },
+          "control2": {
+            "x": 25.421881406348877,
+            "y": 6.0343348894093065
+          },
+          "end": {
+            "x": 25.421881406818365,
+            "y": 6.034334890485271
+          }
+        },
+        "bounds": {
+          "min": {
+            "x": 25.421881405409902,
+            "y": 6.034334887257383
+          },
+          "max": {
+            "x": 25.421881406818365,
+            "y": 6.034334890485271
+          }
+        },
+        "start_vertex": 13,
+        "end_vertex": 11,
+        "forward_multiplicity": 1,
+        "reverse_multiplicity": 0
+      }
+    ],
+    "error": {
+      "type": "InternalCyclicOrderCircleIntersectionFailed",
+      "vertex": 11,
+      "edge": 10,
+      "radius": 1.4087181144878586e-9
+    }
+  },
+  {
+    "vertex": {
+      "x": 25.42188140611414,
+      "y": 6.034334888871326
+    },
+    "id": 11,
+    "radius": 1.4087181144878586e-9,
+    "tolerance": 2e-9,
+    "oriented": {
+      "edge_id": 11,
+      "reversed": false
+    },
+    "edge": {
+      "id": 11,
+      "segment": {
+        "start": {
+          "x": 25.421881405409906,
+          "y": 6.0343348872573825
+        },
+        "radius": {
+          "x": 0.1,
+          "y": 0.1
+        },
+        "x_axis_rotation": 0,
+        "large_arc": false,
+        "sweep": true,
+        "end": {
+          "x": 25.42188140453115,
+          "y": 6.0343348852434655
+        }
+      },
+      "bounds": {
+        "min": {
+          "x": 25.42188140453115,
+          "y": 6.0343348852434655
+        },
+        "max": {
+          "x": 25.421881405409906,
+          "y": 6.0343348872573825
+        }
+      },
+      "start_vertex": 11,
+      "end_vertex": 13,
+      "forward_multiplicity": 1,
+      "reverse_multiplicity": 1
+    },
+    "segment": {
+      "start": {
+        "x": -7.042331162665505e-10,
+        "y": -1.6139436453954659e-9
+      },
+      "radius": {
+        "x": 0.1,
+        "y": 0.1
+      },
+      "x_axis_rotation": 0,
+      "large_arc": false,
+      "sweep": true,
+      "end": {
+        "x": -1.5829897392904968e-9,
+        "y": -3.627860678534489e-9
+      }
+    },
+    "incident": [
+      {
+        "id": 10,
+        "segment": {
+          "start": {
+            "x": 25.421881408639944,
+            "y": 6.0343348946599065
+          },
+          "radius": {
+            "x": 0.1,
+            "y": 0.1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 25.421881406818372,
+            "y": 6.034334890485271
+          }
+        },
+        "bounds": {
+          "min": {
+            "x": 25.421881406818375,
+            "y": 6.034334890485271
+          },
+          "max": {
+            "x": 25.421881408639948,
+            "y": 6.0343348946599065
+          }
+        },
+        "start_vertex": 10,
+        "end_vertex": 11,
+        "forward_multiplicity": 1,
+        "reverse_multiplicity": 1
+      },
+      {
+        "id": 11,
+        "segment": {
+          "start": {
+            "x": 25.421881405409906,
+            "y": 6.0343348872573825
+          },
+          "radius": {
+            "x": 0.1,
+            "y": 0.1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 25.42188140453115,
+            "y": 6.0343348852434655
+          }
+        },
+        "bounds": {
+          "min": {
+            "x": 25.42188140453115,
+            "y": 6.0343348852434655
+          },
+          "max": {
+            "x": 25.421881405409906,
+            "y": 6.0343348872573825
+          }
+        },
+        "start_vertex": 11,
+        "end_vertex": 13,
+        "forward_multiplicity": 1,
+        "reverse_multiplicity": 1
+      },
+      {
+        "id": 14,
+        "segment": {
+          "start": {
+            "x": 25.421881405409902,
+            "y": 6.034334887257383
+          },
+          "control1": {
+            "x": 25.42188140587939,
+            "y": 6.034334888333345
+          },
+          "control2": {
+            "x": 25.421881406348877,
+            "y": 6.0343348894093065
+          },
+          "end": {
+            "x": 25.421881406818365,
+            "y": 6.034334890485271
+          }
+        },
+        "bounds": {
+          "min": {
+            "x": 25.421881405409902,
+            "y": 6.034334887257383
+          },
+          "max": {
+            "x": 25.421881406818365,
+            "y": 6.034334890485271
+          }
+        },
+        "start_vertex": 13,
+        "end_vertex": 11,
+        "forward_multiplicity": 1,
+        "reverse_multiplicity": 0
+      }
+    ],
+    "error": {
+      "type": "InternalCyclicOrderCircleIntersectionFailed",
+      "vertex": 11,
+      "edge": 11,
+      "radius": 1.4087181144878586e-9
+    }
+  },
+  {
+    "vertex": {
+      "x": 25.42188140611414,
+      "y": 6.034334888871326
+    },
+    "id": 11,
+    "radius": 1.126974491590287e-9,
+    "tolerance": 2e-9,
+    "oriented": {
+      "edge_id": 10,
+      "reversed": true
+    },
+    "edge": {
+      "id": 10,
+      "segment": {
+        "start": {
+          "x": 25.421881408639944,
+          "y": 6.0343348946599065
+        },
+        "radius": {
+          "x": 0.1,
+          "y": 0.1
+        },
+        "x_axis_rotation": 0,
+        "large_arc": false,
+        "sweep": true,
+        "end": {
+          "x": 25.421881406818372,
+          "y": 6.034334890485271
+        }
+      },
+      "bounds": {
+        "min": {
+          "x": 25.421881406818375,
+          "y": 6.034334890485271
+        },
+        "max": {
+          "x": 25.421881408639948,
+          "y": 6.0343348946599065
+        }
+      },
+      "start_vertex": 10,
+      "end_vertex": 11,
+      "forward_multiplicity": 1,
+      "reverse_multiplicity": 1
+    },
+    "segment": {
+      "start": {
+        "x": 7.042331162665505e-10,
+        "y": 1.6139445335738856e-9
+      },
+      "radius": {
+        "x": 0.1,
+        "y": 0.1
+      },
+      "x_axis_rotation": 0,
+      "large_arc": false,
+      "sweep": false,
+      "end": {
+        "x": 2.525805342656895e-9,
+        "y": 5.7885802817736476e-9
+      }
+    },
+    "incident": [
+      {
+        "id": 10,
+        "segment": {
+          "start": {
+            "x": 25.421881408639944,
+            "y": 6.0343348946599065
+          },
+          "radius": {
+            "x": 0.1,
+            "y": 0.1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 25.421881406818372,
+            "y": 6.034334890485271
+          }
+        },
+        "bounds": {
+          "min": {
+            "x": 25.421881406818375,
+            "y": 6.034334890485271
+          },
+          "max": {
+            "x": 25.421881408639948,
+            "y": 6.0343348946599065
+          }
+        },
+        "start_vertex": 10,
+        "end_vertex": 11,
+        "forward_multiplicity": 1,
+        "reverse_multiplicity": 1
+      },
+      {
+        "id": 11,
+        "segment": {
+          "start": {
+            "x": 25.421881405409906,
+            "y": 6.0343348872573825
+          },
+          "radius": {
+            "x": 0.1,
+            "y": 0.1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 25.42188140453115,
+            "y": 6.0343348852434655
+          }
+        },
+        "bounds": {
+          "min": {
+            "x": 25.42188140453115,
+            "y": 6.0343348852434655
+          },
+          "max": {
+            "x": 25.421881405409906,
+            "y": 6.0343348872573825
+          }
+        },
+        "start_vertex": 11,
+        "end_vertex": 13,
+        "forward_multiplicity": 1,
+        "reverse_multiplicity": 1
+      },
+      {
+        "id": 14,
+        "segment": {
+          "start": {
+            "x": 25.421881405409902,
+            "y": 6.034334887257383
+          },
+          "control1": {
+            "x": 25.42188140587939,
+            "y": 6.034334888333345
+          },
+          "control2": {
+            "x": 25.421881406348877,
+            "y": 6.0343348894093065
+          },
+          "end": {
+            "x": 25.421881406818365,
+            "y": 6.034334890485271
+          }
+        },
+        "bounds": {
+          "min": {
+            "x": 25.421881405409902,
+            "y": 6.034334887257383
+          },
+          "max": {
+            "x": 25.421881406818365,
+            "y": 6.034334890485271
+          }
+        },
+        "start_vertex": 13,
+        "end_vertex": 11,
+        "forward_multiplicity": 1,
+        "reverse_multiplicity": 0
+      }
+    ],
+    "error": {
+      "type": "InternalCyclicOrderCircleIntersectionFailed",
+      "vertex": 11,
+      "edge": 10,
+      "radius": 1.126974491590287e-9
+    }
+  },
+  {
+    "vertex": {
+      "x": 25.42188140611414,
+      "y": 6.034334888871326
+    },
+    "id": 11,
+    "radius": 1.126974491590287e-9,
+    "tolerance": 2e-9,
+    "oriented": {
+      "edge_id": 11,
+      "reversed": false
+    },
+    "edge": {
+      "id": 11,
+      "segment": {
+        "start": {
+          "x": 25.421881405409906,
+          "y": 6.0343348872573825
+        },
+        "radius": {
+          "x": 0.1,
+          "y": 0.1
+        },
+        "x_axis_rotation": 0,
+        "large_arc": false,
+        "sweep": true,
+        "end": {
+          "x": 25.42188140453115,
+          "y": 6.0343348852434655
+        }
+      },
+      "bounds": {
+        "min": {
+          "x": 25.42188140453115,
+          "y": 6.0343348852434655
+        },
+        "max": {
+          "x": 25.421881405409906,
+          "y": 6.0343348872573825
+        }
+      },
+      "start_vertex": 11,
+      "end_vertex": 13,
+      "forward_multiplicity": 1,
+      "reverse_multiplicity": 1
+    },
+    "segment": {
+      "start": {
+        "x": -7.042331162665505e-10,
+        "y": -1.6139436453954659e-9
+      },
+      "radius": {
+        "x": 0.1,
+        "y": 0.1
+      },
+      "x_axis_rotation": 0,
+      "large_arc": false,
+      "sweep": true,
+      "end": {
+        "x": -1.5829897392904968e-9,
+        "y": -3.627860678534489e-9
+      }
+    },
+    "incident": [
+      {
+        "id": 10,
+        "segment": {
+          "start": {
+            "x": 25.421881408639944,
+            "y": 6.0343348946599065
+          },
+          "radius": {
+            "x": 0.1,
+            "y": 0.1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 25.421881406818372,
+            "y": 6.034334890485271
+          }
+        },
+        "bounds": {
+          "min": {
+            "x": 25.421881406818375,
+            "y": 6.034334890485271
+          },
+          "max": {
+            "x": 25.421881408639948,
+            "y": 6.0343348946599065
+          }
+        },
+        "start_vertex": 10,
+        "end_vertex": 11,
+        "forward_multiplicity": 1,
+        "reverse_multiplicity": 1
+      },
+      {
+        "id": 11,
+        "segment": {
+          "start": {
+            "x": 25.421881405409906,
+            "y": 6.0343348872573825
+          },
+          "radius": {
+            "x": 0.1,
+            "y": 0.1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 25.42188140453115,
+            "y": 6.0343348852434655
+          }
+        },
+        "bounds": {
+          "min": {
+            "x": 25.42188140453115,
+            "y": 6.0343348852434655
+          },
+          "max": {
+            "x": 25.421881405409906,
+            "y": 6.0343348872573825
+          }
+        },
+        "start_vertex": 11,
+        "end_vertex": 13,
+        "forward_multiplicity": 1,
+        "reverse_multiplicity": 1
+      },
+      {
+        "id": 14,
+        "segment": {
+          "start": {
+            "x": 25.421881405409902,
+            "y": 6.034334887257383
+          },
+          "control1": {
+            "x": 25.42188140587939,
+            "y": 6.034334888333345
+          },
+          "control2": {
+            "x": 25.421881406348877,
+            "y": 6.0343348894093065
+          },
+          "end": {
+            "x": 25.421881406818365,
+            "y": 6.034334890485271
+          }
+        },
+        "bounds": {
+          "min": {
+            "x": 25.421881405409902,
+            "y": 6.034334887257383
+          },
+          "max": {
+            "x": 25.421881406818365,
+            "y": 6.034334890485271
+          }
+        },
+        "start_vertex": 13,
+        "end_vertex": 11,
+        "forward_multiplicity": 1,
+        "reverse_multiplicity": 0
+      }
+    ],
+    "error": {
+      "type": "InternalCyclicOrderCircleIntersectionFailed",
+      "vertex": 11,
+      "edge": 11,
+      "radius": 1.126974491590287e-9
+    }
+  }
+]

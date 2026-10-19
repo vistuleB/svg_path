@@ -436,5 +436,12 @@
     ],
     "status": "dual-placement-repaired-other-construction-and-collapse-open",
     "reason": "Component-based placement repairs the captured graph (ten faces) and actual 1e-6 offset (empty result). The 1e-5 offset fails earlier in cyclic-order circle intersection and remains open; default normalization/collapse policy is unchanged. See DUAL-NARROW-FACE-TRIAGE.md."
+  },
+  {
+    "ids": [
+      "CC01189"
+    ],
+    "status": "tight-tolerance-construction-repaired-collapse-policy-open",
+    "reason": "Implemented and fully tested component placement and consistent endpoint ownership. Actual 1e-5 and 1e-6 offsets now return empty; reversed/reordered JS reduction also passes. Default normalization/collapse semantics remain unchanged. See CYCLIC-CLUSTER-RADIUS-TRIAGE.md and owner-repair-test-release.log. Uncommitted repair."
   }
 ]

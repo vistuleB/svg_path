@@ -17,33 +17,39 @@ fn narrow_component(size: Float) -> List(svg_path.Segment) {
 fn check_bridge(bridge: svg_path.Segment, outside: Bool) {
   list.each([0.001, 0.0001, 0.00001], fn(size) {
     list.each([False, True], fn(reverse) {
-      let segments = [bridge, ..narrow_component(size)]
-      let segments = case reverse {
-        True -> list.map(segments, svg_path.segment_reverse)
-        False -> segments
-      }
-      let assert Ok(built) =
-        arrangement.build_with(
-          segments,
-          vertex_tolerance: 0.000000000001,
-          minimum_length: 0.000000000001,
-          endpoint_sliver_tolerance: 0.0,
-        )
-      let assert Ok(dual) = arrangement.dual(built.graph)
-      assert list.length(dual.faces) == 3
-      let assert Ok(bridge_edge) =
-        list.find(built.graph.edges, fn(edge) {
-          edge.segment == bridge
-          || edge.segment == svg_path.segment_reverse(bridge)
-        })
-      let assert Ok(bridge_faces) =
-        list.find(dual.edge_faces, fn(edge) { edge.edge_id == bridge_edge.id })
-      assert bridge_faces.left_face == bridge_faces.right_face
-      let assert Ok(host) =
-        list.find(dual.faces, fn(face) { face.id == bridge_faces.left_face })
-      assert host.outer == outside
-      assert list.length(host.walks) == 2
-      assert list.length(dual.edge_faces) == list.length(built.graph.edges)
+      list.each([False, True], fn(reorder) {
+        let segments = [bridge, ..narrow_component(size)]
+        let segments = case reverse {
+          True -> list.map(segments, svg_path.segment_reverse)
+          False -> segments
+        }
+        let segments = case reorder {
+          True -> list.reverse(segments)
+          False -> segments
+        }
+        let assert Ok(built) =
+          arrangement.build_with(
+            segments,
+            vertex_tolerance: 0.000000000001,
+            minimum_length: 0.000000000001,
+            endpoint_sliver_tolerance: 0.0,
+          )
+        let assert Ok(dual) = arrangement.dual(built.graph)
+        assert list.length(dual.faces) == 3
+        let assert Ok(bridge_edge) =
+          list.find(built.graph.edges, fn(edge) {
+            edge.segment == bridge
+            || edge.segment == svg_path.segment_reverse(bridge)
+          })
+        let assert Ok(bridge_faces) =
+          list.find(dual.edge_faces, fn(edge) { edge.edge_id == bridge_edge.id })
+        assert bridge_faces.left_face == bridge_faces.right_face
+        let assert Ok(host) =
+          list.find(dual.faces, fn(face) { face.id == bridge_faces.left_face })
+        assert host.outer == outside
+        assert list.length(host.walks) == 2
+        assert list.length(dual.edge_faces) == list.length(built.graph.edges)
+      })
     })
   })
 }

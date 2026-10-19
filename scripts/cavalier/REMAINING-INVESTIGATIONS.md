@@ -14,11 +14,11 @@ mismatch; the tighter run's zero-area retrace follows existing preservation
 behavior. Documentation clarification suggested; see `SHAPE-CASE3-TRIAGE.md`.
 
 1. **Other offset geometry and trimming policies:** CC01160/CC01292 are now
-   explained by detail tolerance. CC01189 dual-placement exhaustion is repaired
-   at tolerance 1e-6; the original call now returns the expected empty offset.
-   Its 1e-5 call still fails earlier, during cyclic-order circle intersection.
-   A reversed/reordered size-1e-4 reduced input exposes another pre-existing JS
-   cyclic-order construction failure. See `DUAL-NARROW-FACE-TRIAGE.md`.
+   explained by detail tolerance. CC01189's tight-tolerance numerical failures
+   are repaired: component placement fixes 1e-6, and consistent endpoint
+   ownership fixes 1e-5 and the reduced reversed-order JS case. Both original
+   calls now return empty; canonical release tests pass. See
+   `DUAL-NARROW-FACE-TRIAGE.md` and `CYCLIC-CLUSTER-RADIUS-TRIAGE.md`.
    Square extra contours, collapse policy and the remaining broader offset
    catalogue still need review. See `REMAINING-OFFSET-DETAIL-TRIAGE.md`.
 2. **Boolean closure and geometry classification:** earlier construction choices

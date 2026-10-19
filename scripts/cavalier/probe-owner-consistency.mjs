@@ -1,0 +1,11 @@
+const build=process.env.AUDIT_JS_BUILD??new URL('./probe/build/dev/javascript',import.meta.url).pathname;
+const a=await import(`${build}/svg_path/svg_path/arrangement.mjs`),g=await import(`${build}/svg_path/svg_path.mjs`);
+const {toList}=await import(`${build}/prelude.mjs`);
+const p=(x,y)=>new g.Point(x,y);
+const vertices=[new a.ArrangementVertex(0,p(0,0),toList([p(-.9,0),p(.9,0)])),new a.ArrangementVertex(1,p(2,0),toList([p(2,0)])),new a.ArrangementVertex(2,p(4,3),toList([p(4,3)]))];
+const edge=(id,start,end,sv,ev)=>new a.ArrangementEdge(id,new g.Line(start,end),new g.BoundingBox(p(Math.min(start.x,end.x),Math.min(start.y,end.y)),p(Math.max(start.x,end.x),Math.max(start.y,end.y))),sv,ev,1,0);
+const graph=new a.ArrangementGraph(toList(vertices),toList([edge(0,p(-.9,0),p(4,3),0,2),edge(1,p(.9,0),p(2,0),0,1)]),toList([]));
+const start=p(.900000000000001,-1e-15),segment=new g.Line(start,p(0,-4));
+const matches=vertices.filter(v=>Math.hypot(start.x-v.point.x,start.y-v.point.y)<=1).map(v=>v.id);
+const r=a.insert_atomic_segment(graph,segment,1,.1);
+console.log(JSON.stringify({uniqueCenterMatches:matches,result:r.isOk()?[...r[0].edges].find(e=>e.id===2):r[0]},null,2));

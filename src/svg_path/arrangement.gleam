@@ -5127,7 +5127,7 @@ fn attach_vertex(
   endpoint: svg_path.Point,
   tolerance: Float,
 ) -> #(List(ArrangementVertex), Int) {
-  case best_vertex_attachment(vertices, endpoint, tolerance, None) {
+  case selected_vertex_attachment(vertices, endpoint, tolerance) {
     Some(VertexAttachment(
       vertex: ArrangementVertex(id:, endpoint_samples:, ..),
       center:,
@@ -5153,6 +5153,46 @@ fn attach_vertex(
         id,
       )
     }
+  }
+}
+
+// Comparison and insertion must agree when an endpoint uniquely matches an
+// existing center. A smaller newly enlarged cluster must not steal that owner.
+// Exact stored samples retain precedence, and every candidate must still meet
+// the enclosing-circle bound (also for the trusting insertion primitive).
+fn selected_vertex_attachment(
+  vertices: List(ArrangementVertex),
+  endpoint: svg_path.Point,
+  tolerance: Float,
+) -> Option(VertexAttachment) {
+  let best = best_vertex_attachment(vertices, endpoint, tolerance, None)
+  case best {
+    Some(candidate) -> {
+      case list.contains(candidate.vertex.endpoint_samples, endpoint) {
+        True -> best
+        False ->
+          preferred_center_attachment(vertices, endpoint, tolerance, best)
+      }
+    }
+    None -> None
+  }
+}
+
+fn preferred_center_attachment(
+  vertices: List(ArrangementVertex),
+  endpoint: svg_path.Point,
+  tolerance: Float,
+  fallback: Option(VertexAttachment),
+) -> Option(VertexAttachment) {
+  case unique_vertex_for_endpoint(vertices, endpoint, tolerance) {
+    Ok(Some(id)) -> {
+      let assert Ok(vertex) = list.find(vertices, fn(v) { v.id == id })
+      case best_vertex_attachment([vertex], endpoint, tolerance, None) {
+        Some(_) as preferred -> preferred
+        None -> fallback
+      }
+    }
+    _ -> fallback
   }
 }
 

@@ -1,0 +1,32 @@
+{
+  "uniqueCenterMatches": [
+    0
+  ],
+  "result": {
+    "id": 2,
+    "segment": {
+      "start": {
+        "x": 0.900000000000001,
+        "y": -1e-15
+      },
+      "end": {
+        "x": 0,
+        "y": -4
+      }
+    },
+    "bounds": {
+      "min": {
+        "x": 0,
+        "y": -4
+      },
+      "max": {
+        "x": 0.900000000000001,
+        "y": -1e-15
+      }
+    },
+    "start_vertex": 1,
+    "end_vertex": 3,
+    "forward_multiplicity": 1,
+    "reverse_multiplicity": 0
+  }
+}
