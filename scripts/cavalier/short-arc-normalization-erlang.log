@@ -1,0 +1,25 @@
+  Compiling cavalier_audit_probe
+warning: Unused result value
+  ┌─ /Users/jpsteinb/github.com/vistuleB/svg_path/scripts/cavalier/probe/src/short_arc_normalization_audit_probe.gleam:9:3
+  │
+9 │   echo degeneracy.normalize_degenerate_segments(alone, 0.001)
+  │   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The Result value created here is unused
+
+Hint: If you are sure you don't need it you can assign it to `_`.
+
+warning: Unused result value
+   ┌─ /Users/jpsteinb/github.com/vistuleB/svg_path/scripts/cavalier/probe/src/short_arc_normalization_audit_probe.gleam:16:3
+   │
+16 │   echo offset.normalize_short_source_runs(source, 0.001)
+   │   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The Result value created here is unused
+
+Hint: If you are sure you don't need it you can assign it to `_`.
+
+   Compiled in 0.33s
+    Running short_arc_normalization_audit_probe.main
+[90msrc/short_arc_normalization_audit_probe.gleam:9[39m
+Ok(Subpath(Point(0.0, 0.0), [], False))
+[90msrc/short_arc_normalization_audit_probe.gleam:16[39m
+Error(InternalPathError(Discontinuous(0, 1, Point(0.0, 0.0), Point(3.0e-5, 0.0), 3.0e-5)))
+[90msrc/short_arc_normalization_audit_probe.gleam:17[39m
+Error(PathError(Discontinuous(0, 1, Point(0.0, 0.0), Point(3.0e-5, 0.0), 3.0e-5)))

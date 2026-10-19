@@ -336,3 +336,32 @@ The final stricter-line implementation passed `scripts/test-release`: 2,054
 ordinary + 31 slow, and 800 portable tests on each of Erlang and JavaScript.
 Retained in the working tree, uncommitted. Figures not regenerated; F# deferred.
 Raw log: `scripts/cavalier/strict-line-test-release.log`.
+
+## Offset investigation after `e936c7b` — 2026-10-19
+
+See `scripts/cavalier/OFFSET-COLLAPSE-AND-NORMALIZATION-TRIAGE.md`.
+Circle beyond-collapse behavior follows an explicitly tested normal-extrusion
+construction; default trimming is not generally filled-region erosion. High-level
+collapse behavior remains a policy question, not a newly confirmed bug.
+
+A separate confirmed bug explains short-arc failures CC01160/CC01292: degeneracy
+cleanup drops the connection between distinct endpoints when shorter than its
+tolerance, violating documented endpoint preservation and opening a gap inside
+offset source normalization. Reduced to one radius-1 arc of chord length 3e-5,
+reproduced Erlang/JS, with the public offset failure reproduced on a three-segment
+continuous path. Candidate next fix: omit only exact zero-length connections
+between retained traversal points. Not implemented; F# deferred.
+
+### Short-arc cleanup repair — 2026-10-19
+
+Corrected the earlier call-path diagnosis: `point_traversal_lines` already gets
+zero tolerance. The loss is in `degenerate_line_list`, whose no-axis branch
+returned an empty list even for distinct endpoints. It now retains existing
+linearized connections, omitting only exact zero-length lines. Three permanent
+portable regressions pass targeted Erlang checks. Original CC01160/CC01189/
+CC01292/CC01296 now all complete; only CC01296 also matches baseline aggregate
+properties. Other output discrepancies remain open. No commit or F# port yet.
+
+Short-arc repair passed `scripts/test-release`: 2,057 ordinary + 31 slow, plus
+803 portable tests each on Erlang and JavaScript. See
+`scripts/cavalier/short-arc-cleanup-test-release.log`. Uncommitted; F# deferred.

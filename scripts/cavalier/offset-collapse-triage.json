@@ -1,0 +1,624 @@
+[
+  {
+    "name": "circle_collapsed",
+    "distance": 0.5,
+    "mode": "default",
+    "result": {
+      "ok": true,
+      "subpaths": [
+        {
+          "area": 0.7853981633974483,
+          "svg": "M 0.5 0 A 0.5 0.5 0 0 1 1.5 0 A 0.5 0.5 0 0 1 0.5 0 Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "circle_collapsed",
+    "distance": 0.5,
+    "mode": "no-offside",
+    "result": {
+      "ok": true,
+      "subpaths": [
+        {
+          "area": 0.7853981633974483,
+          "svg": "M 0.5 0 A 0.5 0.5 0 0 1 1.5 0 A 0.5 0.5 0 0 1 0.5 0 Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "circle_collapsed",
+    "distance": 0.5,
+    "mode": "offside-only",
+    "result": {
+      "ok": true,
+      "subpaths": [
+        {
+          "area": 0.7853981633974483,
+          "svg": "M 0.5 0 A 0.5 0.5 0 0 1 1.5 0 A 0.5 0.5 0 0 1 0.5 0 Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "circle_collapsed",
+    "distance": 0.5,
+    "mode": "none",
+    "result": {
+      "ok": true,
+      "subpaths": [
+        {
+          "area": 0.7853981633974483,
+          "svg": "M 0.5 0 A 0.5 0.5 0 0 1 1.5 0 A 0.5 0.5 0 0 1 0.5 0 Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "circle_collapsed",
+    "distance": 1,
+    "mode": "default",
+    "result": {
+      "ok": false,
+      "error": {
+        "type": "DegenerateTangent",
+        "t": 0
+      }
+    }
+  },
+  {
+    "name": "circle_collapsed",
+    "distance": 1,
+    "mode": "no-offside",
+    "result": {
+      "ok": false,
+      "error": {
+        "type": "DegenerateTangent",
+        "t": 0
+      }
+    }
+  },
+  {
+    "name": "circle_collapsed",
+    "distance": 1,
+    "mode": "offside-only",
+    "result": {
+      "ok": false,
+      "error": {
+        "type": "DegenerateTangent",
+        "t": 0
+      }
+    }
+  },
+  {
+    "name": "circle_collapsed",
+    "distance": 1,
+    "mode": "none",
+    "result": {
+      "ok": false,
+      "error": {
+        "type": "DegenerateTangent",
+        "t": 0
+      }
+    }
+  },
+  {
+    "name": "circle_collapsed",
+    "distance": 1.5,
+    "mode": "default",
+    "result": {
+      "ok": true,
+      "subpaths": [
+        {
+          "area": 0.7853981633974483,
+          "svg": "M 1.5 0 A 0.5 0.5 0 0 1 0.5 0 A 0.5 0.5 0 0 1 1.5 0 Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "circle_collapsed",
+    "distance": 1.5,
+    "mode": "no-offside",
+    "result": {
+      "ok": true,
+      "subpaths": [
+        {
+          "area": 0.7853981633974483,
+          "svg": "M 1.5 0 A 0.5 0.5 0 0 1 0.5 0 A 0.5 0.5 0 0 1 1.5 0 Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "circle_collapsed",
+    "distance": 1.5,
+    "mode": "offside-only",
+    "result": {
+      "ok": true,
+      "subpaths": [
+        {
+          "area": 0.7853981633974483,
+          "svg": "M 1.5 0 A 0.5 0.5 0 0 1 0.5 0 A 0.5 0.5 0 0 1 1.5 0 Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "circle_collapsed",
+    "distance": 1.5,
+    "mode": "none",
+    "result": {
+      "ok": true,
+      "subpaths": [
+        {
+          "area": 0.7853981633974483,
+          "svg": "M 1.5 0 A 0.5 0.5 0 0 1 0.5 0 A 0.5 0.5 0 0 1 1.5 0 Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "circle_collapsed",
+    "distance": 2,
+    "mode": "default",
+    "result": {
+      "ok": true,
+      "subpaths": [
+        {
+          "area": 3.141592653589793,
+          "svg": "M 2 0 A 1 1 0 0 1 0 0 A 1 1 0 0 1 2 0 Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "circle_collapsed",
+    "distance": 2,
+    "mode": "no-offside",
+    "result": {
+      "ok": true,
+      "subpaths": [
+        {
+          "area": 3.141592653589793,
+          "svg": "M 2 0 A 1 1 0 0 1 0 0 A 1 1 0 0 1 2 0 Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "circle_collapsed",
+    "distance": 2,
+    "mode": "offside-only",
+    "result": {
+      "ok": true,
+      "subpaths": [
+        {
+          "area": 3.141592653589793,
+          "svg": "M 2 0 A 1 1 0 0 1 0 0 A 1 1 0 0 1 2 0 Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "circle_collapsed",
+    "distance": 2,
+    "mode": "none",
+    "result": {
+      "ok": true,
+      "subpaths": [
+        {
+          "area": 3.141592653589793,
+          "svg": "M 2 0 A 1 1 0 0 1 0 0 A 1 1 0 0 1 2 0 Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "circle_collapsed",
+    "distance": 2.5,
+    "mode": "default",
+    "result": {
+      "ok": true,
+      "subpaths": []
+    }
+  },
+  {
+    "name": "circle_collapsed",
+    "distance": 2.5,
+    "mode": "no-offside",
+    "result": {
+      "ok": true,
+      "subpaths": [
+        {
+          "area": 7.0685834705770345,
+          "svg": "M 2.5 0 A 1.5 1.5 0 0 1 -0.5 0 A 1.5 1.5 0 0 1 2.5 0 Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "circle_collapsed",
+    "distance": 2.5,
+    "mode": "offside-only",
+    "result": {
+      "ok": true,
+      "subpaths": []
+    }
+  },
+  {
+    "name": "circle_collapsed",
+    "distance": 2.5,
+    "mode": "none",
+    "result": {
+      "ok": true,
+      "subpaths": [
+        {
+          "area": 7.0685834705770345,
+          "svg": "M 2.5 0 A 1.5 1.5 0 0 1 -0.5 0 A 1.5 1.5 0 0 1 2.5 0 Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "circle_collapsed",
+    "distance": 3,
+    "mode": "default",
+    "result": {
+      "ok": true,
+      "subpaths": []
+    }
+  },
+  {
+    "name": "circle_collapsed",
+    "distance": 3,
+    "mode": "no-offside",
+    "result": {
+      "ok": true,
+      "subpaths": [
+        {
+          "area": 12.566370614359172,
+          "svg": "M 3 0 A 2 2 0 0 1 -1 0 A 2 2 0 0 1 3 0 Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "circle_collapsed",
+    "distance": 3,
+    "mode": "offside-only",
+    "result": {
+      "ok": true,
+      "subpaths": []
+    }
+  },
+  {
+    "name": "circle_collapsed",
+    "distance": 3,
+    "mode": "none",
+    "result": {
+      "ok": true,
+      "subpaths": [
+        {
+          "area": 12.566370614359172,
+          "svg": "M 3 0 A 2 2 0 0 1 -1 0 A 2 2 0 0 1 3 0 Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "square_collapsed",
+    "distance": 0.5,
+    "mode": "default",
+    "result": {
+      "ok": true,
+      "subpaths": [
+        {
+          "area": 1,
+          "svg": "M -0.5 -0.5 H 0.5 V 0.5 H -0.5 Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "square_collapsed",
+    "distance": 0.5,
+    "mode": "no-offside",
+    "result": {
+      "ok": true,
+      "subpaths": [
+        {
+          "area": 1,
+          "svg": "M -0.5 -0.5 H 0.5 V 0.5 H -0.5 Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "square_collapsed",
+    "distance": 0.5,
+    "mode": "offside-only",
+    "result": {
+      "ok": true,
+      "subpaths": [
+        {
+          "area": 0.7853981633974483,
+          "svg": "M -1 -0.5 H -0.5 H 0.5 H 1 A 0.5 0.5 0 0 1 0.5 -1 V -0.5 V 0.5 V 1 A 0.5 0.5 0 0 1 1 0.5 H 0.5 H -0.5 H -1 A 0.5 0.5 0 0 1 -0.5 1 V 0.5 V -0.5 V -1 A 0.5 0.5 0 0 1 -1 -0.5 Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "square_collapsed",
+    "distance": 0.5,
+    "mode": "none",
+    "result": {
+      "ok": true,
+      "subpaths": [
+        {
+          "area": 0.7853981633974483,
+          "svg": "M -1 -0.5 H 1 A 0.5 0.5 0 0 1 0.5 -1 V 1 A 0.5 0.5 0 0 1 1 0.5 H -1 A 0.5 0.5 0 0 1 -0.5 1 V -1 A 0.5 0.5 0 0 1 -1 -0.5 Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "square_collapsed",
+    "distance": 1,
+    "mode": "default",
+    "result": {
+      "ok": true,
+      "subpaths": []
+    }
+  },
+  {
+    "name": "square_collapsed",
+    "distance": 1,
+    "mode": "no-offside",
+    "result": {
+      "ok": true,
+      "subpaths": []
+    }
+  },
+  {
+    "name": "square_collapsed",
+    "distance": 1,
+    "mode": "offside-only",
+    "result": {
+      "ok": true,
+      "subpaths": [
+        {
+          "area": -0.8584073464102069,
+          "svg": "M -1 0 H 0 H 1 A 1 1 0 0 1 0 -1 V 0 V 1 A 1 1 0 0 1 1 0 H 0 H -1 A 1 1 0 0 1 0 1 V 0 V -1 A 1 1 0 0 1 -1 0 Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "square_collapsed",
+    "distance": 1,
+    "mode": "none",
+    "result": {
+      "ok": true,
+      "subpaths": [
+        {
+          "area": -0.8584073464102069,
+          "svg": "M -1 0 H 1 A 1 1 0 0 1 0 -1 V 1 A 1 1 0 0 1 1 0 H -1 A 1 1 0 0 1 0 1 V -1 A 1 1 0 0 1 -1 0 Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "square_collapsed",
+    "distance": 1.5,
+    "mode": "default",
+    "result": {
+      "ok": true,
+      "subpaths": [
+        {
+          "area": 0.028898609534757994,
+          "svg": "M 0 0.11803 A 1.5 1.5 0 0 1 -0.11803 0 A 1.5 1.5 0 0 1 0 -0.11803 A 1.5 1.5 0 0 1 0.11803 0 A 1.5 1.5 0 0 1 0 0.11803 Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "square_collapsed",
+    "distance": 1.5,
+    "mode": "no-offside",
+    "result": {
+      "ok": true,
+      "subpaths": [
+        {
+          "area": 0.028898609534757994,
+          "svg": "M 0 0.11803 A 1.5 1.5 0 0 1 -0.11803 0 A 1.5 1.5 0 0 1 0 -0.11803 A 1.5 1.5 0 0 1 0.11803 0 A 1.5 1.5 0 0 1 0 0.11803 Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "square_collapsed",
+    "distance": 1.5,
+    "mode": "offside-only",
+    "result": {
+      "ok": true,
+      "subpaths": [
+        {
+          "area": -0.9314165294229665,
+          "svg": "M -1 0.5 H -0.5 H -0.41421 H 0.41421 H 0.5 H 1 A 1.5 1.5 0 0 1 0.5 0.41421 A 1.5 1.5 0 0 1 0.35355 0.35355 A 1.5 1.5 0 0 1 0 0.11803 A 1.5 1.5 0 0 1 -0.11803 0 A 1.5 1.5 0 0 1 -0.35355 -0.35355 A 1.5 1.5 0 0 1 -0.41421 -0.5 A 1.5 1.5 0 0 1 -0.5 -1 V -0.5 V -0.41421 V 0.41421 V 0.5 V 1 A 1.5 1.5 0 0 1 -0.41421 0.5 A 1.5 1.5 0 0 1 -0.35355 0.35355 A 1.5 1.5 0 0 1 -0.11803 0 A 1.5 1.5 0 0 1 0 -0.11803 A 1.5 1.5 0 0 1 0.35355 -0.35355 A 1.5 1.5 0 0 1 0.5 -0.41421 A 1.5 1.5 0 0 1 1 -0.5 H 0.5 H 0.41421 H -0.41421 H -0.5 H -1 A 1.5 1.5 0 0 1 -0.5 -0.41421 A 1.5 1.5 0 0 1 -0.35355 -0.35355 A 1.5 1.5 0 0 1 0 -0.11803 A 1.5 1.5 0 0 1 0.11803 0 A 1.5 1.5 0 0 1 0.35355 0.35355 A 1.5 1.5 0 0 1 0.41421 0.5 A 1.5 1.5 0 0 1 0.5 1 V 0.5 V 0.41421 V -0.41421 V -0.5 V -1 A 1.5 1.5 0 0 1 0.41421 -0.5 A 1.5 1.5 0 0 1 0.35355 -0.35355 A 1.5 1.5 0 0 1 0.11803 0 A 1.5 1.5 0 0 1 0 0.11803 A 1.5 1.5 0 0 1 -0.35355 0.35355 A 1.5 1.5 0 0 1 -0.5 0.41421 A 1.5 1.5 0 0 1 -1 0.5 Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "square_collapsed",
+    "distance": 1.5,
+    "mode": "none",
+    "result": {
+      "ok": true,
+      "subpaths": [
+        {
+          "area": -0.9314165294229655,
+          "svg": "M -1 0.5 H 1 A 1.5 1.5 0 0 1 -0.5 -1 V 1 A 1.5 1.5 0 0 1 1 -0.5 H -1 A 1.5 1.5 0 0 1 0.5 1 V -1 A 1.5 1.5 0 0 1 -1 0.5 Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "square_collapsed",
+    "distance": 2,
+    "mode": "default",
+    "result": {
+      "ok": true,
+      "subpaths": [
+        {
+          "area": -4,
+          "svg": "M 1 -1 H -1 V 1 H 1 Z"
+        },
+        {
+          "area": 1.2605869745108833,
+          "svg": "M 0 0.73205 A 2 2 0 0 1 -0.73205 0 A 2 2 0 0 1 0 -0.73205 A 2 2 0 0 1 0.73205 0 A 2 2 0 0 1 0 0.73205 Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "square_collapsed",
+    "distance": 2,
+    "mode": "no-offside",
+    "result": {
+      "ok": true,
+      "subpaths": [
+        {
+          "area": -4,
+          "svg": "M 1 -1 H -1 V 1 H 1 Z"
+        },
+        {
+          "area": 1.2605869745108833,
+          "svg": "M 0 0.73205 A 2 2 0 0 1 -0.73205 0 A 2 2 0 0 1 0 -0.73205 A 2 2 0 0 1 0.73205 0 A 2 2 0 0 1 0 0.73205 Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "square_collapsed",
+    "distance": 2,
+    "mode": "offside-only",
+    "result": {
+      "ok": true,
+      "subpaths": [
+        {
+          "area": 0.5663706143591736,
+          "svg": "M -1 1 H 1 A 2 2 0 0 1 0 0.73205 A 2 2 0 0 1 -0.73205 0 A 2 2 0 0 1 -1 -1 V 1 A 2 2 0 0 1 -0.73205 0 A 2 2 0 0 1 0 -0.73205 A 2 2 0 0 1 1 -1 H -1 A 2 2 0 0 1 0 -0.73205 A 2 2 0 0 1 0.73205 0 A 2 2 0 0 1 1 1 V -1 A 2 2 0 0 1 0.73205 0 A 2 2 0 0 1 0 0.73205 A 2 2 0 0 1 -1 1 Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "square_collapsed",
+    "distance": 2,
+    "mode": "none",
+    "result": {
+      "ok": true,
+      "subpaths": [
+        {
+          "area": 0.5663706143591725,
+          "svg": "M -1 1 H 1 A 2 2 0 0 1 -1 -1 V 1 A 2 2 0 0 1 1 -1 H -1 A 2 2 0 0 1 1 1 V -1 A 2 2 0 0 1 -1 1 Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "square_collapsed",
+    "distance": 2.5,
+    "mode": "default",
+    "result": {
+      "ok": true,
+      "subpaths": []
+    }
+  },
+  {
+    "name": "square_collapsed",
+    "distance": 2.5,
+    "mode": "no-offside",
+    "result": {
+      "ok": true,
+      "subpaths": [
+        {
+          "area": 3.6349540849362088,
+          "svg": "M -1 1.5 H 1 A 2.5 2.5 0 0 1 0 1.29129 A 2.5 2.5 0 0 1 -0.5 1 A 2.5 2.5 0 0 1 -1 0.5 A 2.5 2.5 0 0 1 -1.29129 0 A 2.5 2.5 0 0 1 -1.5 -1 V 1 A 2.5 2.5 0 0 1 -1.29129 0 A 2.5 2.5 0 0 1 -1 -0.5 A 2.5 2.5 0 0 1 -0.5 -1 A 2.5 2.5 0 0 1 0 -1.29129 A 2.5 2.5 0 0 1 1 -1.5 H -1 A 2.5 2.5 0 0 1 0 -1.29129 A 2.5 2.5 0 0 1 0.5 -1 A 2.5 2.5 0 0 1 1 -0.5 A 2.5 2.5 0 0 1 1.29129 0 A 2.5 2.5 0 0 1 1.5 1 V -1 A 2.5 2.5 0 0 1 1.29129 0 A 2.5 2.5 0 0 1 1 0.5 A 2.5 2.5 0 0 1 0.5 1 A 2.5 2.5 0 0 1 0 1.29129 A 2.5 2.5 0 0 1 -1 1.5 Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "square_collapsed",
+    "distance": 2.5,
+    "mode": "offside-only",
+    "result": {
+      "ok": true,
+      "subpaths": []
+    }
+  },
+  {
+    "name": "square_collapsed",
+    "distance": 2.5,
+    "mode": "none",
+    "result": {
+      "ok": true,
+      "subpaths": [
+        {
+          "area": 3.634954084936208,
+          "svg": "M -1 1.5 H 1 A 2.5 2.5 0 0 1 -1.5 -1 V 1 A 2.5 2.5 0 0 1 1 -1.5 H -1 A 2.5 2.5 0 0 1 1.5 1 V -1 A 2.5 2.5 0 0 1 -1 1.5 Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "square_collapsed",
+    "distance": 3,
+    "mode": "default",
+    "result": {
+      "ok": true,
+      "subpaths": []
+    }
+  },
+  {
+    "name": "square_collapsed",
+    "distance": 3,
+    "mode": "no-offside",
+    "result": {
+      "ok": true,
+      "subpaths": [
+        {
+          "area": 8.274333882308136,
+          "svg": "M -1 2 H 1 A 3 3 0 0 1 0 1.82843 A 3 3 0 0 1 -1.82843 0 A 3 3 0 0 1 -2 -1 V 1 A 3 3 0 0 1 -1.82843 0 A 3 3 0 0 1 0 -1.82843 A 3 3 0 0 1 1 -2 H -1 A 3 3 0 0 1 0 -1.82843 A 3 3 0 0 1 1.82843 0 A 3 3 0 0 1 2 1 V -1 A 3 3 0 0 1 1.82843 0 A 3 3 0 0 1 0 1.82843 A 3 3 0 0 1 -1 2 Z"
+        }
+      ]
+    }
+  },
+  {
+    "name": "square_collapsed",
+    "distance": 3,
+    "mode": "offside-only",
+    "result": {
+      "ok": true,
+      "subpaths": []
+    }
+  },
+  {
+    "name": "square_collapsed",
+    "distance": 3,
+    "mode": "none",
+    "result": {
+      "ok": true,
+      "subpaths": [
+        {
+          "area": 8.274333882308138,
+          "svg": "M -1 2 H 1 A 3 3 0 0 1 -2 -1 V 1 A 3 3 0 0 1 1 -2 H -1 A 3 3 0 0 1 2 1 V -1 A 3 3 0 0 1 -1 2 Z"
+        }
+      ]
+    }
+  }
+]

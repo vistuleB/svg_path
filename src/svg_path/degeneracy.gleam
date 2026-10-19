@@ -632,7 +632,10 @@ fn degenerate_line_list(
 ) -> Result(Option(List(svg_path.Segment)), Error) {
   let points = line_list_points(lines, [])
   case degenerate_line_axis(points, tolerance) {
-    None -> Ok(Some([]))
+    // No usable axis can mean the whole walk is shorter than tolerance,
+    // not that it has no movement. Keep its endpoint connections; only exact
+    // zero-length lines can be omitted without changing those anchors.
+    None -> Ok(Some(remove_zero_length_lines(lines)))
     Some(#(start, axis)) -> {
       case defining_points_are_in_strip(points, start, axis, tolerance) {
         True -> Ok(Some(remove_zero_length_lines(lines)))

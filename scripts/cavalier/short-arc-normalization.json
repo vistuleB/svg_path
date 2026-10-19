@@ -1,0 +1,312 @@
+[
+  {
+    "name": "radius 1",
+    "arc": {
+      "start": {
+        "x": 0,
+        "y": 0
+      },
+      "radius": {
+        "x": 1,
+        "y": 1
+      },
+      "x_axis_rotation": 0,
+      "large_arc": false,
+      "sweep": true,
+      "end": {
+        "x": 0.00003,
+        "y": 0
+      }
+    },
+    "alone": {
+      "ok": true,
+      "segments": []
+    },
+    "short_run": {
+      "ok": false,
+      "error": {
+        "type": "InternalPathError",
+        "error": {
+          "previous_index": 0,
+          "next_index": 1,
+          "expected": {
+            "x": 0,
+            "y": 0
+          },
+          "got": {
+            "x": 0.00003,
+            "y": 0
+          },
+          "distance": 0.00003
+        }
+      }
+    },
+    "offset": {
+      "ok": false,
+      "error": {
+        "type": "PathError",
+        "error": {
+          "previous_index": 0,
+          "next_index": 1,
+          "expected": {
+            "x": 0,
+            "y": 0
+          },
+          "got": {
+            "x": 0.00003,
+            "y": 0
+          },
+          "distance": 0.00003
+        }
+      }
+    }
+  },
+  {
+    "name": "radius 10",
+    "arc": {
+      "start": {
+        "x": 0,
+        "y": 0
+      },
+      "radius": {
+        "x": 10,
+        "y": 10
+      },
+      "x_axis_rotation": 0,
+      "large_arc": false,
+      "sweep": true,
+      "end": {
+        "x": 0.00003,
+        "y": 0
+      }
+    },
+    "alone": {
+      "ok": true,
+      "segments": []
+    },
+    "short_run": {
+      "ok": false,
+      "error": {
+        "type": "InternalPathError",
+        "error": {
+          "previous_index": 0,
+          "next_index": 1,
+          "expected": {
+            "x": 0,
+            "y": 0
+          },
+          "got": {
+            "x": 0.00003,
+            "y": 0
+          },
+          "distance": 0.00003
+        }
+      }
+    },
+    "offset": {
+      "ok": false,
+      "error": {
+        "type": "PathError",
+        "error": {
+          "previous_index": 0,
+          "next_index": 1,
+          "expected": {
+            "x": 0,
+            "y": 0
+          },
+          "got": {
+            "x": 0.00003,
+            "y": 0
+          },
+          "distance": 0.00003
+        }
+      }
+    }
+  },
+  {
+    "name": "radius 100",
+    "arc": {
+      "start": {
+        "x": 0,
+        "y": 0
+      },
+      "radius": {
+        "x": 100,
+        "y": 100
+      },
+      "x_axis_rotation": 0,
+      "large_arc": false,
+      "sweep": true,
+      "end": {
+        "x": 0.00003,
+        "y": 0
+      }
+    },
+    "alone": {
+      "ok": true,
+      "segments": []
+    },
+    "short_run": {
+      "ok": false,
+      "error": {
+        "type": "InternalPathError",
+        "error": {
+          "previous_index": 0,
+          "next_index": 1,
+          "expected": {
+            "x": 0,
+            "y": 0
+          },
+          "got": {
+            "x": 0.00003,
+            "y": 0
+          },
+          "distance": 0.00003
+        }
+      }
+    },
+    "offset": {
+      "ok": false,
+      "error": {
+        "type": "PathError",
+        "error": {
+          "previous_index": 0,
+          "next_index": 1,
+          "expected": {
+            "x": 0,
+            "y": 0
+          },
+          "got": {
+            "x": 0.00003,
+            "y": 0
+          },
+          "distance": 0.00003
+        }
+      }
+    }
+  },
+  {
+    "name": "CC01160",
+    "arc": {
+      "start": {
+        "x": 25.513536043139947,
+        "y": 5.994342045615725
+      },
+      "radius": {
+        "x": 9.70349890781377,
+        "y": 9.70349890781377
+      },
+      "x_axis_rotation": 0,
+      "large_arc": false,
+      "sweep": false,
+      "end": {
+        "x": 25.513549288435023,
+        "y": 5.994372400909494
+      }
+    },
+    "alone": {
+      "ok": true,
+      "segments": []
+    },
+    "short_run": {
+      "ok": false,
+      "error": {
+        "type": "InternalPathError",
+        "error": {
+          "previous_index": 0,
+          "next_index": 1,
+          "expected": {
+            "x": 25.513536043139947,
+            "y": 5.994342045615725
+          },
+          "got": {
+            "x": 25.513549288435023,
+            "y": 5.994372400909494
+          },
+          "distance": 0.00003311920442077183
+        }
+      }
+    },
+    "offset": {
+      "ok": false,
+      "error": {
+        "type": "PathError",
+        "error": {
+          "previous_index": 0,
+          "next_index": 1,
+          "expected": {
+            "x": 25.513536043139947,
+            "y": 5.994342045615725
+          },
+          "got": {
+            "x": 25.513549288435023,
+            "y": 5.994372400909494
+          },
+          "distance": 0.00003311920442077183
+        }
+      }
+    }
+  },
+  {
+    "name": "CC01292",
+    "arc": {
+      "start": {
+        "x": 151.52944705175477,
+        "y": 2672.3604162683446
+      },
+      "radius": {
+        "x": 156.74719854878373,
+        "y": 156.74719854878373
+      },
+      "x_axis_rotation": 0,
+      "large_arc": false,
+      "sweep": false,
+      "end": {
+        "x": 151.52946162808874,
+        "y": 2672.3604165872725
+      }
+    },
+    "alone": {
+      "ok": true,
+      "segments": []
+    },
+    "short_run": {
+      "ok": false,
+      "error": {
+        "type": "InternalPathError",
+        "error": {
+          "previous_index": 0,
+          "next_index": 1,
+          "expected": {
+            "x": 151.52944705175477,
+            "y": 2672.3604162683446
+          },
+          "got": {
+            "x": 151.52946162808874,
+            "y": 2672.3604165872725
+          },
+          "distance": 0.000014579822597429767
+        }
+      }
+    },
+    "offset": {
+      "ok": false,
+      "error": {
+        "type": "PathError",
+        "error": {
+          "previous_index": 0,
+          "next_index": 1,
+          "expected": {
+            "x": 151.52944705175477,
+            "y": 2672.3604162683446
+          },
+          "got": {
+            "x": 151.52946162808874,
+            "y": 2672.3604165872725
+          },
+          "distance": 0.000014579822597429767
+        }
+      }
+    }
+  }
+]

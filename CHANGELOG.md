@@ -11,6 +11,9 @@ rather than only the tag object.
 
 ## Unreleased
 
+- Preserve distinct endpoints when cleaning up arcs shorter than the degeneracy
+  tolerance, preventing gaps and discontinuity errors during offset construction.
+
 - Align non-collinear line intersection searches with the numerical threshold
   used for curve intersections. Some near-endpoint contacts previously reported
   for lines are now omitted, consistently with equivalent straight Béziers.

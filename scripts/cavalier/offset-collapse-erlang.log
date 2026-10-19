@@ -1,0 +1,16 @@
+  Compiling svg_path
+  Compiling cavalier_audit_probe
+   Compiled in 1.28s
+    Running offset_collapse_audit_probe.main
+[90msrc/offset_collapse_audit_probe.gleam:16[39m
+#(0.5, Ok([0.7853981633974483]))
+[90msrc/offset_collapse_audit_probe.gleam:16[39m
+#(1.0, Error(DegenerateTangent(0.0)))
+[90msrc/offset_collapse_audit_probe.gleam:16[39m
+#(1.5, Ok([0.7853981633974483]))
+[90msrc/offset_collapse_audit_probe.gleam:16[39m
+#(2.0, Ok([3.141592653589793]))
+[90msrc/offset_collapse_audit_probe.gleam:16[39m
+#(2.5, Ok([]))
+[90msrc/offset_collapse_audit_probe.gleam:16[39m
+#(3.0, Ok([]))

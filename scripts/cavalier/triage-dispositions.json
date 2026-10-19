@@ -355,5 +355,15 @@
     ],
     "status": "confirmed-native-cyclic-circle-sampling-defect-at-smaller-minimum-length",
     "reason": "With minimum_length 1e-8, loose circle residual tolerance accepts t=0 then cyclic sampling rejects it. Reduced to two perpendicular lines, reproduced Erlang/JS. The local repair now makes all 16 affected arrangements build at minimum_length 1e-8 on JS (cyclic-repaired-original.json); the default boundary guard remains a separate disposition. See CYCLIC-ORDER-TRIAGE.md."
+  },
+  {
+    "ids": [
+      "CC01160",
+      "CC01189",
+      "CC01292",
+      "CC01296"
+    ],
+    "status": "native-endpoint-loss-repaired-comparison-partly-open",
+    "reason": "degenerate_line_list confused no axis longer than tolerance with no movement. Working-tree repair preserves distinct endpoints; all four offsets now construct. CC01296 matches aggregate properties, other three remain offset-policy/geometry discrepancies. See OFFSET-COLLAPSE-AND-NORMALIZATION-TRIAGE.md."
   }
 ]
