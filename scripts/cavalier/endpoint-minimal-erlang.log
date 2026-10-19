@@ -1,0 +1,11 @@
+  Compiling cavalier_audit_probe
+   Compiled in 0.33s
+    Running endpoint_tolerance_audit_probe.main
+[90msrc/endpoint_tolerance_audit_probe.gleam:18[39m
+#(0.0, Ok([SegmentIntersection(1.0, 0.0, Point(0.0, 1.0))]))
+[90msrc/endpoint_tolerance_audit_probe.gleam:18[39m
+#(1.0e-12, Error(CrossingMaxIterationsReached(1.0, 1.000088900582341e-12)))
+[90msrc/endpoint_tolerance_audit_probe.gleam:18[39m
+#(1.0e-10, Ok([]))
+[90msrc/endpoint_tolerance_audit_probe.gleam:18[39m
+#(2.0e-9, Ok([]))

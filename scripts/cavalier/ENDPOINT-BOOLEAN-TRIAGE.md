@@ -8,7 +8,11 @@
 Native source: `090f8e63`. Classification only; no production modifications,
 permanent regression additions, commits, or F# work.
 
-## Arc endpoint matching uses the wrong tolerance for the caller
+## Arc endpoint matching uses a stricter tolerance than the caller
+
+> Follow-up: ENDPOINT-REPAIR-EXPERIMENT.md revises the bug classification. The
+> blanket caller-tolerance change conflicts with FL006, and endpoint completeness
+> within tolerance is not explicitly promised. The observations below remain valid.
 
 CC01751, CC01752 and CC01753 are three presentations of the same near-coincident
 arc endpoint pair. Their endpoint gap is 1.4068028429806625e-12.

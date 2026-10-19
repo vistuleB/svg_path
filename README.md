@@ -1282,6 +1282,13 @@ intersections.path_self(path)
 Results are ordered by parameter, and boundary aliases are canonicalized. Use
 `_with` variants to supply `IntersectionOptions` or `SelfIntersectionOptions`.
 
+Intersection tolerance is a numerical acceptance bound in path-coordinate units:
+each reported point must be within that distance of both curves evaluated at
+their reported parameters. Meeting this bound is **necessary, not sufficient**
+for reporting an intersection. Tolerance is not a proximity query or an endpoint
+snapping or merging radius. For example, two distinct endpoints less than `1e-9`
+apart need not produce an intersection when the tolerance is `1e-9`.
+
 These are numerical results, not exact algebraic root certificates. Returned
 candidates satisfy the geometric tolerance, but several distinct parameter
 pairs can approximate the same mathematical contact, especially at tangencies

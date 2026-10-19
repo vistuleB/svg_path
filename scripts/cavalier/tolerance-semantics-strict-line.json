@@ -1,0 +1,326 @@
+[
+  {
+    "name": "perpendicular gap=0 line/line",
+    "tolerance": 1e-9,
+    "result": {
+      "ok": true,
+      "hits": [
+        {
+          "left_t": 1,
+          "right_t": 0,
+          "point": {
+            "x": 1,
+            "y": 0
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "perpendicular gap=0 line/quadratic",
+    "tolerance": 1e-9,
+    "result": {
+      "ok": true,
+      "hits": [
+        {
+          "left_t": 1,
+          "right_t": 0,
+          "point": {
+            "x": 1,
+            "y": 0
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "perpendicular gap=0 line/cubic",
+    "tolerance": 1e-9,
+    "result": {
+      "ok": true,
+      "hits": [
+        {
+          "left_t": 1,
+          "right_t": 0,
+          "point": {
+            "x": 1,
+            "y": 0
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "perpendicular gap=0 quadratic/line",
+    "tolerance": 1e-9,
+    "result": {
+      "ok": true,
+      "hits": [
+        {
+          "left_t": 1,
+          "right_t": 0,
+          "point": {
+            "x": 1,
+            "y": 0
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "perpendicular gap=0 quadratic/quadratic",
+    "tolerance": 1e-9,
+    "result": {
+      "ok": true,
+      "hits": [
+        {
+          "left_t": 1,
+          "right_t": 0,
+          "point": {
+            "x": 1,
+            "y": 0
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "perpendicular gap=0 quadratic/cubic",
+    "tolerance": 1e-9,
+    "result": {
+      "ok": true,
+      "hits": [
+        {
+          "left_t": 1,
+          "right_t": 0,
+          "point": {
+            "x": 1,
+            "y": 0
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "perpendicular gap=0 cubic/line",
+    "tolerance": 1e-9,
+    "result": {
+      "ok": true,
+      "hits": [
+        {
+          "left_t": 1,
+          "right_t": 0,
+          "point": {
+            "x": 1,
+            "y": 0
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "perpendicular gap=0 cubic/quadratic",
+    "tolerance": 1e-9,
+    "result": {
+      "ok": true,
+      "hits": [
+        {
+          "left_t": 1,
+          "right_t": 0,
+          "point": {
+            "x": 1,
+            "y": 0
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "perpendicular gap=0 cubic/cubic",
+    "tolerance": 1e-9,
+    "result": {
+      "ok": true,
+      "hits": [
+        {
+          "left_t": 1,
+          "right_t": 0,
+          "point": {
+            "x": 1,
+            "y": 0
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "perpendicular gap=1e-10 line/line",
+    "tolerance": 1e-9,
+    "result": {
+      "ok": true,
+      "hits": []
+    }
+  },
+  {
+    "name": "perpendicular gap=1e-10 line/quadratic",
+    "tolerance": 1e-9,
+    "result": {
+      "ok": true,
+      "hits": []
+    }
+  },
+  {
+    "name": "perpendicular gap=1e-10 line/cubic",
+    "tolerance": 1e-9,
+    "result": {
+      "ok": true,
+      "hits": []
+    }
+  },
+  {
+    "name": "perpendicular gap=1e-10 quadratic/line",
+    "tolerance": 1e-9,
+    "result": {
+      "ok": true,
+      "hits": []
+    }
+  },
+  {
+    "name": "perpendicular gap=1e-10 quadratic/quadratic",
+    "tolerance": 1e-9,
+    "result": {
+      "ok": true,
+      "hits": []
+    }
+  },
+  {
+    "name": "perpendicular gap=1e-10 quadratic/cubic",
+    "tolerance": 1e-9,
+    "result": {
+      "ok": true,
+      "hits": []
+    }
+  },
+  {
+    "name": "perpendicular gap=1e-10 cubic/line",
+    "tolerance": 1e-9,
+    "result": {
+      "ok": true,
+      "hits": []
+    }
+  },
+  {
+    "name": "perpendicular gap=1e-10 cubic/quadratic",
+    "tolerance": 1e-9,
+    "result": {
+      "ok": true,
+      "hits": []
+    }
+  },
+  {
+    "name": "perpendicular gap=1e-10 cubic/cubic",
+    "tolerance": 1e-9,
+    "result": {
+      "ok": true,
+      "hits": []
+    }
+  },
+  {
+    "name": "perpendicular gap=2e-9 line/line",
+    "tolerance": 1e-9,
+    "result": {
+      "ok": true,
+      "hits": []
+    }
+  },
+  {
+    "name": "perpendicular gap=2e-9 line/quadratic",
+    "tolerance": 1e-9,
+    "result": {
+      "ok": true,
+      "hits": []
+    }
+  },
+  {
+    "name": "perpendicular gap=2e-9 line/cubic",
+    "tolerance": 1e-9,
+    "result": {
+      "ok": true,
+      "hits": []
+    }
+  },
+  {
+    "name": "perpendicular gap=2e-9 quadratic/line",
+    "tolerance": 1e-9,
+    "result": {
+      "ok": true,
+      "hits": []
+    }
+  },
+  {
+    "name": "perpendicular gap=2e-9 quadratic/quadratic",
+    "tolerance": 1e-9,
+    "result": {
+      "ok": true,
+      "hits": []
+    }
+  },
+  {
+    "name": "perpendicular gap=2e-9 quadratic/cubic",
+    "tolerance": 1e-9,
+    "result": {
+      "ok": true,
+      "hits": []
+    }
+  },
+  {
+    "name": "perpendicular gap=2e-9 cubic/line",
+    "tolerance": 1e-9,
+    "result": {
+      "ok": true,
+      "hits": []
+    }
+  },
+  {
+    "name": "perpendicular gap=2e-9 cubic/quadratic",
+    "tolerance": 1e-9,
+    "result": {
+      "ok": true,
+      "hits": []
+    }
+  },
+  {
+    "name": "perpendicular gap=2e-9 cubic/cubic",
+    "tolerance": 1e-9,
+    "result": {
+      "ok": true,
+      "hits": []
+    }
+  },
+  {
+    "name": "distinct constant points",
+    "tolerance": 1e-9,
+    "result": {
+      "ok": true,
+      "hits": [
+        {
+          "left_t": 0,
+          "right_t": 0,
+          "point": {
+            "x": 0,
+            "y": 0
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "parallel offset lines",
+    "tolerance": 1e-9,
+    "result": {
+      "ok": false,
+      "error": {
+        "type": "OverlappingSegments"
+      }
+    }
+  }
+]

@@ -1,0 +1,26 @@
+--- a/src/svg_path/intersections.gleam
++++ b/src/svg_path/intersections.gleam
+@@ -4444,7 +4444,7 @@
+   use endpoints <- result.try(case endpoint_seeds {
+     Some(seeds) -> Ok(seeds)
+     None ->
+-      elizabeth_endpoint_candidates(left, right, tolerance)
++      elizabeth_endpoint_candidates(left, right, options.tolerance)
+       |> result.map_error(CurveSolverPathError)
+   })
+   elizabeth_beam_generation(
+@@ -5218,13 +5218,8 @@
+             svg_path.segment_map_points(right, with: normalize)
+             |> result.map_error(CurveSolverPathError),
+           )
+-          use original_tolerance <- result.try(elizabeth_search_tolerance(
+-            left,
+-            right,
+-            options,
+-          ))
+           use original_endpoints <- result.try(
+-            elizabeth_endpoint_candidates(left, right, original_tolerance)
++            elizabeth_endpoint_candidates(left, right, options.tolerance)
+             |> result.map_error(CurveSolverPathError),
+           )
+           let seeds =

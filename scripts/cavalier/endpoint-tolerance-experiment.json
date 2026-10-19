@@ -1,0 +1,119 @@
+[
+  {
+    "id": "CC01751",
+    "magnitude": 225.6316469895722,
+    "internal_tolerance": 8.01604638630139e-13,
+    "endpoints": [
+      {
+        "t": 0,
+        "public_matches": [],
+        "internal_matches": []
+      },
+      {
+        "t": 1,
+        "public_matches": [
+          1
+        ],
+        "internal_matches": []
+      }
+    ],
+    "native": [
+      {
+        "left_t": 1,
+        "right_t": 1,
+        "point": {
+          "x": -170.9999999999995,
+          "y": -225.6316469895715
+        }
+      }
+    ],
+    "translated": [
+      {
+        "left_t": 1,
+        "right_t": 1,
+        "point": {
+          "x": 4.973799150320701e-13,
+          "y": -4.973799150320701e-13
+        }
+      }
+    ]
+  },
+  {
+    "id": "CC01752",
+    "magnitude": 225.6316469895722,
+    "internal_tolerance": 8.01604638630139e-13,
+    "endpoints": [
+      {
+        "t": 0,
+        "public_matches": [],
+        "internal_matches": []
+      },
+      {
+        "t": 1,
+        "public_matches": [
+          1
+        ],
+        "internal_matches": []
+      }
+    ],
+    "native": [
+      {
+        "left_t": 1,
+        "right_t": 1,
+        "point": {
+          "x": -170.9999999999995,
+          "y": -225.6316469895715
+        }
+      }
+    ],
+    "translated": [
+      {
+        "left_t": 1,
+        "right_t": 1,
+        "point": {
+          "x": 4.973799150320701e-13,
+          "y": -4.973799150320701e-13
+        }
+      }
+    ]
+  },
+  {
+    "id": "CC01753",
+    "magnitude": 225.6316469895722,
+    "internal_tolerance": 8.01604638630139e-13,
+    "endpoints": [
+      {
+        "t": 0,
+        "public_matches": [],
+        "internal_matches": []
+      },
+      {
+        "t": 1,
+        "public_matches": [
+          0
+        ],
+        "internal_matches": []
+      }
+    ],
+    "native": [
+      {
+        "left_t": 1,
+        "right_t": 0,
+        "point": {
+          "x": -170.9999999999995,
+          "y": -225.6316469895715
+        }
+      }
+    ],
+    "translated": [
+      {
+        "left_t": 1,
+        "right_t": 0,
+        "point": {
+          "x": 4.973799150320701e-13,
+          "y": -4.973799150320701e-13
+        }
+      }
+    ]
+  }
+]

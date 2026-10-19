@@ -123,8 +123,8 @@
       "CC01752",
       "CC01753"
     ],
-    "status": "native-endpoint-tolerance-inconsistency",
-    "reason": "Endpoint matcher accepts with public 1e-9 but rejects with internal 8.016e-13 passed by arc search. See ENDPOINT-BOOLEAN-TRIAGE.md."
+    "status": "understood-tolerance-semantics-not-a-confirmed-bug",
+    "reason": "User clarified 2026-10-19: tolerance is a necessary acceptance bound, not a sufficient proximity rule. Missing approximate endpoint matches are not confirmed bugs; reject blanket widening that conflicts with FL006. The reduced iteration error remains a separate robustness concern. See ENDPOINT-REPAIR-EXPERIMENT.md."
   },
   {
     "ids": [

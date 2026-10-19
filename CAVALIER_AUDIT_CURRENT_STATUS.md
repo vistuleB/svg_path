@@ -280,3 +280,59 @@ cover centered and offset endpoints, lines/arcs, reversed traversal and scales.
 All 16 original affected arrangements now build with minimum length 1e-8 on JS;
 see `scripts/cavalier/cyclic-repaired-original.json` and `CYCLIC-ORDER-TRIAGE.md`.
 Default CSG boundary-guard dispositions remain separate. F# and commit deferred.
+
+## Endpoint tolerance follow-up after cyclic-order repair
+
+Cyclic-order repair committed as `3e8aa8c`. Next investigation reduces
+CC01751–CC01753 to two unit-radius quarter-circles with a sub-tolerance endpoint
+gap, reproduced on Erlang and JS. An isolated copied-JS-build experiment using
+caller tolerance for endpoint seeds recovers the reduced and original cases;
+production source remains unchanged. See
+`scripts/cavalier/ENDPOINT-REPAIR-EXPERIMENT.md` for the candidate repair, controls,
+raw evidence, and remaining validation requirements.
+
+### Endpoint recommendation revised after broader testing
+
+The blanket endpoint-tolerance change conflicts with the existing FL006 regression:
+it adds three tolerance-valid near-endpoint candidates alongside the true crossing.
+The API does not explicitly promise all within-tolerance endpoint pairs are found.
+The earlier bug classification was too strong; record an approximate-endpoint
+policy/robustness question rather than adopting this as an unconditional repair.
+See the broader-investigation section of ENDPOINT-REPAIR-EXPERIMENT.md. Production
+source is unchanged; the tested candidate is preserved as an unapplied patch.
+
+### Endpoint semantics resolved — 2026-10-19
+
+User decision: tolerance is a necessary acceptance bound, not a sufficient
+proximity rule. CC01751–CC01753 missing approximate endpoint matches are not
+confirmed bugs; the blanket endpoint widening is rejected. Gleam API docs and
+README clarify this. The reduced iteration error remains a separate numerical
+robustness concern. Carry the documentation clarification into the deferred F#
+port; no solver changes or new commits in this documentation update.
+
+### Tolerance implementation review — 2026-10-19
+
+`TOLERANCE-SEMANTICS-REVIEW.md` records a concrete representation discrepancy:
+two straight edges separated by a sub-tolerance endpoint gap return a candidate
+as Lines but empty as straight quadratics. Reproduced Erlang/JS. Caller tolerance
+also participates in constant-point matching, overlap recognition and result
+grouping, so it is not used solely for final certification internally. The
+necessary-but-not-sufficient public bound remains coherent; no strict exact-root
+or representation-invariance guarantee is established. A shared numerical
+endpoint-recognition policy is a possible future internal improvement, requiring
+FL006 and exact-endpoint regressions. No production changes or commit.
+
+### Authorized stricter line-query experiment — 2026-10-19
+
+See `STRICT-LINE-TOLERANCE-EXPERIMENT.md`. The non-collinear line solver now shares
+curve search's numerical recognition threshold for endpoint admission, ray
+residuals and finite-line parameter bounds; public tolerance remains the final
+acceptance bound. The representation probe now agrees on all 27 line/Bezier pair
+cases. Constants, overlap/collinear handling and result grouping are unchanged.
+A permanent portable regression covers reversed line/quadratic representations.
+F# remains deferred. Validation results are recorded in the experiment report.
+
+The final stricter-line implementation passed `scripts/test-release`: 2,054
+ordinary + 31 slow, and 800 portable tests on each of Erlang and JavaScript.
+Retained in the working tree, uncommitted. Figures not regenerated; F# deferred.
+Raw log: `scripts/cavalier/strict-line-test-release.log`.

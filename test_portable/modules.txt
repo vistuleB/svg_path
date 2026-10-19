@@ -64,3 +64,4 @@ svg_path_flatten_arc_overlap_test.gleam
 svg_path_cavalier_projection_test.gleam
 
 svg_path_cyclic_order_short_edge_test.gleam
+svg_path_endpoint_representation_test.gleam

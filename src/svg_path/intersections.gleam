@@ -5,6 +5,13 @@
 //// `svg_path.SegmentIntersection`, `svg_path.SubpathIntersection`, and
 //// `svg_path.PathIntersection`.
 ////
+//// Intersection tolerance is a numerical acceptance bound in path-coordinate
+//// units. A reported point must be within that distance of each curve evaluated
+//// at its reported parameter. Satisfying this bound is necessary, not sufficient,
+//// for reporting an intersection: proximity alone does not establish one.
+//// In particular, tolerance is not an endpoint snapping or merging radius, and
+//// endpoints closer than tolerance are not guaranteed an intersection result.
+////
 //// General curve pairs use a bounded numerical search. Returned candidates
 //// satisfy the geometric tolerance, but the search is not a proof that every
 //// mathematical intersection was found. Nearby parameter pairs are merged;
@@ -224,8 +231,12 @@ pub type ParameterSnap {
 /// Options for finding segment, subpath, and path intersections.
 pub type IntersectionOptions {
   IntersectionOptions(
-    /// Path-coordinate distance used for geometric coincidence tests.
-    /// Final results must satisfy this tolerance. General curve-pair refinement
+    /// Numerical acceptance bound in path-coordinate units: each reported point
+    /// must be within this distance of both curves at their reported parameters.
+    /// This is necessary, not sufficient, for reporting an intersection. It is
+    /// not a proximity query or an endpoint snapping/merging radius; distinct
+    /// endpoints within tolerance need not produce an intersection result.
+    /// General curve-pair refinement
     /// uses a roundoff allowance internally; an unachievable requested tolerance
     /// can therefore return a certification error rather than an empty result.
     tolerance: Float,
@@ -3936,7 +3947,6 @@ fn line_segment_intersections(
         line_is_left,
         segment,
         options,
-        line_parameter_tolerance,
       )
   }
 }
@@ -3947,9 +3957,18 @@ fn line_segment_intersections_by_ray(
   line_is_left: Bool,
   segment: Segment,
   options: IntersectionOptions,
-  line_parameter_tolerance: Float,
 ) -> Result(List(SegmentIntersection), svg_path.Error) {
+  // Use the same numerical recognition threshold as curve/curve search.
+  // Caller tolerance certifies results; it must not widen just this solver's
+  // endpoint admission, ray residual or finite-line parameter range.
+  use numerical_tolerance <- result.try(numerical_search_tolerance(
+    Line(line_start, line_end),
+    segment,
+    options,
+  ))
   let line_direction = point_difference(line_end, line_start)
+  let line_parameter_tolerance =
+    parameter_tolerance_for_chord(line_direction, numerical_tolerance)
   // Analytic arc roots use reconstructed center/angle data. Near tangency,
   // roundoff can move an exact stored endpoint root outside the arc sweep.
   // Independently check both stored endpoints against the finite line. Keep
@@ -3963,7 +3982,7 @@ fn line_segment_intersections_by_ray(
       let #(segment_t, p) = endpoint
       let line_t = line_projection_t(p, line_start, line_end) |> clamp01
       let projected = interpolate(line_start, line_end, line_t)
-      case distance(p, projected) <=. options.tolerance {
+      case distance(p, projected) <=. numerical_tolerance {
         False -> Error(Nil)
         True ->
           Ok(case line_is_left {
@@ -3981,7 +4000,7 @@ fn line_segment_intersections_by_ray(
       direction: line_direction,
       options: svg_path.CrossingOptions(
         samples: 1,
-        signed_line_distance_tolerance: options.tolerance,
+        signed_line_distance_tolerance: numerical_tolerance,
         max_iterations: options.max_depth * 4,
       ),
     )
@@ -4464,18 +4483,21 @@ fn elizabeth_search_tolerance(
   right: Segment,
   options: IntersectionOptions,
 ) -> Result(Float, CurveSolverError) {
+  numerical_search_tolerance(left, right, options)
+  |> result.map_error(CurveSolverPathError)
+}
+
+fn numerical_search_tolerance(
+  left: Segment,
+  right: Segment,
+  options: IntersectionOptions,
+) -> Result(Float, svg_path.Error) {
   // Curve evaluation has an absolute rounding error proportional to its
   // coordinates. A fixed residual cap can be smaller than representable steps.
   // Include the enclosure (control points for Beziers), not only endpoints.
   // Sixteen machine epsilons allow for evaluation and subtraction rounding.
-  use left_points <- result.try(
-    query.segment_bounding_polygon(left)
-    |> result.map_error(CurveSolverPathError),
-  )
-  use right_points <- result.try(
-    query.segment_bounding_polygon(right)
-    |> result.map_error(CurveSolverPathError),
-  )
+  use left_points <- result.try(query.segment_bounding_polygon(left))
+  use right_points <- result.try(query.segment_bounding_polygon(right))
   let magnitude =
     list.fold(list.append(left_points, right_points), 0.0, fn(size, p) {
       float.max(

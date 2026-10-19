@@ -1,0 +1,14 @@
+  Compiling svg_path
+  Compiling cavalier_audit_probe
+   Compiled in 1.27s
+    Running tolerance_semantics_audit_probe.main
+[90msrc/tolerance_semantics_audit_probe.gleam:9[39m
+#("line/line", Ok([SegmentIntersection(1.0, 0.0, Point(1.0000000001, 1.0e-10))]))
+[90msrc/tolerance_semantics_audit_probe.gleam:10[39m
+#("quadratic/quadratic", Ok([]))
+[90msrc/tolerance_semantics_audit_probe.gleam:11[39m
+#("line/quadratic", Ok([SegmentIntersection(1.0, 0.0, Point(1.0000000001, 1.0e-10))]))
+[90msrc/tolerance_semantics_audit_probe.gleam:12[39m
+#("constant points", Ok([SegmentIntersection(0.0, 0.0, Point(0.0, 0.0))]))
+[90msrc/tolerance_semantics_audit_probe.gleam:19[39m
+#("parallel lines", Error(OverlappingSegments))
