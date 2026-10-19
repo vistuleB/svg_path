@@ -407,5 +407,12 @@
     ],
     "status": "understood-touching-contour-policy",
     "reason": "After tested exact-arc overlap repair, native returns one self-touching contour: Preserve variants match, Separate variants differ in grouping. Independent analytic boundary check passes. Native exposes neither touching-loop policy. The associated exact-arc overlap defect is repaired; see SHORT-ARC-OVERLAP-PERFORMANCE.md. Uncommitted candidate."
+  },
+  {
+    "ids": [
+      "CC01807"
+    ],
+    "status": "understood-source-normalization-and-retrace-policy",
+    "reason": "Default fitting tolerance also coarsens source line-degenerate windows. Tightening only normalization to 1e-4 reproduces upstream main contour properties; extra zero-area reversed-arc contour follows existing retrace preservation. See SHAPE-CASE3-TRIAGE.md. Clarify tolerance documentation; no confirmed geometry bug."
   }
 ]

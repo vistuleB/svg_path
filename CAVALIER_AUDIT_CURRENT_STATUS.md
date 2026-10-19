@@ -490,3 +490,13 @@ Preserve variants now match; Separate differs only in grouping. Six remaining
 investigation groups are listed in `scripts/cavalier/REMAINING-INVESTIGATIONS.md`.
 No commit, F# port or figures in this turn. See SHORT-ARC-OVERLAP-PERFORMANCE.md
 for logs, caveats and exact replay filenames.
+
+### Shape case3 investigation
+
+Committed exact-arc overlap repair and evidence as `0d3449f`. CC01807 is now
+explained: default fitting.tolerance also normalizes line-degenerate source
+windows. Tightening only that normalization to 1e-4 reproduces the main upstream
+contours; the extra zero-area out-and-back contour is consistent with existing
+retrace preservation tests. No new geometry bug established. Documentation
+clarification suggested. See `scripts/cavalier/SHAPE-CASE3-TRIAGE.md`. Five open
+investigation groups remain. No production changes; new findings uncommitted.
