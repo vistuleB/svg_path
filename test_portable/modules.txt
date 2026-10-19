@@ -71,3 +71,4 @@ svg_path_arc_interval_overlap_test.gleam
 svg_path_vertex_membership_test.gleam
 svg_path_shared_circle_intersections_test.gleam
 svg_path_offset_endpoint_cycle_test.gleam
+svg_path_exact_arc_overlap_test.gleam

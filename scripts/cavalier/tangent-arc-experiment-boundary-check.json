@@ -1,0 +1,12 @@
+{
+  "ideal_lobe_area": 84.20380692878892,
+  "ideal_lobe_length": 37.736160094840606,
+  "matched_ideal_pieces": 12,
+  "native_segments": 18,
+  "extra_seam_pieces": 6,
+  "extra_seam_length": 1.2772326234360815e-06,
+  "max_corresponding_piece_bound": 3.4833632191362123e-07,
+  "max_extra_seam_bound": 6.60118547104317e-07,
+  "symmetric_boundary_distance_upper_bound": 6.60118547104317e-07,
+  "method": "Analytic line/arc parameter correspondence plus arc-length seam enclosure; double-precision arithmetic, not interval arithmetic."
+}

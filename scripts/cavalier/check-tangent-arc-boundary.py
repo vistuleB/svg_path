@@ -1,10 +1,10 @@
 """Independent line/circle comparison against analytic inward-offset boundary.
 Uses exported native segments; does not call native intersection/projection.
 """
-import json, math
+import json, math, sys
 from pathlib import Path
 root=Path(__file__).resolve().parent
-raw=json.loads((root/'tangent-arc-contours.json').read_text())
+raw=json.loads((root/(sys.argv[1] if len(sys.argv)>1 else 'tangent-arc-contours.json')).read_text())
 r=math.sqrt(2)
 p=lambda v:(v['x'],v['y'])
 d=math.dist

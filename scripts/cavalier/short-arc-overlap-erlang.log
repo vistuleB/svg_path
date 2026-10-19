@@ -1,0 +1,23 @@
+  Compiling cavalier_audit_probe
+warning: Unused result value
+  ┌─ /Users/jpsteinb/github.com/vistuleB/svg_path/scripts/cavalier/probe/src/short_arc_normalization_audit_probe.gleam:9:3
+  │
+9 │   echo degeneracy.normalize_degenerate_segments(alone, 0.001)
+  │   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The Result value created here is unused
+
+Hint: If you are sure you don't need it you can assign it to `_`.
+
+warning: Unused result value
+   ┌─ /Users/jpsteinb/github.com/vistuleB/svg_path/scripts/cavalier/probe/src/short_arc_normalization_audit_probe.gleam:16:3
+   │
+16 │   echo offset.normalize_short_source_runs(source, 0.001)
+   │   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The Result value created here is unused
+
+Hint: If you are sure you don't need it you can assign it to `_`.
+
+   Compiled in 0.32s
+    Running short_arc_overlap_audit_probe.main
+[90msrc/short_arc_overlap_audit_probe.gleam:9[39m
+#(1.0e-7, Ok([SegmentIntersection(0.0, 0.0, Point(0.0, 0.0)), SegmentIntersection(0.2499999985480892, 0.2500000004839703, Point(2.4999999769079905e-8, -7.771561172376096e-16)), SegmentIntersection(0.5, 0.5, Point(5.0e-8, -1.1102230246251565e-15)), SegmentIntersection(1.0, 1.0, Point(1.0e-7, 0.0))]), Ok([SegmentIntersection(0.0, 1.0, Point(0.0, 0.0)), SegmentIntersection(0.49999999806411893, 0.5, Point(4.9999999839187735e-8, -1.1102230246251565e-15)), SegmentIntersection(0.7499999995160298, 0.2499999985480892, Point(7.499999990929555e-8, -7.771561172376096e-16)), SegmentIntersection(1.0, 0.0, Point(1.0e-7, 0.0))]))
+[90msrc/short_arc_overlap_audit_probe.gleam:9[39m
+#(1.0e-8, Ok([SegmentIntersection(0.0, 0.0, Point(0.0, 0.0)), SegmentIntersection(0.2499999912885351, 0.25, Point(2.5000000764260177e-9, -1.1102230246251565e-16)), SegmentIntersection(0.4999999816091296, 0.5, Point(5.0e-9, -1.1102230246251565e-16)), SegmentIntersection(1.0, 1.0, Point(1.0e-8, 0.0))]), Ok([SegmentIntersection(0.0, 1.0, Point(0.0, 0.0)), SegmentIntersection(0.24999998451295125, 0.7499999825770701, Point(2.5000000764260177e-9, -1.1102230246251565e-16)), SegmentIntersection(0.4999999816091296, 0.4999999816091296, Point(5.0e-9, -1.1102230246251565e-16)), SegmentIntersection(1.0, 0.0, Point(1.0e-8, 0.0))]))

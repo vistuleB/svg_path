@@ -11,6 +11,10 @@ rather than only the tag object.
 
 ## Unreleased
 
+- Preserve validated full overlap for exactly identical or reversed arcs when
+  rounded endpoint proposals conflict, avoiding false point intersections and
+  repeated subdivision of short coincident arcs in offset construction.
+
 - Retain intact offset cycles when clipping turns an original open endpoint into
   a cycle seam, instead of rejecting the result with a parity construction error.
 

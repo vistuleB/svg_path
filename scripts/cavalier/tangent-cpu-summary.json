@@ -1,0 +1,105 @@
+{
+  "sampled_milliseconds": 16201.24999999999,
+  "top_self_time": [
+    {
+      "function": "",
+      "file": "intersections.mjs",
+      "milliseconds": 3319.414999999992
+    },
+    {
+      "function": "Ok",
+      "file": "prelude.mjs",
+      "milliseconds": 3263.6879999999965
+    },
+    {
+      "function": "",
+      "file": "prelude.mjs",
+      "milliseconds": 872.3330000000022
+    },
+    {
+      "function": "isEqual",
+      "file": "prelude.mjs",
+      "milliseconds": 872.2980000000022
+    },
+    {
+      "function": "(garbage collector)",
+      "file": "",
+      "milliseconds": 800.3780000000007
+    },
+    {
+      "function": "getHash",
+      "file": "dict.mjs",
+      "milliseconds": 787.5870000000009
+    },
+    {
+      "function": "",
+      "file": "query.mjs",
+      "milliseconds": 415.21499999999963
+    },
+    {
+      "function": "lookup",
+      "file": "dict.mjs",
+      "milliseconds": 415.1549999999996
+    },
+    {
+      "function": "insertIntoNode",
+      "file": "dict.mjs",
+      "milliseconds": 380.24399999999986
+    },
+    {
+      "function": "unique_loop",
+      "file": "list.mjs",
+      "milliseconds": 312.58999999999975
+    },
+    {
+      "function": "do_endpoint_to_center",
+      "file": "ellipse.mjs",
+      "milliseconds": 302.95300000000003
+    },
+    {
+      "function": "elizabeth_cached_pair",
+      "file": "intersections.mjs",
+      "milliseconds": 268.50199999999995
+    },
+    {
+      "function": "hashObject",
+      "file": "dict.mjs",
+      "milliseconds": 262.5809999999999
+    },
+    {
+      "function": "ellipse_point",
+      "file": "ellipse.mjs",
+      "milliseconds": 236.70499999999998
+    },
+    {
+      "function": "merge_descending_pairs",
+      "file": "list.mjs",
+      "milliseconds": 194.918
+    },
+    {
+      "function": "arc_center_data",
+      "file": "svg_path.mjs",
+      "milliseconds": 179.41099999999997
+    },
+    {
+      "function": "reverse",
+      "file": "list.mjs",
+      "milliseconds": 160.916
+    },
+    {
+      "function": "atan2_degrees",
+      "file": "trig.mjs",
+      "milliseconds": 138.999
+    },
+    {
+      "function": "merge_ascendings",
+      "file": "list.mjs",
+      "milliseconds": 130.419
+    },
+    {
+      "function": "merge_all",
+      "file": "list.mjs",
+      "milliseconds": 127.499
+    }
+  ]
+}

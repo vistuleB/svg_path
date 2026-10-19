@@ -1,35 +1,33 @@
 # Remaining investigation groups — 2026-10-19
 
-After the endpoint-cycle repair, the remaining work is organized into seven
-groups. This is a work breakdown, not seven confirmed bugs or a count of all
-individual fixture discrepancies. Original baseline totals remain historical.
+Six investigation groups remain after the tested exact-arc overlap repair.
+These are work groups, not six confirmed bugs or a count of individual fixture
+discrepancies. Original baseline totals remain historical.
 
-1. **Tangent arc efficiency follow-up:** original contour discrepancies are
-   explained by Cavalier Preserve versus Separate policy. Independent analytic
-   boundary check accounts for all ideal pieces with calculated deviation below
-   6.7e-7. Construction still takes about 15 seconds and returns 25 additional
-   short seam pieces. Investigate cost/output complexity separately; see
-   `TANGENT-ARC-CONTOUR-TRIAGE.md`. This replaces the original geometry question,
-   rather than silently treating it as an unresolved contour bug.
-2. **Shape offset case3:** CC01807 now constructs but remains an aggregate
+Completed tangent-arc follow-up: exact-arc full-map preference repairs overlap
+classification and reduces the representative offset from ~15.4s to ~0.63s.
+Canonical release tests pass. Contour grouping remains a policy distinction.
+See `SHORT-ARC-OVERLAP-PERFORMANCE.md`; candidate remains uncommitted.
+
+1. **Shape offset case3:** CC01807 now constructs but remains an aggregate
    discrepancy. Same current replay file.
-3. **Other offset geometry and trimming policies:** remaining contour/length/
+2. **Other offset geometry and trimming policies:** remaining contour/length/
    bounds differences, including CC01160, CC01189 and CC01292 after endpoint-loss
    repair, square extra contours, and collapse semantics. Circle normal extrusion
    is understood and must not simply be treated as filled-region erosion.
-4. **Boolean closure and geometry classification:** earlier construction choices
+3. **Boolean closure and geometry classification:** earlier construction choices
    behind the 16 default boundary-guard cases, stronger equivalence checks for
    decomposition differences, and earlier-stage correctness in cases where final
    arc reconstruction conforms to the documented tolerance contract. See
    `BOOLEAN-CONTRACT-TRIAGE.md` and the dispositions register.
-5. **Near-semicircle numerical accuracy:** six center/bounds flags (CX00420/21,
+4. **Near-semicircle numerical accuracy:** six center/bounds flags (CX00420/21,
    CX00622/23, CX00636/37). Conversion conditioning and additional native
    cancellation were separated; disposition/improvement remains open.
-6. **Reduced endpoint-search robustness:** the 1e-12-gap iteration error from
+5. **Reduced endpoint-search robustness:** the 1e-12-gap iteration error from
    `ENDPOINT-REPAIR-EXPERIMENT.md`. Missing proximity matches are understood under
    the clarified necessary-not-sufficient tolerance contract; this narrower
    iteration failure remains a separate concern.
-7. **Coverage closure:** overlap interval adaptation and disposition of the 31
+6. **Coverage closure:** overlap interval adaptation and disposition of the 31
    tests without selected adaptations (8 representation/API reviews and 23
    math/internal gaps). See `TEST-COVERAGE.md` and `REVIEW.md`.
 

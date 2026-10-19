@@ -1,0 +1,98 @@
+[
+  {
+    "chord": 1,
+    "reverse": false,
+    "milliseconds": 5.58625,
+    "result": {
+      "error": "OverlappingSegments"
+    }
+  },
+  {
+    "chord": 1,
+    "reverse": true,
+    "milliseconds": 1.780541999999997,
+    "result": {
+      "error": "OverlappingSegments"
+    }
+  },
+  {
+    "chord": 0.001,
+    "reverse": false,
+    "milliseconds": 1.0344169999999977,
+    "result": {
+      "error": "OverlappingSegments"
+    }
+  },
+  {
+    "chord": 0.001,
+    "reverse": true,
+    "milliseconds": 0.7227080000000043,
+    "result": {
+      "error": "OverlappingSegments"
+    }
+  },
+  {
+    "chord": 0.00001,
+    "reverse": false,
+    "milliseconds": 0.6622909999999962,
+    "result": {
+      "error": "OverlappingSegments"
+    }
+  },
+  {
+    "chord": 0.00001,
+    "reverse": true,
+    "milliseconds": 0.8675830000000033,
+    "result": {
+      "error": "OverlappingSegments"
+    }
+  },
+  {
+    "chord": 1e-7,
+    "reverse": false,
+    "milliseconds": 0.5450839999999957,
+    "result": {
+      "error": "OverlappingSegments"
+    }
+  },
+  {
+    "chord": 1e-7,
+    "reverse": true,
+    "milliseconds": 0.5680839999999989,
+    "result": {
+      "error": "OverlappingSegments"
+    }
+  },
+  {
+    "chord": 1e-8,
+    "reverse": false,
+    "milliseconds": 0.9209580000000059,
+    "result": {
+      "error": "OverlappingSegments"
+    }
+  },
+  {
+    "chord": 1e-8,
+    "reverse": true,
+    "milliseconds": 0.8717919999999992,
+    "result": {
+      "error": "OverlappingSegments"
+    }
+  },
+  {
+    "chord": 1e-9,
+    "reverse": false,
+    "milliseconds": 0.8473749999999995,
+    "result": {
+      "error": "OverlappingSegments"
+    }
+  },
+  {
+    "chord": 1e-9,
+    "reverse": true,
+    "milliseconds": 0.7389170000000007,
+    "result": {
+      "error": "OverlappingSegments"
+    }
+  }
+]

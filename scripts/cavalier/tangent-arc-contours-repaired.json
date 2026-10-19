@@ -1,0 +1,575 @@
+{
+  "id": "CC01645",
+  "milliseconds": 625.9485830000001,
+  "source": {
+    "closed": true,
+    "vertices": [
+      [
+        0,
+        12,
+        0
+      ],
+      [
+        10,
+        12,
+        0
+      ],
+      [
+        10,
+        22,
+        0
+      ],
+      [
+        22,
+        22,
+        0
+      ],
+      [
+        22,
+        10,
+        0
+      ],
+      [
+        12,
+        10,
+        0
+      ],
+      [
+        12,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0
+      ]
+    ]
+  },
+  "offset": -1.4142135623730951,
+  "contours": [
+    {
+      "closed": true,
+      "segments": [
+        {
+          "segment": {
+            "type": "Line",
+            "start": {
+              "type": "Point",
+              "x": 1.414213562373095,
+              "y": 10.585786437626904
+            },
+            "end": {
+              "type": "Point",
+              "x": 10,
+              "y": 10.585786437626904
+            }
+          },
+          "center": null
+        },
+        {
+          "segment": {
+            "type": "Arc",
+            "start": {
+              "type": "Point",
+              "x": 10,
+              "y": 10.585786437626904
+            },
+            "radius": {
+              "type": "Point",
+              "x": 1.4142135623730951,
+              "y": 1.4142135623730951
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "type": "Point",
+              "x": 10.999999753689101,
+              "y": 10.999999753689162
+            }
+          },
+          "center": {
+            "type": "CenterArcData",
+            "center": {
+              "type": "EllipsePoint",
+              "x": 10,
+              "y": 12
+            },
+            "radius": {
+              "type": "EllipsePoint",
+              "x": 1.4142135623730951,
+              "y": 1.4142135623730951
+            },
+            "x_axis_rotation": 0,
+            "start_angle": -89.99999999999999,
+            "delta_angle": 44.999985887426796
+          }
+        },
+        {
+          "segment": {
+            "type": "Arc",
+            "start": {
+              "type": "Point",
+              "x": 10.999999753689101,
+              "y": 10.999999753689162
+            },
+            "radius": {
+              "type": "Point",
+              "x": 1.4142135623730951,
+              "y": 1.4142135623730951
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "type": "Point",
+              "x": 10.999999974152564,
+              "y": 10.999999974152564
+            }
+          },
+          "center": {
+            "type": "CenterArcData",
+            "center": {
+              "type": "EllipsePoint",
+              "x": 10.000000000896245,
+              "y": 12.000000000896245
+            },
+            "radius": {
+              "type": "EllipsePoint",
+              "x": 1.4142135623730951,
+              "y": 1.4142135623730951
+            },
+            "x_axis_rotation": 0,
+            "start_angle": -45.00001416392427,
+            "delta_angle": 0.000012631624216598917
+          }
+        },
+        {
+          "segment": {
+            "type": "Arc",
+            "start": {
+              "type": "Point",
+              "x": 10.999999974152564,
+              "y": 10.999999974152564
+            },
+            "radius": {
+              "type": "Point",
+              "x": 1.4142135623730951,
+              "y": 1.4142135623730951
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "type": "Point",
+              "x": 11.000000020787544,
+              "y": 11.000000020787544
+            }
+          },
+          "center": {
+            "type": "CenterArcData",
+            "center": {
+              "type": "EllipsePoint",
+              "x": 9.999999997470054,
+              "y": 11.999999997470054
+            },
+            "radius": {
+              "type": "EllipsePoint",
+              "x": 1.4142135623730951,
+              "y": 1.4142135623730951
+            },
+            "x_axis_rotation": 0,
+            "start_angle": -45.00000133599377,
+            "delta_angle": 0.0000026719875469381914
+          }
+        },
+        {
+          "segment": {
+            "type": "Arc",
+            "start": {
+              "type": "Point",
+              "x": 11.000000020787544,
+              "y": 11.000000020787544
+            },
+            "radius": {
+              "type": "Point",
+              "x": 1.4142135623730951,
+              "y": 1.4142135623730951
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "type": "Point",
+              "x": 11.000000205259035,
+              "y": 11.000000205259077
+            }
+          },
+          "center": {
+            "type": "CenterArcData",
+            "center": {
+              "type": "EllipsePoint",
+              "x": 9.999999997470056,
+              "y": 11.999999997470054
+            },
+            "radius": {
+              "type": "EllipsePoint",
+              "x": 1.4142135623730951,
+              "y": 1.4142135623730951
+            },
+            "x_axis_rotation": 0,
+            "start_angle": -44.99999866400621,
+            "delta_angle": 0.000010569439069044712
+          }
+        },
+        {
+          "segment": {
+            "type": "Arc",
+            "start": {
+              "type": "Point",
+              "x": 11.000000205259035,
+              "y": 11.000000205259077
+            },
+            "radius": {
+              "type": "Point",
+              "x": 1.4142135623730951,
+              "y": 1.4142135623730951
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "type": "Point",
+              "x": 11.414213562373096,
+              "y": 12
+            }
+          },
+          "center": {
+            "type": "CenterArcData",
+            "center": {
+              "type": "EllipsePoint",
+              "x": 10,
+              "y": 12.000000000000002
+            },
+            "radius": {
+              "type": "EllipsePoint",
+              "x": 1.4142135623730951,
+              "y": 1.4142135623730951
+            },
+            "x_axis_rotation": 0,
+            "start_angle": -44.99998823952245,
+            "delta_angle": 44.999988239522395
+          }
+        },
+        {
+          "segment": {
+            "type": "Line",
+            "start": {
+              "type": "Point",
+              "x": 11.414213562373096,
+              "y": 12
+            },
+            "end": {
+              "type": "Point",
+              "x": 11.414213562373096,
+              "y": 20.585786437626904
+            }
+          },
+          "center": null
+        },
+        {
+          "segment": {
+            "type": "Line",
+            "start": {
+              "type": "Point",
+              "x": 11.414213562373096,
+              "y": 20.585786437626904
+            },
+            "end": {
+              "type": "Point",
+              "x": 20.585786437626904,
+              "y": 20.585786437626904
+            }
+          },
+          "center": null
+        },
+        {
+          "segment": {
+            "type": "Line",
+            "start": {
+              "type": "Point",
+              "x": 20.585786437626904,
+              "y": 20.585786437626904
+            },
+            "end": {
+              "type": "Point",
+              "x": 20.585786437626904,
+              "y": 11.414213562373096
+            }
+          },
+          "center": null
+        },
+        {
+          "segment": {
+            "type": "Line",
+            "start": {
+              "type": "Point",
+              "x": 20.585786437626904,
+              "y": 11.414213562373096
+            },
+            "end": {
+              "type": "Point",
+              "x": 12,
+              "y": 11.414213562373096
+            }
+          },
+          "center": null
+        },
+        {
+          "segment": {
+            "type": "Arc",
+            "start": {
+              "type": "Point",
+              "x": 12,
+              "y": 11.414213562373096
+            },
+            "radius": {
+              "type": "Point",
+              "x": 1.4142135623730951,
+              "y": 1.4142135623730951
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "type": "Point",
+              "x": 11.000000205259045,
+              "y": 11.000000205259067
+            }
+          },
+          "center": {
+            "type": "CenterArcData",
+            "center": {
+              "type": "EllipsePoint",
+              "x": 11.999999999999938,
+              "y": 10
+            },
+            "radius": {
+              "type": "EllipsePoint",
+              "x": 1.4142135623730951,
+              "y": 1.4142135623730951
+            },
+            "x_axis_rotation": 0,
+            "start_angle": 89.99999999999747,
+            "delta_angle": 44.99998823952314
+          }
+        },
+        {
+          "segment": {
+            "type": "Arc",
+            "start": {
+              "type": "Point",
+              "x": 11.000000205259045,
+              "y": 11.000000205259067
+            },
+            "radius": {
+              "type": "Point",
+              "x": 1.4142135623730951,
+              "y": 1.4142135623730951
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "type": "Point",
+              "x": 11.000000020787544,
+              "y": 11.000000020787544
+            }
+          },
+          "center": {
+            "type": "CenterArcData",
+            "center": {
+              "type": "EllipsePoint",
+              "x": 10.000000055246677,
+              "y": 12.000000055246675
+            },
+            "radius": {
+              "type": "EllipsePoint",
+              "x": 1.4142135623730951,
+              "y": 1.4142135623730951
+            },
+            "x_axis_rotation": 0,
+            "start_angle": -44.9999914049238,
+            "delta_angle": -0.000010569439075405825
+          }
+        },
+        {
+          "segment": {
+            "type": "Arc",
+            "start": {
+              "type": "Point",
+              "x": 11.000000020787544,
+              "y": 11.000000020787544
+            },
+            "radius": {
+              "type": "Point",
+              "x": 1.4142135623730951,
+              "y": 1.4142135623730951
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "type": "Point",
+              "x": 10.999999974152564,
+              "y": 10.999999974152564
+            }
+          },
+          "center": {
+            "type": "CenterArcData",
+            "center": {
+              "type": "EllipsePoint",
+              "x": 9.999999997470054,
+              "y": 11.999999997470054
+            },
+            "radius": {
+              "type": "EllipsePoint",
+              "x": 1.4142135623730951,
+              "y": 1.4142135623730951
+            },
+            "x_axis_rotation": 0,
+            "start_angle": -44.99999866400623,
+            "delta_angle": -0.0000026719875469381914
+          }
+        },
+        {
+          "segment": {
+            "type": "Arc",
+            "start": {
+              "type": "Point",
+              "x": 10.999999974152564,
+              "y": 10.999999974152564
+            },
+            "radius": {
+              "type": "Point",
+              "x": 1.4142135623730951,
+              "y": 1.4142135623730951
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "type": "Point",
+              "x": 10.999999753689117,
+              "y": 10.999999753689146
+            }
+          },
+          "center": {
+            "type": "CenterArcData",
+            "center": {
+              "type": "EllipsePoint",
+              "x": 9.99999992837986,
+              "y": 11.999999928379857
+            },
+            "radius": {
+              "type": "EllipsePoint",
+              "x": 1.4142135623730951,
+              "y": 1.4142135623730951
+            },
+            "x_axis_rotation": 0,
+            "start_angle": -44.99999737741715,
+            "delta_angle": -0.00001263162421341836
+          }
+        },
+        {
+          "segment": {
+            "type": "Arc",
+            "start": {
+              "type": "Point",
+              "x": 10.999999753689117,
+              "y": 10.999999753689146
+            },
+            "radius": {
+              "type": "Point",
+              "x": 1.4142135623730951,
+              "y": 1.4142135623730951
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "type": "Point",
+              "x": 10.585786437626904,
+              "y": 10
+            }
+          },
+          "center": {
+            "type": "CenterArcData",
+            "center": {
+              "type": "EllipsePoint",
+              "x": 12,
+              "y": 10.000000000000089
+            },
+            "radius": {
+              "type": "EllipsePoint",
+              "x": 1.4142135623730951,
+              "y": 1.4142135623730951
+            },
+            "x_axis_rotation": 0,
+            "start_angle": 135.00001411257574,
+            "delta_angle": 44.99998588742785
+          }
+        },
+        {
+          "segment": {
+            "type": "Line",
+            "start": {
+              "type": "Point",
+              "x": 10.585786437626904,
+              "y": 10
+            },
+            "end": {
+              "type": "Point",
+              "x": 10.585786437626904,
+              "y": 1.4142135623730951
+            }
+          },
+          "center": null
+        },
+        {
+          "segment": {
+            "type": "Line",
+            "start": {
+              "type": "Point",
+              "x": 10.585786437626904,
+              "y": 1.4142135623730951
+            },
+            "end": {
+              "type": "Point",
+              "x": 1.4142135623730951,
+              "y": 1.4142135623730951
+            }
+          },
+          "center": null
+        },
+        {
+          "segment": {
+            "type": "Line",
+            "start": {
+              "type": "Point",
+              "x": 1.4142135623730951,
+              "y": 1.4142135623730951
+            },
+            "end": {
+              "type": "Point",
+              "x": 1.414213562373095,
+              "y": 10.585786437626904
+            }
+          },
+          "center": null
+        }
+      ]
+    }
+  ]
+}

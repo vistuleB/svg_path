@@ -468,3 +468,25 @@ changes. A separate efficiency concern remains: roughly 15 seconds for this
 8-edge source and 37 output segments, including 25 short seam pieces. This is
 not yet a measured historical regression; the remaining-work register now
 tracks that concern instead of the explained contour-policy discrepancy.
+
+### Short-arc overlap performance investigation
+
+Committed preceding contour-policy findings as `544a358`. Profiling isolates
+~16.3s in general curve intersections. A valid radius-1 arc of chord 1e-8 against
+itself/reverse incorrectly returns point hits: conflicting endpoint proposals
+erase the already-validated full overlap. Reproduced Erlang/JS. Copied-build
+exact-arc full-map preference reduces the original offset to ~0.61s and 18
+segments (one self-touching contour); independent boundary check still passes.
+See `scripts/cavalier/SHORT-ARC-OVERLAP-PERFORMANCE.md`. No production repair or
+full regression testing yet. New investigation evidence remains uncommitted.
+
+### Exact-arc overlap candidate tested
+
+Implemented narrow full-map preference for exactly identical/reversed arcs,
+after existing validation. Four portable regression tests added. Canonical
+`scripts/test-release` passed: 2,073 ordinary + 31 slow + 819 on each portable
+target. Actual Gleam JS original replay ~0.63s, 18 segments, boundary check passes.
+Preserve variants now match; Separate differs only in grouping. Six remaining
+investigation groups are listed in `scripts/cavalier/REMAINING-INVESTIGATIONS.md`.
+No commit, F# port or figures in this turn. See SHORT-ARC-OVERLAP-PERFORMANCE.md
+for logs, caveats and exact replay filenames.

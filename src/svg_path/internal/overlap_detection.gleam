@@ -369,9 +369,10 @@ fn detect_nonconstant_with_samples(
 
 // Endpoint projection can produce several nearby parameter addresses for one
 // endpoint. Merging these proposals can contradict an otherwise valid full map.
-// Prefer that map only with a whole-curve control-point distance bound and a
-// shared strictly monotone coordinate. The latter excludes extra traversal
-// branches; sampled coincidence alone is insufficient for this preference.
+// An exact arc identity/reversal certifies its full map after validation.
+// For polynomials require a whole-curve control-point distance bound and a
+// shared strictly monotone coordinate to exclude extra traversal branches;
+// sampled coincidence alone is insufficient for this preference.
 fn prefer_certified_full_overlap(
   candidates: List(RawOverlap),
   left: svg_path.Segment,
@@ -386,22 +387,36 @@ fn prefer_certified_full_overlap(
       case lf == 0.0 && lt == 1.0 {
         False -> False
         True -> {
-          let oriented_right = case rf, rt {
-            0.0, 1.0 -> right_controls
-            1.0, 0.0 -> list.reverse(right_controls)
-            _, _ -> []
-          }
-          let pairs = list.zip(left_controls, oriented_right)
-          !list.is_empty(pairs)
-          && list.length(left_controls) == list.length(oriented_right)
-          && list.all(pairs, fn(pair) { points_near(pair.0, pair.1, tolerance) })
-          && {
-            shared_monotone_coordinate(left_controls, oriented_right, fn(p) {
-              p.x
-            })
-            || shared_monotone_coordinate(left_controls, oriented_right, fn(p) {
-              p.y
-            })
+          case left, right {
+            svg_path.Arc(..), svg_path.Arc(..) ->
+              case rf, rt {
+                0.0, 1.0 -> left == right
+                1.0, 0.0 -> left == svg_path.segment_reverse(right)
+                _, _ -> False
+              }
+            _, _ -> {
+              let oriented_right = case rf, rt {
+                0.0, 1.0 -> right_controls
+                1.0, 0.0 -> list.reverse(right_controls)
+                _, _ -> []
+              }
+              let pairs = list.zip(left_controls, oriented_right)
+              !list.is_empty(pairs)
+              && list.length(left_controls) == list.length(oriented_right)
+              && list.all(pairs, fn(pair) {
+                points_near(pair.0, pair.1, tolerance)
+              })
+              && {
+                shared_monotone_coordinate(left_controls, oriented_right, fn(p) {
+                  p.x
+                })
+                || shared_monotone_coordinate(
+                  left_controls,
+                  oriented_right,
+                  fn(p) { p.y },
+                )
+              }
+            }
           }
         }
       }

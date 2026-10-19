@@ -1,0 +1,230 @@
+[
+  {
+    "chord": 1,
+    "reverse": false,
+    "milliseconds": 6.343583000000002,
+    "result": {
+      "error": "OverlappingSegments"
+    }
+  },
+  {
+    "chord": 1,
+    "reverse": true,
+    "milliseconds": 1.950833000000003,
+    "result": {
+      "error": "OverlappingSegments"
+    }
+  },
+  {
+    "chord": 0.001,
+    "reverse": false,
+    "milliseconds": 0.9983330000000024,
+    "result": {
+      "error": "OverlappingSegments"
+    }
+  },
+  {
+    "chord": 0.001,
+    "reverse": true,
+    "milliseconds": 0.8102500000000035,
+    "result": {
+      "error": "OverlappingSegments"
+    }
+  },
+  {
+    "chord": 0.00001,
+    "reverse": false,
+    "milliseconds": 0.8479170000000025,
+    "result": {
+      "error": "OverlappingSegments"
+    }
+  },
+  {
+    "chord": 0.00001,
+    "reverse": true,
+    "milliseconds": 0.8617080000000001,
+    "result": {
+      "error": "OverlappingSegments"
+    }
+  },
+  {
+    "chord": 1e-7,
+    "reverse": false,
+    "milliseconds": 0.5057079999999985,
+    "result": {
+      "error": "OverlappingSegments"
+    }
+  },
+  {
+    "chord": 1e-7,
+    "reverse": true,
+    "milliseconds": 0.5715840000000014,
+    "result": {
+      "error": "OverlappingSegments"
+    }
+  },
+  {
+    "chord": 1e-8,
+    "reverse": false,
+    "milliseconds": 630.790125,
+    "result": {
+      "hits": [
+        {
+          "left_t": 0,
+          "right_t": 0,
+          "point": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "left_t": 0.2499999912885351,
+          "right_t": 0.25,
+          "point": {
+            "x": 2.4999998543814128e-9,
+            "y": -1.1102230246251565e-16
+          }
+        },
+        {
+          "left_t": 0.4999999816091296,
+          "right_t": 0.5,
+          "point": {
+            "x": 4.999999839187735e-9,
+            "y": -1.1102230246251565e-16
+          }
+        },
+        {
+          "left_t": 1,
+          "right_t": 1,
+          "point": {
+            "x": 1e-8,
+            "y": 0
+          }
+        }
+      ]
+    }
+  },
+  {
+    "chord": 1e-8,
+    "reverse": true,
+    "milliseconds": 602.25,
+    "result": {
+      "hits": [
+        {
+          "left_t": 0,
+          "right_t": 1,
+          "point": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "left_t": 0.2510287978728972,
+          "right_t": 0.7489711905118163,
+          "point": {
+            "x": 2.5102878470614042e-9,
+            "y": -1.1102230246251565e-16
+          }
+        },
+        {
+          "left_t": 0.5015432011650783,
+          "right_t": 0.49845678721963516,
+          "point": {
+            "x": 5.015431939230025e-9,
+            "y": -1.1102230246251565e-16
+          }
+        },
+        {
+          "left_t": 1,
+          "right_t": 0,
+          "point": {
+            "x": 1e-8,
+            "y": 0
+          }
+        }
+      ]
+    }
+  },
+  {
+    "chord": 1e-9,
+    "reverse": false,
+    "milliseconds": 513.159208,
+    "result": {
+      "hits": [
+        {
+          "left_t": 0,
+          "right_t": 0,
+          "point": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "left_t": 0.24999987319978836,
+          "right_t": 0.25,
+          "point": {
+            "x": 2.499998185026423e-10,
+            "y": -1.1102230246251565e-16
+          }
+        },
+        {
+          "left_t": 0.4999998698119964,
+          "right_t": 0.5000000004839702,
+          "point": {
+            "x": 4.99999839187735e-10,
+            "y": -1.1102230246251565e-16
+          }
+        },
+        {
+          "left_t": 1,
+          "right_t": 1,
+          "point": {
+            "x": 1e-9,
+            "y": 0
+          }
+        }
+      ]
+    }
+  },
+  {
+    "chord": 1e-9,
+    "reverse": true,
+    "milliseconds": 432.00924999999984,
+    "result": {
+      "hits": [
+        {
+          "left_t": 0,
+          "right_t": 1,
+          "point": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "left_t": 0.2505165114666922,
+          "right_t": 0.7494834759500807,
+          "point": {
+            "x": 2.5051651629830285e-10,
+            "y": -1.1102230246251565e-16
+          }
+        },
+        {
+          "left_t": 0.5005723142071612,
+          "right_t": 0.4994276732096118,
+          "point": {
+            "x": 5.005722701792318e-10,
+            "y": -1.1102230246251565e-16
+          }
+        },
+        {
+          "left_t": 1,
+          "right_t": 0,
+          "point": {
+            "x": 1e-9,
+            "y": 0
+          }
+        }
+      ]
+    }
+  }
+]
