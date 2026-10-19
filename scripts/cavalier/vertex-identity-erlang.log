@@ -1,0 +1,32 @@
+  Compiling svg_path
+  Compiling cavalier_audit_probe
+warning: Unused result value
+  ┌─ /Users/jpsteinb/github.com/vistuleB/svg_path/scripts/cavalier/probe/src/short_arc_normalization_audit_probe.gleam:9:3
+  │
+9 │   echo degeneracy.normalize_degenerate_segments(alone, 0.001)
+  │   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The Result value created here is unused
+
+Hint: If you are sure you don't need it you can assign it to `_`.
+
+warning: Unused result value
+   ┌─ /Users/jpsteinb/github.com/vistuleB/svg_path/scripts/cavalier/probe/src/short_arc_normalization_audit_probe.gleam:16:3
+   │
+16 │   echo offset.normalize_short_source_runs(source, 0.001)
+   │   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The Result value created here is unused
+
+Hint: If you are sure you don't need it you can assign it to `_`.
+
+   Compiled in 1.28s
+    Running vertex_identity_audit_probe.main
+[90msrc/vertex_identity_audit_probe.gleam:19[39m
+[ArrangementVertex(0, Point(0.0, 0.0), [Point(0.0, 0.0)])]
+[90msrc/vertex_identity_audit_probe.gleam:19[39m
+[ArrangementVertex(0, Point(1.3, 0.0), [Point(2.6, 0.0), Point(0.0, 0.0)])]
+[90msrc/vertex_identity_audit_probe.gleam:19[39m
+[ArrangementVertex(0, Point(1.3, 0.0), [Point(2.6, 0.0), Point(0.0, 0.0)])]
+[90msrc/vertex_identity_audit_probe.gleam:19[39m
+[ArrangementVertex(0, Point(1.3, 0.0), [Point(2.6, 0.0), Point(0.0, 0.0)]), ArrangementVertex(3, Point(-1.18, 0.0), [Point(0.0, 0.0), Point(-2.36, 0.0)])]
+[90msrc/vertex_identity_audit_probe.gleam:19[39m
+[ArrangementVertex(0, Point(1.3, 0.0), [Point(2.6, 0.0), Point(0.0, 0.0)]), ArrangementVertex(3, Point(-1.18, 0.0), [Point(0.0, 0.0), Point(0.0, 0.0), Point(-2.36, 0.0)])]
+[90msrc/vertex_identity_audit_probe.gleam:24[39m
+Error(InternalNormalizationError)

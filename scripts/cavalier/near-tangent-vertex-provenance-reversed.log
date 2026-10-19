@@ -1,0 +1,12 @@
+normalization failure Error
+    at unique_vertex_for_endpoint_loop (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:7307:50)
+    at unique_vertex_for_endpoint (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:7325:18)
+    at audit_original_validate_piece_endpoint_vertices (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:7418:5)
+    at validate_piece_endpoint_vertices (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:8247:15)
+    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:7539:13
+    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)
+    at progressive_insert_pieces_loop (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:7518:20)
+    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:7567:28
+    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)
+    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:7541:30
+ambiguous endpoint {"endpoint":{"x":44.6547075248664,"y":-2.0000001287907363},"vertex_tolerance":2e-9,"matches":[{"id":5,"point":{"x":44.65470752685117,"y":-2.0000001287917604},"distance":1.9847663934180586e-9},{"id":39,"point":{"x":44.654707523593885,"y":-2.000000128790107},"distance":1.272518246491724e-9}]}

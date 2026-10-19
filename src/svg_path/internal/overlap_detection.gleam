@@ -1086,20 +1086,47 @@ fn sampled_overlap_valid(
     True, svg_path.Line(..), svg_path.Line(..) ->
       line_correspondence_valid(overlap, left, right, tolerance)
     True, _, _ -> {
-      use right_piece <- result.try(svg_path.segment_between_inside(
-        right,
-        from: min_float(right_from, right_to),
-        to: max_float(right_from, right_to),
-      ))
-      sampled_overlap_valid_loop(
-        left,
-        right_piece,
-        left_from,
-        left_to,
-        tolerance,
-        samples,
-        1,
-      )
+      let checked = {
+        use right_piece <- result.try(svg_path.segment_between_inside(
+          right,
+          from: min_float(right_from, right_to),
+          to: max_float(right_from, right_to),
+        ))
+        sampled_overlap_valid_loop(
+          left,
+          right_piece,
+          left_from,
+          left_to,
+          tolerance,
+          samples,
+          1,
+        )
+      }
+      case checked {
+        Ok(valid) -> Ok(valid)
+        Error(svg_path.DegenerateArc) -> {
+          // A split can round a valid arc's short remainder endpoints together.
+          // Points on the original interval can still prove proximity without
+          // constructing that remainder. Validate the original arc first.
+          use _ <- result.try(svg_path.arc_center_data(right))
+          use start <- result.try(svg_path.segment_point(right, right_from))
+          use middle <- result.try(svg_path.segment_point(
+            right,
+            right_from +. { right_to -. right_from } /. 2.0,
+          ))
+          use end <- result.try(svg_path.segment_point(right, right_to))
+          sampled_overlap_witnesses_loop(
+            left,
+            [start, middle, end],
+            left_from,
+            left_to,
+            tolerance,
+            samples,
+            1,
+          )
+        }
+        Error(error) -> Error(error)
+      }
     }
   }
 }
@@ -1174,6 +1201,44 @@ fn line_correspondence_valid(
   use c <- result.try(svg_path.segment_point(right, rf))
   use d <- result.try(svg_path.segment_point(right, rt))
   Ok(aligned && points_near(a, c, tolerance) && points_near(b, d, tolerance))
+}
+
+// A witness bounds nearest distance from above. No witness means unknown,
+// not non-overlap: retain the original extraction error in that case.
+fn sampled_overlap_witnesses_loop(
+  left: svg_path.Segment,
+  witnesses: List(svg_path.Point),
+  left_from: Float,
+  left_to: Float,
+  tolerance: Float,
+  samples: Int,
+  index: Int,
+) -> Result(Bool, svg_path.Error) {
+  case index > samples {
+    True -> Ok(True)
+    False -> {
+      let portion = int.to_float(index) /. int.to_float(samples + 1)
+      let t = left_from +. { left_to -. left_from } *. portion
+      use sample <- result.try(svg_path.segment_point(left, at: t))
+      case
+        list.any(witnesses, fn(witness) {
+          point.distance(sample, witness) <=. tolerance
+        })
+      {
+        False -> Error(svg_path.DegenerateArc)
+        True ->
+          sampled_overlap_witnesses_loop(
+            left,
+            witnesses,
+            left_from,
+            left_to,
+            tolerance,
+            samples,
+            index + 1,
+          )
+      }
+    }
+  }
 }
 
 fn sampled_overlap_valid_loop(

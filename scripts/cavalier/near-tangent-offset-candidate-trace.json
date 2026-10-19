@@ -1,0 +1,521 @@
+[
+  {
+    "mode": "untrimmed",
+    "result": {
+      "ok": true
+    },
+    "trace": [],
+    "arcs": [],
+    "between": []
+  },
+  {
+    "mode": "none",
+    "result": {
+      "ok": false,
+      "error": {
+        "type": "ConstructionFailed"
+      }
+    },
+    "trace": [
+      {
+        "type": "Object",
+        "module": "offset",
+        "error": {
+          "type": "InternalArrangementGraphError",
+          "error": {
+            "type": "InternalPathError",
+            "error": {
+              "type": "DegenerateArc"
+            }
+          }
+        }
+      }
+    ],
+    "arcs": [
+      {
+        "type": "Object",
+        "segment": {
+          "type": "Arc",
+          "start": {
+            "type": "Point",
+            "x": 44.65470741271587,
+            "y": -2.0000001287338165
+          },
+          "radius": {
+            "type": "Point",
+            "x": 1,
+            "y": 1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "type": "Point",
+            "x": 44.65470741271587,
+            "y": -2.0000001287338165
+          }
+        },
+        "error": {
+          "type": "DegenerateArc"
+        },
+        "stack": "Error\n    at arc_center_data (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:10443:94)\n    at split_arc_segment (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5416:5)\n    at segment_split (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5459:12)\n    at forward_segment_between (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5785:16)\n    at segment_between (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5840:14)\n    at audit_original_segment_between_inside (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5856:12)\n    at Module.segment_between_inside (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:10449:15)\n    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:819:29\n    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)\n    at sampled_overlap_valid (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:812:18)"
+      },
+      {
+        "type": "Object",
+        "segment": {
+          "type": "Arc",
+          "start": {
+            "type": "Point",
+            "x": 44.65470741271587,
+            "y": -2.0000001287338165
+          },
+          "radius": {
+            "type": "Point",
+            "x": 1,
+            "y": 1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "type": "Point",
+            "x": 44.65470741271587,
+            "y": -2.0000001287338165
+          }
+        },
+        "error": {
+          "type": "DegenerateArc"
+        },
+        "stack": "Error\n    at arc_center_data (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:10443:94)\n    at split_arc_segment (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5416:5)\n    at segment_split (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5459:12)\n    at forward_segment_between (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5785:16)\n    at segment_between (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5840:14)\n    at audit_original_segment_between_inside (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5856:12)\n    at Module.segment_between_inside (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:10449:15)\n    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:819:29\n    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)\n    at sampled_overlap_valid (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:812:18)"
+      },
+      {
+        "type": "Object",
+        "segment": {
+          "type": "Arc",
+          "start": {
+            "type": "Point",
+            "x": 44.65470740723881,
+            "y": -2.0000001287310374
+          },
+          "radius": {
+            "type": "Point",
+            "x": 1,
+            "y": 1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "type": "Point",
+            "x": 44.65470740723881,
+            "y": -2.0000001287310374
+          }
+        },
+        "error": {
+          "type": "DegenerateArc"
+        },
+        "stack": "Error\n    at arc_center_data (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:10443:94)\n    at arc_projection_with (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:9478:5)\n    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:9543:16\n    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)\n    at segment_projection_with (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:9531:18)\n    at segment_distance_with (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/query.mjs:2604:15)\n    at Module.segment_distance (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/query.mjs:2615:10)\n    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:685:18\n    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)\n    at sampled_overlap_valid_loop (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:681:20)"
+      }
+    ],
+    "between": [
+      {
+        "type": "Object",
+        "segment": {
+          "type": "Arc",
+          "start": {
+            "type": "Point",
+            "x": 44.65470741897046,
+            "y": -2.0000001287369904
+          },
+          "radius": {
+            "type": "Point",
+            "x": 1,
+            "y": 1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "type": "Point",
+            "x": 44.65470741271587,
+            "y": -2.0000001287338165
+          }
+        },
+        "from": 0.9999995858161379,
+        "to": 1,
+        "error": {
+          "type": "DegenerateArc"
+        }
+      },
+      {
+        "type": "Object",
+        "segment": {
+          "type": "Arc",
+          "start": {
+            "type": "Point",
+            "x": 44.654707416808364,
+            "y": -2.000000128735893
+          },
+          "radius": {
+            "type": "Point",
+            "x": 1,
+            "y": 1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "type": "Point",
+            "x": 44.65470741271587,
+            "y": -2.0000001287338165
+          }
+        },
+        "from": 0.9999982882754642,
+        "to": 1,
+        "error": {
+          "type": "DegenerateArc"
+        }
+      }
+    ]
+  },
+  {
+    "mode": "cusp",
+    "result": {
+      "ok": false,
+      "error": {
+        "type": "ConstructionFailed"
+      }
+    },
+    "trace": [
+      {
+        "type": "Object",
+        "module": "offset",
+        "error": {
+          "type": "InternalArrangementGraphError",
+          "error": {
+            "type": "InternalPathError",
+            "error": {
+              "type": "DegenerateArc"
+            }
+          }
+        }
+      }
+    ],
+    "arcs": [
+      {
+        "type": "Object",
+        "segment": {
+          "type": "Arc",
+          "start": {
+            "type": "Point",
+            "x": 44.65470741271587,
+            "y": -2.0000001287338165
+          },
+          "radius": {
+            "type": "Point",
+            "x": 1,
+            "y": 1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "type": "Point",
+            "x": 44.65470741271587,
+            "y": -2.0000001287338165
+          }
+        },
+        "error": {
+          "type": "DegenerateArc"
+        },
+        "stack": "Error\n    at arc_center_data (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:10443:94)\n    at split_arc_segment (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5416:5)\n    at segment_split (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5459:12)\n    at forward_segment_between (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5785:16)\n    at segment_between (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5840:14)\n    at audit_original_segment_between_inside (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5856:12)\n    at Module.segment_between_inside (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:10449:15)\n    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:819:29\n    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)\n    at sampled_overlap_valid (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:812:18)"
+      },
+      {
+        "type": "Object",
+        "segment": {
+          "type": "Arc",
+          "start": {
+            "type": "Point",
+            "x": 44.65470741271587,
+            "y": -2.0000001287338165
+          },
+          "radius": {
+            "type": "Point",
+            "x": 1,
+            "y": 1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "type": "Point",
+            "x": 44.65470741271587,
+            "y": -2.0000001287338165
+          }
+        },
+        "error": {
+          "type": "DegenerateArc"
+        },
+        "stack": "Error\n    at arc_center_data (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:10443:94)\n    at split_arc_segment (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5416:5)\n    at segment_split (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5459:12)\n    at forward_segment_between (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5785:16)\n    at segment_between (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5840:14)\n    at audit_original_segment_between_inside (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5856:12)\n    at Module.segment_between_inside (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:10449:15)\n    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:819:29\n    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)\n    at sampled_overlap_valid (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:812:18)"
+      },
+      {
+        "type": "Object",
+        "segment": {
+          "type": "Arc",
+          "start": {
+            "type": "Point",
+            "x": 44.65470740723881,
+            "y": -2.0000001287310374
+          },
+          "radius": {
+            "type": "Point",
+            "x": 1,
+            "y": 1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "type": "Point",
+            "x": 44.65470740723881,
+            "y": -2.0000001287310374
+          }
+        },
+        "error": {
+          "type": "DegenerateArc"
+        },
+        "stack": "Error\n    at arc_center_data (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:10443:94)\n    at arc_projection_with (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:9478:5)\n    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:9543:16\n    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)\n    at segment_projection_with (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:9531:18)\n    at segment_distance_with (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/query.mjs:2604:15)\n    at Module.segment_distance (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/query.mjs:2615:10)\n    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:685:18\n    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)\n    at sampled_overlap_valid_loop (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:681:20)"
+      }
+    ],
+    "between": [
+      {
+        "type": "Object",
+        "segment": {
+          "type": "Arc",
+          "start": {
+            "type": "Point",
+            "x": 44.65470741897046,
+            "y": -2.0000001287369904
+          },
+          "radius": {
+            "type": "Point",
+            "x": 1,
+            "y": 1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "type": "Point",
+            "x": 44.65470741271587,
+            "y": -2.0000001287338165
+          }
+        },
+        "from": 0.9999995858161379,
+        "to": 1,
+        "error": {
+          "type": "DegenerateArc"
+        }
+      },
+      {
+        "type": "Object",
+        "segment": {
+          "type": "Arc",
+          "start": {
+            "type": "Point",
+            "x": 44.654707416808364,
+            "y": -2.000000128735893
+          },
+          "radius": {
+            "type": "Point",
+            "x": 1,
+            "y": 1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "type": "Point",
+            "x": 44.65470741271587,
+            "y": -2.0000001287338165
+          }
+        },
+        "from": 0.9999982882754642,
+        "to": 1,
+        "error": {
+          "type": "DegenerateArc"
+        }
+      }
+    ]
+  },
+  {
+    "mode": "in-band",
+    "result": {
+      "ok": false,
+      "error": {
+        "type": "ConstructionFailed"
+      }
+    },
+    "trace": [
+      {
+        "type": "Object",
+        "module": "offset",
+        "error": {
+          "type": "InternalArrangementGraphError",
+          "error": {
+            "type": "InternalPathError",
+            "error": {
+              "type": "DegenerateArc"
+            }
+          }
+        }
+      }
+    ],
+    "arcs": [
+      {
+        "type": "Object",
+        "segment": {
+          "type": "Arc",
+          "start": {
+            "type": "Point",
+            "x": 44.65470741271587,
+            "y": -2.0000001287338165
+          },
+          "radius": {
+            "type": "Point",
+            "x": 1,
+            "y": 1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "type": "Point",
+            "x": 44.65470741271587,
+            "y": -2.0000001287338165
+          }
+        },
+        "error": {
+          "type": "DegenerateArc"
+        },
+        "stack": "Error\n    at arc_center_data (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:10443:94)\n    at split_arc_segment (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5416:5)\n    at segment_split (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5459:12)\n    at forward_segment_between (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5785:16)\n    at segment_between (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5840:14)\n    at audit_original_segment_between_inside (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5856:12)\n    at Module.segment_between_inside (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:10449:15)\n    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:819:29\n    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)\n    at sampled_overlap_valid (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:812:18)"
+      },
+      {
+        "type": "Object",
+        "segment": {
+          "type": "Arc",
+          "start": {
+            "type": "Point",
+            "x": 44.65470741271587,
+            "y": -2.0000001287338165
+          },
+          "radius": {
+            "type": "Point",
+            "x": 1,
+            "y": 1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "type": "Point",
+            "x": 44.65470741271587,
+            "y": -2.0000001287338165
+          }
+        },
+        "error": {
+          "type": "DegenerateArc"
+        },
+        "stack": "Error\n    at arc_center_data (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:10443:94)\n    at split_arc_segment (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5416:5)\n    at segment_split (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5459:12)\n    at forward_segment_between (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5785:16)\n    at segment_between (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5840:14)\n    at audit_original_segment_between_inside (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5856:12)\n    at Module.segment_between_inside (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:10449:15)\n    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:819:29\n    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)\n    at sampled_overlap_valid (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:812:18)"
+      },
+      {
+        "type": "Object",
+        "segment": {
+          "type": "Arc",
+          "start": {
+            "type": "Point",
+            "x": 44.65470740723881,
+            "y": -2.0000001287310374
+          },
+          "radius": {
+            "type": "Point",
+            "x": 1,
+            "y": 1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "type": "Point",
+            "x": 44.65470740723881,
+            "y": -2.0000001287310374
+          }
+        },
+        "error": {
+          "type": "DegenerateArc"
+        },
+        "stack": "Error\n    at arc_center_data (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:10443:94)\n    at arc_projection_with (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:9478:5)\n    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:9543:16\n    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)\n    at segment_projection_with (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:9531:18)\n    at segment_distance_with (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/query.mjs:2604:15)\n    at Module.segment_distance (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/query.mjs:2615:10)\n    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:685:18\n    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)\n    at sampled_overlap_valid_loop (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:681:20)"
+      }
+    ],
+    "between": [
+      {
+        "type": "Object",
+        "segment": {
+          "type": "Arc",
+          "start": {
+            "type": "Point",
+            "x": 44.65470741897046,
+            "y": -2.0000001287369904
+          },
+          "radius": {
+            "type": "Point",
+            "x": 1,
+            "y": 1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "type": "Point",
+            "x": 44.65470741271587,
+            "y": -2.0000001287338165
+          }
+        },
+        "from": 0.9999995858161379,
+        "to": 1,
+        "error": {
+          "type": "DegenerateArc"
+        }
+      },
+      {
+        "type": "Object",
+        "segment": {
+          "type": "Arc",
+          "start": {
+            "type": "Point",
+            "x": 44.654707416808364,
+            "y": -2.000000128735893
+          },
+          "radius": {
+            "type": "Point",
+            "x": 1,
+            "y": 1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "type": "Point",
+            "x": 44.65470741271587,
+            "y": -2.0000001287338165
+          }
+        },
+        "from": 0.9999982882754642,
+        "to": 1,
+        "error": {
+          "type": "DegenerateArc"
+        }
+      }
+    ]
+  }
+]

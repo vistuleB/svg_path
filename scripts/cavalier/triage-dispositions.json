@@ -365,5 +365,13 @@
     ],
     "status": "native-endpoint-loss-repaired-comparison-partly-open",
     "reason": "degenerate_line_list confused no axis longer than tolerance with no movement. Working-tree repair preserves distinct endpoints; all four offsets now construct. CC01296 matches aggregate properties, other three remain offset-policy/geometry discrepancies. See OFFSET-COLLAPSE-AND-NORMALIZATION-TRIAGE.md."
+  },
+  {
+    "ids": [
+      "CC01267",
+      "CC01271"
+    ],
+    "status": "fixed-native-construction-defect",
+    "reason": "Shared-endpoint circular intersection calculation avoids repeated near-tangent cuts; exact endpoint vertex ownership and arc-interval witness fallback also repaired. Both default-offset replays now match captured aggregate properties. See NEAR-TANGENT-REPAIR.md."
   }
 ]

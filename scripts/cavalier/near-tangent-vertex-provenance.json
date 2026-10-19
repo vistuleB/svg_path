@@ -1,0 +1,5844 @@
+[
+  {
+    "mode": "none",
+    "result": {
+      "ok": false,
+      "error": {
+        "type": "ConstructionFailed"
+      }
+    },
+    "trace": [
+      {
+        "type": "Object",
+        "module": "offset",
+        "error": {
+          "type": "InternalArrangementGraphError",
+          "error": {
+            "type": "InternalNormalizationError"
+          }
+        }
+      }
+    ],
+    "arcs": [
+      {
+        "type": "Object",
+        "segment": {
+          "type": "Arc",
+          "start": {
+            "type": "Point",
+            "x": 44.65470741271587,
+            "y": -2.0000001287338165
+          },
+          "radius": {
+            "type": "Point",
+            "x": 1,
+            "y": 1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "type": "Point",
+            "x": 44.65470741271587,
+            "y": -2.0000001287338165
+          }
+        },
+        "error": {
+          "type": "DegenerateArc"
+        },
+        "stack": "Error\n    at arc_center_data (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:10443:94)\n    at split_arc_segment (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5416:5)\n    at segment_split (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5459:12)\n    at forward_segment_between (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5785:16)\n    at segment_between (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5840:14)\n    at audit_original_segment_between_inside (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5856:12)\n    at Module.segment_between_inside (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:10449:15)\n    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:820:23\n    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)\n    at sampled_overlap_valid (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:812:18)"
+      },
+      {
+        "type": "Object",
+        "segment": {
+          "type": "Arc",
+          "start": {
+            "type": "Point",
+            "x": 44.65470741271587,
+            "y": -2.0000001287338165
+          },
+          "radius": {
+            "type": "Point",
+            "x": 1,
+            "y": 1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "type": "Point",
+            "x": 44.65470741271587,
+            "y": -2.0000001287338165
+          }
+        },
+        "error": {
+          "type": "DegenerateArc"
+        },
+        "stack": "Error\n    at arc_center_data (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:10443:94)\n    at split_arc_segment (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5416:5)\n    at segment_split (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5459:12)\n    at forward_segment_between (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5785:16)\n    at segment_between (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5840:14)\n    at audit_original_segment_between_inside (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5856:12)\n    at Module.segment_between_inside (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:10449:15)\n    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:820:23\n    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)\n    at sampled_overlap_valid (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:812:18)"
+      },
+      {
+        "type": "Object",
+        "segment": {
+          "type": "Arc",
+          "start": {
+            "type": "Point",
+            "x": 44.65470740723881,
+            "y": -2.0000001287310374
+          },
+          "radius": {
+            "type": "Point",
+            "x": 1,
+            "y": 1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "type": "Point",
+            "x": 44.65470740723881,
+            "y": -2.0000001287310374
+          }
+        },
+        "error": {
+          "type": "DegenerateArc"
+        },
+        "stack": "Error\n    at arc_center_data (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:10443:94)\n    at arc_projection_with (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:9478:5)\n    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:9543:16\n    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)\n    at segment_projection_with (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:9531:18)\n    at segment_distance_with (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/query.mjs:2604:15)\n    at Module.segment_distance (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/query.mjs:2615:10)\n    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:685:18\n    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)\n    at sampled_overlap_valid_loop (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:681:20)"
+      },
+      {
+        "type": "Object",
+        "segment": {
+          "type": "Arc",
+          "start": {
+            "type": "Point",
+            "x": 44.65470740125266,
+            "y": -2.000000128728
+          },
+          "radius": {
+            "type": "Point",
+            "x": 1,
+            "y": 1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "type": "Point",
+            "x": 44.65470740125266,
+            "y": -2.000000128728
+          }
+        },
+        "error": {
+          "type": "DegenerateArc"
+        },
+        "stack": "Error\n    at arc_center_data (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:10443:94)\n    at arc_projection_with (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:9478:5)\n    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:9543:16\n    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)\n    at segment_projection_with (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:9531:18)\n    at segment_distance_with (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/query.mjs:2604:15)\n    at Module.segment_distance (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/query.mjs:2615:10)\n    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:685:18\n    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)\n    at sampled_overlap_valid_loop (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:681:20)"
+      },
+      {
+        "type": "Object",
+        "segment": {
+          "type": "Arc",
+          "start": {
+            "type": "Point",
+            "x": 44.654707393709614,
+            "y": -2.0000001287241727
+          },
+          "radius": {
+            "type": "Point",
+            "x": 1,
+            "y": 1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "type": "Point",
+            "x": 44.654707393709614,
+            "y": -2.0000001287241727
+          }
+        },
+        "error": {
+          "type": "DegenerateArc"
+        },
+        "stack": "Error\n    at arc_center_data (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:10443:94)\n    at split_arc_segment (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5416:5)\n    at segment_split (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5459:12)\n    at forward_segment_between (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5785:16)\n    at segment_between (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5840:14)\n    at audit_original_segment_between_inside (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5856:12)\n    at Module.segment_between_inside (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:10449:15)\n    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:820:23\n    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)\n    at sampled_overlap_valid (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:812:18)"
+      },
+      {
+        "type": "Object",
+        "segment": {
+          "type": "Arc",
+          "start": {
+            "type": "Point",
+            "x": 44.654707389219936,
+            "y": -2.0000001287218945
+          },
+          "radius": {
+            "type": "Point",
+            "x": 1,
+            "y": 1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "type": "Point",
+            "x": 44.654707389219936,
+            "y": -2.0000001287218945
+          }
+        },
+        "error": {
+          "type": "DegenerateArc"
+        },
+        "stack": "Error\n    at arc_center_data (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:10443:94)\n    at arc_projection_with (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:9478:5)\n    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:9543:16\n    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)\n    at segment_projection_with (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:9531:18)\n    at segment_distance_with (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/query.mjs:2604:15)\n    at Module.segment_distance (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/query.mjs:2615:10)\n    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:685:18\n    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)\n    at sampled_overlap_valid_loop (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:681:20)"
+      },
+      {
+        "type": "Object",
+        "segment": {
+          "type": "Arc",
+          "start": {
+            "type": "Point",
+            "x": 44.654707389219936,
+            "y": -2.0000001287218945
+          },
+          "radius": {
+            "type": "Point",
+            "x": 1,
+            "y": 1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "type": "Point",
+            "x": 44.654707389219936,
+            "y": -2.0000001287218945
+          }
+        },
+        "error": {
+          "type": "DegenerateArc"
+        },
+        "stack": "Error\n    at arc_center_data (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:10443:94)\n    at arc_projection_with (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:9478:5)\n    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:9543:16\n    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)\n    at segment_projection_with (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:9531:18)\n    at segment_distance_with (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/query.mjs:2604:15)\n    at Module.segment_distance (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/query.mjs:2615:10)\n    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:685:18\n    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)\n    at sampled_overlap_valid_loop (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:681:20)"
+      },
+      {
+        "type": "Object",
+        "segment": {
+          "type": "Arc",
+          "start": {
+            "type": "Point",
+            "x": 44.654707389219936,
+            "y": -2.0000001287218945
+          },
+          "radius": {
+            "type": "Point",
+            "x": 1,
+            "y": 1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "type": "Point",
+            "x": 44.654707389219936,
+            "y": -2.0000001287218945
+          }
+        },
+        "error": {
+          "type": "DegenerateArc"
+        },
+        "stack": "Error\n    at arc_center_data (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:10443:94)\n    at arc_projection_with (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:9478:5)\n    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:9543:16\n    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)\n    at segment_projection_with (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:9531:18)\n    at segment_distance_with (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/query.mjs:2604:15)\n    at Module.segment_distance (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/query.mjs:2615:10)\n    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:685:18\n    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)\n    at sampled_overlap_valid_loop (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:681:20)"
+      },
+      {
+        "type": "Object",
+        "segment": {
+          "type": "Arc",
+          "start": {
+            "type": "Point",
+            "x": 44.654707389219936,
+            "y": -2.0000001287218945
+          },
+          "radius": {
+            "type": "Point",
+            "x": 1,
+            "y": 1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "type": "Point",
+            "x": 44.654707389219936,
+            "y": -2.0000001287218945
+          }
+        },
+        "error": {
+          "type": "DegenerateArc"
+        },
+        "stack": "Error\n    at arc_center_data (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:10443:94)\n    at arc_projection_with (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:9478:5)\n    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:9543:16\n    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)\n    at segment_projection_with (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:9531:18)\n    at segment_distance_with (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/query.mjs:2604:15)\n    at Module.segment_distance (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/query.mjs:2615:10)\n    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:685:18\n    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)\n    at sampled_overlap_valid_loop (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:681:20)"
+      },
+      {
+        "type": "Object",
+        "segment": {
+          "type": "Arc",
+          "start": {
+            "type": "Point",
+            "x": 44.65470735208983,
+            "y": -2.000000128703056
+          },
+          "radius": {
+            "type": "Point",
+            "x": 1,
+            "y": 1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "type": "Point",
+            "x": 44.65470735208983,
+            "y": -2.000000128703056
+          }
+        },
+        "error": {
+          "type": "DegenerateArc"
+        },
+        "stack": "Error\n    at arc_center_data (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:10443:94)\n    at split_arc_segment (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5416:5)\n    at segment_split (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5459:12)\n    at forward_segment_between (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5785:16)\n    at segment_between (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5840:14)\n    at audit_original_segment_between_inside (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:5856:12)\n    at Module.segment_between_inside (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path.mjs:10449:15)\n    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:820:23\n    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)\n    at sampled_overlap_valid (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/internal/overlap_detection.mjs:812:18)"
+      }
+    ],
+    "between": [
+      {
+        "type": "Object",
+        "segment": {
+          "type": "Arc",
+          "start": {
+            "type": "Point",
+            "x": 44.65470741897046,
+            "y": -2.0000001287369904
+          },
+          "radius": {
+            "type": "Point",
+            "x": 1,
+            "y": 1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "type": "Point",
+            "x": 44.65470741271587,
+            "y": -2.0000001287338165
+          }
+        },
+        "from": 0.9999995858161379,
+        "to": 1,
+        "error": {
+          "type": "DegenerateArc"
+        }
+      },
+      {
+        "type": "Object",
+        "segment": {
+          "type": "Arc",
+          "start": {
+            "type": "Point",
+            "x": 44.654707416808364,
+            "y": -2.000000128735893
+          },
+          "radius": {
+            "type": "Point",
+            "x": 1,
+            "y": 1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "type": "Point",
+            "x": 44.65470741271587,
+            "y": -2.0000001287338165
+          }
+        },
+        "from": 0.9999982882754642,
+        "to": 1,
+        "error": {
+          "type": "DegenerateArc"
+        }
+      },
+      {
+        "type": "Object",
+        "segment": {
+          "type": "Arc",
+          "start": {
+            "type": "Point",
+            "x": 44.65470739609011,
+            "y": -2.0000001287253806
+          },
+          "radius": {
+            "type": "Point",
+            "x": 1,
+            "y": 1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "type": "Point",
+            "x": 44.654707393709614,
+            "y": -2.0000001287241727
+          }
+        },
+        "from": 0.9999970304054092,
+        "to": 1,
+        "error": {
+          "type": "DegenerateArc"
+        }
+      },
+      {
+        "type": "Object",
+        "segment": {
+          "type": "Arc",
+          "start": {
+            "type": "Point",
+            "x": 44.65470738191777,
+            "y": -2.0000001287181894
+          },
+          "radius": {
+            "type": "Point",
+            "x": 1,
+            "y": 1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "type": "Point",
+            "x": 44.65470735208983,
+            "y": -2.000000128703056
+          }
+        },
+        "from": 0.999999902562416,
+        "to": 1,
+        "error": {
+          "type": "DegenerateArc"
+        }
+      }
+    ],
+    "vertices": [
+      {
+        "type": "Object",
+        "kind": "source",
+        "segments": [
+          {
+            "type": "Line",
+            "start": {
+              "type": "Point",
+              "x": 29.147933544518214,
+              "y": 12.471880016841876
+            },
+            "end": {
+              "type": "Point",
+              "x": 42.88593354451822,
+              "y": -1.2671599831581235
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "type": "Point",
+              "x": 42.88593354451822,
+              "y": -1.2671599831581235
+            },
+            "radius": {
+              "type": "Point",
+              "x": 1,
+              "y": 1
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "type": "Point",
+              "x": 42.88575071280833,
+              "y": -1.2669771848740625
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "type": "Point",
+              "x": 42.88575071280833,
+              "y": -1.2669771848740625
+            },
+            "radius": {
+              "type": "Point",
+              "x": 2.504034466969128,
+              "y": 2.504034466969128
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "type": "Point",
+              "x": 44.65470741897046,
+              "y": -2.0000001287369904
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "type": "Point",
+              "x": 44.65470741897046,
+              "y": -2.0000001287369904
+            },
+            "radius": {
+              "type": "Point",
+              "x": 1,
+              "y": 1
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "type": "Point",
+              "x": 44.6542,
+              "y": -2
+            }
+          },
+          {
+            "type": "Line",
+            "start": {
+              "type": "Point",
+              "x": 44.6542,
+              "y": -2
+            },
+            "end": {
+              "type": "Point",
+              "x": 49.6542,
+              "y": -2
+            }
+          },
+          {
+            "type": "Line",
+            "start": {
+              "type": "Point",
+              "x": 28.4408,
+              "y": 11.7648
+            },
+            "end": {
+              "type": "Point",
+              "x": 42.1788,
+              "y": -1.97424
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "type": "Point",
+              "x": 42.1788,
+              "y": -1.97424
+            },
+            "radius": {
+              "type": "Point",
+              "x": 3.504034466969128,
+              "y": 3.504034466969128
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "type": "Point",
+              "x": 44.6542,
+              "y": -3
+            }
+          },
+          {
+            "type": "Line",
+            "start": {
+              "type": "Point",
+              "x": 44.6542,
+              "y": -3
+            },
+            "end": {
+              "type": "Point",
+              "x": 49.6542,
+              "y": -3
+            }
+          },
+          {
+            "type": "Line",
+            "start": {
+              "type": "Point",
+              "x": 49.6542,
+              "y": -3
+            },
+            "end": {
+              "type": "Point",
+              "x": 49.6542,
+              "y": -2
+            }
+          },
+          {
+            "type": "Line",
+            "start": {
+              "type": "Point",
+              "x": 29.147933544518214,
+              "y": 12.471880016841876
+            },
+            "end": {
+              "type": "Point",
+              "x": 28.4408,
+              "y": 11.7648
+            }
+          }
+        ],
+        "vertex_tolerance": 2e-9,
+        "minimum_length": 2e-9,
+        "endpoint_sliver_tolerance": 0.0001
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 29.147933544518214,
+          "y": 12.471880016841876
+        },
+        "tolerance": 2e-9,
+        "id": 0,
+        "created": true,
+        "old": null,
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 29.147933544518214,
+            "y": 12.471880016841876
+          },
+          "count": 1
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4861:20",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at insert_atomic_segment (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4852:20)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 42.88593354451822,
+          "y": -1.2671599831581235
+        },
+        "tolerance": 2e-9,
+        "id": 1,
+        "created": true,
+        "old": null,
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 42.88593354451822,
+            "y": -1.2671599831581235
+          },
+          "count": 1
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4864:20",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at insert_atomic_segment (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4852:20)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 42.88593354451822,
+          "y": -1.2671599831581235
+        },
+        "tolerance": 2e-9,
+        "id": 1,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 42.88593354451822,
+            "y": -1.2671599831581235
+          },
+          "count": 1
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 42.88593354451822,
+            "y": -1.2671599831581235
+          },
+          "count": 2
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4861:20",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at insert_atomic_segment (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4852:20)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 42.88575071280833,
+          "y": -1.2669771848740625
+        },
+        "tolerance": 2e-9,
+        "id": 2,
+        "created": true,
+        "old": null,
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 42.88575071280833,
+            "y": -1.2669771848740625
+          },
+          "count": 1
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4864:20",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at insert_atomic_segment (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4852:20)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "split-edge",
+        "edge": {
+          "type": "ArrangementEdge",
+          "id": 0,
+          "segment": {
+            "type": "Line",
+            "start": {
+              "type": "Point",
+              "x": 29.147933544518214,
+              "y": 12.471880016841876
+            },
+            "end": {
+              "type": "Point",
+              "x": 42.88593354451822,
+              "y": -1.2671599831581235
+            }
+          },
+          "bounds": {
+            "type": "BoundingBox",
+            "min": {
+              "type": "Point",
+              "x": 29.147933544518214,
+              "y": -1.2671599831581235
+            },
+            "max": {
+              "type": "Point",
+              "x": 42.88593354451822,
+              "y": 12.471880016841876
+            }
+          },
+          "start_vertex": 0,
+          "end_vertex": 1,
+          "forward_multiplicity": 1,
+          "reverse_multiplicity": 0
+        },
+        "cuts": [
+          0.9999927807755868
+        ],
+        "tolerance": 2e-9,
+        "minimum_length": 2e-9
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 29.147933544518214,
+          "y": 12.471880016841876
+        },
+        "tolerance": 2e-9,
+        "id": 0,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 29.147933544518214,
+            "y": 12.471880016841876
+          },
+          "count": 1
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 29.147933544518214,
+            "y": 12.471880016841876
+          },
+          "count": 2
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 42.88583436681323,
+          "y": -1.2670607979451418
+        },
+        "tolerance": 2e-9,
+        "id": 3,
+        "created": true,
+        "old": null,
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 42.88583436681323,
+            "y": -1.2670607979451418
+          },
+          "count": 1
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 42.88583436681323,
+          "y": -1.2670607979451418
+        },
+        "tolerance": 2e-9,
+        "id": 3,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 42.88583436681323,
+            "y": -1.2670607979451418
+          },
+          "count": 1
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 42.88583436681323,
+            "y": -1.2670607979451418
+          },
+          "count": 2
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 42.88593354451822,
+          "y": -1.2671599831581235
+        },
+        "tolerance": 2e-9,
+        "id": 1,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 42.88593354451822,
+            "y": -1.2671599831581235
+          },
+          "count": 2
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 42.88593354451822,
+            "y": -1.2671599831581235
+          },
+          "count": 3
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 42.88575071280833,
+          "y": -1.2669771848740625
+        },
+        "tolerance": 2e-9,
+        "id": 2,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 42.88575071280833,
+            "y": -1.2669771848740625
+          },
+          "count": 1
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 42.88575071280833,
+            "y": -1.2669771848740625
+          },
+          "count": 2
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4861:20",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at insert_atomic_segment (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4852:20)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 42.88583436681323,
+          "y": -1.2670607979451385
+        },
+        "tolerance": 2e-9,
+        "id": 3,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 42.88583436681323,
+            "y": -1.2670607979451418
+          },
+          "count": 2
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 42.88583436681323,
+            "y": -1.26706079794514
+          },
+          "count": 3
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4864:20",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at insert_atomic_segment (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4852:20)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 42.88583436681323,
+          "y": -1.2670607979451385
+        },
+        "tolerance": 2e-9,
+        "id": 3,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 42.88583436681323,
+            "y": -1.26706079794514
+          },
+          "count": 3
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 42.88583436681323,
+            "y": -1.26706079794514
+          },
+          "count": 4
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4861:20",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at insert_atomic_segment (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4852:20)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470741897046,
+          "y": -2.0000001287369904
+        },
+        "tolerance": 2e-9,
+        "id": 4,
+        "created": true,
+        "old": null,
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470741897046,
+            "y": -2.0000001287369904
+          },
+          "count": 1
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4864:20",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at insert_atomic_segment (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4852:20)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "split-edge",
+        "edge": {
+          "type": "ArrangementEdge",
+          "id": 4,
+          "segment": {
+            "type": "Arc",
+            "start": {
+              "type": "Point",
+              "x": 42.88583436681323,
+              "y": -1.2670607979451385
+            },
+            "radius": {
+              "type": "Point",
+              "x": 2.504034466969128,
+              "y": 2.504034466969128
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "type": "Point",
+              "x": 44.65470741897046,
+              "y": -2.0000001287369904
+            }
+          },
+          "bounds": {
+            "type": "BoundingBox",
+            "min": {
+              "type": "Point",
+              "x": 42.88583436681323,
+              "y": -2.000000128736991
+            },
+            "max": {
+              "type": "Point",
+              "x": 44.65470741897046,
+              "y": -1.2670607979451387
+            }
+          },
+          "start_vertex": 3,
+          "end_vertex": 4,
+          "forward_multiplicity": 1,
+          "reverse_multiplicity": 0
+        },
+        "cuts": [
+          0.9999998671475243
+        ],
+        "tolerance": 2e-9,
+        "minimum_length": 2e-9
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 42.88583436681323,
+          "y": -1.2670607979451385
+        },
+        "tolerance": 2e-9,
+        "id": 3,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 42.88583436681323,
+            "y": -1.26706079794514
+          },
+          "count": 4
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 42.88583436681323,
+            "y": -1.26706079794514
+          },
+          "count": 5
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707157952494,
+          "y": -2.0000001286044364
+        },
+        "tolerance": 2e-9,
+        "id": 5,
+        "created": true,
+        "old": null,
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707157952494,
+            "y": -2.0000001286044364
+          },
+          "count": 1
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707157952494,
+          "y": -2.0000001286044364
+        },
+        "tolerance": 2e-9,
+        "id": 5,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707157952494,
+            "y": -2.0000001286044364
+          },
+          "count": 1
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707157952494,
+            "y": -2.0000001286044364
+          },
+          "count": 2
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470741897046,
+          "y": -2.0000001287369904
+        },
+        "tolerance": 2e-9,
+        "id": 4,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470741897046,
+            "y": -2.0000001287369904
+          },
+          "count": 1
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470741897046,
+            "y": -2.0000001287369904
+          },
+          "count": 2
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "split-edge",
+        "edge": {
+          "type": "ArrangementEdge",
+          "id": 5,
+          "segment": {
+            "type": "Arc",
+            "start": {
+              "type": "Point",
+              "x": 44.654707157952494,
+              "y": -2.0000001286044364
+            },
+            "radius": {
+              "type": "Point",
+              "x": 2.504034466969128,
+              "y": 2.504034466969128
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "type": "Point",
+              "x": 44.65470741897046,
+              "y": -2.0000001287369904
+            }
+          },
+          "bounds": {
+            "type": "BoundingBox",
+            "min": {
+              "type": "Point",
+              "x": 44.654707157952494,
+              "y": -2.00000012873699
+            },
+            "max": {
+              "type": "Point",
+              "x": 44.65470741897046,
+              "y": -2.000000128604436
+            }
+          },
+          "start_vertex": 5,
+          "end_vertex": 4,
+          "forward_multiplicity": 1,
+          "reverse_multiplicity": 0
+        },
+        "cuts": [
+          0.3734567717325864,
+          0.7437699953770385
+        ],
+        "tolerance": 2e-9,
+        "minimum_length": 2e-9
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707157952494,
+          "y": -2.0000001286044364
+        },
+        "tolerance": 2e-9,
+        "id": 5,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707157952494,
+            "y": -2.0000001286044364
+          },
+          "count": 2
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707157952494,
+            "y": -2.0000001286044364
+          },
+          "count": 3
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707255431425,
+          "y": -2.0000001286539426
+        },
+        "tolerance": 2e-9,
+        "id": 6,
+        "created": true,
+        "old": null,
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707255431425,
+            "y": -2.0000001286539426
+          },
+          "count": 1
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707255431425,
+          "y": -2.0000001286539426
+        },
+        "tolerance": 2e-9,
+        "id": 6,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707255431425,
+            "y": -2.0000001286539426
+          },
+          "count": 1
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707255431425,
+            "y": -2.0000001286539426
+          },
+          "count": 2
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470735208983,
+          "y": -2.0000001287030287
+        },
+        "tolerance": 2e-9,
+        "id": 7,
+        "created": true,
+        "old": null,
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470735208983,
+            "y": -2.0000001287030287
+          },
+          "count": 1
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470735208983,
+          "y": -2.0000001287030287
+        },
+        "tolerance": 2e-9,
+        "id": 7,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470735208983,
+            "y": -2.0000001287030287
+          },
+          "count": 1
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470735208983,
+            "y": -2.0000001287030287
+          },
+          "count": 2
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470741897046,
+          "y": -2.0000001287369904
+        },
+        "tolerance": 2e-9,
+        "id": 4,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470741897046,
+            "y": -2.0000001287369904
+          },
+          "count": 2
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470741897046,
+            "y": -2.0000001287369904
+          },
+          "count": 3
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "split-edge",
+        "edge": {
+          "type": "ArrangementEdge",
+          "id": 7,
+          "segment": {
+            "type": "Arc",
+            "start": {
+              "type": "Point",
+              "x": 44.65470735208983,
+              "y": -2.0000001287030287
+            },
+            "radius": {
+              "type": "Point",
+              "x": 2.504034466969128,
+              "y": 2.504034466969128
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "type": "Point",
+              "x": 44.65470741897046,
+              "y": -2.0000001287369904
+            }
+          },
+          "bounds": {
+            "type": "BoundingBox",
+            "min": {
+              "type": "Point",
+              "x": 44.65470735208983,
+              "y": -2.000000128736991
+            },
+            "max": {
+              "type": "Point",
+              "x": 44.65470741897046,
+              "y": -2.000000128703029
+            }
+          },
+          "start_vertex": 7,
+          "end_vertex": 4,
+          "forward_multiplicity": 1,
+          "reverse_multiplicity": 0
+        },
+        "cuts": [
+          0.44598764367364163,
+          0.6959876465774633
+        ],
+        "tolerance": 2e-9,
+        "minimum_length": 2e-9
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470735208983,
+          "y": -2.0000001287030287
+        },
+        "tolerance": 2e-9,
+        "id": 7,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470735208983,
+            "y": -2.0000001287030287
+          },
+          "count": 2
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470735208983,
+            "y": -2.0000001287030287
+          },
+          "count": 3
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470738191777,
+          "y": -2.000000128718176
+        },
+        "tolerance": 2e-9,
+        "id": 8,
+        "created": true,
+        "old": null,
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470738191777,
+            "y": -2.000000128718176
+          },
+          "count": 1
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470738191777,
+          "y": -2.000000128718176
+        },
+        "tolerance": 2e-9,
+        "id": 8,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470738191777,
+            "y": -2.000000128718176
+          },
+          "count": 1
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470738191777,
+            "y": -2.000000128718176
+          },
+          "count": 2
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707398637925,
+          "y": -2.0000001287266667
+        },
+        "tolerance": 2e-9,
+        "id": 9,
+        "created": true,
+        "old": null,
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707398637925,
+            "y": -2.0000001287266667
+          },
+          "count": 1
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707398637925,
+          "y": -2.0000001287266667
+        },
+        "tolerance": 2e-9,
+        "id": 9,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707398637925,
+            "y": -2.0000001287266667
+          },
+          "count": 1
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707398637925,
+            "y": -2.0000001287266667
+          },
+          "count": 2
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470741897046,
+          "y": -2.0000001287369904
+        },
+        "tolerance": 2e-9,
+        "id": 4,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470741897046,
+            "y": -2.0000001287369904
+          },
+          "count": 3
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470741897046,
+            "y": -2.0000001287369904
+          },
+          "count": 4
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "split-edge",
+        "edge": {
+          "type": "ArrangementEdge",
+          "id": 9,
+          "segment": {
+            "type": "Arc",
+            "start": {
+              "type": "Point",
+              "x": 44.654707398637925,
+              "y": -2.0000001287266667
+            },
+            "radius": {
+              "type": "Point",
+              "x": 2.504034466969128,
+              "y": 2.504034466969128
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "type": "Point",
+              "x": 44.65470741897046,
+              "y": -2.0000001287369904
+            }
+          },
+          "bounds": {
+            "type": "BoundingBox",
+            "min": {
+              "type": "Point",
+              "x": 44.654707398637925,
+              "y": -2.0000001287369913
+            },
+            "max": {
+              "type": "Point",
+              "x": 44.65470741897046,
+              "y": -2.0000001287266675
+            }
+          },
+          "start_vertex": 9,
+          "end_vertex": 4,
+          "forward_multiplicity": 1,
+          "reverse_multiplicity": 0
+        },
+        "cuts": [
+          0.42301090424518056,
+          0.6923852341738177
+        ],
+        "tolerance": 2e-9,
+        "minimum_length": 2e-9
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707398637925,
+          "y": -2.0000001287266667
+        },
+        "tolerance": 2e-9,
+        "id": 9,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707398637925,
+            "y": -2.0000001287266667
+          },
+          "count": 2
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707398637925,
+            "y": -2.0000001287266667
+          },
+          "count": 3
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470740723881,
+          "y": -2.0000001287310343
+        },
+        "tolerance": 2e-9,
+        "id": 10,
+        "created": true,
+        "old": null,
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470740723881,
+            "y": -2.0000001287310343
+          },
+          "count": 1
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470740723881,
+          "y": -2.0000001287310343
+        },
+        "tolerance": 2e-9,
+        "id": 10,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470740723881,
+            "y": -2.0000001287310343
+          },
+          "count": 1
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470740723881,
+            "y": -2.0000001287310343
+          },
+          "count": 2
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470741271587,
+          "y": -2.0000001287338156
+        },
+        "tolerance": 2e-9,
+        "id": 11,
+        "created": true,
+        "old": null,
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470741271587,
+            "y": -2.0000001287338156
+          },
+          "count": 1
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470741271587,
+          "y": -2.0000001287338156
+        },
+        "tolerance": 2e-9,
+        "id": 11,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470741271587,
+            "y": -2.0000001287338156
+          },
+          "count": 1
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470741271587,
+            "y": -2.0000001287338156
+          },
+          "count": 2
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470741897046,
+          "y": -2.0000001287369904
+        },
+        "tolerance": 2e-9,
+        "id": 4,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470741897046,
+            "y": -2.0000001287369904
+          },
+          "count": 4
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470741897046,
+            "y": -2.0000001287369904
+          },
+          "count": 5
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "split-edge",
+        "edge": {
+          "type": "ArrangementEdge",
+          "id": 11,
+          "segment": {
+            "type": "Arc",
+            "start": {
+              "type": "Point",
+              "x": 44.65470741271587,
+              "y": -2.0000001287338156
+            },
+            "radius": {
+              "type": "Point",
+              "x": 2.504034466969128,
+              "y": 2.504034466969128
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "type": "Point",
+              "x": 44.65470741897046,
+              "y": -2.0000001287369904
+            }
+          },
+          "bounds": {
+            "type": "BoundingBox",
+            "min": {
+              "type": "Point",
+              "x": 44.65470741271587,
+              "y": -2.00000012873699
+            },
+            "max": {
+              "type": "Point",
+              "x": 44.65470741897046,
+              "y": -2.000000128733815
+            }
+          },
+          "start_vertex": 11,
+          "end_vertex": 4,
+          "forward_multiplicity": 1,
+          "reverse_multiplicity": 0
+        },
+        "cuts": [
+          0.6543186481420191
+        ],
+        "tolerance": 2e-9,
+        "minimum_length": 2e-9
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470741271587,
+          "y": -2.0000001287338156
+        },
+        "tolerance": 2e-9,
+        "id": 11,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470741271587,
+            "y": -2.0000001287338156
+          },
+          "count": 2
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470741271587,
+            "y": -2.0000001287338156
+          },
+          "count": 3
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707416808364,
+          "y": -2.000000128735893
+        },
+        "tolerance": 2e-9,
+        "id": 4,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470741897046,
+            "y": -2.0000001287369904
+          },
+          "count": 5
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470741788941,
+            "y": -2.000000128736442
+          },
+          "count": 6
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707416808364,
+          "y": -2.000000128735893
+        },
+        "tolerance": 2e-9,
+        "id": 4,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470741788941,
+            "y": -2.000000128736442
+          },
+          "count": 6
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470741788941,
+            "y": -2.000000128736442
+          },
+          "count": 7
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470741897046,
+          "y": -2.0000001287369904
+        },
+        "tolerance": 2e-9,
+        "id": 4,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470741788941,
+            "y": -2.000000128736442
+          },
+          "count": 7
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470741788941,
+            "y": -2.000000128736442
+          },
+          "count": 8
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470741897046,
+          "y": -2.0000001287369904
+        },
+        "tolerance": 2e-9,
+        "id": 4,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470741788941,
+            "y": -2.000000128736442
+          },
+          "count": 8
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470741788941,
+            "y": -2.000000128736442
+          },
+          "count": 9
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4861:20",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at insert_atomic_segment (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4852:20)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707416808364,
+          "y": -2.000000128735893
+        },
+        "tolerance": 2e-9,
+        "id": 4,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470741788941,
+            "y": -2.000000128736442
+          },
+          "count": 9
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470741788941,
+            "y": -2.000000128736442
+          },
+          "count": 10
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4864:20",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at insert_atomic_segment (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4852:20)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "split-edge",
+        "edge": {
+          "type": "ArrangementEdge",
+          "id": 9,
+          "segment": {
+            "type": "Arc",
+            "start": {
+              "type": "Point",
+              "x": 44.654707398637925,
+              "y": -2.0000001287266667
+            },
+            "radius": {
+              "type": "Point",
+              "x": 2.504034466969128,
+              "y": 2.504034466969128
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "type": "Point",
+              "x": 44.65470740723881,
+              "y": -2.0000001287310343
+            }
+          },
+          "bounds": {
+            "type": "BoundingBox",
+            "min": {
+              "type": "Point",
+              "x": 44.654707398637925,
+              "y": -2.0000001287310347
+            },
+            "max": {
+              "type": "Point",
+              "x": 44.65470740723881,
+              "y": -2.000000128726667
+            }
+          },
+          "start_vertex": 9,
+          "end_vertex": 10,
+          "forward_multiplicity": 1,
+          "reverse_multiplicity": 0
+        },
+        "cuts": [
+          0.3040068758469819,
+          0.6697465992822077
+        ],
+        "tolerance": 2e-9,
+        "minimum_length": 2e-9
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707398637925,
+          "y": -2.0000001287266667
+        },
+        "tolerance": 2e-9,
+        "id": 9,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707398637925,
+            "y": -2.0000001287266667
+          },
+          "count": 3
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707398637925,
+            "y": -2.0000001287266667
+          },
+          "count": 4
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470740125266,
+          "y": -2.0000001287279954
+        },
+        "tolerance": 2e-9,
+        "id": 9,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707398637925,
+            "y": -2.0000001287266667
+          },
+          "count": 4
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707399945295,
+            "y": -2.000000128727331
+          },
+          "count": 5
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470740125266,
+          "y": -2.0000001287279954
+        },
+        "tolerance": 2e-9,
+        "id": 9,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707399945295,
+            "y": -2.000000128727331
+          },
+          "count": 5
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707399945295,
+            "y": -2.000000128727331
+          },
+          "count": 6
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707404398344,
+          "y": -2.0000001287295928
+        },
+        "tolerance": 2e-9,
+        "id": 10,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470740723881,
+            "y": -2.0000001287310343
+          },
+          "count": 2
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470740581858,
+            "y": -2.0000001287303135
+          },
+          "count": 3
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707404398344,
+          "y": -2.0000001287295928
+        },
+        "tolerance": 2e-9,
+        "id": 10,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470740581858,
+            "y": -2.0000001287303135
+          },
+          "count": 3
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470740581858,
+            "y": -2.0000001287303135
+          },
+          "count": 4
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470740723881,
+          "y": -2.0000001287310343
+        },
+        "tolerance": 2e-9,
+        "id": 10,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470740581858,
+            "y": -2.0000001287303135
+          },
+          "count": 4
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470740581858,
+            "y": -2.0000001287303135
+          },
+          "count": 5
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470740723881,
+          "y": -2.0000001287310374
+        },
+        "tolerance": 2e-9,
+        "id": 10,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470740581858,
+            "y": -2.0000001287303135
+          },
+          "count": 5
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470740581858,
+            "y": -2.0000001287303153
+          },
+          "count": 6
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4861:20",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at insert_atomic_segment (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4852:20)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707404398344,
+          "y": -2.000000128729596
+        },
+        "tolerance": 2e-9,
+        "id": 10,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470740581858,
+            "y": -2.0000001287303153
+          },
+          "count": 6
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470740581858,
+            "y": -2.0000001287303153
+          },
+          "count": 7
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4864:20",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at insert_atomic_segment (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4852:20)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470740125266,
+          "y": -2.000000128728
+        },
+        "tolerance": 2e-9,
+        "id": 9,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707399945295,
+            "y": -2.000000128727331
+          },
+          "count": 6
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707399945295,
+            "y": -2.0000001287273332
+          },
+          "count": 7
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4861:20",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at insert_atomic_segment (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4852:20)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707398637925,
+          "y": -2.0000001287266733
+        },
+        "tolerance": 2e-9,
+        "id": 9,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707399945295,
+            "y": -2.0000001287273332
+          },
+          "count": 7
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707399945295,
+            "y": -2.0000001287273332
+          },
+          "count": 8
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4864:20",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at insert_atomic_segment (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4852:20)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "split-edge",
+        "edge": {
+          "type": "ArrangementEdge",
+          "id": 8,
+          "segment": {
+            "type": "Arc",
+            "start": {
+              "type": "Point",
+              "x": 44.65470738191777,
+              "y": -2.000000128718176
+            },
+            "radius": {
+              "type": "Point",
+              "x": 2.504034466969128,
+              "y": 2.504034466969128
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "type": "Point",
+              "x": 44.654707398637925,
+              "y": -2.0000001287266667
+            }
+          },
+          "bounds": {
+            "type": "BoundingBox",
+            "min": {
+              "type": "Point",
+              "x": 44.65470738191777,
+              "y": -2.0000001287266667
+            },
+            "max": {
+              "type": "Point",
+              "x": 44.654707398637925,
+              "y": -2.0000001287181757
+            }
+          },
+          "start_vertex": 8,
+          "end_vertex": 9,
+          "forward_multiplicity": 1,
+          "reverse_multiplicity": 0
+        },
+        "cuts": [
+          0.43672827019739785,
+          0.7052472988205847
+        ],
+        "tolerance": 2e-9,
+        "minimum_length": 2e-9
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470738191777,
+          "y": -2.000000128718176
+        },
+        "tolerance": 2e-9,
+        "id": 8,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470738191777,
+            "y": -2.000000128718176
+          },
+          "count": 2
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470738191777,
+            "y": -2.000000128718176
+          },
+          "count": 3
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707389219936,
+          "y": -2.0000001287218843
+        },
+        "tolerance": 2e-9,
+        "id": 12,
+        "created": true,
+        "old": null,
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707389219936,
+            "y": -2.0000001287218843
+          },
+          "count": 1
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707389219936,
+          "y": -2.0000001287218843
+        },
+        "tolerance": 2e-9,
+        "id": 12,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707389219936,
+            "y": -2.0000001287218843
+          },
+          "count": 1
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707389219936,
+            "y": -2.0000001287218843
+          },
+          "count": 2
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707393709614,
+          "y": -2.000000128724164
+        },
+        "tolerance": 2e-9,
+        "id": 13,
+        "created": true,
+        "old": null,
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707393709614,
+            "y": -2.000000128724164
+          },
+          "count": 1
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707393709614,
+          "y": -2.000000128724164
+        },
+        "tolerance": 2e-9,
+        "id": 13,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707393709614,
+            "y": -2.000000128724164
+          },
+          "count": 1
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707393709614,
+            "y": -2.000000128724164
+          },
+          "count": 2
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707398637925,
+          "y": -2.0000001287266667
+        },
+        "tolerance": 2e-9,
+        "id": 9,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707399945295,
+            "y": -2.000000128727331
+          },
+          "count": 6
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707399945295,
+            "y": -2.000000128727331
+          },
+          "count": 7
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "split-edge",
+        "edge": {
+          "type": "ArrangementEdge",
+          "id": 13,
+          "segment": {
+            "type": "Arc",
+            "start": {
+              "type": "Point",
+              "x": 44.654707393709614,
+              "y": -2.000000128724164
+            },
+            "radius": {
+              "type": "Point",
+              "x": 2.504034466969128,
+              "y": 2.504034466969128
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "type": "Point",
+              "x": 44.654707398637925,
+              "y": -2.0000001287266667
+            }
+          },
+          "bounds": {
+            "type": "BoundingBox",
+            "min": {
+              "type": "Point",
+              "x": 44.654707393709614,
+              "y": -2.000000128726666
+            },
+            "max": {
+              "type": "Point",
+              "x": 44.654707398637925,
+              "y": -2.000000128724164
+            }
+          },
+          "start_vertex": 13,
+          "end_vertex": 9,
+          "forward_multiplicity": 1,
+          "reverse_multiplicity": 0
+        },
+        "cuts": [
+          0.4830238439260759
+        ],
+        "tolerance": 2e-9,
+        "minimum_length": 2e-9
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707393709614,
+          "y": -2.000000128724164
+        },
+        "tolerance": 2e-9,
+        "id": 13,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707393709614,
+            "y": -2.000000128724164
+          },
+          "count": 2
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707393709614,
+            "y": -2.000000128724164
+          },
+          "count": 3
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470739609011,
+          "y": -2.000000128725373
+        },
+        "tolerance": 2e-9,
+        "id": 13,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707393709614,
+            "y": -2.000000128724164
+          },
+          "count": 3
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470739489986,
+            "y": -2.0000001287247686
+          },
+          "count": 4
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470739609011,
+          "y": -2.000000128725373
+        },
+        "tolerance": 2e-9,
+        "id": 13,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470739489986,
+            "y": -2.0000001287247686
+          },
+          "count": 4
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470739489986,
+            "y": -2.0000001287247686
+          },
+          "count": 5
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707398637925,
+          "y": -2.0000001287266667
+        },
+        "tolerance": 2e-9,
+        "id": 9,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707399945295,
+            "y": -2.000000128727331
+          },
+          "count": 7
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707399945295,
+            "y": -2.000000128727331
+          },
+          "count": 8
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470739609011,
+          "y": -2.0000001287253806
+        },
+        "tolerance": 2e-9,
+        "id": 13,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470739489986,
+            "y": -2.0000001287247686
+          },
+          "count": 5
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470739489986,
+            "y": -2.000000128724772
+          },
+          "count": 6
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4861:20",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at insert_atomic_segment (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4852:20)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707393709614,
+          "y": -2.0000001287241727
+        },
+        "tolerance": 2e-9,
+        "id": 13,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470739489986,
+            "y": -2.000000128724772
+          },
+          "count": 6
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470739489986,
+            "y": -2.0000001287247766
+          },
+          "count": 7
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4864:20",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at insert_atomic_segment (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4852:20)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "split-edge",
+        "edge": {
+          "type": "ArrangementEdge",
+          "id": 8,
+          "segment": {
+            "type": "Arc",
+            "start": {
+              "type": "Point",
+              "x": 44.65470738191777,
+              "y": -2.000000128718176
+            },
+            "radius": {
+              "type": "Point",
+              "x": 2.504034466969128,
+              "y": 2.504034466969128
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "type": "Point",
+              "x": 44.654707389219936,
+              "y": -2.0000001287218843
+            }
+          },
+          "bounds": {
+            "type": "BoundingBox",
+            "min": {
+              "type": "Point",
+              "x": 44.654707381917774,
+              "y": -2.0000001287218843
+            },
+            "max": {
+              "type": "Point",
+              "x": 44.65470738921994,
+              "y": -2.0000001287181766
+            }
+          },
+          "start_vertex": 8,
+          "end_vertex": 12,
+          "forward_multiplicity": 1,
+          "reverse_multiplicity": 0
+        },
+        "cuts": [
+          0.41975246500192204
+        ],
+        "tolerance": 2e-9,
+        "minimum_length": 2e-9
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470738191777,
+          "y": -2.000000128718176
+        },
+        "tolerance": 2e-9,
+        "id": 8,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470738191777,
+            "y": -2.000000128718176
+          },
+          "count": 3
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470738191777,
+            "y": -2.000000128718176
+          },
+          "count": 4
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470738498288,
+          "y": -2.000000128719733
+        },
+        "tolerance": 2e-9,
+        "id": 8,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470738191777,
+            "y": -2.000000128718176
+          },
+          "count": 4
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470738345032,
+            "y": -2.0000001287189546
+          },
+          "count": 5
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470738498288,
+          "y": -2.000000128719733
+        },
+        "tolerance": 2e-9,
+        "id": 8,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470738345032,
+            "y": -2.0000001287189546
+          },
+          "count": 5
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470738345032,
+            "y": -2.0000001287189546
+          },
+          "count": 6
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707389219936,
+          "y": -2.0000001287218843
+        },
+        "tolerance": 2e-9,
+        "id": 12,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707389219936,
+            "y": -2.0000001287218843
+          },
+          "count": 2
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707389219936,
+            "y": -2.0000001287218843
+          },
+          "count": 3
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "split-edge",
+        "edge": {
+          "type": "ArrangementEdge",
+          "id": 8,
+          "segment": {
+            "type": "Arc",
+            "start": {
+              "type": "Point",
+              "x": 44.65470738498288,
+              "y": -2.000000128719733
+            },
+            "radius": {
+              "type": "Point",
+              "x": 2.504034466969128,
+              "y": 2.504034466969128
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "type": "Point",
+              "x": 44.654707389219936,
+              "y": -2.0000001287218843
+            }
+          },
+          "bounds": {
+            "type": "BoundingBox",
+            "min": {
+              "type": "Point",
+              "x": 44.65470738498288,
+              "y": -2.0000001287218843
+            },
+            "max": {
+              "type": "Point",
+              "x": 44.654707389219936,
+              "y": -2.000000128719733
+            }
+          },
+          "start_vertex": 8,
+          "end_vertex": 12,
+          "forward_multiplicity": 1,
+          "reverse_multiplicity": 0
+        },
+        "cuts": [
+          0.4999995692664566
+        ],
+        "tolerance": 2e-9,
+        "minimum_length": 2e-9
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470738498288,
+          "y": -2.000000128719733
+        },
+        "tolerance": 2e-9,
+        "id": 8,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470738345032,
+            "y": -2.0000001287189546
+          },
+          "count": 6
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470738345032,
+            "y": -2.0000001287189546
+          },
+          "count": 7
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470738710141,
+          "y": -2.0000001287208087
+        },
+        "tolerance": 2e-9,
+        "id": 12,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707389219936,
+            "y": -2.0000001287218843
+          },
+          "count": 3
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470738816067,
+            "y": -2.0000001287213465
+          },
+          "count": 4
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470738710141,
+          "y": -2.0000001287208087
+        },
+        "tolerance": 2e-9,
+        "id": 12,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470738816067,
+            "y": -2.0000001287213465
+          },
+          "count": 4
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470738816067,
+            "y": -2.0000001287213465
+          },
+          "count": 5
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707389219936,
+          "y": -2.0000001287218843
+        },
+        "tolerance": 2e-9,
+        "id": 12,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470738816067,
+            "y": -2.0000001287213465
+          },
+          "count": 5
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470738816067,
+            "y": -2.0000001287213465
+          },
+          "count": 6
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707389219936,
+          "y": -2.0000001287218945
+        },
+        "tolerance": 2e-9,
+        "id": 12,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470738816067,
+            "y": -2.0000001287213465
+          },
+          "count": 6
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470738816067,
+            "y": -2.000000128721352
+          },
+          "count": 7
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4861:20",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at insert_atomic_segment (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4852:20)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470738710141,
+          "y": -2.000000128720819
+        },
+        "tolerance": 2e-9,
+        "id": 12,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470738816067,
+            "y": -2.000000128721352
+          },
+          "count": 7
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470738816067,
+            "y": -2.000000128721352
+          },
+          "count": 8
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4864:20",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at insert_atomic_segment (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4852:20)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470738498288,
+          "y": -2.000000128719744
+        },
+        "tolerance": 2e-9,
+        "id": 8,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470738345032,
+            "y": -2.0000001287189546
+          },
+          "count": 7
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470738345032,
+            "y": -2.00000012871896
+          },
+          "count": 8
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4861:20",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at insert_atomic_segment (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4852:20)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470738191777,
+          "y": -2.0000001287181894
+        },
+        "tolerance": 2e-9,
+        "id": 8,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470738345032,
+            "y": -2.00000012871896
+          },
+          "count": 8
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470738345032,
+            "y": -2.00000012871896
+          },
+          "count": 9
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4864:20",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at insert_atomic_segment (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4852:20)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "split-edge",
+        "edge": {
+          "type": "ArrangementEdge",
+          "id": 7,
+          "segment": {
+            "type": "Arc",
+            "start": {
+              "type": "Point",
+              "x": 44.65470735208983,
+              "y": -2.0000001287030287
+            },
+            "radius": {
+              "type": "Point",
+              "x": 2.504034466969128,
+              "y": 2.504034466969128
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "type": "Point",
+              "x": 44.65470738191777,
+              "y": -2.000000128718176
+            }
+          },
+          "bounds": {
+            "type": "BoundingBox",
+            "min": {
+              "type": "Point",
+              "x": 44.65470735208982,
+              "y": -2.0000001287181766
+            },
+            "max": {
+              "type": "Point",
+              "x": 44.65470738191776,
+              "y": -2.000000128703029
+            }
+          },
+          "start_vertex": 7,
+          "end_vertex": 8,
+          "forward_multiplicity": 1,
+          "reverse_multiplicity": 0
+        },
+        "cuts": [
+          0.47959527170877114,
+          0.7335390820669787
+        ],
+        "tolerance": 2e-9,
+        "minimum_length": 2e-9
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470735208983,
+          "y": -2.0000001287030287
+        },
+        "tolerance": 2e-9,
+        "id": 7,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470735208983,
+            "y": -2.0000001287030287
+          },
+          "count": 3
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470735208983,
+            "y": -2.0000001287030287
+          },
+          "count": 4
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707366395165,
+          "y": -2.0000001287102935
+        },
+        "tolerance": 2e-9,
+        "id": 14,
+        "created": true,
+        "old": null,
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707366395165,
+            "y": -2.0000001287102935
+          },
+          "count": 1
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707366395165,
+          "y": -2.0000001287102935
+        },
+        "tolerance": 2e-9,
+        "id": 14,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707366395165,
+            "y": -2.0000001287102935
+          },
+          "count": 1
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707366395165,
+            "y": -2.0000001287102935
+          },
+          "count": 2
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707373969785,
+          "y": -2.0000001287141402
+        },
+        "tolerance": 2e-9,
+        "id": 15,
+        "created": true,
+        "old": null,
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707373969785,
+            "y": -2.0000001287141402
+          },
+          "count": 1
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707373969785,
+          "y": -2.0000001287141402
+        },
+        "tolerance": 2e-9,
+        "id": 15,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707373969785,
+            "y": -2.0000001287141402
+          },
+          "count": 1
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707373969785,
+            "y": -2.0000001287141402
+          },
+          "count": 2
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470738191777,
+          "y": -2.000000128718176
+        },
+        "tolerance": 2e-9,
+        "id": 8,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470738345032,
+            "y": -2.0000001287189546
+          },
+          "count": 7
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470738345032,
+            "y": -2.0000001287189546
+          },
+          "count": 8
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "split-edge",
+        "edge": {
+          "type": "ArrangementEdge",
+          "id": 15,
+          "segment": {
+            "type": "Arc",
+            "start": {
+              "type": "Point",
+              "x": 44.654707373969785,
+              "y": -2.0000001287141402
+            },
+            "radius": {
+              "type": "Point",
+              "x": 2.504034466969128,
+              "y": 2.504034466969128
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "type": "Point",
+              "x": 44.65470738191777,
+              "y": -2.000000128718176
+            }
+          },
+          "bounds": {
+            "type": "BoundingBox",
+            "min": {
+              "type": "Point",
+              "x": 44.65470737396979,
+              "y": -2.000000128718176
+            },
+            "max": {
+              "type": "Point",
+              "x": 44.654707381917774,
+              "y": -2.0000001287141402
+            }
+          },
+          "start_vertex": 15,
+          "end_vertex": 8,
+          "forward_multiplicity": 1,
+          "reverse_multiplicity": 0
+        },
+        "cuts": [
+          0.32664560172500323,
+          0.587962879720076
+        ],
+        "tolerance": 2e-9,
+        "minimum_length": 2e-9
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707373969785,
+          "y": -2.0000001287141402
+        },
+        "tolerance": 2e-9,
+        "id": 15,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707373969785,
+            "y": -2.0000001287141402
+          },
+          "count": 2
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707373969785,
+            "y": -2.0000001287141402
+          },
+          "count": 3
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707376565966,
+          "y": -2.0000001287154587
+        },
+        "tolerance": 2e-9,
+        "id": 15,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707373969785,
+            "y": -2.0000001287141402
+          },
+          "count": 3
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707375267876,
+            "y": -2.0000001287147997
+          },
+          "count": 4
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707376565966,
+          "y": -2.0000001287154587
+        },
+        "tolerance": 2e-9,
+        "id": 15,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707375267876,
+            "y": -2.0000001287147997
+          },
+          "count": 4
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707375267876,
+            "y": -2.0000001287147997
+          },
+          "count": 5
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470737864291,
+          "y": -2.0000001287165134
+        },
+        "tolerance": 2e-9,
+        "id": 16,
+        "created": true,
+        "old": null,
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470737864291,
+            "y": -2.0000001287165134
+          },
+          "count": 1
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470737864291,
+          "y": -2.0000001287165134
+        },
+        "tolerance": 2e-9,
+        "id": 16,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470737864291,
+            "y": -2.0000001287165134
+          },
+          "count": 1
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470737864291,
+            "y": -2.0000001287165134
+          },
+          "count": 2
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470738191777,
+          "y": -2.000000128718176
+        },
+        "tolerance": 2e-9,
+        "id": 8,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470738345032,
+            "y": -2.0000001287189546
+          },
+          "count": 8
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470738345032,
+            "y": -2.0000001287189546
+          },
+          "count": 9
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707376565966,
+          "y": -2.0000001287154734
+        },
+        "tolerance": 2e-9,
+        "id": 16,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470737864291,
+            "y": -2.0000001287165134
+          },
+          "count": 2
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470737760444,
+            "y": -2.0000001287159934
+          },
+          "count": 3
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4861:20",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at insert_atomic_segment (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4852:20)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707373969785,
+          "y": -2.0000001287141567
+        },
+        "tolerance": 2e-9,
+        "id": 15,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707375267876,
+            "y": -2.0000001287147997
+          },
+          "count": 5
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707375267876,
+            "y": -2.0000001287147997
+          },
+          "count": 6
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4864:20",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at insert_atomic_segment (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:4852:20)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "split-edge",
+        "edge": {
+          "type": "ArrangementEdge",
+          "id": 14,
+          "segment": {
+            "type": "Arc",
+            "start": {
+              "type": "Point",
+              "x": 44.654707366395165,
+              "y": -2.0000001287102935
+            },
+            "radius": {
+              "type": "Point",
+              "x": 2.504034466969128,
+              "y": 2.504034466969128
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "type": "Point",
+              "x": 44.654707373969785,
+              "y": -2.0000001287141402
+            }
+          },
+          "bounds": {
+            "type": "BoundingBox",
+            "min": {
+              "type": "Point",
+              "x": 44.654707366395165,
+              "y": -2.0000001287141402
+            },
+            "max": {
+              "type": "Point",
+              "x": 44.654707373969785,
+              "y": -2.0000001287102935
+            }
+          },
+          "start_vertex": 14,
+          "end_vertex": 15,
+          "forward_multiplicity": 1,
+          "reverse_multiplicity": 0
+        },
+        "cuts": [
+          0.3719129859314178,
+          0.6882708930179993
+        ],
+        "tolerance": 2e-9,
+        "minimum_length": 2e-9
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707366395165,
+          "y": -2.0000001287102935
+        },
+        "tolerance": 2e-9,
+        "id": 14,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707366395165,
+            "y": -2.0000001287102935
+          },
+          "count": 2
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707366395165,
+            "y": -2.0000001287102935
+          },
+          "count": 3
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470736921227,
+          "y": -2.0000001287117244
+        },
+        "tolerance": 2e-9,
+        "id": 14,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707366395165,
+            "y": -2.0000001287102935
+          },
+          "count": 3
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470736780372,
+            "y": -2.000000128711009
+          },
+          "count": 4
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470736921227,
+          "y": -2.0000001287117244
+        },
+        "tolerance": 2e-9,
+        "id": 14,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470736780372,
+            "y": -2.000000128711009
+          },
+          "count": 4
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470736780372,
+            "y": -2.000000128711009
+          },
+          "count": 5
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470737160856,
+          "y": -2.000000128712941
+        },
+        "tolerance": 2e-9,
+        "id": 17,
+        "created": true,
+        "old": null,
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470737160856,
+            "y": -2.000000128712941
+          },
+          "count": 1
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.65470737160856,
+          "y": -2.000000128712941
+        },
+        "tolerance": 2e-9,
+        "id": 17,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470737160856,
+            "y": -2.000000128712941
+          },
+          "count": 1
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470737160856,
+            "y": -2.000000128712941
+          },
+          "count": 2
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5825:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "attach",
+        "endpoint": {
+          "type": "Point",
+          "x": 44.654707373969785,
+          "y": -2.0000001287141402
+        },
+        "tolerance": 2e-9,
+        "id": 17,
+        "created": false,
+        "old": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.65470737160856,
+            "y": -2.000000128712941
+          },
+          "count": 2
+        },
+        "current": {
+          "type": "Object",
+          "point": {
+            "type": "Point",
+            "x": 44.654707372789176,
+            "y": -2.0000001287135407
+          },
+          "count": 3
+        },
+        "caller": [
+          "    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5828:22",
+          "    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)",
+          "    at progressive_replacement_edges (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:5806:22)"
+        ]
+      },
+      {
+        "type": "Object",
+        "kind": "failed-piece",
+        "piece": {
+          "type": "AtomicPiece",
+          "source_index": 3,
+          "path_index": 0,
+          "subpath_index": 0,
+          "segment_index": 3,
+          "source_from": 0.00008868542738931561,
+          "source_to": 0.00009333882786494167,
+          "self_split_depth": 0,
+          "segment": {
+            "type": "Arc",
+            "start": {
+              "type": "Point",
+              "x": 44.654707373969785,
+              "y": -2.0000001287141567
+            },
+            "radius": {
+              "type": "Point",
+              "x": 1,
+              "y": 1
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "type": "Point",
+              "x": 44.65470737160856,
+              "y": -2.0000001287129585
+            }
+          }
+        },
+        "vertices": [
+          {
+            "type": "Object",
+            "id": 0,
+            "point": {
+              "type": "Point",
+              "x": 29.147933544518214,
+              "y": 12.471880016841876
+            },
+            "endpoint_samples": [
+              {
+                "type": "Point",
+                "x": 29.147933544518214,
+                "y": 12.471880016841876
+              },
+              {
+                "type": "Point",
+                "x": 29.147933544518214,
+                "y": 12.471880016841876
+              }
+            ]
+          },
+          {
+            "type": "Object",
+            "id": 1,
+            "point": {
+              "type": "Point",
+              "x": 42.88593354451822,
+              "y": -1.2671599831581235
+            },
+            "endpoint_samples": [
+              {
+                "type": "Point",
+                "x": 42.88593354451822,
+                "y": -1.2671599831581235
+              },
+              {
+                "type": "Point",
+                "x": 42.88593354451822,
+                "y": -1.2671599831581235
+              },
+              {
+                "type": "Point",
+                "x": 42.88593354451822,
+                "y": -1.2671599831581235
+              }
+            ]
+          },
+          {
+            "type": "Object",
+            "id": 2,
+            "point": {
+              "type": "Point",
+              "x": 42.88575071280833,
+              "y": -1.2669771848740625
+            },
+            "endpoint_samples": [
+              {
+                "type": "Point",
+                "x": 42.88575071280833,
+                "y": -1.2669771848740625
+              },
+              {
+                "type": "Point",
+                "x": 42.88575071280833,
+                "y": -1.2669771848740625
+              }
+            ]
+          },
+          {
+            "type": "Object",
+            "id": 3,
+            "point": {
+              "type": "Point",
+              "x": 42.88583436681323,
+              "y": -1.26706079794514
+            },
+            "endpoint_samples": [
+              {
+                "type": "Point",
+                "x": 42.88583436681323,
+                "y": -1.2670607979451385
+              },
+              {
+                "type": "Point",
+                "x": 42.88583436681323,
+                "y": -1.2670607979451385
+              },
+              {
+                "type": "Point",
+                "x": 42.88583436681323,
+                "y": -1.2670607979451385
+              },
+              {
+                "type": "Point",
+                "x": 42.88583436681323,
+                "y": -1.2670607979451418
+              },
+              {
+                "type": "Point",
+                "x": 42.88583436681323,
+                "y": -1.2670607979451418
+              }
+            ]
+          },
+          {
+            "type": "Object",
+            "id": 4,
+            "point": {
+              "type": "Point",
+              "x": 44.65470741788941,
+              "y": -2.000000128736442
+            },
+            "endpoint_samples": [
+              {
+                "type": "Point",
+                "x": 44.65470741897046,
+                "y": -2.0000001287369904
+              },
+              {
+                "type": "Point",
+                "x": 44.654707416808364,
+                "y": -2.000000128735893
+              },
+              {
+                "type": "Point",
+                "x": 44.654707416808364,
+                "y": -2.000000128735893
+              },
+              {
+                "type": "Point",
+                "x": 44.65470741897046,
+                "y": -2.0000001287369904
+              },
+              {
+                "type": "Point",
+                "x": 44.65470741897046,
+                "y": -2.0000001287369904
+              },
+              {
+                "type": "Point",
+                "x": 44.65470741897046,
+                "y": -2.0000001287369904
+              },
+              {
+                "type": "Point",
+                "x": 44.65470741897046,
+                "y": -2.0000001287369904
+              },
+              {
+                "type": "Point",
+                "x": 44.65470741897046,
+                "y": -2.0000001287369904
+              }
+            ]
+          },
+          {
+            "type": "Object",
+            "id": 5,
+            "point": {
+              "type": "Point",
+              "x": 44.654707157952494,
+              "y": -2.0000001286044364
+            },
+            "endpoint_samples": [
+              {
+                "type": "Point",
+                "x": 44.654707157952494,
+                "y": -2.0000001286044364
+              },
+              {
+                "type": "Point",
+                "x": 44.654707157952494,
+                "y": -2.0000001286044364
+              },
+              {
+                "type": "Point",
+                "x": 44.654707157952494,
+                "y": -2.0000001286044364
+              }
+            ]
+          },
+          {
+            "type": "Object",
+            "id": 6,
+            "point": {
+              "type": "Point",
+              "x": 44.654707255431425,
+              "y": -2.0000001286539426
+            },
+            "endpoint_samples": [
+              {
+                "type": "Point",
+                "x": 44.654707255431425,
+                "y": -2.0000001286539426
+              },
+              {
+                "type": "Point",
+                "x": 44.654707255431425,
+                "y": -2.0000001286539426
+              }
+            ]
+          },
+          {
+            "type": "Object",
+            "id": 7,
+            "point": {
+              "type": "Point",
+              "x": 44.65470735208983,
+              "y": -2.0000001287030287
+            },
+            "endpoint_samples": [
+              {
+                "type": "Point",
+                "x": 44.65470735208983,
+                "y": -2.0000001287030287
+              },
+              {
+                "type": "Point",
+                "x": 44.65470735208983,
+                "y": -2.0000001287030287
+              },
+              {
+                "type": "Point",
+                "x": 44.65470735208983,
+                "y": -2.0000001287030287
+              },
+              {
+                "type": "Point",
+                "x": 44.65470735208983,
+                "y": -2.0000001287030287
+              }
+            ]
+          },
+          {
+            "type": "Object",
+            "id": 8,
+            "point": {
+              "type": "Point",
+              "x": 44.65470738345032,
+              "y": -2.0000001287189546
+            },
+            "endpoint_samples": [
+              {
+                "type": "Point",
+                "x": 44.65470738191777,
+                "y": -2.000000128718176
+              },
+              {
+                "type": "Point",
+                "x": 44.65470738191777,
+                "y": -2.000000128718176
+              },
+              {
+                "type": "Point",
+                "x": 44.65470738498288,
+                "y": -2.000000128719733
+              },
+              {
+                "type": "Point",
+                "x": 44.65470738498288,
+                "y": -2.000000128719733
+              },
+              {
+                "type": "Point",
+                "x": 44.65470738498288,
+                "y": -2.000000128719733
+              },
+              {
+                "type": "Point",
+                "x": 44.65470738191777,
+                "y": -2.000000128718176
+              },
+              {
+                "type": "Point",
+                "x": 44.65470738191777,
+                "y": -2.000000128718176
+              },
+              {
+                "type": "Point",
+                "x": 44.65470738191777,
+                "y": -2.000000128718176
+              },
+              {
+                "type": "Point",
+                "x": 44.65470738191777,
+                "y": -2.000000128718176
+              }
+            ]
+          },
+          {
+            "type": "Object",
+            "id": 9,
+            "point": {
+              "type": "Point",
+              "x": 44.654707399945295,
+              "y": -2.000000128727331
+            },
+            "endpoint_samples": [
+              {
+                "type": "Point",
+                "x": 44.654707398637925,
+                "y": -2.0000001287266667
+              },
+              {
+                "type": "Point",
+                "x": 44.654707398637925,
+                "y": -2.0000001287266667
+              },
+              {
+                "type": "Point",
+                "x": 44.65470740125266,
+                "y": -2.0000001287279954
+              },
+              {
+                "type": "Point",
+                "x": 44.65470740125266,
+                "y": -2.0000001287279954
+              },
+              {
+                "type": "Point",
+                "x": 44.654707398637925,
+                "y": -2.0000001287266667
+              },
+              {
+                "type": "Point",
+                "x": 44.654707398637925,
+                "y": -2.0000001287266667
+              },
+              {
+                "type": "Point",
+                "x": 44.654707398637925,
+                "y": -2.0000001287266667
+              },
+              {
+                "type": "Point",
+                "x": 44.654707398637925,
+                "y": -2.0000001287266667
+              }
+            ]
+          },
+          {
+            "type": "Object",
+            "id": 10,
+            "point": {
+              "type": "Point",
+              "x": 44.65470740581858,
+              "y": -2.0000001287303135
+            },
+            "endpoint_samples": [
+              {
+                "type": "Point",
+                "x": 44.65470740723881,
+                "y": -2.0000001287310343
+              },
+              {
+                "type": "Point",
+                "x": 44.654707404398344,
+                "y": -2.0000001287295928
+              },
+              {
+                "type": "Point",
+                "x": 44.654707404398344,
+                "y": -2.0000001287295928
+              },
+              {
+                "type": "Point",
+                "x": 44.65470740723881,
+                "y": -2.0000001287310343
+              },
+              {
+                "type": "Point",
+                "x": 44.65470740723881,
+                "y": -2.0000001287310343
+              }
+            ]
+          },
+          {
+            "type": "Object",
+            "id": 11,
+            "point": {
+              "type": "Point",
+              "x": 44.65470741271587,
+              "y": -2.0000001287338156
+            },
+            "endpoint_samples": [
+              {
+                "type": "Point",
+                "x": 44.65470741271587,
+                "y": -2.0000001287338156
+              },
+              {
+                "type": "Point",
+                "x": 44.65470741271587,
+                "y": -2.0000001287338156
+              },
+              {
+                "type": "Point",
+                "x": 44.65470741271587,
+                "y": -2.0000001287338156
+              }
+            ]
+          },
+          {
+            "type": "Object",
+            "id": 12,
+            "point": {
+              "type": "Point",
+              "x": 44.65470738816067,
+              "y": -2.0000001287213465
+            },
+            "endpoint_samples": [
+              {
+                "type": "Point",
+                "x": 44.654707389219936,
+                "y": -2.0000001287218843
+              },
+              {
+                "type": "Point",
+                "x": 44.65470738710141,
+                "y": -2.0000001287208087
+              },
+              {
+                "type": "Point",
+                "x": 44.65470738710141,
+                "y": -2.0000001287208087
+              },
+              {
+                "type": "Point",
+                "x": 44.654707389219936,
+                "y": -2.0000001287218843
+              },
+              {
+                "type": "Point",
+                "x": 44.654707389219936,
+                "y": -2.0000001287218843
+              },
+              {
+                "type": "Point",
+                "x": 44.654707389219936,
+                "y": -2.0000001287218843
+              }
+            ]
+          },
+          {
+            "type": "Object",
+            "id": 13,
+            "point": {
+              "type": "Point",
+              "x": 44.65470739489986,
+              "y": -2.0000001287247686
+            },
+            "endpoint_samples": [
+              {
+                "type": "Point",
+                "x": 44.65470739609011,
+                "y": -2.000000128725373
+              },
+              {
+                "type": "Point",
+                "x": 44.65470739609011,
+                "y": -2.000000128725373
+              },
+              {
+                "type": "Point",
+                "x": 44.654707393709614,
+                "y": -2.000000128724164
+              },
+              {
+                "type": "Point",
+                "x": 44.654707393709614,
+                "y": -2.000000128724164
+              },
+              {
+                "type": "Point",
+                "x": 44.654707393709614,
+                "y": -2.000000128724164
+              }
+            ]
+          },
+          {
+            "type": "Object",
+            "id": 14,
+            "point": {
+              "type": "Point",
+              "x": 44.65470736780372,
+              "y": -2.000000128711009
+            },
+            "endpoint_samples": [
+              {
+                "type": "Point",
+                "x": 44.65470736921227,
+                "y": -2.0000001287117244
+              },
+              {
+                "type": "Point",
+                "x": 44.65470736921227,
+                "y": -2.0000001287117244
+              },
+              {
+                "type": "Point",
+                "x": 44.654707366395165,
+                "y": -2.0000001287102935
+              },
+              {
+                "type": "Point",
+                "x": 44.654707366395165,
+                "y": -2.0000001287102935
+              },
+              {
+                "type": "Point",
+                "x": 44.654707366395165,
+                "y": -2.0000001287102935
+              }
+            ]
+          },
+          {
+            "type": "Object",
+            "id": 15,
+            "point": {
+              "type": "Point",
+              "x": 44.654707375267876,
+              "y": -2.0000001287147997
+            },
+            "endpoint_samples": [
+              {
+                "type": "Point",
+                "x": 44.654707373969785,
+                "y": -2.0000001287141567
+              },
+              {
+                "type": "Point",
+                "x": 44.654707376565966,
+                "y": -2.0000001287154587
+              },
+              {
+                "type": "Point",
+                "x": 44.654707376565966,
+                "y": -2.0000001287154587
+              },
+              {
+                "type": "Point",
+                "x": 44.654707373969785,
+                "y": -2.0000001287141402
+              },
+              {
+                "type": "Point",
+                "x": 44.654707373969785,
+                "y": -2.0000001287141402
+              },
+              {
+                "type": "Point",
+                "x": 44.654707373969785,
+                "y": -2.0000001287141402
+              }
+            ]
+          },
+          {
+            "type": "Object",
+            "id": 16,
+            "point": {
+              "type": "Point",
+              "x": 44.65470737760444,
+              "y": -2.0000001287159934
+            },
+            "endpoint_samples": [
+              {
+                "type": "Point",
+                "x": 44.654707376565966,
+                "y": -2.0000001287154734
+              },
+              {
+                "type": "Point",
+                "x": 44.65470737864291,
+                "y": -2.0000001287165134
+              },
+              {
+                "type": "Point",
+                "x": 44.65470737864291,
+                "y": -2.0000001287165134
+              }
+            ]
+          },
+          {
+            "type": "Object",
+            "id": 17,
+            "point": {
+              "type": "Point",
+              "x": 44.654707372789176,
+              "y": -2.0000001287135407
+            },
+            "endpoint_samples": [
+              {
+                "type": "Point",
+                "x": 44.654707373969785,
+                "y": -2.0000001287141402
+              },
+              {
+                "type": "Point",
+                "x": 44.65470737160856,
+                "y": -2.000000128712941
+              },
+              {
+                "type": "Point",
+                "x": 44.65470737160856,
+                "y": -2.000000128712941
+              }
+            ]
+          }
+        ],
+        "edges": [
+          {
+            "type": "ArrangementEdge",
+            "id": 0,
+            "segment": {
+              "type": "Line",
+              "start": {
+                "type": "Point",
+                "x": 29.147933544518214,
+                "y": 12.471880016841876
+              },
+              "end": {
+                "type": "Point",
+                "x": 42.88583436681323,
+                "y": -1.2670607979451418
+              }
+            },
+            "bounds": {
+              "type": "BoundingBox",
+              "min": {
+                "type": "Point",
+                "x": 29.147933544518214,
+                "y": -1.2670607979451418
+              },
+              "max": {
+                "type": "Point",
+                "x": 42.88583436681323,
+                "y": 12.471880016841876
+              }
+            },
+            "start_vertex": 0,
+            "end_vertex": 3,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          {
+            "type": "ArrangementEdge",
+            "id": 2,
+            "segment": {
+              "type": "Line",
+              "start": {
+                "type": "Point",
+                "x": 42.88583436681323,
+                "y": -1.2670607979451418
+              },
+              "end": {
+                "type": "Point",
+                "x": 42.88593354451822,
+                "y": -1.2671599831581235
+              }
+            },
+            "bounds": {
+              "type": "BoundingBox",
+              "min": {
+                "type": "Point",
+                "x": 42.88583436681323,
+                "y": -1.2671599831581235
+              },
+              "max": {
+                "type": "Point",
+                "x": 42.88593354451822,
+                "y": -1.2670607979451418
+              }
+            },
+            "start_vertex": 3,
+            "end_vertex": 1,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          {
+            "type": "ArrangementEdge",
+            "id": 1,
+            "segment": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 42.88593354451822,
+                "y": -1.2671599831581235
+              },
+              "radius": {
+                "type": "Point",
+                "x": 1,
+                "y": 1
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 42.88575071280833,
+                "y": -1.2669771848740625
+              }
+            },
+            "bounds": {
+              "type": "BoundingBox",
+              "min": {
+                "type": "Point",
+                "x": 42.88575071280833,
+                "y": -1.2671599831581237
+              },
+              "max": {
+                "type": "Point",
+                "x": 42.88593354451822,
+                "y": -1.2669771848740625
+              }
+            },
+            "start_vertex": 1,
+            "end_vertex": 2,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          {
+            "type": "ArrangementEdge",
+            "id": 3,
+            "segment": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 42.88575071280833,
+                "y": -1.2669771848740625
+              },
+              "radius": {
+                "type": "Point",
+                "x": 2.504034466969128,
+                "y": 2.504034466969128
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 42.88583436681323,
+                "y": -1.2670607979451385
+              }
+            },
+            "bounds": {
+              "type": "BoundingBox",
+              "min": {
+                "type": "Point",
+                "x": 42.88575071280833,
+                "y": -1.2670607979451376
+              },
+              "max": {
+                "type": "Point",
+                "x": 42.88583436681323,
+                "y": -1.2669771848740623
+              }
+            },
+            "start_vertex": 2,
+            "end_vertex": 3,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          {
+            "type": "ArrangementEdge",
+            "id": 4,
+            "segment": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 42.88583436681323,
+                "y": -1.2670607979451385
+              },
+              "radius": {
+                "type": "Point",
+                "x": 2.504034466969128,
+                "y": 2.504034466969128
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 44.654707157952494,
+                "y": -2.0000001286044364
+              }
+            },
+            "bounds": {
+              "type": "BoundingBox",
+              "min": {
+                "type": "Point",
+                "x": 42.885834366813235,
+                "y": -2.000000128604436
+              },
+              "max": {
+                "type": "Point",
+                "x": 44.6547071579525,
+                "y": -1.2670607979451383
+              }
+            },
+            "start_vertex": 3,
+            "end_vertex": 5,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          {
+            "type": "ArrangementEdge",
+            "id": 5,
+            "segment": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 44.654707157952494,
+                "y": -2.0000001286044364
+              },
+              "radius": {
+                "type": "Point",
+                "x": 2.504034466969128,
+                "y": 2.504034466969128
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 44.654707255431425,
+                "y": -2.0000001286539426
+              }
+            },
+            "bounds": {
+              "type": "BoundingBox",
+              "min": {
+                "type": "Point",
+                "x": 44.654707157952494,
+                "y": -2.0000001286539426
+              },
+              "max": {
+                "type": "Point",
+                "x": 44.654707255431425,
+                "y": -2.0000001286044364
+              }
+            },
+            "start_vertex": 5,
+            "end_vertex": 6,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          {
+            "type": "ArrangementEdge",
+            "id": 6,
+            "segment": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 44.654707255431425,
+                "y": -2.0000001286539426
+              },
+              "radius": {
+                "type": "Point",
+                "x": 2.504034466969128,
+                "y": 2.504034466969128
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 44.65470735208983,
+                "y": -2.0000001287030287
+              }
+            },
+            "bounds": {
+              "type": "BoundingBox",
+              "min": {
+                "type": "Point",
+                "x": 44.65470725543143,
+                "y": -2.0000001287030287
+              },
+              "max": {
+                "type": "Point",
+                "x": 44.65470735208984,
+                "y": -2.0000001286539426
+              }
+            },
+            "start_vertex": 6,
+            "end_vertex": 7,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          {
+            "type": "ArrangementEdge",
+            "id": 7,
+            "segment": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 44.65470735208983,
+                "y": -2.0000001287030287
+              },
+              "radius": {
+                "type": "Point",
+                "x": 2.504034466969128,
+                "y": 2.504034466969128
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 44.654707366395165,
+                "y": -2.0000001287102935
+              }
+            },
+            "bounds": {
+              "type": "BoundingBox",
+              "min": {
+                "type": "Point",
+                "x": 44.65470735208983,
+                "y": -2.0000001287102944
+              },
+              "max": {
+                "type": "Point",
+                "x": 44.654707366395165,
+                "y": -2.0000001287030296
+              }
+            },
+            "start_vertex": 7,
+            "end_vertex": 14,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          {
+            "type": "ArrangementEdge",
+            "id": 14,
+            "segment": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 44.65470736921227,
+                "y": -2.0000001287117244
+              },
+              "radius": {
+                "type": "Point",
+                "x": 2.504034466969128,
+                "y": 2.504034466969128
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 44.65470737160856,
+                "y": -2.000000128712941
+              }
+            },
+            "bounds": {
+              "type": "BoundingBox",
+              "min": {
+                "type": "Point",
+                "x": 44.65470736921227,
+                "y": -2.0000001287129416
+              },
+              "max": {
+                "type": "Point",
+                "x": 44.65470737160856,
+                "y": -2.000000128711725
+              }
+            },
+            "start_vertex": 14,
+            "end_vertex": 17,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          },
+          {
+            "type": "ArrangementEdge",
+            "id": 15,
+            "segment": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 44.654707376565966,
+                "y": -2.0000001287154587
+              },
+              "radius": {
+                "type": "Point",
+                "x": 2.504034466969128,
+                "y": 2.504034466969128
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 44.65470737864291,
+                "y": -2.0000001287165134
+              }
+            },
+            "bounds": {
+              "type": "BoundingBox",
+              "min": {
+                "type": "Point",
+                "x": 44.654707376565966,
+                "y": -2.000000128716514
+              },
+              "max": {
+                "type": "Point",
+                "x": 44.65470737864291,
+                "y": -2.000000128715459
+              }
+            },
+            "start_vertex": 15,
+            "end_vertex": 16,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 1
+          },
+          {
+            "type": "ArrangementEdge",
+            "id": 16,
+            "segment": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 44.65470737864291,
+                "y": -2.0000001287165134
+              },
+              "radius": {
+                "type": "Point",
+                "x": 2.504034466969128,
+                "y": 2.504034466969128
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 44.65470738191777,
+                "y": -2.000000128718176
+              }
+            },
+            "bounds": {
+              "type": "BoundingBox",
+              "min": {
+                "type": "Point",
+                "x": 44.65470737864292,
+                "y": -2.0000001287181757
+              },
+              "max": {
+                "type": "Point",
+                "x": 44.654707381917774,
+                "y": -2.000000128716513
+              }
+            },
+            "start_vertex": 16,
+            "end_vertex": 8,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 1
+          },
+          {
+            "type": "ArrangementEdge",
+            "id": 8,
+            "segment": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 44.65470738498288,
+                "y": -2.000000128719733
+              },
+              "radius": {
+                "type": "Point",
+                "x": 2.504034466969128,
+                "y": 2.504034466969128
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 44.65470738710141,
+                "y": -2.0000001287208087
+              }
+            },
+            "bounds": {
+              "type": "BoundingBox",
+              "min": {
+                "type": "Point",
+                "x": 44.65470738498288,
+                "y": -2.0000001287208087
+              },
+              "max": {
+                "type": "Point",
+                "x": 44.65470738710141,
+                "y": -2.000000128719733
+              }
+            },
+            "start_vertex": 8,
+            "end_vertex": 12,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 1
+          },
+          {
+            "type": "ArrangementEdge",
+            "id": 12,
+            "segment": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 44.654707389219936,
+                "y": -2.0000001287218843
+              },
+              "radius": {
+                "type": "Point",
+                "x": 2.504034466969128,
+                "y": 2.504034466969128
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 44.654707393709614,
+                "y": -2.000000128724164
+              }
+            },
+            "bounds": {
+              "type": "BoundingBox",
+              "min": {
+                "type": "Point",
+                "x": 44.654707389219936,
+                "y": -2.000000128724164
+              },
+              "max": {
+                "type": "Point",
+                "x": 44.654707393709614,
+                "y": -2.0000001287218843
+              }
+            },
+            "start_vertex": 12,
+            "end_vertex": 13,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 1
+          },
+          {
+            "type": "ArrangementEdge",
+            "id": 13,
+            "segment": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 44.65470739609011,
+                "y": -2.000000128725373
+              },
+              "radius": {
+                "type": "Point",
+                "x": 2.504034466969128,
+                "y": 2.504034466969128
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 44.654707398637925,
+                "y": -2.0000001287266667
+              }
+            },
+            "bounds": {
+              "type": "BoundingBox",
+              "min": {
+                "type": "Point",
+                "x": 44.65470739609011,
+                "y": -2.000000128726667
+              },
+              "max": {
+                "type": "Point",
+                "x": 44.654707398637925,
+                "y": -2.0000001287253735
+              }
+            },
+            "start_vertex": 13,
+            "end_vertex": 9,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 1
+          },
+          {
+            "type": "ArrangementEdge",
+            "id": 9,
+            "segment": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 44.65470740125266,
+                "y": -2.0000001287279954
+              },
+              "radius": {
+                "type": "Point",
+                "x": 2.504034466969128,
+                "y": 2.504034466969128
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 44.654707404398344,
+                "y": -2.0000001287295928
+              }
+            },
+            "bounds": {
+              "type": "BoundingBox",
+              "min": {
+                "type": "Point",
+                "x": 44.65470740125266,
+                "y": -2.0000001287295928
+              },
+              "max": {
+                "type": "Point",
+                "x": 44.654707404398344,
+                "y": -2.0000001287279954
+              }
+            },
+            "start_vertex": 9,
+            "end_vertex": 10,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 1
+          },
+          {
+            "type": "ArrangementEdge",
+            "id": 10,
+            "segment": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 44.65470740723881,
+                "y": -2.0000001287310343
+              },
+              "radius": {
+                "type": "Point",
+                "x": 2.504034466969128,
+                "y": 2.504034466969128
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 44.65470741271587,
+                "y": -2.0000001287338156
+              }
+            },
+            "bounds": {
+              "type": "BoundingBox",
+              "min": {
+                "type": "Point",
+                "x": 44.65470740723881,
+                "y": -2.0000001287338156
+              },
+              "max": {
+                "type": "Point",
+                "x": 44.65470741271587,
+                "y": -2.0000001287310343
+              }
+            },
+            "start_vertex": 10,
+            "end_vertex": 11,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 1
+          },
+          {
+            "type": "ArrangementEdge",
+            "id": 11,
+            "segment": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 44.65470741271587,
+                "y": -2.0000001287338156
+              },
+              "radius": {
+                "type": "Point",
+                "x": 2.504034466969128,
+                "y": 2.504034466969128
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 44.654707416808364,
+                "y": -2.000000128735893
+              }
+            },
+            "bounds": {
+              "type": "BoundingBox",
+              "min": {
+                "type": "Point",
+                "x": 44.654707412715865,
+                "y": -2.0000001287358935
+              },
+              "max": {
+                "type": "Point",
+                "x": 44.65470741680836,
+                "y": -2.0000001287338165
+              }
+            },
+            "start_vertex": 11,
+            "end_vertex": 4,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 1
+          },
+          {
+            "type": "ArrangementEdge",
+            "id": 17,
+            "segment": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 44.654707376565966,
+                "y": -2.0000001287154734
+              },
+              "radius": {
+                "type": "Point",
+                "x": 1,
+                "y": 1
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 44.654707373969785,
+                "y": -2.0000001287141567
+              }
+            },
+            "bounds": {
+              "type": "BoundingBox",
+              "min": {
+                "type": "Point",
+                "x": 44.654707373969785,
+                "y": -2.000000128715473
+              },
+              "max": {
+                "type": "Point",
+                "x": 44.654707376565966,
+                "y": -2.0000001287141567
+              }
+            },
+            "start_vertex": 16,
+            "end_vertex": 15,
+            "forward_multiplicity": 1,
+            "reverse_multiplicity": 0
+          }
+        ],
+        "vertex_tolerance": 2e-9
+      }
+    ]
+  }
+]

@@ -1,0 +1,2 @@
+{"id":"CC01267","kind":"offset","binary":"test_pline_parallel_offset","test":"test_past_failures::near_tangent_line_arc_joins","milliseconds":29066,"status":"error","phase":"offset","error":{"type":"ConstructionFailed"}}
+{"id":"CC01271","kind":"offset","binary":"test_pline_parallel_offset","test":"test_past_failures::near_tangent_line_arc_joins","milliseconds":347845,"status":"timeout","seconds":10}

@@ -11,6 +11,14 @@ rather than only the tag object.
 
 ## Unreleased
 
+- Preserve existing vertex ownership when an exact arrangement endpoint repeats,
+  preventing identical endpoints from being assigned to different clusters.
+- Solve circular-arc pairs with a shared endpoint analytically when their centers
+  are sufficiently separated, preventing repeated near-tangent subdivisions in
+  offset construction while retaining genuine second intersections.
+- Validate numerically collapsed arc overlap intervals using points on the
+  original interval when possible, without constructing invalid intermediate arcs.
+
 - Preserve distinct endpoints when cleaning up arcs shorter than the degeneracy
   tolerance, preventing gaps and discontinuity errors during offset construction.
 

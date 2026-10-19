@@ -1,0 +1,114 @@
+[
+  {
+    "id": "CC01267",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_past_failures::near_tangent_line_arc_joins",
+    "input": {
+      "closed": false,
+      "vertices": [
+        [
+          28.4408,
+          11.7648,
+          0.0
+        ],
+        [
+          42.1788,
+          -1.97424,
+          0.198723
+        ],
+        [
+          44.6542,
+          -3.0,
+          0.0
+        ],
+        [
+          49.6542,
+          -3.0,
+          0.0
+        ]
+      ]
+    },
+    "offset": 1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 0.0,
+        "length": 26.393274274152024,
+        "bounds": [
+          29.147933544518214,
+          -2.0,
+          49.6542,
+          12.471880016841876
+        ],
+        "closed": false,
+        "vertices": 4
+      }
+    ],
+    "observations": 1,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_past_failures::near_tangent_line_arc_joins",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01271",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_past_failures::near_tangent_line_arc_joins",
+    "input": {
+      "closed": false,
+      "vertices": [
+        [
+          49.6542,
+          -3.0,
+          -0.0
+        ],
+        [
+          44.6542,
+          -3.0,
+          -0.198723
+        ],
+        [
+          42.1788,
+          -1.97424,
+          -0.0
+        ],
+        [
+          28.4408,
+          11.7648,
+          0.0
+        ]
+      ]
+    },
+    "offset": -1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 0.0,
+        "length": 26.393274274152024,
+        "bounds": [
+          29.147933544518214,
+          -2.0,
+          49.6542,
+          12.471880016841876
+        ],
+        "closed": false,
+        "vertices": 4
+      }
+    ],
+    "observations": 1,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_past_failures::near_tangent_line_arc_joins",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  }
+]

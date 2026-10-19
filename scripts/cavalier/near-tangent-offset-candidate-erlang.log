@@ -1,0 +1,28 @@
+  Compiling svg_path
+  Compiling cavalier_audit_probe
+warning: Unused result value
+  ┌─ /Users/jpsteinb/github.com/vistuleB/svg_path/scripts/cavalier/probe/src/short_arc_normalization_audit_probe.gleam:9:3
+  │
+9 │   echo degeneracy.normalize_degenerate_segments(alone, 0.001)
+  │   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The Result value created here is unused
+
+Hint: If you are sure you don't need it you can assign it to `_`.
+
+warning: Unused result value
+   ┌─ /Users/jpsteinb/github.com/vistuleB/svg_path/scripts/cavalier/probe/src/short_arc_normalization_audit_probe.gleam:16:3
+   │
+16 │   echo offset.normalize_short_source_runs(source, 0.001)
+   │   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The Result value created here is unused
+
+Hint: If you are sure you don't need it you can assign it to `_`.
+
+   Compiled in 1.20s
+    Running near_tangent_offset_audit_probe.main
+[90msrc/near_tangent_offset_audit_probe.gleam:15[39m
+Ok(CenterArcData(EllipsePoint(44.654199963522544, -2.9999999999814664), EllipsePoint(1.0, 1.0), 0.0, 89.97092494329576, 3.583615387677445e-7))
+[90msrc/near_tangent_offset_audit_probe.gleam:16[39m
+Error(DegenerateArc)
+[90msrc/near_tangent_offset_audit_probe.gleam:20[39m
+#(Point(44.65470741271587, -2.0000001287338165), Point(44.65470741271587, -2.0000001287338165))
+[90msrc/near_tangent_offset_audit_probe.gleam:39[39m
+Error(ConstructionFailed)

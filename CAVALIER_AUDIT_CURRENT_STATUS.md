@@ -1,8 +1,8 @@
 # Cavalier Contours audit: resumption notes
 
-Latest classification: `scripts/cavalier/BOOLEAN-CONTRACT-TRIAGE.md`. The earlier
-Boolean bug label is corrected: the observed arc displacement conforms to the
-explicit endpoint-reconstruction limitation. Read the final update below.
+Latest repair: `scripts/cavalier/NEAR-TANGENT-REPAIR.md`; CC01267 and CC01271
+now complete and match captured aggregate properties. Broader discrepancy
+classification remains open. Read the final updates below.
 
 Recorded 2026-10-16 at the user's request before shelving work for about a week.
 Resumed explicitly by the user on 2026-10-18. Finish the audit in **Gleam first**;
@@ -365,3 +365,62 @@ properties. Other output discrepancies remain open. No commit or F# port yet.
 Short-arc repair passed `scripts/test-release`: 2,057 ordinary + 31 slow, plus
 803 portable tests each on Erlang and JavaScript. See
 `scripts/cavalier/short-arc-cleanup-test-release.log`. Uncommitted; F# deferred.
+
+Committed the short-arc cleanup repair and its evidence as `abe15554`.
+
+### Next issue: near-tangent offset — 2026-10-19
+
+CC01267/CC01271 still fail after that repair. See
+`scripts/cavalier/NEAR-TANGENT-OFFSET-TRIAGE.md`. CC01267 is now traced on JS and
+reproduced on Erlang: overlap checking extracts a subinterval of a valid generated
+arc whose endpoints round to the same point, then attempts a second split and
+gets `DegenerateArc`. Untrimmed construction succeeds; the arrangement path
+fails even with `NoTrimming`. CC01271 was replayed but not independently traced.
+No production repair yet; local interval-distance handling is the next candidate
+to investigate. New investigation evidence is uncommitted. F# remains deferred.
+
+### Arc-interval witness experiment — 2026-10-19
+
+An uncommitted local overlap repair now uses actual original-interval points as
+positive distance witnesses when an extracted arc degenerates numerically.
+It preserves the error when witnesses are inconclusive and validates the source
+arc. Three regressions added; ordinary suite: 2,060 passed. The original offsets
+still fail. CC01267 advances to ambiguous vertex matching: an endpoint is within
+2e-9 of two distinct vertices, each more than 2e-9 from the other. Do not describe
+this as a completed offset repair. See the candidate section of
+`scripts/cavalier/NEAR-TANGENT-OFFSET-TRIAGE.md` and its new replay/trace evidence.
+
+Portable validation completed: 806 Erlang + 806 JavaScript tests passed via
+`scripts/test-portable all all`; root slow/release sequence not rerun.
+CC01271 independently traced to the same ambiguous-vertex check (two matches
+inside 2e-9). Both original offsets remain unresolved. No commit this turn.
+
+### Vertex identity investigation — 2026-10-19
+
+Both CC01267 and CC01271 contain an exact endpoint sample assigned to two
+vertices: greedy minimum-radius attachment can reassign a repeated sample to a
+newer cluster. Reduced to five straight lines; reproduced on Erlang and JS.
+A copied-JS experiment preserving existing exact sample membership fixes that
+reduced arrangement. It is not yet a demonstrated fix for the original offsets.
+See `scripts/cavalier/VERTEX-MEMBERSHIP-TRIAGE.md` and provenance/reduction logs.
+No additional production changes or commits in this investigation.
+
+Exact-membership copied-build experiment: five-line arrangement now succeeds;
+original CC01267 continues subdividing and exceeded a separate 60-second budget.
+This confirms a local repair direction, not completion of the offset case.
+
+### Near-tangent repair implementation — 2026-10-19
+
+See `scripts/cavalier/NEAR-TANGENT-REPAIR.md`. Exact repeated endpoint ownership
+is now preserved. Cut tracing identified repeated approximate interior hits
+between circular arcs that mathematically only share an endpoint on their sweeps.
+A guarded shared-endpoint circular solver now avoids that repeated subdivision.
+Both CC01267 and CC01271 complete and match the recorded aggregate properties
+with default options (actual Gleam JS replay). Earlier unresolved-outcome entries
+above are historical. Full final validation is recorded in the repair report;
+changes remain uncommitted, F# deferred.
+
+Final `scripts/test-release` passed: 2,067 ordinary + 31 slow + 813 portable on
+each target. Log `scripts/cavalier/shared-circle-final-test-release.log`.
+Both targeted originals match recorded aggregate properties. No figures or F#
+port in this turn; no commit requested or made.

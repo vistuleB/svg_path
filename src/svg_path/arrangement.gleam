@@ -5170,19 +5170,30 @@ fn best_vertex_attachment(
         radius_squared:,
       )) = smallest_enclosing_circle.points([endpoint, ..endpoint_samples])
       let candidate = VertexAttachment(vertex: first, center:, radius_squared:)
-      let best = case radius_squared <=. tolerance *. tolerance {
-        False -> best
-        True ->
-          case best {
-            None -> Some(candidate)
-            Some(previous) ->
-              case attachment_precedes(candidate, previous) {
-                True -> Some(candidate)
-                False -> best
+      // A repeated sample keeps its existing owner rather than choosing a
+      // newer cluster with a smaller enclosing circle. Check the bound too,
+      // since the trusting insertion primitive accepts an explicit tolerance.
+      case
+        radius_squared <=. tolerance *. tolerance
+        && list.contains(endpoint_samples, endpoint)
+      {
+        True -> Some(candidate)
+        False -> {
+          let best = case radius_squared <=. tolerance *. tolerance {
+            False -> best
+            True ->
+              case best {
+                None -> Some(candidate)
+                Some(previous) ->
+                  case attachment_precedes(candidate, previous) {
+                    True -> Some(candidate)
+                    False -> best
+                  }
               }
           }
+          best_vertex_attachment(rest, endpoint, tolerance, best)
+        }
       }
-      best_vertex_attachment(rest, endpoint, tolerance, best)
     }
   }
 }

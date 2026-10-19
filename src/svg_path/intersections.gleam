@@ -2499,7 +2499,121 @@ fn nonconstant_segment_intersections(
         segment: left,
         options:,
       )
+    Arc(..), Arc(..) -> {
+      use found <- result.try(shared_endpoint_circle_intersections(
+        left,
+        right,
+        options,
+      ))
+      case found {
+        Some(found) -> Ok(found)
+        None -> curve_curve_intersections(left, right, options)
+      }
+    }
     _, _ -> curve_curve_intersections(left, right, options)
+  }
+}
+
+// Two distinct circles sharing P have a radical axis through P, perpendicular
+// to their center difference. Substituting P + t*N in either circle gives
+// t = 0 or t = -2 dot(P-C, N). This avoids accepting a continuum of small
+// residuals as separate roots near a tangent endpoint.
+fn shared_endpoint_circle_intersections(
+  left: Segment,
+  right: Segment,
+  options: IntersectionOptions,
+) -> Result(Option(List(SegmentIntersection)), svg_path.Error) {
+  let shared =
+    list.flat_map([0.0, 1.0], fn(t) {
+      let a = case t == 0.0 {
+        True -> svg_path.segment_start(left)
+        False -> svg_path.segment_end(left)
+      }
+      list.filter_map([0.0, 1.0], fn(u) {
+        let b = case u == 0.0 {
+          True -> svg_path.segment_start(right)
+          False -> svg_path.segment_end(right)
+        }
+        case a == b {
+          True -> Ok(SegmentIntersection(left_t: t, right_t: u, point: a))
+          False -> Error(Nil)
+        }
+      })
+    })
+  case shared {
+    [] -> Ok(None)
+    [first, ..] -> {
+      use a <- result.try(svg_path.arc_center_data(left))
+      use b <- result.try(svg_path.arc_center_data(right))
+      let dx = b.center.x -. a.center.x
+      let dy = b.center.y -. a.center.y
+      let scale = float.max(float.absolute_value(dx), float.absolute_value(dy))
+      // Near-concentric circles make subtraction of their centers ill
+      // conditioned. Keep the existing solver there, and for all ellipses.
+      case
+        a.radius.x != a.radius.y
+        || b.radius.x != b.radius.y
+        || scale <=. float.max(a.radius.x, b.radius.x) *. 0.00000001
+        || scale -. scale != 0.0
+      {
+        True -> Ok(None)
+        False ->
+          case shared {
+            [_, _, ..] -> Ok(Some(shared |> sort_segment_intersections))
+            _ -> {
+              let x = dx /. scale
+              let y = dy /. scale
+              let assert Ok(length) = float.square_root(x *. x +. y *. y)
+              let nx = 0.0 -. y /. length
+              let ny = x /. length
+              let p = first.point
+              let travel =
+                -2.0
+                *. {
+                  { p.x -. a.center.x } *. nx +. { p.y -. a.center.y } *. ny
+                }
+              let q = Point(p.x +. travel *. nx, p.y +. travel *. ny)
+              case q.x -. q.x != 0.0 || q.y -. q.y != 0.0 {
+                True -> Ok(None)
+                False -> {
+                  use numerical <- result.try(numerical_search_tolerance(
+                    left,
+                    right,
+                    options,
+                  ))
+                  let tolerance = float.min(numerical, options.tolerance)
+                  case
+                    query.segment_projection(q, left),
+                    query.segment_projection(q, right)
+                  {
+                    Ok(l), Ok(r) -> {
+                      let found = case
+                        l.distance <=. tolerance && r.distance <=. tolerance
+                      {
+                        True -> [
+                          SegmentIntersection(
+                            left_t: l.at,
+                            right_t: r.at,
+                            point: q,
+                          ),
+                          ..shared
+                        ]
+                        False -> shared
+                      }
+                      Ok(Some(
+                        found
+                        |> dedupe_segment_intersections
+                        |> sort_segment_intersections,
+                      ))
+                    }
+                    _, _ -> Ok(None)
+                  }
+                }
+              }
+            }
+          }
+      }
+    }
   }
 }
 

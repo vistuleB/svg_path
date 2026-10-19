@@ -1,0 +1,11 @@
+normalization failure Error
+    at unique_vertex_for_endpoint_loop (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:7307:50)
+    at unique_vertex_for_endpoint (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:7325:10)
+    at validate_piece_endpoint_vertices (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:7416:5)
+    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:7537:13
+    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)
+    at progressive_insert_pieces_loop (file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:7516:20)
+    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:7565:28
+    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)
+    at file:///private/tmp/cavalier-near-tangent-offset-trace/svg_path/svg_path/arrangement.mjs:7539:30
+    at Module.try$ (file:///private/tmp/cavalier-near-tangent-offset-trace/gleam_stdlib/gleam/result.mjs:161:12)
