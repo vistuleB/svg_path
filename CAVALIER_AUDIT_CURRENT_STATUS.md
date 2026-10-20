@@ -752,3 +752,16 @@ default failures as understood option semantics, not a new confirmed bug.
 See `scripts/cavalier/BOOLEAN-MINIMUM-LENGTH-TRIAGE.md`. Geometry equivalence is
 still a separate open check. JavaScript diagnostics only; no production changes,
 full-suite rerun, F# port or commit in this batch.
+
+### Boolean stitching geometry follow-up — 2026-10-20
+
+Committed the previous minimum-length findings as `7698b5a`. Investigated four
+XOR presentations CC00704/08/12/16 using independent circular-arc scanlines.
+Native one-walk output splits at an exact repeated vertex into Cavalier's two
+cycles; absolute areas, lengths and bounds agree within about 1e-6. Stronger
+checks detect narrow region differences missed by the older samples; they must
+not be called exact parity. A tighter-options run reduces but does not eliminate
+them, consistent with the documented arc endpoint-reconstruction limitation.
+No new contract violation established. See
+`scripts/cavalier/BOOLEAN-STITCHING-GEOMETRY-TRIAGE.md` for numerical evidence,
+probe limitations and the tighter-run residual. No production edits or new commit.

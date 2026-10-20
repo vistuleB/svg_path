@@ -49,3 +49,10 @@ target; all 47 published figures are byte-identical. The production replay cover
 range limitations remain documented, rather than implying exact arithmetic.
 See `ELLIPSE-PRECISION-PRODUCTION.md`, `ELLIPSE-PRECISION-THRESHOLD.md`,
 `CIRCLE-ROTATION-TRIAGE.md` and `SEMICIRCLE-ACCURACY-TRIAGE.md`.
+
+Completed Boolean stitching decomposition follow-up: CC00704/08/12/16 split into
+the expected two cycles at an exact repeated vertex. Independent scanlines also
+find narrow nonidentical regions, not exact parity; no new contract violation is
+established. The tighter run demonstrates the existing arc reconstruction
+limitation. See `BOOLEAN-STITCHING-GEOMETRY-TRIAGE.md`. Other Boolean families
+still need their own geometry checks.
