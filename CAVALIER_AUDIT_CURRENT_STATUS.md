@@ -1043,3 +1043,19 @@ No new confirmed native bug in this batch. No production or permanent suite
 changes, full-suite rerun, F# work, or commit. Original offset and Boolean
 classification groups remain open. CC01301's additional fragment and other
 previously deferred follow-ups remain deferred; no audit-closure claim.
+
+### 2026-10-20: original offset-specific cases continued
+
+Coverage findings committed as `079b2db`. Replayed ten original records across
+case11, case5 and two self-intersection families. Full upstream coordinates were
+recaptured from the pinned source. Six records have source-distance-filter
+policy differences; two more trace missing output to native winding/parity
+trimming, with sampled raw geometry agreeing at about 1e-13. The final two have
+the same trimming distinction plus a separately recorded numerical residual
+(area about 0.0003692; sampled boundary up to 1.95e-6), not yet isolated.
+
+See `scripts/cavalier/ORIGINAL-OFFSET-SPECIFIC-TRIAGE.md`. No new confirmed
+native bug or production edit. Findings uncommitted; no full-suite rerun or F#
+work. Continue original topology-policy offset families and Boolean classification.
+Deferred questions, including stronger winding-policy validation and the recorded
+numerical residual, remain visible rather than counted as exact matches.

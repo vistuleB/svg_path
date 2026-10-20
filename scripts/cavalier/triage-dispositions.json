@@ -551,5 +551,33 @@
     ],
     "status": "repaired-collapsed-stalled-run-joining",
     "reason": "Supersedes earlier different-api-contract classification. Collapsed stalled runs now retain point geometry and source tangents until joins are built; redundant point lines are then omitted. All six JS public-operation replays match captured properties. See COLLAPSED-STALLED-RUN-REPAIR.md; full release suite passes (2100 + 31 + 846 per portable target), and all 47 figures regenerate without new geometry changes."
+  },
+  {
+    "ids": [
+      "CC01405",
+      "CC01409",
+      "CC01410",
+      "CC01411",
+      "CC01470",
+      "CC01474"
+    ],
+    "status": "different-source-distance-trimming-contract",
+    "reason": "Native retains normal-extrusion pieces closer to the source than abs(offset); upstream explicitly applies a minimum-source-distance filter. Tighter fitting does not change the discrepancy. Full upstream coordinate replay and sampled boundary checks recorded in ORIGINAL-OFFSET-SPECIFIC-TRIAGE.md; no global source-distance guarantee in native contract."
+  },
+  {
+    "ids": [
+      "CC01499",
+      "CC01503"
+    ],
+    "status": "understood-winding-parity-removal-different-policy",
+    "reason": "Extra upstream walk exists in native raw output (sampled distance <=1.28e-13), then winding/parity trimming removes it. Traced 29 offset edges ->16 winding-compatible ->2 survivors. No independent certification of all winding labels; no new native contract violation established. See ORIGINAL-OFFSET-SPECIFIC-TRIAGE.md."
+  },
+  {
+    "ids": [
+      "CC01504",
+      "CC01508"
+    ],
+    "status": "trimming-policy-classified-numerical-residual-open",
+    "reason": "Extra upstream open walk exists in native raw geometry, then winding/parity leaves only closed component (12->10->7 edges). Retained component has area difference about 0.0003692 and sampled raw boundary residual up to 1.95e-6; numerical cause remains explicitly unisolated. See ORIGINAL-OFFSET-SPECIFIC-TRIAGE.md."
   }
 ]
