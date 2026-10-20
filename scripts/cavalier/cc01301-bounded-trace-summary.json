@@ -1,0 +1,59 @@
+{
+  "lines": 83807,
+  "unresolved": 41984,
+  "firstFive": [
+    {
+      "adaptiveArcSplit": {
+        "a": 0,
+        "b": 0.999999636830873,
+        "residual": 8.572784522304603e-07,
+        "tolerance": 2e-09,
+        "depth": 0
+      }
+    },
+    {
+      "adaptiveArcSplit": {
+        "a": 0.999999636830873,
+        "b": 1,
+        "residual": 9.602345067406826e-07,
+        "tolerance": 2e-09,
+        "depth": 0
+      }
+    },
+    {
+      "adaptiveArcSplit": {
+        "a": 0.999999636830873,
+        "b": 0.9999998184154365,
+        "residual": 2.51949137581115e-06,
+        "tolerance": 2e-09,
+        "depth": 1
+      }
+    },
+    {
+      "adaptiveArcSplit": {
+        "a": 0.999999636830873,
+        "b": 0.9999997276231547,
+        "residual": 1.0309875194857694e-07,
+        "tolerance": 2e-09,
+        "depth": 2
+      }
+    },
+    {
+      "adaptiveArcSplit": {
+        "a": 0.999999636830873,
+        "b": 0.9999996822270139,
+        "residual": 1.0920187470762463e-06,
+        "tolerance": 2e-09,
+        "depth": 3
+      }
+    }
+  ],
+  "last": {
+    "type": "InternalArrangementGraphError",
+    "error": {
+      "type": "InternalSegmentTooShort",
+      "length_upper_bound": 0,
+      "minimum": 2e-09
+    }
+  }
+}

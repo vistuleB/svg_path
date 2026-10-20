@@ -987,3 +987,40 @@ limited to numerical rounding (maximum 8.88e-16). See the final section of
 record. CC01301 remains blocked by the separately isolated near-semicircle
 reconstruction error, not by its original overlap incompatibility. No commit or
 F# port yet. Earlier "not implemented" notes above describe earlier steps only.
+
+### 2026-10-20: straightening committed; CC01301 arrangement repair investigated
+
+Committed normalization, H straightening, stage rename, short-line tangent fix,
+tests, figures and records as `3425b9e`. No push or F# port.
+
+CC01301 reduces to an order-dependent three-segment arrangement failure on both
+targets. Exact-binary-input 80-digit arithmetic confirms center information is
+lost in split endpoint-form arcs; more precision alone cannot fix it. Isolated
+JS adaptive subdivision with combined geometric bounds repairs construction at
+both tested fitting tolerances and passes 142 targeted tests. No production
+arrangement edit or additional commit yet. Full tests/figures for this candidate
+remain necessary. Cavalier's additional arc output fragment remains a separate
+unclassified trimming discrepancy. Details and reproduction:
+`scripts/cavalier/CC01301-ARC-SPLITTING-INVESTIGATION.md`.
+
+### 2026-10-20: CC01301 arrangement repair implemented and validated
+
+Combined-bound adaptive arc subdivision now runs before split child arcs can
+be reused by arrangement construction. Only unstable split intervals receive
+additional cuts; untouched arcs remain unchanged. Depth exhaustion and required
+sub-minimum-length cuts fail explicitly through the existing public construction
+error. Final source-image certification remains in place.
+
+`scripts/test-all`: 2109 ordinary + 31 slow passed.
+`scripts/test-portable all all`: 855 Erlang + 855 JavaScript passed.
+`scripts/generate-published-figures`: all 47 figures regenerated successfully,
+all byte-identical to the pre-repair working-tree baseline. Production CC01301
+probes succeed at fitting tolerances 0.01 and 0.00001. Tests cover insertion
+order, reversed traversal, source-image geometry, untouched arcs, and the public
+offset call. See `scripts/cavalier/CC01301-ARC-SPLITTING-INVESTIGATION.md` and its
+recorded logs/hash comparison.
+
+The construction bug is fixed. Cavalier's additional retained arc fragment is
+still an open trimming-contract comparison. Repair and validation records are
+included in this commit; F# port remains pending. The preceding straightening
+commit is `3425b9e`.

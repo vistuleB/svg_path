@@ -1,0 +1,24 @@
+{
+  "build": "/tmp/cc01301-adaptive-arcs",
+  "modules": [
+    "svg_path_arc_interval_overlap_test.mjs",
+    "svg_path_arc_line_roundoff_test.mjs",
+    "svg_path_collapsed_offset_test.mjs",
+    "svg_path_csg_cluster_join_test.mjs",
+    "svg_path_csg_face_winding_test.mjs",
+    "svg_path_csg_tangent_order_test.mjs",
+    "svg_path_csg_test.mjs",
+    "svg_path_exact_arc_overlap_test.mjs",
+    "svg_path_flatten_arc_overlap_test.mjs",
+    "svg_path_offset_endpoint_cycle_test.mjs",
+    "svg_path_offset_reversal_join_test.mjs",
+    "svg_path_offset_straightening_test.mjs",
+    "svg_path_semicircle_accuracy_test.mjs",
+    "svg_path_short_arc_cleanup_test.mjs",
+    "svg_path_stroke_test.mjs",
+    "svg_path_stroke_zero_arc_test.mjs",
+    "svg_path_svg_arc_normalization_test.mjs"
+  ],
+  "passed": 142,
+  "failed": []
+}

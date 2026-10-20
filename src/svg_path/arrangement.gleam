@@ -25,6 +25,7 @@ import gleam/result
 import svg_path
 import svg_path/bounds
 import svg_path/containment
+import svg_path/ellipse
 import svg_path/internal/number
 import svg_path/internal/query
 import svg_path/internal/smallest_enclosing_circle
@@ -33,6 +34,7 @@ import svg_path/intersections
 import svg_path/measure
 import svg_path/overlaps
 import svg_path/point
+import svg_path/trig
 
 const cyclic_order_max_attempts = 3
 
@@ -469,6 +471,14 @@ pub type InternalError {
 
   /// Normalization failed for a reason outside its path-operation contract.
   InternalNormalizationError
+
+  /// Arc endpoint reconstruction could not preserve the parent interval.
+  InternalArcSubdivisionFailed(
+    from: Float,
+    to: Float,
+    deviation: Float,
+    tolerance: Float,
+  )
 
   /// Late self-intersection subdivision could not make bounded progress.
   InternalSelfIntersectionSubdivisionFailed(source_index: Int)
@@ -3748,6 +3758,12 @@ fn split_progressive_graph_edge(
     |> list.sort(float_compare)
     |> distinct_parameters(segment, tolerance, []),
   )
+  use parameters <- result.try(stable_arc_parameters(
+    segment,
+    parameters,
+    tolerance,
+    minimum_length,
+  ))
   use split <- result.try(
     svg_path.segment_between_many_inside(segment, between: parameters)
     |> result.map_error(InternalPathError),
@@ -4416,6 +4432,211 @@ fn intersection_options_for_graph_tolerance(
   )
 }
 
+// Endpoint-form arcs close to a semicircle can lose their center when a split
+// endpoint is rounded. Reject that drift before the child is split again.
+// Quarter-tolerance is a local budget, not a cumulative error guarantee; final
+// source-image certification remains authoritative after progressive noding.
+fn stable_arc_parameters(
+  segment: svg_path.Segment,
+  parameters: List(Float),
+  tolerance: Float,
+  minimum_length: Float,
+) -> Result(List(Float), InternalError) {
+  case segment, parameters {
+    svg_path.Arc(..), [first, _, _, ..] -> {
+      use parent <- result.try(
+        svg_path.arc_center_data(segment)
+        |> result.map_error(InternalPathError),
+      )
+      stable_arc_parameter_intervals(
+        segment,
+        parent,
+        parameters,
+        tolerance /. 4.0,
+        minimum_length,
+        [first],
+      )
+    }
+    _, _ -> Ok(parameters)
+  }
+}
+
+fn stable_arc_parameter_intervals(
+  segment: svg_path.Segment,
+  parent: ellipse.CenterArcData,
+  parameters: List(Float),
+  budget: Float,
+  minimum_length: Float,
+  reversed: List(Float),
+) -> Result(List(Float), InternalError) {
+  case parameters {
+    [from, to, ..rest] -> {
+      use reversed <- result.try(stable_arc_interval(
+        segment,
+        parent,
+        from,
+        to,
+        budget,
+        minimum_length,
+        8,
+        reversed,
+      ))
+      stable_arc_parameter_intervals(
+        segment,
+        parent,
+        [to, ..rest],
+        budget,
+        minimum_length,
+        reversed,
+      )
+    }
+    _ -> Ok(list.reverse(reversed))
+  }
+}
+
+fn stable_arc_interval(
+  segment: svg_path.Segment,
+  parent: ellipse.CenterArcData,
+  from: Float,
+  to: Float,
+  budget: Float,
+  minimum_length: Float,
+  remaining: Int,
+  reversed: List(Float),
+) -> Result(List(Float), InternalError) {
+  use child <- result.try(
+    svg_path.segment_between(segment, from:, to:)
+    |> result.map_error(InternalPathError),
+  )
+  use size <- result.try(segment_length_bound(child))
+  // Existing minimum-length filtering discards this interval anyway.
+  case size <. minimum_length {
+    True -> Ok([to, ..reversed])
+    False -> {
+      use data <- result.try(
+        svg_path.arc_center_data(child)
+        |> result.map_error(InternalPathError),
+      )
+      let deviation = arc_interval_deviation_bound(parent, data, from, to)
+      case number.is_finite(deviation) && deviation <=. budget {
+        True -> Ok([to, ..reversed])
+        False -> {
+          let middle = from +. { to -. from } /. 2.0
+          use _ <- result.try(
+            case remaining > 0 && middle >. from && middle <. to {
+              True -> Ok(Nil)
+              False ->
+                Error(InternalArcSubdivisionFailed(from, to, deviation, budget))
+            },
+          )
+          // Extra numerical cuts must not silently delete source geometry.
+          use left_long <- result.try(parameter_length_bound_long_enough(
+            segment,
+            from,
+            middle,
+            minimum_length,
+          ))
+          use right_long <- result.try(parameter_length_bound_long_enough(
+            segment,
+            middle,
+            to,
+            minimum_length,
+          ))
+          use _ <- result.try(case left_long && right_long {
+            True -> Ok(Nil)
+            False ->
+              Error(InternalArcSubdivisionFailed(from, to, deviation, budget))
+          })
+          use reversed <- result.try(stable_arc_interval(
+            segment,
+            parent,
+            from,
+            middle,
+            budget,
+            minimum_length,
+            remaining - 1,
+            reversed,
+          ))
+          stable_arc_interval(
+            segment,
+            parent,
+            middle,
+            to,
+            budget,
+            minimum_length,
+            remaining - 1,
+            reversed,
+          )
+        }
+      }
+    }
+  }
+}
+
+// Two bounds for matching parameter fractions on arcs with the same axis
+// rotation. Center/radius/phase differences work well for ordinary arcs. The
+// endpoint-plus-second-derivative bound avoids cancellation-sensitive centers
+// of very short arcs. Bounds are geometric, evaluated in floating point.
+fn arc_interval_deviation_bound(
+  parent: ellipse.CenterArcData,
+  child: ellipse.CenterArcData,
+  from: Float,
+  to: Float,
+) -> Float {
+  let parent_radius = float.max(parent.radius.x, parent.radius.y)
+  let child_radius = float.max(child.radius.x, child.radius.y)
+  let sweep = { to -. from } *. parent.delta_angle
+  let raw_phase =
+    child.start_angle -. { parent.start_angle +. from *. parent.delta_angle }
+  let phase = raw_phase -. 360.0 *. float.floor({ raw_phase +. 180.0 } /. 360.0)
+  let end_phase = phase +. child.delta_angle -. sweep
+  let angle =
+    trig.degrees_to_radians(float.max(
+      float.absolute_value(phase),
+      float.absolute_value(end_phase),
+    ))
+  let center_bound =
+    ellipse_point_distance(parent.center, child.center)
+    +. float.max(
+      float.absolute_value(parent.radius.x -. child.radius.x),
+      float.absolute_value(parent.radius.y -. child.radius.y),
+    )
+    +. parent_radius
+    *. float.min(2.0, angle)
+  let endpoints =
+    float.max(
+      ellipse_point_distance(
+        ellipse.arc_point(parent, from),
+        ellipse.arc_point(child, 0.0),
+      ),
+      ellipse_point_distance(
+        ellipse.arc_point(parent, to),
+        ellipse.arc_point(child, 1.0),
+      ),
+    )
+  let parent_sweep = trig.degrees_to_radians(sweep)
+  let child_sweep = trig.degrees_to_radians(child.delta_angle)
+  let chord_bound =
+    endpoints
+    +. {
+      parent_radius
+      *. parent_sweep
+      *. parent_sweep
+      +. child_radius
+      *. child_sweep
+      *. child_sweep
+    }
+    /. 8.0
+  float.min(center_bound, chord_bound)
+}
+
+fn ellipse_point_distance(
+  a: ellipse.EllipsePoint,
+  b: ellipse.EllipsePoint,
+) -> Float {
+  point.distance(svg_path.Point(a.x, a.y), svg_path.Point(b.x, b.y))
+}
+
 fn split_atomic_piece(
   piece: AtomicPiece,
   cuts: List(Float),
@@ -4437,6 +4658,12 @@ fn split_atomic_piece(
     |> list.sort(float_compare)
     |> distinct_parameters(segment, tolerance, []),
   )
+  use parameters <- result.try(stable_arc_parameters(
+    segment,
+    parameters,
+    tolerance,
+    minimum_length,
+  ))
   use split <- result.try(
     svg_path.segment_between_many_inside(segment, between: parameters)
     |> result.map_error(InternalPathError),

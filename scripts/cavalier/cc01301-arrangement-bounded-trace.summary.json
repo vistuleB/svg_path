@@ -1,0 +1,51 @@
+{
+  "lines": 3579,
+  "unresolved": 1792,
+  "firstFive": [
+    {
+      "adaptiveArcSplit": {
+        "a": 0,
+        "b": 3.0118855255063005e-08,
+        "residual": 1.4630897887763795e-05,
+        "tolerance": 1e-09,
+        "depth": 0
+      }
+    },
+    {
+      "adaptiveArcSplit": {
+        "a": 0,
+        "b": 1.5059427627531502e-08,
+        "residual": 3.76692307934114e-05,
+        "tolerance": 1e-09,
+        "depth": 1
+      }
+    },
+    {
+      "adaptiveArcSplit": {
+        "a": 0,
+        "b": 7.529713813765751e-09,
+        "residual": 7.802394272136094e-05,
+        "tolerance": 1e-09,
+        "depth": 2
+      }
+    },
+    {
+      "adaptiveArcSplit": {
+        "a": 0,
+        "b": 3.764856906882876e-09,
+        "residual": 0.00015578040716794303,
+        "tolerance": 1e-09,
+        "depth": 3
+      }
+    },
+    {
+      "adaptiveArcSplit": {
+        "a": 0,
+        "b": 1.882428453441438e-09,
+        "residual": 0.00031001397066640916,
+        "tolerance": 1e-09,
+        "depth": 4
+      }
+    }
+  ]
+}
