@@ -75,3 +75,4 @@ svg_path_exact_arc_overlap_test.gleam
 
 svg_path_dual_component_placement_test.gleam
 svg_path_vertex_ownership_test.gleam
+svg_path_semicircle_accuracy_test.gleam

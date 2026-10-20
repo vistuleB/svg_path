@@ -28,7 +28,11 @@ behavior. Documentation clarification suggested; see `SHAPE-CASE3-TRIAGE.md`.
    `BOOLEAN-CONTRACT-TRIAGE.md` and the dispositions register.
 3. **Near-semicircle numerical accuracy:** six center/bounds flags (CX00420/21,
    CX00622/23, CX00636/37). Conversion conditioning and additional native
-   cancellation were separated; disposition/improvement remains open.
+   cancellation are separated. The production compensated center calculation
+   improves exact-SVG-input accuracy in 24/27 targeted cases (three already exact).
+   Full release tests pass. Rotated-half-chord rounding remains a limitation;
+   all 46 published figures regenerated, with only numeric changes in three;
+   see `SEMICIRCLE-ACCURACY-TRIAGE.md`.
 4. **Reduced endpoint-search robustness:** the 1e-12-gap iteration error from
    `ENDPOINT-REPAIR-EXPERIMENT.md`. Missing proximity matches are understood under
    the clarified necessary-not-sufficient tolerance contract; this narrower

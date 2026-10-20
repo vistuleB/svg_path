@@ -811,7 +811,12 @@ fn do_endpoint_to_center(
       let scale = square_root(radius_scale)
       let rx = rx *. scale
       let ry = ry *. scale
-      let center_prime = center_prime(rx, ry, x1p, y1p, large_arc, sweep)
+      // Enlarging insufficient radii leaves exactly one center, the midpoint.
+      // Rounded corrected radii must not introduce an artificial displacement.
+      let center_prime = case radius_scale >. 1.0 {
+        True -> EllipsePoint(0.0, 0.0)
+        False -> center_prime(rx, ry, x1p, y1p, large_arc, sweep)
+      }
       let center =
         EllipsePoint(
           cos_phi *. center_prime.x -. sin_phi *. center_prime.y +. midpoint.x,
@@ -849,20 +854,110 @@ fn center_prime(
   large_arc: Bool,
   sweep: Bool,
 ) -> EllipsePoint {
-  let numerator =
-    rx *. rx *. ry *. ry -. rx *. rx *. y1p *. y1p -. ry *. ry *. x1p *. x1p
-  let denominator = rx *. rx *. y1p *. y1p +. ry *. ry *. x1p *. x1p
+  let radius_product = rx *. rx *. ry *. ry
+  let y_product = rx *. rx *. y1p *. y1p
+  let x_product = ry *. ry *. x1p *. x1p
+  let numerator = radius_product -. y_product -. x_product
+  let denominator = y_product +. x_product
+  let quotient = case
+    float.absolute_value(numerator)
+    <=. 0.000000000001 *. float.max(radius_product, denominator)
+  {
+    True ->
+      compensated_center_quotient(rx, ry, x1p, y1p, numerator /. denominator)
+    False -> numerator /. denominator
+  }
   let sign = case large_arc == sweep {
     True -> -1.0
     False -> 1.0
   }
-  let coefficient =
-    sign *. square_root(float.max(0.0, numerator /. denominator))
+  let coefficient = sign *. square_root(float.max(0.0, quotient))
 
   EllipsePoint(
     coefficient *. rx *. y1p /. ry,
     0.0 -. coefficient *. ry *. x1p /. rx,
   )
+}
+
+// Near a semicircle the radius/chord products almost cancel. Retain their
+// rounding remainders instead of replacing the SVG geometry with a semicircle.
+// Power-of-two scaling is exact and keeps the product splitting below overflow.
+fn compensated_center_quotient(
+  rx: Float,
+  ry: Float,
+  x: Float,
+  y: Float,
+  fallback: Float,
+) -> Float {
+  let magnitude =
+    float.max(
+      float.max(rx, ry),
+      float.max(float.absolute_value(x), float.absolute_value(y)),
+    )
+  case magnitude {
+    m if m >. 1.0 ->
+      compensated_center_quotient(
+        rx /. 2.0,
+        ry /. 2.0,
+        x /. 2.0,
+        y /. 2.0,
+        fallback,
+      )
+    m if m <. 0.5 && m >. 0.0 ->
+      compensated_center_quotient(
+        rx *. 2.0,
+        ry *. 2.0,
+        x *. 2.0,
+        y *. 2.0,
+        fallback,
+      )
+    _ -> {
+      let a = center_product(rx, rx)
+      let b = center_product(ry, ry)
+      let u = center_multiply(a, center_product(y, y))
+      let v = center_multiply(b, center_product(x, x))
+      let gap =
+        center_add(
+          center_add(center_multiply(a, b), #(-1.0 *. u.0, -1.0 *. u.1)),
+          #(-1.0 *. v.0, -1.0 *. v.1),
+        )
+      let denominator = center_add(u, v)
+      let denominator = denominator.0 +. denominator.1
+      case denominator >. 0.0 {
+        True -> { gap.0 +. gap.1 } /. denominator
+        False -> fallback
+      }
+    }
+  }
+}
+
+// Error-free sum and product on the normalized operands above. The pair stores
+// a rounded leading value and its low-order remainder; it is not an error bound.
+fn center_sum(a: Float, b: Float) -> #(Float, Float) {
+  let sum = a +. b
+  let v = sum -. a
+  #(sum, { a -. { sum -. v } } +. { b -. v })
+}
+
+fn center_product(a: Float, b: Float) -> #(Float, Float) {
+  let product = a *. b
+  let ca = 134_217_729.0 *. a
+  let cb = 134_217_729.0 *. b
+  let ah = ca -. { ca -. a }
+  let al = a -. ah
+  let bh = cb -. { cb -. b }
+  let bl = b -. bh
+  #(product, { { ah *. bh -. product } +. ah *. bl +. al *. bh } +. al *. bl)
+}
+
+fn center_add(a: #(Float, Float), b: #(Float, Float)) -> #(Float, Float) {
+  let sum = center_sum(a.0, b.0)
+  center_sum(sum.0, sum.1 +. a.1 +. b.1)
+}
+
+fn center_multiply(a: #(Float, Float), b: #(Float, Float)) -> #(Float, Float) {
+  let product = center_product(a.0, b.0)
+  center_sum(product.0, product.1 +. a.0 *. b.1 +. a.1 *. b.0 +. a.1 *. b.1)
 }
 
 fn swept_delta_angle(

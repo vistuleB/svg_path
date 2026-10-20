@@ -575,3 +575,38 @@ each portable target. See CYCLIC-CLUSTER-RADIUS-TRIAGE.md and
 normalization/collapse policy is unchanged. No new public API or edge-geometry
 rewriting. Changes uncommitted; F# remains deferred. Five broader investigation
 groups still remain; the overall audit is not complete.
+
+### Near-semicircle accuracy experiment
+
+Committed the endpoint-ownership fix and preceding investigation as `b7f9257`.
+The six center/bounds flags reduce to three SVG arcs with mixed adapter loss and
+native cancellation. A copied-JS compensated center calculation reduces original
+center errors from 1.4e-6/3.2e-6 to final-coordinate rounding scale; a 27-case
+circle/axis-aligned-ellipse scale sweep improves 24 cases and preserves three
+already-exact midpoint cases. Exact-input Decimal oracle and raw results saved
+in SEMICIRCLE-ACCURACY-TRIAGE.md and companion files. Recommend a compensated
+near-cancellation path, followed by full tests and figure review. No production
+changes, candidate Erlang run, or full suite in this investigation. Upstream
+bulge-equality discrepancies remain representation differences; audit not closed.
+
+
+### Near-semicircle production repair and full validation
+
+Implemented compensated center products only near cancellation. Radius enlargement
+now explicitly retains its unique midpoint center, avoiding an artificial shift
+from rounding the enlarged radii. Four new portable regression tests cover 27
+exact-input center cases, flags, bounds, quadrant rotations, and radius correction.
+The first run exposed one existing congruency regression; explicit midpoint
+handling fixed it without weakening the assertion.
+
+Final `scripts/test-release`: 2,084 ordinary + 31 slow + 830 portable Erlang +
+830 portable JavaScript, all passing. `scripts/generate-published-figures` passed,
+including its ordinary suite rerun: 13 README and 33 Gallery figures generated.
+All README and 30 Gallery files are byte-identical. The other three have identical
+nonnumeric content and only coordinate rounding changes (dash figures <=1e-5;
+second-offset arrangement <=2.622e-9). Evidence and limitations are recorded in
+`scripts/cavalier/SEMICIRCLE-ACCURACY-TRIAGE.md`.
+
+Non-quadrant rotation can still lose half-chord accuracy before the compensated
+calculation; this remains recorded follow-up work. Bulge-to-SVG information loss
+is also unchanged. No public API changes. F# remains deferred; audit not closed.
