@@ -1,0 +1,7 @@
+{
+  "case": "CC01640",
+  "experiment": "Current generated JS with only round_join sweep reverted to angle > 0; not a historical full checkout",
+  "status": "timeout",
+  "limit_seconds": 30,
+  "elapsed_seconds": 30.012892875000002
+}

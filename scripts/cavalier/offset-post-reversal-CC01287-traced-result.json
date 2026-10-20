@@ -1,0 +1,124 @@
+[
+  {
+    "mode": "default",
+    "normalization": [
+      [
+        {
+          "type": "Arc",
+          "start": {
+            "x": 100,
+            "y": 100
+          },
+          "radius": {
+            "x": 13.975424859373685,
+            "y": 13.975424859373685
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": false,
+          "end": {
+            "x": 80,
+            "y": 90
+          }
+        },
+        {
+          "type": "Arc",
+          "start": {
+            "x": 80,
+            "y": 90
+          },
+          "radius": {
+            "x": 120.28207587906756,
+            "y": 120.28207587906756
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 210,
+            "y": 0
+          }
+        },
+        {
+          "type": "Line",
+          "start": {
+            "x": 210,
+            "y": 0
+          },
+          "end": {
+            "x": 230,
+            "y": 0
+          }
+        },
+        {
+          "type": "Arc",
+          "start": {
+            "x": 230,
+            "y": 0
+          },
+          "radius": {
+            "x": 45,
+            "y": 45
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 320,
+            "y": 0
+          }
+        },
+        {
+          "type": "Arc",
+          "start": {
+            "x": 320,
+            "y": 0
+          },
+          "radius": {
+            "x": 25,
+            "y": 25
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": false,
+          "end": {
+            "x": 280,
+            "y": 0
+          }
+        },
+        {
+          "type": "Arc",
+          "start": {
+            "x": 280,
+            "y": 0
+          },
+          "radius": {
+            "x": 148.1658698891212,
+            "y": 148.1658698891212
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 390,
+            "y": 210
+          }
+        },
+        {
+          "type": "Line",
+          "start": {
+            "x": 390,
+            "y": 210
+          },
+          "end": {
+            "x": 280,
+            "y": 120
+          }
+        }
+      ]
+    ],
+    "tolerance": 0.01,
+    "milliseconds": 491.369416,
+    "result": []
+  }
+]

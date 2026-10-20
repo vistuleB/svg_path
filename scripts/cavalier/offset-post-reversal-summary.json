@@ -1,0 +1,71 @@
+{
+  "revision": "1e97935",
+  "target": "JavaScript",
+  "selection": "Original captured-results discrepancy/error/timeout records of kind offset or shape_offset; not a full offset regression run.",
+  "records": 192,
+  "families": 45,
+  "statuses": {
+    "discrepancy": 149,
+    "match": 29,
+    "error": 6,
+    "timeout": 8
+  },
+  "transitions": {
+    "discrepancy -> discrepancy": 141,
+    "error -> discrepancy": 8,
+    "discrepancy -> match": 14,
+    "error -> match": 14,
+    "timeout -> match": 1,
+    "error -> error": 6,
+    "timeout -> timeout": 8
+  },
+  "transitions_from_baseline_with_timeout_replay": {
+    "discrepancy -> discrepancy": 141,
+    "error -> discrepancy": 8,
+    "discrepancy -> match": 14,
+    "error -> match": 15,
+    "error -> error": 6,
+    "error -> timeout": 8
+  },
+  "timeouts": [
+    "CC01640",
+    "CC01644",
+    "CC01647",
+    "CC01648",
+    "CC01651",
+    "CC01652",
+    "CC01655",
+    "CC01656"
+  ],
+  "matches": [
+    "CC01192",
+    "CC01196",
+    "CC01267",
+    "CC01271",
+    "CC01296",
+    "CC01398",
+    "CC01402",
+    "CC01412",
+    "CC01416",
+    "CC01426",
+    "CC01430",
+    "CC01438",
+    "CC01439",
+    "CC01485",
+    "CC01489",
+    "CC01492",
+    "CC01496",
+    "CC01558",
+    "CC01562",
+    "CC01563",
+    "CC01564",
+    "CC01565",
+    "CC01566",
+    "CC01567",
+    "CC01568",
+    "CC01645",
+    "CC01646",
+    "CC01649",
+    "CC01650"
+  ]
+}

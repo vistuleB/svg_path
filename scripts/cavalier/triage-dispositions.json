@@ -443,5 +443,47 @@
     ],
     "status": "tight-tolerance-construction-repaired-collapse-policy-open",
     "reason": "Implemented and fully tested component placement and consistent endpoint ownership. Actual 1e-5 and 1e-6 offsets now return empty; reversed/reordered JS reduction also passes. Default normalization/collapse semantics remain unchanged. See CYCLIC-CLUSTER-RADIUS-TRIAGE.md and owner-repair-test-release.log. Uncommitted repair."
+  },
+  {
+    "ids": [
+      "CC01192",
+      "CC01196"
+    ],
+    "status": "fixed-native-reversal-join-defect",
+    "reason": "Committed 1e97935 resolves the ambiguous 180-degree Round-join sweep using signed offset. Fresh JavaScript replay matches captured properties. Full suite and figure verification are recorded in OFFSET-REVERSAL-JOIN-REPAIR.md."
+  },
+  {
+    "ids": [
+      "CC01131",
+      "CC01151"
+    ],
+    "status": "understood-offset-detail-difference",
+    "reason": "At fitting tolerance 1e-4 the native area, length and bounds match captured properties. Default 0.01 changes normalization/detail. See OFFSET-POST-REVERSAL-TRIAGE.md; no new defect established."
+  },
+  {
+    "ids": [
+      "CC01183"
+    ],
+    "status": "understood-detail-and-touching-contour-policy",
+    "reason": "Same native input as CC01131/CC01151. Tightening fitting tolerance to 1e-4 matches total area/length/bounds, while native retains one self-touching contour and upstream Separate requests two. See OFFSET-POST-REVERSAL-TRIAGE.md; aggregate agreement is not a complete boundary proof."
+  },
+  {
+    "ids": [
+      "CC01167",
+      "CC01179",
+      "CC01248",
+      "CC01252",
+      "CC01253",
+      "CC01254"
+    ],
+    "status": "understood-offset-detail-difference",
+    "reason": "Fitting tolerance 1e-3 restores captured length/bounds (open inputs) or area/length/bounds (closed_pline9, both directions). Default normalization differs. See saved offset-post-reversal detail replays and OFFSET-POST-REVERSAL-TRIAGE.md."
+  },
+  {
+    "ids": [
+      "CC01287"
+    ],
+    "status": "understood-open-band-trimming-policy",
+    "reason": "NoTrimming preserves the raw walk; InBandTrimming retains 20 winding-compatible edges in seven chains then forced parity removes all chains, since each has an unprotected terminal. Direct band-winding samples agree with all 30 edge pairs at three distances. Complete deletion is allowed by the native contract. Cavalier retains an independently clipped open chain; no native defect established. See OFFSET-POST-REVERSAL-TRIAGE.md."
   }
 ]

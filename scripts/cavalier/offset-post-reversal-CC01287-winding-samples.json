@@ -1,0 +1,1982 @@
+[
+  {
+    "edge": 0,
+    "measured": [
+      1,
+      0
+    ],
+    "samples": [
+      {
+        "epsilon": 0.001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.0001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.00001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "edge": 2,
+    "measured": [
+      2,
+      1
+    ],
+    "samples": [
+      {
+        "epsilon": 0.001,
+        "pair": [
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 2,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.0001,
+        "pair": [
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 2,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.00001,
+        "pair": [
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 2,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "edge": 18,
+    "measured": [
+      1,
+      0
+    ],
+    "samples": [
+      {
+        "epsilon": 0.001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.0001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.00001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "edge": 1,
+    "measured": [
+      1,
+      0
+    ],
+    "samples": [
+      {
+        "epsilon": 0.001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.0001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.00001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "edge": 19,
+    "measured": [
+      2,
+      1
+    ],
+    "samples": [
+      {
+        "epsilon": 0.001,
+        "pair": [
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 2,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.0001,
+        "pair": [
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 2,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.00001,
+        "pair": [
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 2,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "edge": 47,
+    "measured": [
+      1,
+      0
+    ],
+    "samples": [
+      {
+        "epsilon": 0.001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.0001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.00001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "edge": 3,
+    "measured": [
+      1,
+      0
+    ],
+    "samples": [
+      {
+        "epsilon": 0.001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.0001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.00001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "edge": 48,
+    "measured": [
+      2,
+      1
+    ],
+    "samples": [
+      {
+        "epsilon": 0.001,
+        "pair": [
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 2,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.0001,
+        "pair": [
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 2,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.00001,
+        "pair": [
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 2,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "edge": 4,
+    "measured": [
+      1,
+      0
+    ],
+    "samples": [
+      {
+        "epsilon": 0.001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.0001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.00001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "edge": 5,
+    "measured": [
+      1,
+      0
+    ],
+    "samples": [
+      {
+        "epsilon": 0.001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.0001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.00001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "edge": 6,
+    "measured": [
+      1,
+      0
+    ],
+    "samples": [
+      {
+        "epsilon": 0.001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.0001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.00001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "edge": 7,
+    "measured": [
+      1,
+      0
+    ],
+    "samples": [
+      {
+        "epsilon": 0.001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.0001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.00001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "edge": 11,
+    "measured": [
+      2,
+      1
+    ],
+    "samples": [
+      {
+        "epsilon": 0.001,
+        "pair": [
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 2,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.0001,
+        "pair": [
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 2,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.00001,
+        "pair": [
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 2,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "edge": 30,
+    "measured": [
+      1,
+      0
+    ],
+    "samples": [
+      {
+        "epsilon": 0.001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.0001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.00001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "edge": 8,
+    "measured": [
+      1,
+      0
+    ],
+    "samples": [
+      {
+        "epsilon": 0.001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.0001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.00001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "edge": 31,
+    "measured": [
+      2,
+      1
+    ],
+    "samples": [
+      {
+        "epsilon": 0.001,
+        "pair": [
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 2,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.0001,
+        "pair": [
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 2,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.00001,
+        "pair": [
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 2,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "edge": 9,
+    "measured": [
+      2,
+      1
+    ],
+    "samples": [
+      {
+        "epsilon": 0.001,
+        "pair": [
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 2,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.0001,
+        "pair": [
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 2,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.00001,
+        "pair": [
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 2,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "edge": 26,
+    "measured": [
+      1,
+      0
+    ],
+    "samples": [
+      {
+        "epsilon": 0.001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.0001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.00001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "edge": 10,
+    "measured": [
+      1,
+      0
+    ],
+    "samples": [
+      {
+        "epsilon": 0.001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.0001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.00001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "edge": 12,
+    "measured": [
+      1,
+      0
+    ],
+    "samples": [
+      {
+        "epsilon": 0.001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.0001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.00001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "edge": 23,
+    "measured": [
+      2,
+      1
+    ],
+    "samples": [
+      {
+        "epsilon": 0.001,
+        "pair": [
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 2,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.0001,
+        "pair": [
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 2,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.00001,
+        "pair": [
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 2,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "edge": 13,
+    "measured": [
+      1,
+      0
+    ],
+    "samples": [
+      {
+        "epsilon": 0.001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.0001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.00001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "edge": 14,
+    "measured": [
+      1,
+      0
+    ],
+    "samples": [
+      {
+        "epsilon": 0.001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.0001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.00001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "edge": 44,
+    "measured": [
+      2,
+      1
+    ],
+    "samples": [
+      {
+        "epsilon": 0.001,
+        "pair": [
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 2,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.0001,
+        "pair": [
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 2,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.00001,
+        "pair": [
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 2,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "edge": 39,
+    "measured": [
+      1,
+      0
+    ],
+    "samples": [
+      {
+        "epsilon": 0.001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.0001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.00001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "edge": 15,
+    "measured": [
+      1,
+      0
+    ],
+    "samples": [
+      {
+        "epsilon": 0.001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.0001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.00001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "edge": 40,
+    "measured": [
+      2,
+      1
+    ],
+    "samples": [
+      {
+        "epsilon": 0.001,
+        "pair": [
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 2,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.0001,
+        "pair": [
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 2,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.00001,
+        "pair": [
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 2,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "edge": 34,
+    "measured": [
+      1,
+      0
+    ],
+    "samples": [
+      {
+        "epsilon": 0.001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.0001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.00001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "edge": 16,
+    "measured": [
+      1,
+      0
+    ],
+    "samples": [
+      {
+        "epsilon": 0.001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.0001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.00001,
+        "pair": [
+          {
+            "0": {
+              "0": 0,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "edge": 35,
+    "measured": [
+      2,
+      1
+    ],
+    "samples": [
+      {
+        "epsilon": 0.001,
+        "pair": [
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 2,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.0001,
+        "pair": [
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 2,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      },
+      {
+        "epsilon": 0.00001,
+        "pair": [
+          {
+            "0": {
+              "0": 1,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          },
+          {
+            "0": {
+              "0": 2,
+              "type": "Winding"
+            },
+            "type": "Ok"
+          }
+        ]
+      }
+    ]
+  }
+]

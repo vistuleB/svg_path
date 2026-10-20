@@ -25,7 +25,13 @@ behavior. Documentation clarification suggested; see `SHAPE-CASE3-TRIAGE.md`.
    `OFFSET-REVERSAL-JOIN-TRIAGE.md`. A targeted correction now passes the full
    release suite and all 47 published figures are byte-identical; see
    `OFFSET-REVERSAL-JOIN-REPAIR.md`. The correction is retained; F# remains pending.
-   The remaining broader offset catalogue still needs review. See `REMAINING-OFFSET-DETAIL-TRIAGE.md`.
+   The broader offset replay now covers 192 originally flagged records: 29 matches,
+   149 property mismatches, six errors and eight timeouts. Early numerical
+   mismatches are explained by fitting detail; CC01287 is traced to existing
+   open-band winding/parity policy. Eight tangent arc–arc orientation variants
+   time out at 30 seconds and are the recommended next investigation. See
+   `OFFSET-POST-REVERSAL-TRIAGE.md` and `OFFSET-POST-REVERSAL-REPLAY.md`.
+   Remaining mismatches are not all classified; raw counts are not bug counts.
 2. **Boolean closure and geometry classification:** the 16 default boundary-guard cases now have traced short-piece filtering
    explanations and verified lower-threshold public-operation success; see
    `BOOLEAN-MINIMUM-LENGTH-TRIAGE.md`. The 56 previously witness-free difference/XOR decomposition flags now have

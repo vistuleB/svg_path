@@ -805,3 +805,25 @@ assertion was too strict for rotated reconstruction; that failure and its correc
 1e-6 normalized area tolerance are documented. See
 `scripts/cavalier/OFFSET-REVERSAL-JOIN-REPAIR.md`. The correction is retained;
 the user authorized committing production changes, tests and findings. F# deferred.
+
+
+### Offset catalogue replay after reversal repair — 2026-10-20
+
+Reversal correction committed as `1e97935`. Replayed all 192 originally flagged
+offset/shape-offset records on the current JavaScript build: 29 property matches,
+149 mismatches, six DegenerateTangent errors, eight 30-second timeouts. These
+include known policy differences and repeated variants; no bug-count inference.
+Previously matching records were not rerun in this screening.
+
+Tighter fitting tolerance explains CC01131/51, CC01167, CC01179 and both directions
+of closed_pline9; CC01183 additionally differs in touching-loop grouping.
+CC01287's empty result is traced through 30 candidate edges, 20 winding survivors,
+seven open chains and complete forced-parity deletion. Public winding samples
+agree at all 30 midpoints and three distances. No new native bug established.
+
+Next recommended investigation is the eight tangent arc–arc orientation timeouts,
+starting CC01640. That case also times out with only the latest sweep rule reverted
+in copied generated JS, so the latest join repair is not necessary for the timeout.
+See `scripts/cavalier/OFFSET-POST-REVERSAL-TRIAGE.md` and its replay table.
+No production changes, full-suite/figure rerun, commit or F# work in this step.
+New records remain uncommitted. The broader audit is still open.
