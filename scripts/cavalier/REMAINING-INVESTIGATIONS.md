@@ -81,3 +81,13 @@ find narrow nonidentical regions, not exact parity; no new contract violation is
 established. The tighter run demonstrates the existing arc reconstruction
 limitation. See `BOOLEAN-STITCHING-GEOMETRY-TRIAGE.md`. The remaining previously witness-free Boolean families were subsequently reviewed
 in `BOOLEAN-DECOMPOSITION-TRIAGE.md`.
+
+## Original-queue continuation — 2026-10-20
+
+The four offset-specific families and all 18 topology-policy families now have
+current dispositions in `ORIGINAL-OFFSET-SPECIFIC-TRIAGE.md` and
+`ORIGINAL-OFFSET-TOPOLOGY-TRIAGE.md`. This adds ten specific-offset records and
+192 topology-policy records (including controls) to the classified inventory.
+Numerical residuals and stronger policy validation remain explicitly deferred.
+Next reconcile any remaining original offset IDs and finish original Boolean
+classification; do not infer overall closure from these batch totals.

@@ -1059,3 +1059,23 @@ native bug or production edit. Findings uncommitted; no full-suite rerun or F#
 work. Continue original topology-policy offset families and Boolean classification.
 Deferred questions, including stronger winding-policy validation and the recorded
 numerical residual, remain visible rather than counted as exact matches.
+
+### 2026-10-20: original topology-policy batch classified
+
+Specific-offset findings committed as `1b4113b`. Replayed 192 original records
+from 18 topology-policy families (34 distinct native calls): 82 property matches,
+110 flags, no errors/timeouts. Full pinned-upstream coordinate exports reproduce
+all captured property expectations. Boundary sampling matches 127 records.
+
+The 110 flags are classified as 55 coincident-discard policy differences, 24
+contour grouping differences, 21 traversal multiplicity differences, eight
+three-way round-retrace/source-distance policy comparisons, and two bow-tie
+winding/parity removals. Multiplicity cases agree in boundary-union length
+within 5.04e-8. The bow-tie's missing lobe exists in raw output but is removed
+by winding/parity; no-offside gives the same result. Stronger winding correctness
+and policy review remain deferred, not silently classified as exact parity.
+
+See `scripts/cavalier/ORIGINAL-OFFSET-TOPOLOGY-TRIAGE.md` and machine-readable
+per-ID evidence. No new confirmed bug or production edits. Findings uncommitted;
+no full-suite rerun or F# work. Next: reconcile remaining original inventory and
+continue Boolean classification before deferred follow-ups.

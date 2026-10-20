@@ -1,0 +1,2821 @@
+[
+  {
+    "id": "CC01142",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "coincident_discard_removes_same_direction_and_opposing_partial_spans",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          0.0,
+          0.0
+        ],
+        [
+          5.0,
+          0.0,
+          0.0
+        ],
+        [
+          15.0,
+          0.0,
+          0.0
+        ],
+        [
+          15.0,
+          10.0,
+          0.0
+        ],
+        [
+          0.0,
+          10.0,
+          0.0
+        ]
+      ]
+    },
+    "offset": 1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 0.0,
+        "length": 47.0,
+        "bounds": [
+          1.0,
+          1.0,
+          14.0,
+          9.0
+        ],
+        "closed": false,
+        "vertices": 8
+      }
+    ],
+    "observations": 1,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "coincident_discard_removes_same_direction_and_opposing_partial_spans",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01145",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "coincident_discard_removes_same_direction_and_opposing_partial_spans",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          2.0,
+          0.0
+        ],
+        [
+          5.0,
+          2.0,
+          0.0
+        ],
+        [
+          5.0,
+          10.0,
+          0.0
+        ],
+        [
+          0.0,
+          10.0,
+          0.0
+        ]
+      ]
+    },
+    "offset": 1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 24.214601836602554,
+        "length": 31.5707963267949,
+        "bounds": [
+          1.0,
+          1.0,
+          9.0,
+          9.0
+        ],
+        "closed": true,
+        "vertices": 7
+      }
+    ],
+    "observations": 1,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "coincident_discard_removes_same_direction_and_opposing_partial_spans",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01147",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "collapsed_rectangle_preserves_or_discards_coincident_centerline",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          20.0,
+          0.0,
+          0.0
+        ],
+        [
+          20.0,
+          10.0,
+          0.0
+        ],
+        [
+          0.0,
+          10.0,
+          0.0
+        ]
+      ]
+    },
+    "offset": 5.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 0.0,
+        "length": 20.0,
+        "bounds": [
+          5.0,
+          5.0,
+          15.0,
+          5.0
+        ],
+        "closed": true,
+        "vertices": 2
+      }
+    ],
+    "observations": 5,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "collapsed_rectangle_preserves_or_discards_coincident_centerline",
+        "binary": "test_pline_parallel_offset"
+      },
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_simple::closed_rectangle_into_overlapping_line",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01509",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::coincident_line_dumbbell_segment_interior_boundaries",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          4.0,
+          0.0
+        ],
+        [
+          20.0,
+          4.0,
+          0.0
+        ],
+        [
+          20.0,
+          0.0,
+          0.0
+        ],
+        [
+          30.0,
+          0.0,
+          0.0
+        ],
+        [
+          30.0,
+          10.0,
+          0.0
+        ],
+        [
+          20.0,
+          10.0,
+          0.0
+        ],
+        [
+          18.0,
+          6.0,
+          0.0
+        ],
+        [
+          12.0,
+          6.0,
+          0.0
+        ],
+        [
+          12.0,
+          10.0,
+          0.0
+        ],
+        [
+          0.0,
+          10.0,
+          0.0
+        ]
+      ]
+    },
+    "offset": 1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 142.23612918466094,
+        "length": 85.05560567567858,
+        "bounds": [
+          1.0,
+          1.0,
+          29.0,
+          9.0
+        ],
+        "closed": true,
+        "vertices": 18
+      }
+    ],
+    "observations": 12,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::coincident_line_dumbbell_segment_interior_boundaries",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01514",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::coincident_line_dumbbell_segment_interior_boundaries",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          0.0,
+          10.0,
+          -0.0
+        ],
+        [
+          12.0,
+          10.0,
+          -0.0
+        ],
+        [
+          12.0,
+          6.0,
+          -0.0
+        ],
+        [
+          18.0,
+          6.0,
+          -0.0
+        ],
+        [
+          20.0,
+          10.0,
+          -0.0
+        ],
+        [
+          30.0,
+          10.0,
+          -0.0
+        ],
+        [
+          30.0,
+          0.0,
+          -0.0
+        ],
+        [
+          20.0,
+          0.0,
+          -0.0
+        ],
+        [
+          20.0,
+          4.0,
+          -0.0
+        ],
+        [
+          10.0,
+          4.0,
+          -0.0
+        ],
+        [
+          10.0,
+          0.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -0.0
+        ]
+      ]
+    },
+    "offset": -1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": -142.23612918466094,
+        "length": 85.05560567567856,
+        "bounds": [
+          1.0,
+          1.0,
+          29.0,
+          9.0
+        ],
+        "closed": true,
+        "vertices": 18
+      }
+    ],
+    "observations": 12,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::coincident_line_dumbbell_segment_interior_boundaries",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01528",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::coincident_line_dumbbell_vertex_boundaries",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          4.0,
+          0.0
+        ],
+        [
+          20.0,
+          4.0,
+          0.0
+        ],
+        [
+          20.0,
+          0.0,
+          0.0
+        ],
+        [
+          30.0,
+          0.0,
+          0.0
+        ],
+        [
+          30.0,
+          10.0,
+          0.0
+        ],
+        [
+          20.0,
+          10.0,
+          0.0
+        ],
+        [
+          20.0,
+          6.0,
+          0.0
+        ],
+        [
+          10.0,
+          6.0,
+          0.0
+        ],
+        [
+          10.0,
+          10.0,
+          0.0
+        ],
+        [
+          0.0,
+          10.0,
+          0.0
+        ]
+      ]
+    },
+    "offset": 1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 128.85840734641022,
+        "length": 86.2831853071796,
+        "bounds": [
+          1.0,
+          1.0,
+          29.0,
+          9.0
+        ],
+        "closed": true,
+        "vertices": 16
+      }
+    ],
+    "observations": 12,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::coincident_line_dumbbell_vertex_boundaries",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01533",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::coincident_line_dumbbell_vertex_boundaries",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          0.0,
+          10.0,
+          -0.0
+        ],
+        [
+          10.0,
+          10.0,
+          -0.0
+        ],
+        [
+          10.0,
+          6.0,
+          -0.0
+        ],
+        [
+          20.0,
+          6.0,
+          -0.0
+        ],
+        [
+          20.0,
+          10.0,
+          -0.0
+        ],
+        [
+          30.0,
+          10.0,
+          -0.0
+        ],
+        [
+          30.0,
+          0.0,
+          -0.0
+        ],
+        [
+          20.0,
+          0.0,
+          -0.0
+        ],
+        [
+          20.0,
+          4.0,
+          -0.0
+        ],
+        [
+          10.0,
+          4.0,
+          -0.0
+        ],
+        [
+          10.0,
+          0.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -0.0
+        ]
+      ]
+    },
+    "offset": -1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": -128.85840734641022,
+        "length": 86.2831853071796,
+        "bounds": [
+          1.0,
+          1.0,
+          29.0,
+          9.0
+        ],
+        "closed": true,
+        "vertices": 16
+      }
+    ],
+    "observations": 12,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::coincident_line_dumbbell_vertex_boundaries",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01547",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::disjoint_same_direction_coincident_spans",
+    "input": {
+      "closed": false,
+      "vertices": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          0.0,
+          0.0
+        ],
+        [
+          5.0,
+          0.0,
+          0.0
+        ],
+        [
+          15.0,
+          0.0,
+          0.0
+        ],
+        [
+          20.0,
+          5.0,
+          0.0
+        ],
+        [
+          20.0,
+          10.0,
+          0.0
+        ],
+        [
+          30.0,
+          10.0,
+          0.0
+        ],
+        [
+          25.0,
+          10.0,
+          0.0
+        ],
+        [
+          35.0,
+          10.0,
+          0.0
+        ]
+      ]
+    },
+    "offset": 1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 0.0,
+        "length": 41.985009889168,
+        "bounds": [
+          0.0,
+          1.0,
+          35.0,
+          11.0
+        ],
+        "closed": false,
+        "vertices": 10
+      },
+      {
+        "area": 0.0,
+        "length": 5.0,
+        "bounds": [
+          5.0,
+          1.0,
+          10.0,
+          1.0
+        ],
+        "closed": false,
+        "vertices": 2
+      },
+      {
+        "area": 0.0,
+        "length": 5.0,
+        "bounds": [
+          25.0,
+          11.0,
+          30.0,
+          11.0
+        ],
+        "closed": false,
+        "vertices": 2
+      }
+    ],
+    "observations": 1,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::disjoint_same_direction_coincident_spans",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01551",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::disjoint_same_direction_coincident_spans",
+    "input": {
+      "closed": false,
+      "vertices": [
+        [
+          35.0,
+          10.0,
+          -0.0
+        ],
+        [
+          25.0,
+          10.0,
+          -0.0
+        ],
+        [
+          30.0,
+          10.0,
+          -0.0
+        ],
+        [
+          20.0,
+          10.0,
+          -0.0
+        ],
+        [
+          20.0,
+          5.0,
+          -0.0
+        ],
+        [
+          15.0,
+          0.0,
+          -0.0
+        ],
+        [
+          5.0,
+          0.0,
+          -0.0
+        ],
+        [
+          10.0,
+          0.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    "offset": -1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 0.0,
+        "length": 41.985009889168,
+        "bounds": [
+          0.0,
+          1.0,
+          35.0,
+          11.0
+        ],
+        "closed": false,
+        "vertices": 10
+      },
+      {
+        "area": 0.0,
+        "length": 5.0,
+        "bounds": [
+          25.0,
+          11.0,
+          30.0,
+          11.0
+        ],
+        "closed": false,
+        "vertices": 2
+      },
+      {
+        "area": 0.0,
+        "length": 5.0,
+        "bounds": [
+          5.0,
+          1.0,
+          10.0,
+          1.0
+        ],
+        "closed": false,
+        "vertices": 2
+      }
+    ],
+    "observations": 1,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::disjoint_same_direction_coincident_spans",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01558",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::non_tangent_open_endpoint_clip",
+    "input": {
+      "closed": false,
+      "vertices": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          10.0,
+          0.0
+        ],
+        [
+          0.0,
+          10.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0
+        ]
+      ]
+    },
+    "offset": 1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 0.0,
+        "length": 32.0,
+        "bounds": [
+          1.0,
+          1.0,
+          9.0,
+          9.0
+        ],
+        "closed": false,
+        "vertices": 5
+      }
+    ],
+    "observations": 1,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::non_tangent_open_endpoint_clip",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01562",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::non_tangent_open_endpoint_clip",
+    "input": {
+      "closed": false,
+      "vertices": [
+        [
+          0.0,
+          1.0,
+          -0.0
+        ],
+        [
+          0.0,
+          10.0,
+          -0.0
+        ],
+        [
+          10.0,
+          10.0,
+          -0.0
+        ],
+        [
+          10.0,
+          0.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    "offset": -1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 0.0,
+        "length": 32.0,
+        "bounds": [
+          1.0,
+          1.0,
+          9.0,
+          9.0
+        ],
+        "closed": false,
+        "vertices": 5
+      }
+    ],
+    "observations": 1,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::non_tangent_open_endpoint_clip",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01569",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::opposing_coincident_arcs_segment_interior_boundaries",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          6.0,
+          0.0,
+          1.0
+        ],
+        [
+          -6.0,
+          0.0,
+          0.0
+        ],
+        [
+          -4.0,
+          0.0,
+          0.0
+        ],
+        [
+          -4.0,
+          2.309401076758503,
+          0.0
+        ],
+        [
+          -2.0,
+          3.4641016151377544,
+          -0.2679491924311227
+        ],
+        [
+          2.0,
+          3.4641016151377544,
+          0.0
+        ],
+        [
+          4.0,
+          2.309401076758503,
+          0.0
+        ],
+        [
+          4.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    "offset": 1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": -1.7763568394002505e-15,
+        "length": 10.471975511965976,
+        "bounds": [
+          -2.5,
+          4.330127018922193,
+          2.5,
+          4.999999999999999
+        ],
+        "closed": true,
+        "vertices": 2
+      }
+    ],
+    "observations": 8,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::opposing_coincident_arcs_segment_interior_boundaries",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01574",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::opposing_coincident_arcs_segment_interior_boundaries",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          4.0,
+          0.0,
+          -0.0
+        ],
+        [
+          4.0,
+          2.309401076758503,
+          -0.0
+        ],
+        [
+          2.0,
+          3.4641016151377544,
+          0.2679491924311227
+        ],
+        [
+          -2.0,
+          3.4641016151377544,
+          -0.0
+        ],
+        [
+          -4.0,
+          2.309401076758503,
+          -0.0
+        ],
+        [
+          -4.0,
+          0.0,
+          -0.0
+        ],
+        [
+          -6.0,
+          0.0,
+          -1.0
+        ],
+        [
+          6.0,
+          0.0,
+          -0.0
+        ]
+      ]
+    },
+    "offset": -1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 1.7763568394002505e-15,
+        "length": 10.471975511965976,
+        "bounds": [
+          -2.5,
+          4.330127018922193,
+          2.5,
+          4.999999999999999
+        ],
+        "closed": true,
+        "vertices": 2
+      }
+    ],
+    "observations": 8,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::opposing_coincident_arcs_segment_interior_boundaries",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01588",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::opposing_coincident_arcs_vertex_boundaries",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          4.0,
+          0.0,
+          0.0
+        ],
+        [
+          6.0,
+          0.0,
+          1.0
+        ],
+        [
+          -6.0,
+          0.0,
+          0.0
+        ],
+        [
+          -4.0,
+          0.0,
+          -1.0
+        ]
+      ]
+    },
+    "offset": 1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": -3.552713678800501e-15,
+        "length": 27.388768120091314,
+        "bounds": [
+          -4.898979485566356,
+          1.0,
+          4.898979485566356,
+          5.0
+        ],
+        "closed": true,
+        "vertices": 2
+      }
+    ],
+    "observations": 4,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::opposing_coincident_arcs_vertex_boundaries",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01593",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::opposing_coincident_arcs_vertex_boundaries",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          -4.0,
+          0.0,
+          -0.0
+        ],
+        [
+          -6.0,
+          0.0,
+          -1.0
+        ],
+        [
+          6.0,
+          0.0,
+          -0.0
+        ],
+        [
+          4.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "offset": -1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 3.552713678800501e-15,
+        "length": 27.388768120091314,
+        "bounds": [
+          -4.898979485566356,
+          1.0,
+          4.898979485566356,
+          5.0
+        ],
+        "closed": true,
+        "vertices": 2
+      }
+    ],
+    "observations": 4,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::opposing_coincident_arcs_vertex_boundaries",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01607",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::same_direction_coincident_open_arcs",
+    "input": {
+      "closed": false,
+      "vertices": [
+        [
+          -5.0,
+          0.0,
+          -1.0
+        ],
+        [
+          5.0,
+          0.0,
+          0.5773502691896257
+        ],
+        [
+          -2.5,
+          4.330127018922193,
+          -1.0
+        ],
+        [
+          2.5,
+          -4.330127018922193,
+          0.0
+        ]
+      ]
+    },
+    "offset": 1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 0.0,
+        "length": 25.132741228718345,
+        "bounds": [
+          -6.0,
+          -5.19615242270663,
+          6.0,
+          5.999999999999999
+        ],
+        "closed": false,
+        "vertices": 4
+      },
+      {
+        "area": 0.0,
+        "length": 12.566370614359172,
+        "bounds": [
+          -3.0,
+          0.0,
+          6.0,
+          5.999999999999999
+        ],
+        "closed": false,
+        "vertices": 2
+      }
+    ],
+    "observations": 1,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::same_direction_coincident_open_arcs",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01611",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::same_direction_coincident_open_arcs",
+    "input": {
+      "closed": false,
+      "vertices": [
+        [
+          2.5,
+          -4.330127018922193,
+          1.0
+        ],
+        [
+          -2.5,
+          4.330127018922193,
+          -0.5773502691896257
+        ],
+        [
+          5.0,
+          0.0,
+          1.0
+        ],
+        [
+          -5.0,
+          0.0,
+          -1.0
+        ]
+      ]
+    },
+    "offset": -1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 0.0,
+        "length": 25.132741228718345,
+        "bounds": [
+          -6.0,
+          -5.196152422706631,
+          6.0,
+          5.999999999999999
+        ],
+        "closed": false,
+        "vertices": 4
+      },
+      {
+        "area": 0.0,
+        "length": 12.566370614359172,
+        "bounds": [
+          -3.0,
+          0.0,
+          6.0,
+          5.999999999999999
+        ],
+        "closed": false,
+        "vertices": 2
+      }
+    ],
+    "observations": 1,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::same_direction_coincident_open_arcs",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01618",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::same_direction_coincident_open_line_arc",
+    "input": {
+      "closed": false,
+      "vertices": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          0.0,
+          0.41421356237309503
+        ],
+        [
+          15.0,
+          5.0,
+          -0.41421356237309503
+        ],
+        [
+          10.0,
+          0.0,
+          0.0
+        ],
+        [
+          5.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          0.0,
+          0.41421356237309503
+        ],
+        [
+          15.0,
+          5.0,
+          0.0
+        ],
+        [
+          15.0,
+          10.0,
+          0.0
+        ]
+      ]
+    },
+    "offset": 1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 0.0,
+        "length": 21.283185307179586,
+        "bounds": [
+          0.0,
+          1.0,
+          14.0,
+          10.0
+        ],
+        "closed": false,
+        "vertices": 5
+      },
+      {
+        "area": 0.0,
+        "length": 11.283185307179586,
+        "bounds": [
+          5.0,
+          1.0,
+          14.0,
+          5.0
+        ],
+        "closed": false,
+        "vertices": 3
+      }
+    ],
+    "observations": 1,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::same_direction_coincident_open_line_arc",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01622",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::same_direction_coincident_open_line_arc",
+    "input": {
+      "closed": false,
+      "vertices": [
+        [
+          15.0,
+          10.0,
+          -0.0
+        ],
+        [
+          15.0,
+          5.0,
+          -0.41421356237309503
+        ],
+        [
+          10.0,
+          0.0,
+          -0.0
+        ],
+        [
+          5.0,
+          0.0,
+          -0.0
+        ],
+        [
+          10.0,
+          0.0,
+          0.41421356237309503
+        ],
+        [
+          15.0,
+          5.0,
+          -0.41421356237309503
+        ],
+        [
+          10.0,
+          0.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    "offset": -1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 0.0,
+        "length": 21.283185307179586,
+        "bounds": [
+          0.0,
+          1.0,
+          14.0,
+          10.0
+        ],
+        "closed": false,
+        "vertices": 5
+      },
+      {
+        "area": 0.0,
+        "length": 11.283185307179586,
+        "bounds": [
+          5.0,
+          1.0,
+          14.0,
+          5.0
+        ],
+        "closed": false,
+        "vertices": 3
+      }
+    ],
+    "observations": 1,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::same_direction_coincident_open_line_arc",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01629",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::same_direction_coincident_open_lines",
+    "input": {
+      "closed": false,
+      "vertices": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          0.0,
+          0.0
+        ],
+        [
+          5.0,
+          0.0,
+          0.0
+        ],
+        [
+          15.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    "offset": 1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 0.0,
+        "length": 15.0,
+        "bounds": [
+          0.0,
+          1.0,
+          15.0,
+          1.0
+        ],
+        "closed": false,
+        "vertices": 4
+      },
+      {
+        "area": 0.0,
+        "length": 5.0,
+        "bounds": [
+          5.0,
+          1.0,
+          10.0,
+          1.0
+        ],
+        "closed": false,
+        "vertices": 2
+      }
+    ],
+    "observations": 1,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::same_direction_coincident_open_lines",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01633",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::same_direction_coincident_open_lines",
+    "input": {
+      "closed": false,
+      "vertices": [
+        [
+          15.0,
+          0.0,
+          -0.0
+        ],
+        [
+          5.0,
+          0.0,
+          -0.0
+        ],
+        [
+          10.0,
+          0.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    "offset": -1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 0.0,
+        "length": 15.0,
+        "bounds": [
+          0.0,
+          1.0,
+          15.0,
+          1.0
+        ],
+        "closed": false,
+        "vertices": 4
+      },
+      {
+        "area": 0.0,
+        "length": 5.0,
+        "bounds": [
+          5.0,
+          1.0,
+          10.0,
+          1.0
+        ],
+        "closed": false,
+        "vertices": 2
+      }
+    ],
+    "observations": 1,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::same_direction_coincident_open_lines",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01640",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::tangent_arc_arc_segment_interiors",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          12.0,
+          0.0,
+          0.0
+        ],
+        [
+          12.0,
+          10.0,
+          0.0
+        ],
+        [
+          22.0,
+          10.0,
+          0.0
+        ],
+        [
+          22.0,
+          22.0,
+          0.0
+        ],
+        [
+          10.0,
+          22.0,
+          0.0
+        ],
+        [
+          10.0,
+          12.0,
+          0.0
+        ],
+        [
+          0.0,
+          12.0,
+          0.0
+        ]
+      ]
+    },
+    "offset": 1.4142135623730951,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 168.40761385757781,
+        "length": 75.47232018968121,
+        "bounds": [
+          1.4142135623730951,
+          1.4142135623730951,
+          20.585786437626904,
+          20.585786437626904
+        ],
+        "closed": true,
+        "vertices": 12
+      }
+    ],
+    "observations": 8,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::tangent_arc_arc_segment_interiors",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01645",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::tangent_arc_arc_segment_interiors",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          0.0,
+          12.0,
+          -0.0
+        ],
+        [
+          10.0,
+          12.0,
+          -0.0
+        ],
+        [
+          10.0,
+          22.0,
+          -0.0
+        ],
+        [
+          22.0,
+          22.0,
+          -0.0
+        ],
+        [
+          22.0,
+          10.0,
+          -0.0
+        ],
+        [
+          12.0,
+          10.0,
+          -0.0
+        ],
+        [
+          12.0,
+          0.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -0.0
+        ]
+      ]
+    },
+    "offset": -1.4142135623730951,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": -168.40761385757781,
+        "length": 75.47232018968123,
+        "bounds": [
+          1.4142135623730951,
+          1.4142135623730951,
+          20.585786437626904,
+          20.585786437626904
+        ],
+        "closed": true,
+        "vertices": 12
+      }
+    ],
+    "observations": 8,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::tangent_arc_arc_segment_interiors",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01659",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::tangent_line_arc_segment_interiors",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          20.0,
+          0.0,
+          0.0
+        ],
+        [
+          20.0,
+          20.0,
+          0.0
+        ],
+        [
+          12.0,
+          20.0,
+          0.0
+        ],
+        [
+          10.0,
+          2.0,
+          0.0
+        ],
+        [
+          8.0,
+          20.0,
+          0.0
+        ],
+        [
+          0.0,
+          20.0,
+          0.0
+        ]
+      ]
+    },
+    "offset": 1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 256.10840592808205,
+        "length": 103.56164759128616,
+        "bounds": [
+          1.0,
+          1.0,
+          19.0,
+          19.0
+        ],
+        "closed": true,
+        "vertices": 10
+      }
+    ],
+    "observations": 7,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::tangent_line_arc_segment_interiors",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01664",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::tangent_line_arc_segment_interiors",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          0.0,
+          20.0,
+          -0.0
+        ],
+        [
+          8.0,
+          20.0,
+          -0.0
+        ],
+        [
+          10.0,
+          2.0,
+          -0.0
+        ],
+        [
+          12.0,
+          20.0,
+          -0.0
+        ],
+        [
+          20.0,
+          20.0,
+          -0.0
+        ],
+        [
+          20.0,
+          0.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -0.0
+        ]
+      ]
+    },
+    "offset": -1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": -256.1084059280821,
+        "length": 103.56164759128615,
+        "bounds": [
+          1.0,
+          1.0,
+          19.0,
+          19.0
+        ],
+        "closed": true,
+        "vertices": 10
+      }
+    ],
+    "observations": 7,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::tangent_line_arc_segment_interiors",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01678",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::tangent_line_endpoints",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          4.0,
+          0.0
+        ],
+        [
+          15.0,
+          4.0,
+          0.0
+        ],
+        [
+          20.0,
+          0.0,
+          0.0
+        ],
+        [
+          30.0,
+          0.0,
+          0.0
+        ],
+        [
+          30.0,
+          10.0,
+          0.0
+        ],
+        [
+          20.0,
+          10.0,
+          0.0
+        ],
+        [
+          20.0,
+          6.0,
+          0.0
+        ],
+        [
+          15.0,
+          6.0,
+          0.0
+        ],
+        [
+          10.0,
+          10.0,
+          0.0
+        ],
+        [
+          0.0,
+          10.0,
+          0.0
+        ]
+      ]
+    },
+    "offset": 1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 153.64977637483233,
+        "length": 81.89419877546973,
+        "bounds": [
+          1.0,
+          1.0,
+          29.0,
+          9.0
+        ],
+        "closed": true,
+        "vertices": 16
+      }
+    ],
+    "observations": 12,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::tangent_line_endpoints",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01683",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::tangent_line_endpoints",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          0.0,
+          10.0,
+          -0.0
+        ],
+        [
+          10.0,
+          10.0,
+          -0.0
+        ],
+        [
+          15.0,
+          6.0,
+          -0.0
+        ],
+        [
+          20.0,
+          6.0,
+          -0.0
+        ],
+        [
+          20.0,
+          10.0,
+          -0.0
+        ],
+        [
+          30.0,
+          10.0,
+          -0.0
+        ],
+        [
+          30.0,
+          0.0,
+          -0.0
+        ],
+        [
+          20.0,
+          0.0,
+          -0.0
+        ],
+        [
+          15.0,
+          4.0,
+          -0.0
+        ],
+        [
+          10.0,
+          4.0,
+          -0.0
+        ],
+        [
+          10.0,
+          0.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -0.0
+        ]
+      ]
+    },
+    "offset": -1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": -153.64977637483227,
+        "length": 81.89419877546975,
+        "bounds": [
+          1.0,
+          1.0,
+          29.0,
+          9.0
+        ],
+        "closed": true,
+        "vertices": 16
+      }
+    ],
+    "observations": 12,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::tangent_line_endpoints",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01697",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::three_way_coincident_lines",
+    "input": {
+      "closed": false,
+      "vertices": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          0.0,
+          0.0
+        ],
+        [
+          5.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          0.0,
+          0.0
+        ],
+        [
+          5.0,
+          0.0,
+          0.0
+        ],
+        [
+          15.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    "offset": 1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 0.0,
+        "length": 15.0,
+        "bounds": [
+          0.0,
+          1.0,
+          15.0,
+          1.0
+        ],
+        "closed": false,
+        "vertices": 4
+      },
+      {
+        "area": 0.0,
+        "length": 5.0,
+        "bounds": [
+          5.0,
+          -1.0,
+          10.0,
+          -1.0
+        ],
+        "closed": false,
+        "vertices": 2
+      },
+      {
+        "area": 0.0,
+        "length": 5.0,
+        "bounds": [
+          5.0,
+          1.0,
+          10.0,
+          1.0
+        ],
+        "closed": false,
+        "vertices": 2
+      },
+      {
+        "area": 0.0,
+        "length": 5.0,
+        "bounds": [
+          5.0,
+          -1.0,
+          10.0,
+          -1.0
+        ],
+        "closed": false,
+        "vertices": 2
+      },
+      {
+        "area": 0.0,
+        "length": 5.0,
+        "bounds": [
+          5.0,
+          1.0,
+          10.0,
+          1.0
+        ],
+        "closed": false,
+        "vertices": 2
+      }
+    ],
+    "observations": 1,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::three_way_coincident_lines",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01701",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::three_way_coincident_lines",
+    "input": {
+      "closed": false,
+      "vertices": [
+        [
+          15.0,
+          0.0,
+          -0.0
+        ],
+        [
+          5.0,
+          0.0,
+          -0.0
+        ],
+        [
+          10.0,
+          0.0,
+          -0.0
+        ],
+        [
+          5.0,
+          0.0,
+          -0.0
+        ],
+        [
+          10.0,
+          0.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    "offset": -1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 0.0,
+        "length": 15.0,
+        "bounds": [
+          0.0,
+          1.0,
+          15.0,
+          1.0
+        ],
+        "closed": false,
+        "vertices": 4
+      },
+      {
+        "area": 0.0,
+        "length": 5.0,
+        "bounds": [
+          5.0,
+          -1.0,
+          10.0,
+          -1.0
+        ],
+        "closed": false,
+        "vertices": 2
+      },
+      {
+        "area": 0.0,
+        "length": 5.0,
+        "bounds": [
+          5.0,
+          1.0,
+          10.0,
+          1.0
+        ],
+        "closed": false,
+        "vertices": 2
+      },
+      {
+        "area": 0.0,
+        "length": 5.0,
+        "bounds": [
+          5.0,
+          -1.0,
+          10.0,
+          -1.0
+        ],
+        "closed": false,
+        "vertices": 2
+      },
+      {
+        "area": 0.0,
+        "length": 5.0,
+        "bounds": [
+          5.0,
+          1.0,
+          10.0,
+          1.0
+        ],
+        "closed": false,
+        "vertices": 2
+      }
+    ],
+    "observations": 1,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::three_way_coincident_lines",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01708",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::three_way_point_contact_keeps_paths_separate",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          20.0,
+          0.0,
+          0.0
+        ],
+        [
+          12.5,
+          4.330127018922193,
+          0.0
+        ],
+        [
+          0.5,
+          0.8660254037844386,
+          0.0
+        ],
+        [
+          -2.5,
+          12.990381056766578,
+          0.0
+        ],
+        [
+          -10.0,
+          17.32050807568877,
+          0.0
+        ],
+        [
+          -10.0,
+          8.660254037844386,
+          0.0
+        ],
+        [
+          -1.0,
+          0.0,
+          0.0
+        ],
+        [
+          -10.0,
+          -8.660254037844386,
+          0.0
+        ],
+        [
+          -10.0,
+          -17.32050807568877,
+          0.0
+        ],
+        [
+          -2.5,
+          -12.990381056766578,
+          0.0
+        ],
+        [
+          0.5,
+          -0.8660254037844386,
+          0.0
+        ],
+        [
+          12.5,
+          -4.330127018922193,
+          0.0
+        ]
+      ]
+    },
+    "offset": 1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 54.929566049431294,
+        "length": 36.451085684955316,
+        "bounds": [
+          -9.0,
+          0.9574354897381006,
+          -0.5527756377319942,
+          15.588457268119894
+        ],
+        "closed": true,
+        "vertices": 4
+      },
+      {
+        "area": 54.929566049431315,
+        "length": 36.451085684955316,
+        "bounds": [
+          -9.0,
+          -15.588457268119896,
+          -0.5527756377319942,
+          -0.9574354897381019
+        ],
+        "closed": true,
+        "vertices": 4
+      },
+      {
+        "area": 54.929566049431315,
+        "length": 36.451085684955316,
+        "bounds": [
+          1.1055512754639878,
+          -3.2513381729737314,
+          18.0,
+          3.251338172973732
+        ],
+        "closed": true,
+        "vertices": 4
+      }
+    ],
+    "observations": 12,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::three_way_point_contact_keeps_paths_separate",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01713",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::three_way_point_contact_keeps_paths_separate",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          12.5,
+          -4.330127018922193,
+          -0.0
+        ],
+        [
+          0.5,
+          -0.8660254037844386,
+          -0.0
+        ],
+        [
+          -2.5,
+          -12.990381056766578,
+          -0.0
+        ],
+        [
+          -10.0,
+          -17.32050807568877,
+          -0.0
+        ],
+        [
+          -10.0,
+          -8.660254037844386,
+          -0.0
+        ],
+        [
+          -1.0,
+          0.0,
+          -0.0
+        ],
+        [
+          -10.0,
+          8.660254037844386,
+          -0.0
+        ],
+        [
+          -10.0,
+          17.32050807568877,
+          -0.0
+        ],
+        [
+          -2.5,
+          12.990381056766578,
+          -0.0
+        ],
+        [
+          0.5,
+          0.8660254037844386,
+          -0.0
+        ],
+        [
+          12.5,
+          4.330127018922193,
+          -0.0
+        ],
+        [
+          20.0,
+          0.0,
+          -0.0
+        ]
+      ]
+    },
+    "offset": -1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": -54.929566049431294,
+        "length": 36.451085684955316,
+        "bounds": [
+          -9.0,
+          -15.588457268119894,
+          -0.5527756377319942,
+          -0.9574354897381006
+        ],
+        "closed": true,
+        "vertices": 4
+      },
+      {
+        "area": -54.929566049431315,
+        "length": 36.451085684955316,
+        "bounds": [
+          -9.0,
+          0.9574354897381019,
+          -0.5527756377319942,
+          15.588457268119896
+        ],
+        "closed": true,
+        "vertices": 4
+      },
+      {
+        "area": -54.929566049431315,
+        "length": 36.451085684955316,
+        "bounds": [
+          1.1055512754639878,
+          -3.251338172973732,
+          18.0,
+          3.2513381729737314
+        ],
+        "closed": true,
+        "vertices": 4
+      }
+    ],
+    "observations": 12,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::three_way_point_contact_keeps_paths_separate",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01727",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::touch_at_coincident_overlap_boundary",
+    "input": {
+      "closed": false,
+      "vertices": [
+        [
+          14.0,
+          6.0,
+          -1.0
+        ],
+        [
+          6.0,
+          6.0,
+          0.0
+        ],
+        [
+          -10.0,
+          6.0,
+          0.0
+        ],
+        [
+          -10.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          10.0,
+          0.0,
+          0.0
+        ],
+        [
+          5.0,
+          0.0,
+          0.0
+        ],
+        [
+          15.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    "offset": 1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 0.0,
+        "length": 56.80219417843096,
+        "bounds": [
+          -9.0,
+          1.0,
+          15.0,
+          6.0
+        ],
+        "closed": false,
+        "vertices": 9
+      },
+      {
+        "area": 0.0,
+        "length": 5.0,
+        "bounds": [
+          5.0,
+          1.0,
+          10.0,
+          1.0
+        ],
+        "closed": false,
+        "vertices": 2
+      }
+    ],
+    "observations": 1,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::touch_at_coincident_overlap_boundary",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01731",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_topology_stitching::touch_at_coincident_overlap_boundary",
+    "input": {
+      "closed": false,
+      "vertices": [
+        [
+          15.0,
+          0.0,
+          -0.0
+        ],
+        [
+          5.0,
+          0.0,
+          -0.0
+        ],
+        [
+          10.0,
+          0.0,
+          -0.0
+        ],
+        [
+          0.0,
+          0.0,
+          -0.0
+        ],
+        [
+          -10.0,
+          0.0,
+          -0.0
+        ],
+        [
+          -10.0,
+          6.0,
+          -0.0
+        ],
+        [
+          6.0,
+          6.0,
+          1.0
+        ],
+        [
+          14.0,
+          6.0,
+          -1.0
+        ]
+      ]
+    },
+    "offset": -1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 0.0,
+        "length": 56.80219417843095,
+        "bounds": [
+          -9.0,
+          1.0,
+          15.0,
+          6.0
+        ],
+        "closed": false,
+        "vertices": 9
+      },
+      {
+        "area": 0.0,
+        "length": 5.0,
+        "bounds": [
+          5.0,
+          1.0,
+          10.0,
+          1.0
+        ],
+        "closed": false,
+        "vertices": 2
+      }
+    ],
+    "observations": 1,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_topology_stitching::touch_at_coincident_overlap_boundary",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01738",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "touching_loop_behavior_does_not_change_crossing_routing",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          4.0,
+          4.0,
+          0.0
+        ],
+        [
+          0.0,
+          4.0,
+          0.0
+        ],
+        [
+          4.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    "offset": 0.1,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: true, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 3.092598846298224,
+        "length": 8.491168824543143,
+        "bounds": [
+          0.24142135623730931,
+          2.1414213562373092,
+          3.7585786437626907,
+          3.9
+        ],
+        "closed": true,
+        "vertices": 3
+      },
+      {
+        "area": 0.0,
+        "length": 9.928093147530848,
+        "bounds": [
+          -0.1,
+          -0.1,
+          4.1,
+          2.0
+        ],
+        "closed": false,
+        "vertices": 6
+      }
+    ],
+    "observations": 1,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "touching_loop_behavior_does_not_change_crossing_routing",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  }
+]

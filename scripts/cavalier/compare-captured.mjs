@@ -102,7 +102,7 @@ function compare(c){
    const p=c.kind==='offset'?path(c.input):new g.Path(toList(c.inputs.filter(p=>p.vertices.length).map(sub)));
    phase='offset';const r=unwrap(off.path(p,-c.offset,new off.Round(),new off.Butt()));phase='properties';
    const actual=Array.from(r.subpaths).map(s=>properties(s,c.kind==='offset'&&!c.input.closed));
-   return {status:matchProps(actual,c.result)?'match':'discrepancy',actual,expected:c.result,policy:c.options??'ShapeOffsetOptions::default'};
+   return {status:matchProps(actual,c.result)?'match':'discrepancy',actual,expected:c.result,policy:c.options??'ShapeOffsetOptions::default',...(process.env.CAVALIER_GEOMETRY?{geometry:Array.from(r.subpaths).map(s=>Array.from(g.subpath_segments(s)).map(s=>({type:s.constructor.name,...s})))}:{})};
   }
   if(c.kind==='boolean'){
    if(!c.input.closed||!c.other.closed)throw {scope:'Boolean requires closed inputs'};
