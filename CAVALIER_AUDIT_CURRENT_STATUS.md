@@ -1024,3 +1024,22 @@ The construction bug is fixed. Cavalier's additional retained arc fragment is
 still an open trimming-contract comparison. Repair and validation records are
 included in this commit; F# port remains pending. The preceding straightening
 commit is `3425b9e`.
+
+### 2026-10-20: original coverage work resumed, deferred issues left separate
+
+Per user direction, continued the original audit rather than reopening deferred
+policy questions. Adapted all 53 original continuous-overlap records: 52 match
+at defaults; CC01771 rejects a 1e-9 accuracy request around coordinates 3e9.
+Explicit tolerances 1e-5 and the upstream value 10000 both recover the expected
+interval. See `scripts/cavalier/ORIGINAL-OVERLAP-ADAPTATION.md`.
+
+Reviewed all 31 originally uncaptured tests. Eight yield 32 public geometric
+checks, all passing on JavaScript. The other 23 assert Rust representation or
+private-algorithm contracts without direct native counterparts; these are scope
+dispositions, not passes. Per-test reasons and results are recorded in
+`scripts/cavalier/ORIGINAL-COVERAGE-GAPS.md` and companion JSON files.
+
+No new confirmed native bug in this batch. No production or permanent suite
+changes, full-suite rerun, F# work, or commit. Original offset and Boolean
+classification groups remain open. CC01301's additional fragment and other
+previously deferred follow-ups remain deferred; no audit-closure claim.

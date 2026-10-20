@@ -1,0 +1,219 @@
+[
+  {
+    "source": "src/core/math/vector2.rs",
+    "test": "core::math::vector2::tests::ops",
+    "status": "different-private-or-representation-contract",
+    "reason": "Rust iterator/operator, in-place bulge-vertex mutation, repeated-vertex storage, or borrowed-view panic contract; no direct native equivalent. Geometry reversal is independently exercised elsewhere, but these assertions are not ported.",
+    "probe_count": 0
+  },
+  {
+    "source": "src/core/math/base_math.rs",
+    "test": "core::math::base_math::tests::small_arc_sweep_excludes_opposite_point_at_different_scales",
+    "status": "public-geometry-probe-passed",
+    "reason": "Related public geometric behavior exercised; not an adaptation of private representation assertions.",
+    "probe_count": 3
+  },
+  {
+    "source": "src/core/math/base_math.rs",
+    "test": "core::math::base_math::tests::arc_sweep_uses_position_tolerance_at_both_boundaries",
+    "status": "public-geometry-probe-passed",
+    "reason": "Related public geometric behavior exercised; not an adaptation of private representation assertions.",
+    "probe_count": 12
+  },
+  {
+    "source": "src/polyline/internal/pline_intersects.rs",
+    "test": "polyline::internal::pline_intersects::local_self_intersect_tests::circle_no_intersects",
+    "status": "public-geometry-probe-passed",
+    "reason": "Related public geometric behavior exercised; not an adaptation of private representation assertions.",
+    "probe_count": 1
+  },
+  {
+    "source": "src/polyline/internal/pline_intersects.rs",
+    "test": "polyline::internal::pline_intersects::local_self_intersect_tests::empty_polyline",
+    "status": "public-geometry-probe-passed",
+    "reason": "Related public geometric behavior exercised; not an adaptation of private representation assertions.",
+    "probe_count": 1
+  },
+  {
+    "source": "src/polyline/internal/pline_intersects.rs",
+    "test": "polyline::internal::pline_intersects::local_self_intersect_tests::filters_local_segment_pairs",
+    "status": "different-private-or-representation-contract",
+    "reason": "Private visitor filtering by local segment index; no corresponding native visitor callback contract.",
+    "probe_count": 0
+  },
+  {
+    "source": "src/polyline/internal/pline_intersects.rs",
+    "test": "polyline::internal::pline_intersects::local_self_intersect_tests::half_circle_overlapping_self",
+    "status": "public-geometry-probe-passed",
+    "reason": "Related public geometric behavior exercised; not an adaptation of private representation assertions.",
+    "probe_count": 1
+  },
+  {
+    "source": "src/polyline/internal/pline_intersects.rs",
+    "test": "polyline::internal::pline_intersects::local_self_intersect_tests::single_vertex",
+    "status": "public-geometry-probe-passed",
+    "reason": "Related public geometric behavior exercised; not an adaptation of private representation assertions.",
+    "probe_count": 1
+  },
+  {
+    "source": "src/polyline/internal/pline_offset.rs",
+    "test": "polyline::internal::pline_offset::tests::ambiguous_multiway_touch_falls_back_to_preserve_order",
+    "status": "different-private-or-representation-contract",
+    "reason": "Asserts private contact IDs, buckets, occurrence routing, slice indexes or Preserve/Separate policy choices; no direct native equivalent. Reviewed source, not counted as a native passing test.",
+    "probe_count": 0
+  },
+  {
+    "source": "src/polyline/internal/pline_offset.rs",
+    "test": "polyline::internal::pline_offset::tests::discarded_overlap_blocks_preserve_touch_routing_at_shared_boundary",
+    "status": "different-private-or-representation-contract",
+    "reason": "Asserts private contact IDs, buckets, occurrence routing, slice indexes or Preserve/Separate policy choices; no direct native equivalent. Reviewed source, not counted as a native passing test.",
+    "probe_count": 0
+  },
+  {
+    "source": "src/polyline/internal/pline_offset.rs",
+    "test": "polyline::internal::pline_offset::tests::dissection_points_sort_into_segment_ranges",
+    "status": "different-private-or-representation-contract",
+    "reason": "Asserts private contact IDs, buckets, occurrence routing, slice indexes or Preserve/Separate policy choices; no direct native equivalent. Reviewed source, not counted as a native passing test.",
+    "probe_count": 0
+  },
+  {
+    "source": "src/polyline/internal/pline_offset.rs",
+    "test": "polyline::internal::pline_offset::tests::indexed_node_lookup_handles_unbucketed_coordinates",
+    "status": "different-private-or-representation-contract",
+    "reason": "Asserts private contact IDs, buckets, occurrence routing, slice indexes or Preserve/Separate policy choices; no direct native equivalent. Reviewed source, not counted as a native passing test.",
+    "probe_count": 0
+  },
+  {
+    "source": "src/polyline/internal/pline_offset.rs",
+    "test": "polyline::internal::pline_offset::tests::indexed_node_lookup_uses_bucket_probe_order_for_multiple_matches",
+    "status": "different-private-or-representation-contract",
+    "reason": "Asserts private contact IDs, buckets, occurrence routing, slice indexes or Preserve/Separate policy choices; no direct native equivalent. Reviewed source, not counted as a native passing test.",
+    "probe_count": 0
+  },
+  {
+    "source": "src/polyline/internal/pline_offset.rs",
+    "test": "polyline::internal::pline_offset::tests::preserve_routing_visits_related_slice_before_closing",
+    "status": "different-private-or-representation-contract",
+    "reason": "Asserts private contact IDs, buckets, occurrence routing, slice indexes or Preserve/Separate policy choices; no direct native equivalent. Reviewed source, not counted as a native passing test.",
+    "probe_count": 0
+  },
+  {
+    "source": "src/polyline/internal/pline_offset.rs",
+    "test": "polyline::internal::pline_offset::tests::reversed_relation_reports_merge_and_strengthen_one_pair",
+    "status": "different-private-or-representation-contract",
+    "reason": "Asserts private contact IDs, buckets, occurrence routing, slice indexes or Preserve/Separate policy choices; no direct native equivalent. Reviewed source, not counted as a native passing test.",
+    "probe_count": 0
+  },
+  {
+    "source": "src/polyline/internal/pline_offset.rs",
+    "test": "polyline::internal::pline_offset::tests::separate_behavior_keeps_crossing_closure_order",
+    "status": "different-private-or-representation-contract",
+    "reason": "Asserts private contact IDs, buckets, occurrence routing, slice indexes or Preserve/Separate policy choices; no direct native equivalent. Reviewed source, not counted as a native passing test.",
+    "probe_count": 0
+  },
+  {
+    "source": "src/polyline/internal/pline_offset.rs",
+    "test": "polyline::internal::pline_offset::tests::separate_routing_prioritizes_relation_to_initial_occurrence",
+    "status": "different-private-or-representation-contract",
+    "reason": "Asserts private contact IDs, buckets, occurrence routing, slice indexes or Preserve/Separate policy choices; no direct native equivalent. Reviewed source, not counted as a native passing test.",
+    "probe_count": 0
+  },
+  {
+    "source": "src/polyline/internal/pline_offset.rs",
+    "test": "polyline::internal::pline_offset::tests::slices_with_invalid_indexes_are_rejected",
+    "status": "different-private-or-representation-contract",
+    "reason": "Asserts private contact IDs, buckets, occurrence routing, slice indexes or Preserve/Separate policy choices; no direct native equivalent. Reviewed source, not counted as a native passing test.",
+    "probe_count": 0
+  },
+  {
+    "source": "src/polyline/internal/pline_offset.rs",
+    "test": "polyline::internal::pline_offset::tests::unrelated_nodes_do_not_connect_by_position",
+    "status": "different-private-or-representation-contract",
+    "reason": "Asserts private contact IDs, buckets, occurrence routing, slice indexes or Preserve/Separate policy choices; no direct native equivalent. Reviewed source, not counted as a native passing test.",
+    "probe_count": 0
+  },
+  {
+    "source": "src/polyline/internal/raw_pline_offset.rs",
+    "test": "polyline::internal::raw_pline_offset::tests::near_collinear_corner_uses_normalized_angular_tolerance",
+    "status": "different-private-or-representation-contract",
+    "reason": "Asserts private JoinClass::InvalidDegenerateGap for a particular raw builder; native join stages expose no corresponding class. This is not a geometric output assertion or a native pass.",
+    "probe_count": 0
+  },
+  {
+    "source": "src/polyline/internal/raw_pline_offset.rs",
+    "test": "polyline::internal::raw_pline_offset::tests::normal_raw_offsets_have_no_invalid_segments",
+    "status": "public-geometry-probe-passed",
+    "reason": "Related public geometric behavior exercised; not an adaptation of private representation assertions.",
+    "probe_count": 1
+  },
+  {
+    "source": "src/polyline/internal/raw_pline_offset.rs",
+    "test": "polyline::internal::raw_pline_offset::tests::round_join_bulge_matches_sweep_and_offset_direction",
+    "status": "public-geometry-probe-passed",
+    "reason": "Related public geometric behavior exercised; not an adaptation of private representation assertions.",
+    "probe_count": 12
+  },
+  {
+    "source": "src/polyline/internal/raw_pline_offset.rs",
+    "test": "polyline::internal::raw_pline_offset::tests::zero_raw_offset_is_an_exact_copy",
+    "status": "different-private-or-representation-contract",
+    "reason": "Asserts exact bulge-vertex storage, user data, and invalid-segment flags at zero raw offset. Native untrimmed offset explicitly normalizes source geometry; exact storage identity is not its contract.",
+    "probe_count": 0
+  },
+  {
+    "source": "src/polyline/internal/pline_offset.rs",
+    "test": "polyline::internal::pline_offset::tests::topology_builder_indexes_large_contact_sets",
+    "status": "different-private-or-representation-contract",
+    "reason": "Asserts private contact IDs, buckets, occurrence routing, slice indexes or Preserve/Separate policy choices; no direct native equivalent. Reviewed source, not counted as a native passing test.",
+    "probe_count": 0
+  },
+  {
+    "source": "tests/test_pline_basics.rs",
+    "test": "iter_segments",
+    "status": "different-private-or-representation-contract",
+    "reason": "Rust iterator/operator, in-place bulge-vertex mutation, repeated-vertex storage, or borrowed-view panic contract; no direct native equivalent. Geometry reversal is independently exercised elsewhere, but these assertions are not ported.",
+    "probe_count": 0
+  },
+  {
+    "source": "tests/test_pline_basics.rs",
+    "test": "create_from_remove_repeat",
+    "status": "different-private-or-representation-contract",
+    "reason": "Rust iterator/operator, in-place bulge-vertex mutation, repeated-vertex storage, or borrowed-view panic contract; no direct native equivalent. Geometry reversal is independently exercised elsewhere, but these assertions are not ported.",
+    "probe_count": 0
+  },
+  {
+    "source": "tests/test_pline_basics.rs",
+    "test": "invert_direction_mut",
+    "status": "different-private-or-representation-contract",
+    "reason": "Rust iterator/operator, in-place bulge-vertex mutation, repeated-vertex storage, or borrowed-view panic contract; no direct native equivalent. Geometry reversal is independently exercised elsewhere, but these assertions are not ported.",
+    "probe_count": 0
+  },
+  {
+    "source": "tests/test_pline_basics.rs",
+    "test": "iter_segment_indexes",
+    "status": "different-private-or-representation-contract",
+    "reason": "Rust iterator/operator, in-place bulge-vertex mutation, repeated-vertex storage, or borrowed-view panic contract; no direct native equivalent. Geometry reversal is independently exercised elsewhere, but these assertions are not ported.",
+    "probe_count": 0
+  },
+  {
+    "source": "tests/test_pline_basics.rs",
+    "test": "iter_vertexes",
+    "status": "different-private-or-representation-contract",
+    "reason": "Rust iterator/operator, in-place bulge-vertex mutation, repeated-vertex storage, or borrowed-view panic contract; no direct native equivalent. Geometry reversal is independently exercised elsewhere, but these assertions are not ported.",
+    "probe_count": 0
+  },
+  {
+    "source": "tests/test_pline_basics.rs",
+    "test": "remove_repeat",
+    "status": "different-private-or-representation-contract",
+    "reason": "Rust iterator/operator, in-place bulge-vertex mutation, repeated-vertex storage, or borrowed-view panic contract; no direct native equivalent. Geometry reversal is independently exercised elsewhere, but these assertions are not ported.",
+    "probe_count": 0
+  },
+  {
+    "source": "tests/test_pline_view.rs",
+    "test": "attempting_to_wrap_slice_on_open_pline - should panic",
+    "status": "different-private-or-representation-contract",
+    "reason": "Rust iterator/operator, in-place bulge-vertex mutation, repeated-vertex storage, or borrowed-view panic contract; no direct native equivalent. Geometry reversal is independently exercised elsewhere, but these assertions are not ported.",
+    "probe_count": 0
+  }
+]

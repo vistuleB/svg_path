@@ -48,9 +48,14 @@ behavior. Documentation clarification suggested; see `SHAPE-CASE3-TRIAGE.md`.
    earlier-stage correctness in cases where final
    arc reconstruction conforms to the documented tolerance contract. See
    `BOOLEAN-CONTRACT-TRIAGE.md` and the dispositions register.
-3. **Coverage closure:** overlap interval adaptation and disposition of the 31
-   tests without selected adaptations (8 representation/API reviews and 23
-   math/internal gaps). See `TEST-COVERAGE.md` and `REVIEW.md`.
+3. **Original coverage closure completed (2026-10-20):** all 53 selected overlap
+   records now have interval adaptations: 52 default matches and one understood
+   large-coordinate tolerance mismatch, successful with explicit options. All 31
+   originally uncaptured tests have named dispositions: eight supply 32 passing
+   public geometry probes; 23 concern different private/representation contracts.
+   See `ORIGINAL-OVERLAP-ADAPTATION.md` and `ORIGINAL-COVERAGE-GAPS.md`.
+   This is scoped coverage, not full assertion-level parity. Original ledgers
+   remain historical; the offset and Boolean groups above are still open.
 
 The F# port and final validation follow the Gleam audit; they are not counted as
 additional investigations. The audit is not ready to be called complete.

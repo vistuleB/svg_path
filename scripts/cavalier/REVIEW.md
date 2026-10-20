@@ -1,5 +1,12 @@
 # Coverage and interpretation
 
+> Coverage update (2026-10-20): the original overlap-adaptation gap and 31
+> uncaptured-test reviews are now dispositioned in
+> [ORIGINAL-OVERLAP-ADAPTATION.md](ORIGINAL-OVERLAP-ADAPTATION.md) and
+> [ORIGINAL-COVERAGE-GAPS.md](ORIGINAL-COVERAGE-GAPS.md). This supersedes their
+> pending wording below, but does not close the offset/Boolean audit.
+
+
 > Current status (2026-10-18): projection fixes are committed as `dacdb370` and
 > `090f8e63`; the original collection wording below is historical. See
 > [RESUMED-TRIAGE.md](RESUMED-TRIAGE.md) and `triage-dispositions.json` for the
