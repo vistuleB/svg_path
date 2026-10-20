@@ -33,7 +33,11 @@ behavior. Documentation clarification suggested; see `SHAPE-CASE3-TRIAGE.md`.
    improves exact-SVG-input accuracy in 24/27 targeted cases (three already exact).
    Full release tests pass. Rotated-half-chord rounding remains a limitation;
    all 46 published figures regenerated, with only numeric changes in three;
-   see `SEMICIRCLE-ACCURACY-TRIAGE.md`.
+   see `SEMICIRCLE-ACCURACY-TRIAGE.md`. The circular rotation case now has
+   a validated production repair: compute circles before coordinate rotation
+   and adjust the angle afterward. Full release tests pass and all 47 figures
+   are byte-identical. Unequal-radius ellipse conditioning still needs assessment;
+   see `CIRCLE-ROTATION-TRIAGE.md`.
 4. **Coverage closure:** overlap interval adaptation and disposition of the 31
    tests without selected adaptations (8 representation/API reviews and 23
    math/internal gaps). See `TEST-COVERAGE.md` and `REVIEW.md`.

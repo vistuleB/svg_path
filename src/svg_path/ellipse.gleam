@@ -782,7 +782,58 @@ fn ellipse_second_derivative_radians(
   EllipsePoint(cos_phi *. x -. sin_phi *. y, sin_phi *. x +. cos_phi *. y)
 }
 
+// A circle's axis rotation changes its angle coordinates, not its center.
+// Avoid rotating the half-chord before the near-semicircle calculation.
 fn do_endpoint_to_center(
+  start: EllipsePoint,
+  radius: EllipsePoint,
+  x_axis_rotation: Float,
+  large_arc: Bool,
+  sweep: Bool,
+  end: EllipsePoint,
+) -> Result(CenterArcData, Error) {
+  case
+    float.absolute_value(radius.x) == float.absolute_value(radius.y)
+    && x_axis_rotation != 0.0
+  {
+    True -> {
+      case
+        endpoint_to_center_general(start, radius, 0.0, large_arc, sweep, end)
+      {
+        Error(error) -> Error(error)
+        Ok(arc) -> {
+          // Rotate the unit direction instead of subtracting a potentially huge
+          // angle. The degree helpers reduce finite rotations before evaluation.
+          let c = trig.cos_degrees(x_axis_rotation)
+          let s = trig.sin_degrees(x_axis_rotation)
+          let x = trig.cos_degrees(arc.start_angle)
+          let y = trig.sin_degrees(arc.start_angle)
+          Ok(
+            CenterArcData(
+              ..arc,
+              x_axis_rotation:,
+              start_angle: trig.atan2_degrees(
+                c *. y -. s *. x,
+                c *. x +. s *. y,
+              ),
+            ),
+          )
+        }
+      }
+    }
+    False ->
+      endpoint_to_center_general(
+        start,
+        radius,
+        x_axis_rotation,
+        large_arc,
+        sweep,
+        end,
+      )
+  }
+}
+
+fn endpoint_to_center_general(
   start: EllipsePoint,
   radius: EllipsePoint,
   x_axis_rotation: Float,

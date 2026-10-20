@@ -650,3 +650,30 @@ winding trimming mechanism but differs from erosion; classified as an understood
 policy limitation, not a confirmed solver bug. Documentation clarification is
 recommended, not implemented. See `scripts/cavalier/SQUARE-COLLAPSE-WINDING-TRIAGE.md`.
 No production change, full-suite rerun, F# change, or commit in this investigation.
+
+
+### Circular rotation follow-up
+
+Gallery addition and square findings committed as `2abb659`. Investigated the
+remaining circular near-semicircle axis-rotation error: reproduced on both targets.
+An 84-case JS candidate computes circles at rotation zero, preserves the returned
+rotation, and adjusts the start angle. Maximum center discrepancy versus the same
+zero-rotation input drops from 9.92e-6 to zero; sampled/bounds differences fall to
+about 4.1e-12. Unequal-radius ellipses are outside this candidate's scope.
+See `scripts/cavalier/CIRCLE-ROTATION-TRIAGE.md`. No production changes or full
+suite rerun; candidate implementation and broad validation remain pending.
+
+
+### Circular rotation repair validated — 2026-10-20
+
+Implemented zero-rotation center calculation for exactly equal absolute radii,
+retaining the caller's rotation and rotating the start unit direction into its
+angle frame. Unequal-radius conversion is unchanged. Two portable regressions
+cover flags, translation, curve points/bounds, negative radii and enlargement.
+
+`scripts/test-release`: 2,088 ordinary + 31 slow + 834 portable Erlang + 834
+portable JavaScript passed. `scripts/generate-published-figures`: repeat ordinary
+suite passed; all 13 README + 34 Gallery outputs are byte-identical. The 84-case
+production probe has zero center variation and ~4.1e-12 maximum sampled error
+relative to rotation zero. See `scripts/cavalier/CIRCLE-ROTATION-TRIAGE.md`.
+Not yet committed; F# deferred. Unequal-radius conditioning remains open.

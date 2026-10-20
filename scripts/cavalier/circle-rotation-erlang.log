@@ -1,0 +1,33 @@
+warning: Unused result value
+  ┌─ /Users/jpsteinb/github.com/vistuleB/svg_path/scripts/cavalier/probe/src/short_arc_normalization_audit_probe.gleam:9:3
+  │
+9 │   echo degeneracy.normalize_degenerate_segments(alone, 0.001)
+  │   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The Result value created here is unused
+
+Hint: If you are sure you don't need it you can assign it to `_`.
+
+warning: Unused result value
+   ┌─ /Users/jpsteinb/github.com/vistuleB/svg_path/scripts/cavalier/probe/src/short_arc_normalization_audit_probe.gleam:16:3
+   │
+16 │   echo offset.normalize_short_source_runs(source, 0.001)
+   │   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The Result value created here is unused
+
+Hint: If you are sure you don't need it you can assign it to `_`.
+
+  Compiling cavalier_audit_probe
+   Compiled in 0.32s
+    Running circle_rotation_audit_probe.main
+[90msrc/circle_rotation_audit_probe.gleam:15[39m
+#(0.0, EllipsePoint(-5.317918070671084e-6, 3.555937939040056e-6))
+[90msrc/circle_rotation_audit_probe.gleam:15[39m
+#(17.0, EllipsePoint(0.0, 0.0))
+[90msrc/circle_rotation_audit_probe.gleam:15[39m
+#(37.0, EllipsePoint(-6.041203228480398e-6, 4.039577795694362e-6))
+[90msrc/circle_rotation_audit_probe.gleam:15[39m
+#(73.0, EllipsePoint(-1.0655484882350504e-5, 7.125014422652895e-6))
+[90msrc/circle_rotation_audit_probe.gleam:15[39m
+#(90.0, EllipsePoint(-5.317918070671084e-6, 3.555937939040056e-6))
+[90msrc/circle_rotation_audit_probe.gleam:15[39m
+#(137.0, EllipsePoint(0.0, 0.0))
+[90msrc/circle_rotation_audit_probe.gleam:15[39m
+#(359.0, EllipsePoint(0.0, 0.0))

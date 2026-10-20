@@ -9,6 +9,7 @@
 - [Figure-eight band correspondence blocks](gallery-figure-eight-correspondence-blocks.svg)
 - [Figure-eight convex-hull regressions](gallery-figure-eight-convex-hulls.svg)
 - [Stroke offset tracks](gallery-stroke-offset-tracks.svg)
+- [Square inward offsets through collapse](gallery-square-inward-collapse.svg)
 - [Earth-tone offsets](gallery-earth-tone-offsets.svg)
 - [Package title first offset](gallery-package-title-first-offset.svg)
 - [Package title second offset arrangement](gallery-package-title-second-offset-arrangement.svg)
@@ -29,5 +30,3 @@
 - [nested contours · nonzero](gallery-difference-nested-nonzero.svg)
 - [nested contours · even–odd](gallery-difference-nested-evenodd.svg)
 - [self-crossing contour minus rectangle](gallery-difference-bowtie-rectangle.svg)
-
-- [Square inward offsets through collapse](gallery-square-inward-collapse.svg)
