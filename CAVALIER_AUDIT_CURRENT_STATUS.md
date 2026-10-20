@@ -892,3 +892,33 @@ passes: 2100 ordinary + 31 slow + 846 on each portable target. All 47 figures
 regenerated without new geometry changes; only the already recorded README
 centering spelling differs from HEAD. See
 `scripts/cavalier/COLLAPSED-STALLED-RUN-REPAIR.md`. Uncommitted; F# deferred.
+
+## 2026-10-20 — Offset source-normalization review
+
+Collapse repair committed as `99ff1694`. New investigation shows reversal loss
+is not confined to fixed short-run cleanup: whole-path degeneracy normalization
+also removes intermediate reversals, even a half-unit collinear backtrack at
+zero tolerance. JS/Erlang reductions agree. Preserving the CC01301 source lets
+raw offset construction succeed but exposes an arrangement failure in path
+processing. See `scripts/cavalier/SHORT-RUN-NORMALIZATION-INVESTIGATION.md` for
+copied-build controls and proposed offset-specific traversal preservation.
+Production unchanged; new evidence uncommitted; F# deferred.
+
+## 2026-10-20 — Arc cleanup single-chord experiment
+
+User requested one arc -> one Line or unchanged. Arc cleanup now uses a
+conservative whole-arc chord-error bound without polyline subdivision. The old
+suite has exactly one conflicting test: `valid_narrow_arc_can_still_be_simplified_test`
+explicitly requires multiple lines. Ordinary 2099/1, slow 31/0, portable Erlang
+845/1 and JS 845/1; all failures are that same expectation. No tests changed, no
+figures regenerated, no F# changes. See
+`scripts/cavalier/ARC-CHORD-CLEANUP-EXPERIMENT.md`. Candidate uncommitted.
+
+## 2026-10-20 — Arc chord cleanup validated for commit
+
+The old multi-line arc regression now tests that the narrow major arc remains
+unchanged. Figure generation passes all 2100 ordinary tests and regenerates
+all 47 figures byte-identically to the saved pre-change outputs. Portable tests
+pass 846 on each target; the preceding unchanged-production slow run passed 31.
+See `scripts/cavalier/ARC-CHORD-CLEANUP-EXPERIMENT.md`. F# deferred. Offset
+normalization's reversal preservation remains separate unfinished work.

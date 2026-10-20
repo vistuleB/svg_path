@@ -236,7 +236,7 @@ pub fn undefined_arc_in_thin_run_cannot_be_hidden_by_hull_test() {
     == [svg_path.Line(svg_path.Point(0.0, 0.0), svg_path.Point(3.0, 0.0))]
 }
 
-pub fn valid_narrow_arc_can_still_be_simplified_test() {
+pub fn narrow_major_arc_is_not_replaced_by_a_chord_test() {
   let segment =
     svg_path.Arc(
       svg_path.Point(0.0, 0.0),
@@ -246,10 +246,9 @@ pub fn valid_narrow_arc_can_still_be_simplified_test() {
       True,
       svg_path.Point(0.0, 10.0),
     )
-  let assert Ok(Some(lines)) =
-    degeneracy.segment_linearize_if_degenerate(segment, 0.001)
-  assert list.length(lines) > 1
-  let simplified = svg_path.subpath_assert(lines)
-  assert svg_path.subpath_start(simplified) == svg_path.segment_start(segment)
-  assert svg_path.subpath_end(simplified) == svg_path.segment_end(segment)
+  // This arc reaches y=-5 and y=15 despite endpoints at y=0 and y=10.
+  // Its narrow strip does not justify replacing its traversal by that chord.
+  assert degeneracy.segment_linearize_if_degenerate(segment, 0.001) == Ok(None)
+  let assert Ok(source) = svg_path.subpath([segment])
+  assert degeneracy.normalize_degenerate_segments(source, 0.001) == Ok(source)
 }

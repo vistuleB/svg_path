@@ -1,0 +1,166 @@
+[
+  {
+    "xs": [
+      -1,
+      0,
+      0.0002,
+      0.0001,
+      0.0003,
+      1
+    ],
+    "normalized": {
+      "segments": [
+        {
+          "start": {
+            "x": -1,
+            "y": 0
+          },
+          "end": {
+            "x": 1,
+            "y": 0
+          }
+        }
+      ],
+      "length": 2
+    },
+    "exactCleanup": {
+      "segments": [
+        {
+          "start": {
+            "x": -1,
+            "y": 0
+          },
+          "end": {
+            "x": 1,
+            "y": 0
+          }
+        }
+      ],
+      "length": 2
+    },
+    "raw": {
+      "segments": [
+        {
+          "start": {
+            "x": -1,
+            "y": 1
+          },
+          "end": {
+            "x": 1,
+            "y": 1
+          }
+        }
+      ],
+      "length": 2
+    }
+  },
+  {
+    "xs": [
+      -2,
+      0,
+      1,
+      0.5,
+      2,
+      3
+    ],
+    "normalized": {
+      "segments": [
+        {
+          "start": {
+            "x": -2,
+            "y": 0
+          },
+          "end": {
+            "x": 3,
+            "y": 0
+          }
+        }
+      ],
+      "length": 5
+    },
+    "exactCleanup": {
+      "segments": [
+        {
+          "start": {
+            "x": -2,
+            "y": 0
+          },
+          "end": {
+            "x": 3,
+            "y": 0
+          }
+        }
+      ],
+      "length": 5
+    },
+    "raw": {
+      "segments": [
+        {
+          "start": {
+            "x": -2,
+            "y": 1
+          },
+          "end": {
+            "x": 3,
+            "y": 1
+          }
+        }
+      ],
+      "length": 5
+    }
+  },
+  {
+    "xs": [
+      -2,
+      0,
+      1,
+      2,
+      3
+    ],
+    "normalized": {
+      "segments": [
+        {
+          "start": {
+            "x": -2,
+            "y": 0
+          },
+          "end": {
+            "x": 3,
+            "y": 0
+          }
+        }
+      ],
+      "length": 5
+    },
+    "exactCleanup": {
+      "segments": [
+        {
+          "start": {
+            "x": -2,
+            "y": 0
+          },
+          "end": {
+            "x": 3,
+            "y": 0
+          }
+        }
+      ],
+      "length": 5
+    },
+    "raw": {
+      "segments": [
+        {
+          "start": {
+            "x": -2,
+            "y": 1
+          },
+          "end": {
+            "x": 3,
+            "y": 1
+          }
+        }
+      ],
+      "length": 5
+    }
+  }
+]

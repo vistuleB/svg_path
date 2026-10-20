@@ -13,6 +13,7 @@ import svg_path/convex_hull
 import svg_path/internal/number
 import svg_path/internal/root
 import svg_path/point
+import svg_path/trig
 
 /// The longest leading segment sequence certified to fit in a thin strip.
 @internal
@@ -459,6 +460,9 @@ fn degenerate_traversal(
 /// `Ok(None)`. The tolerance must be finite and non-negative; a tolerance of
 /// `0.0` collapses the segment only when it lies exactly on a line strip of
 /// width zero.
+/// Arcs return one endpoint chord only when a conservative whole-arc error
+/// bound fits within tolerance; otherwise they return `Ok(None)`. They are
+/// never subdivided into polylines. Valid curved arcs remain arcs at zero tolerance.
 /// Arcs rejected by `svg_path.arc_center_data` return `PathError(DegenerateArc)`;
 /// this function does not apply SVG-specific line/omission fallbacks.
 pub fn segment_linearize_if_degenerate(
@@ -548,21 +552,27 @@ fn segment_degenerate_lines_valid(
         cubic_degenerate_breaks(start, control1, control2, end, start),
         tolerance,
       )
-    svg_path.Arc(..) -> {
-      use _ <- result.try(
+    svg_path.Arc(start:, end:, ..) -> {
+      use arc <- result.try(
         svg_path.arc_center_data(segment) |> result.map_error(PathError),
       )
-      use lines <- result.try(
-        svg_path.segment_to_lines_with(
-          segment,
-          options: svg_path.LinearizeOptions(
-            tolerance:,
-            max_depth: svg_path.default_linearize_options().max_depth,
-          ),
-        )
-        |> result.map_error(PathError),
-      )
-      degenerate_line_list(lines, tolerance)
+      // Bound the whole arc's deviation from its endpoint chord. Scaling a
+      // unit circle by the larger ellipse radius bounds the ellipse as well.
+      // Never subdivide here: a non-flat arc remains an arc.
+      let radius = float.max(arc.radius.x, arc.radius.y)
+      let sweep = float.absolute_value(arc.delta_angle)
+      let error = case sweep >. 180.0 {
+        True -> 2.0 *. radius
+        False -> {
+          // 1-cos(sweep/2), evaluated without cancellation for short arcs.
+          let sine = trig.sin_degrees(sweep /. 4.0)
+          2.0 *. { radius *. sine } *. sine
+        }
+      }
+      case tolerance >. 0.0 && number.is_finite(error) && error <=. tolerance {
+        True -> Ok(Some([svg_path.Line(start, end)]))
+        False -> Ok(None)
+      }
     }
   }
 }

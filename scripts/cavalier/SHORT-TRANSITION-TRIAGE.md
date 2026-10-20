@@ -59,3 +59,12 @@ Captured in `short-transition-CC01297.json`, `short-transition-CC01301.json`, an
 settings completed successfully; no permanent suite tests were added. No full
 suite or figures rerun for this investigation. Erlang was not rerun for these
 two fixtures. The broader audit remains open.
+
+## Reopened source-preparation investigation
+
+See `SHORT-RUN-NORMALIZATION-INVESTIGATION.md`. Bypassing the fixed short-run
+stage alone does not preserve the reversal: whole-path degeneracy cleanup also
+removes it. A native collinear half-unit backtrack demonstrates the same loss
+even at zero tolerance. Raw construction can retain its reversal joins, but the
+original CC01301 fixture then exposes an arrangement error. Treat this as open
+source-preparation design work, not a settled reason to retain the current loss.
