@@ -1101,3 +1101,14 @@ all 437 final dispositions and the 31 reviewed uncaptured tests. No production
 edits, full-suite/figure rerun or F# port. This final batch is included in the original-audit closure commit.
 Next work is the explicitly deferred review, if requested, not another original
 queue batch. Preserve DEFERRED-API.md's 4.0.0 Error-variant entry.
+
+### 2026-10-20: original audit committed; semicircle residual explained
+
+Original closure committed as `cebcaee`. Investigated deferred CC01504/CC01508
+numerical differences: the bulge-to-SVG adapter rounds an exact semicircle radius
+upwards, encoding a center shift of 1.7801194e-6, confirmed independently with
+80-digit arithmetic on exact binary inputs. Two-quarter-arc controls reproduce
+Cavalier closed-component area and length in both orientations. No production
+bug established; no production edits. See scripts/cavalier/CC01504-SEMICIRCLE-RESIDUAL.md.
+Four targeted offset calls completed. New investigation records are uncommitted.
+Open-component policy, remaining deferred issues and F# work remain separate.

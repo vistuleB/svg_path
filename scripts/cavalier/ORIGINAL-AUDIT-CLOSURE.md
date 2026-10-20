@@ -47,9 +47,10 @@ invariants, FFI, examples and UI are not all native test adaptations.
 2. **CC01301 additional fragment:** construction is repaired, but Cavalier's
    extra arc fragment remains a separate trimming comparison. See
    CC01301-ARC-SPLITTING-INVESTIGATION.md.
-3. **CC01504/CC01508 numerical residual:** retained component area differs by
-   about 0.0003692; sampled raw-boundary residual reaches 1.95e-6. Its numerical
-   cause is not isolated. See ORIGINAL-OFFSET-SPECIFIC-TRIAGE.md.
+3. **CC01504/CC01508 numerical residual — explained 2026-10-20:** the audit
+   adapter loses exact semicircle intent when computing SVG radii. Quarter-arc
+   controls match upstream area and length. No production bug established. See
+   CC01504-SEMICIRCLE-RESIDUAL.md. The open-component policy remains separate.
 4. **CSG endpoint reconstruction:** joining stored arc endpoints can amplify
    interior displacement. Current behavior conforms to the documented endpoint
    contract, but this is a numerical/API improvement candidate. New stage checks
