@@ -10226,6 +10226,16 @@ fn round_join(
       let start_radius = point_helpers.subtract(start, corner)
       let end_radius = point_helpers.subtract(end, corner)
       let angle = signed_angle(start_radius, end_radius)
+      // Antiparallel radii do not determine a turn sign. Resolve that tie
+      // using the signed offset so reversing traversal and offset reverses
+      // the join too. Keep the endpoint-based angle for other turns.
+      let sweep = case
+        float.absolute_value(float.absolute_value(angle) -. 180.0)
+        <=. angle_tolerance_degrees
+      {
+        True -> offset >. 0.0
+        False -> angle >. 0.0
+      }
       case float.absolute_value(angle) <=. angle_tolerance_degrees {
         True -> Ok(polyline.segments(point_tolerance, [start, end]))
         False ->
@@ -10235,7 +10245,7 @@ fn round_join(
               radius: svg_path.Point(radius, radius),
               x_axis_rotation: 0.0,
               large_arc: False,
-              sweep: angle >. 0.0,
+              sweep:,
               end:,
             ),
           ])

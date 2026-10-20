@@ -1,0 +1,65 @@
+warning: unused imports: `pline` and `props`
+   --> cavalier_contours/src/core/math/circle_circle_intersect.rs:119:51
+    |
+119 | if audit_guard.outer { use crate::audit_capture::{pline,props,emit}; emit("circle_circle_intr",format!("\"radius1\":{:?},\"center1\...
+    |                                                   ^^^^^ ^^^^^
+    |
+    = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused imports: `pline` and `props`
+   --> cavalier_contours/src/core/math/line_circle_intersect.rs:175:51
+    |
+175 | if audit_guard.outer { use crate::audit_capture::{pline,props,emit}; emit("line_circle_intr",format!("\"p0\":{:?},\"p1\":{:?},\"rad...
+    |                                                   ^^^^^ ^^^^^
+
+warning: unused imports: `pline` and `props`
+   --> cavalier_contours/src/core/math/line_line_intersect.rs:229:51
+    |
+229 | if audit_guard.outer { use crate::audit_capture::{pline,props,emit}; emit("line_line_intr",format!("\"v1\":{:?},\"v2\":{:?},\"u1\":...
+    |                                                   ^^^^^ ^^^^^
+
+warning: unused imports: `pline` and `props`
+   --> cavalier_contours/src/polyline/pline_seg_intersect.rs:646:51
+    |
+646 | if audit_guard.outer { use crate::audit_capture::{pline,props,emit}; emit("pline_seg_intr",format!("\"v1\":{:?},\"v2\":{:?},\"u1\":...
+    |                                                   ^^^^^ ^^^^^
+
+warning: unused import: `props`
+   --> cavalier_contours/src/polyline/traits.rs:325:57
+    |
+325 | if audit_guard.outer { use crate::audit_capture::{pline,props,emit}; emit("extents",format!("\"input\":{},\"result\":{:?}",pline(se...
+    |                                                         ^^^^^
+
+warning: unused import: `props`
+   --> cavalier_contours/src/polyline/traits.rs:352:57
+    |
+352 | if audit_guard.outer { use crate::audit_capture::{pline,props,emit}; emit("path_length",format!("\"input\":{},\"result\":{:?}",plin...
+    |                                                         ^^^^^
+
+warning: unused import: `props`
+   --> cavalier_contours/src/polyline/traits.rs:422:57
+    |
+422 | if audit_guard.outer { use crate::audit_capture::{pline,props,emit}; emit("area",format!("\"input\":{},\"result\":{:?}",pline(self)...
+    |                                                         ^^^^^
+
+warning: unused import: `props`
+    --> cavalier_contours/src/polyline/traits.rs:1269:57
+     |
+1269 | if audit_guard.outer { use crate::audit_capture::{pline,props,emit}; emit("winding_number",format!("\"input\":{},\"point\":[{:?},{...
+     |                                                         ^^^^^
+
+warning: unused import: `props`
+    --> cavalier_contours/src/polyline/traits.rs:1826:57
+     |
+1826 | if audit_guard.outer { use crate::audit_capture::{pline,props,emit}; emit("contains",format!("\"input\":{},\"other\":{},\"result\"...
+     |                                                         ^^^^^
+
+warning: `cavalier_contours` (lib) generated 9 warnings (run `cargo fix --lib -p cavalier_contours` to apply 9 suggestions)
+   Compiling cavalier_contours v0.9.0 (/tmp/cavalier-audit-capture/cavalier_contours)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.29s
+     Running tests/test_pline_parallel_offset.rs (/tmp/cavalier-audit-target/debug/deps/test_pline_parallel_offset-bc6d35e42d605ffe)
+
+running 1 test
+ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 81 filtered out; finished in 0.00s

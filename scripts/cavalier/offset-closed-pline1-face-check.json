@@ -1,0 +1,578 @@
+[
+  {
+    "id": 0,
+    "point": {
+      "x": 124.9241608649638,
+      "y": 92.38348508238457
+    },
+    "keptByFlood": true,
+    "classification": "Inside",
+    "distance": 25.12634741706339,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 0,
+      "left_face": 1,
+      "right_face": 2
+    }
+  },
+  {
+    "id": 20,
+    "point": {
+      "x": 114.104257352286,
+      "y": 73.82640692134913
+    },
+    "keptByFlood": true,
+    "classification": "Inside",
+    "distance": 26.00000000000003,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 20,
+      "left_face": 2,
+      "right_face": 3
+    }
+  },
+  {
+    "id": 2,
+    "point": {
+      "x": 85.02038666861912,
+      "y": 62.54349059611535
+    },
+    "keptByFlood": true,
+    "classification": "Inside",
+    "distance": 13.230887447790048,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 2,
+      "left_face": 4,
+      "right_face": 5
+    }
+  },
+  {
+    "id": 25,
+    "point": {
+      "x": 70.16823099216764,
+      "y": 65.90203150083117
+    },
+    "keptByFlood": false,
+    "classification": "Outside",
+    "distance": 1.916329376844452,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 25,
+      "left_face": 6,
+      "right_face": 0
+    }
+  },
+  {
+    "id": 1,
+    "point": {
+      "x": 70.16649758134906,
+      "y": 65.93130185941942
+    },
+    "keptByFlood": false,
+    "classification": "Outside",
+    "distance": 1.9218866171347968,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 1,
+      "left_face": 6,
+      "right_face": 0
+    }
+  },
+  {
+    "id": 26,
+    "point": {
+      "x": 89.64639931216323,
+      "y": 65.85570501525677
+    },
+    "keptByFlood": true,
+    "classification": "Inside",
+    "distance": 17.340723289586457,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 26,
+      "left_face": 4,
+      "right_face": 2
+    }
+  },
+  {
+    "id": 3,
+    "point": {
+      "x": 99.97562468362062,
+      "y": 71.14280488481374
+    },
+    "keptByFlood": true,
+    "classification": "Inside",
+    "distance": 20.254188904843353,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 3,
+      "left_face": 4,
+      "right_face": 2
+    }
+  },
+  {
+    "id": 4,
+    "point": {
+      "x": 100.58323375478165,
+      "y": 40.16934970153136
+    },
+    "keptByFlood": true,
+    "classification": "Inside",
+    "distance": 26.000000000000007,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 4,
+      "left_face": 5,
+      "right_face": 3
+    }
+  },
+  {
+    "id": 5,
+    "point": {
+      "x": 123.20515795199753,
+      "y": 11.72691964766731
+    },
+    "keptByFlood": true,
+    "classification": "Inside",
+    "distance": 25.999999999999996,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 5,
+      "left_face": 5,
+      "right_face": 3
+    }
+  },
+  {
+    "id": 6,
+    "point": {
+      "x": 162.5,
+      "y": -36.5
+    },
+    "keptByFlood": true,
+    "classification": "Inside",
+    "distance": 26,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 6,
+      "left_face": 5,
+      "right_face": 3
+    }
+  },
+  {
+    "id": 7,
+    "point": {
+      "x": 204.79346640316552,
+      "y": -16.361418031454363
+    },
+    "keptByFlood": true,
+    "classification": "Inside",
+    "distance": 17.152086041409895,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 7,
+      "left_face": 5,
+      "right_face": 3
+    }
+  },
+  {
+    "id": 30,
+    "point": {
+      "x": 225.87982307678925,
+      "y": -25.98510941584717
+    },
+    "keptByFlood": false,
+    "classification": "Outside",
+    "distance": 5.872903309685348,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 30,
+      "left_face": 0,
+      "right_face": 7
+    }
+  },
+  {
+    "id": 33,
+    "point": {
+      "x": 245.74862075314633,
+      "y": -15.668271660974769
+    },
+    "keptByFlood": true,
+    "classification": "Inside",
+    "distance": 16.497886709917687,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 33,
+      "left_face": 8,
+      "right_face": 3
+    }
+  },
+  {
+    "id": 8,
+    "point": {
+      "x": 253.82148701643536,
+      "y": -10.647213378288544
+    },
+    "keptByFlood": true,
+    "classification": "Inside",
+    "distance": 26.000000000000018,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 8,
+      "left_face": 8,
+      "right_face": 3
+    }
+  },
+  {
+    "id": 10,
+    "point": {
+      "x": 279.03659392841064,
+      "y": -20.482259148225445
+    },
+    "keptByFlood": true,
+    "classification": "Inside",
+    "distance": 16.21231743525446,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 10,
+      "left_face": 9,
+      "right_face": 10
+    }
+  },
+  {
+    "id": 40,
+    "point": {
+      "x": 293.53137924445946,
+      "y": -4.464424607462819
+    },
+    "keptByFlood": false,
+    "classification": "Outside",
+    "distance": 4.488859617792732,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 40,
+      "left_face": 11,
+      "right_face": 0
+    }
+  },
+  {
+    "id": 9,
+    "point": {
+      "x": 294.46898126668356,
+      "y": -4.916002689080234
+    },
+    "keptByFlood": false,
+    "classification": "Outside",
+    "distance": 4.330231463808105,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 9,
+      "left_face": 11,
+      "right_face": 0
+    }
+  },
+  {
+    "id": 41,
+    "point": {
+      "x": 302.5881477107513,
+      "y": -19.30873895046968
+    },
+    "keptByFlood": true,
+    "classification": "Inside",
+    "distance": 9.406221486006608,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 41,
+      "left_face": 9,
+      "right_face": 12
+    }
+  },
+  {
+    "id": 35,
+    "point": {
+      "x": 328.3029376453869,
+      "y": -24.63861251078921
+    },
+    "keptByFlood": false,
+    "classification": "Outside",
+    "distance": 13.500238329958657,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 35,
+      "left_face": 13,
+      "right_face": 0
+    }
+  },
+  {
+    "id": 11,
+    "point": {
+      "x": 324.42145866470923,
+      "y": -29.772674218633636
+    },
+    "keptByFlood": false,
+    "classification": "Outside",
+    "distance": 12.35190055461897,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 11,
+      "left_face": 13,
+      "right_face": 0
+    }
+  },
+  {
+    "id": 36,
+    "point": {
+      "x": 280.5455540519295,
+      "y": -32.143658458520235
+    },
+    "keptByFlood": true,
+    "classification": "Inside",
+    "distance": 14.364736018849655,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 36,
+      "left_face": 9,
+      "right_face": 8
+    }
+  },
+  {
+    "id": 12,
+    "point": {
+      "x": 260.3461867277471,
+      "y": -17.071406158279075
+    },
+    "keptByFlood": true,
+    "classification": "Inside",
+    "distance": 26.000000000000014,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 12,
+      "left_face": 10,
+      "right_face": 3
+    }
+  },
+  {
+    "id": 13,
+    "point": {
+      "x": 255.88525358640314,
+      "y": 9.720031142332669
+    },
+    "keptByFlood": true,
+    "classification": "Inside",
+    "distance": 25.99999999999999,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 13,
+      "left_face": 10,
+      "right_face": 3
+    }
+  },
+  {
+    "id": 14,
+    "point": {
+      "x": 355.31277268753274,
+      "y": 74.75827437231682
+    },
+    "keptByFlood": true,
+    "classification": "Inside",
+    "distance": 25.99999999999991,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 14,
+      "left_face": 10,
+      "right_face": 3
+    }
+  },
+  {
+    "id": 16,
+    "point": {
+      "x": 373.7977510487306,
+      "y": 179.52200007741303
+    },
+    "keptByFlood": true,
+    "classification": "Inside",
+    "distance": 13.32879418210456,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 16,
+      "left_face": 14,
+      "right_face": 2
+    }
+  },
+  {
+    "id": 50,
+    "point": {
+      "x": 367.875304794822,
+      "y": 195.89162663761925
+    },
+    "keptByFlood": false,
+    "classification": "Outside",
+    "distance": 3.0909145581420816,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 50,
+      "left_face": 15,
+      "right_face": 0
+    }
+  },
+  {
+    "id": 15,
+    "point": {
+      "x": 368.04425689421043,
+      "y": 196.07357387293592
+    },
+    "keptByFlood": false,
+    "classification": "Outside",
+    "distance": 3.1247470949092335,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 15,
+      "left_face": 15,
+      "right_face": 0
+    }
+  },
+  {
+    "id": 51,
+    "point": {
+      "x": 383.2137310097353,
+      "y": 184.90126391246417
+    },
+    "keptByFlood": true,
+    "classification": "Inside",
+    "distance": 15.128028016239552,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 51,
+      "left_face": 14,
+      "right_face": 16
+    }
+  },
+  {
+    "id": 45,
+    "point": {
+      "x": 402.9488696647359,
+      "y": 187.45389669131976
+    },
+    "keptByFlood": false,
+    "classification": "Outside",
+    "distance": 4.2097169463693795,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 45,
+      "left_face": 17,
+      "right_face": 0
+    }
+  },
+  {
+    "id": 17,
+    "point": {
+      "x": 402.9734015687676,
+      "y": 187.0210166933236
+    },
+    "keptByFlood": false,
+    "classification": "Outside",
+    "distance": 4.116868364815803,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 17,
+      "left_face": 17,
+      "right_face": 0
+    }
+  },
+  {
+    "id": 46,
+    "point": {
+      "x": 388.1734239737864,
+      "y": 174.91194411561165
+    },
+    "keptByFlood": true,
+    "classification": "Inside",
+    "distance": 13.164770510435286,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 46,
+      "left_face": 14,
+      "right_face": 10
+    }
+  },
+  {
+    "id": 18,
+    "point": {
+      "x": 336.6642049517076,
+      "y": 132.76803764300172
+    },
+    "keptByFlood": true,
+    "classification": "Inside",
+    "distance": 26.000000000000007,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 18,
+      "left_face": 2,
+      "right_face": 3
+    }
+  },
+  {
+    "id": 19,
+    "point": {
+      "x": 278.29940458846573,
+      "y": 94.05567547138163
+    },
+    "keptByFlood": true,
+    "classification": "Inside",
+    "distance": 26,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 19,
+      "left_face": 2,
+      "right_face": 3
+    }
+  },
+  {
+    "id": 21,
+    "point": {
+      "x": 189.43818529005532,
+      "y": 129.3188159547986
+    },
+    "keptByFlood": true,
+    "classification": "Inside",
+    "distance": 26.000000000000036,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 21,
+      "left_face": 2,
+      "right_face": 3
+    }
+  },
+  {
+    "id": 22,
+    "point": {
+      "x": 123.20785841019426,
+      "y": 88.1418378049234
+    },
+    "keptByFlood": true,
+    "classification": "Inside",
+    "distance": 25.673536285757137,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 22,
+      "left_face": 1,
+      "right_face": 2
+    }
+  },
+  {
+    "id": 23,
+    "point": {
+      "x": 124.36659792439954,
+      "y": 90.9297791873269
+    },
+    "keptByFlood": true,
+    "classification": "Inside",
+    "distance": 25.47721854025857,
+    "faces": {
+      "type": "ArrangementEdgeFaces",
+      "edge_id": 23,
+      "left_face": 1,
+      "right_face": 2
+    }
+  }
+]

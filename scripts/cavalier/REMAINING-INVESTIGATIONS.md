@@ -21,6 +21,10 @@ behavior. Documentation clarification suggested; see `SHAPE-CASE3-TRIAGE.md`.
    `DUAL-NARROW-FACE-TRIAGE.md` and `CYCLIC-CLUSTER-RADIUS-TRIAGE.md`.
    The reduced square extra contours now have a winding-policy explanation,
    reproduced on both targets; see `SQUARE-COLLAPSE-WINDING-TRIAGE.md`.
+   CC01192/CC01196 now reduce to a confirmed Round-join reversal bug; see
+   `OFFSET-REVERSAL-JOIN-TRIAGE.md`. A targeted correction now passes the full
+   release suite and all 47 published figures are byte-identical; see
+   `OFFSET-REVERSAL-JOIN-REPAIR.md`. The correction is retained; F# remains pending.
    The remaining broader offset catalogue still needs review. See `REMAINING-OFFSET-DETAIL-TRIAGE.md`.
 2. **Boolean closure and geometry classification:** the 16 default boundary-guard cases now have traced short-piece filtering
    explanations and verified lower-threshold public-operation success; see

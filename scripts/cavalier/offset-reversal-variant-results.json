@@ -1,0 +1,1090 @@
+[
+  {
+    "id": "reversal-False-0",
+    "runs": [
+      {
+        "mode": "default",
+        "normalization": [
+          [
+            {
+              "type": "Arc",
+              "start": {
+                "x": -2,
+                "y": 0
+              },
+              "radius": {
+                "x": 1,
+                "y": 1
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "x": 0,
+                "y": 0
+              }
+            },
+            {
+              "type": "Arc",
+              "start": {
+                "x": 0,
+                "y": 0
+              },
+              "radius": {
+                "x": 1,
+                "y": 1
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "x": 2,
+                "y": 0
+              }
+            },
+            {
+              "type": "Line",
+              "start": {
+                "x": 2,
+                "y": 0
+              },
+              "end": {
+                "x": 2,
+                "y": 2
+              }
+            },
+            {
+              "type": "Line",
+              "start": {
+                "x": 2,
+                "y": 2
+              },
+              "end": {
+                "x": -2,
+                "y": 2
+              }
+            },
+            {
+              "type": "Line",
+              "start": {
+                "x": -2,
+                "y": 2
+              },
+              "end": {
+                "x": -2,
+                "y": 0
+              }
+            }
+          ]
+        ],
+        "tolerance": 0.0001,
+        "milliseconds": 142.38725,
+        "result": []
+      }
+    ]
+  },
+  {
+    "id": "reversal-False-90",
+    "runs": [
+      {
+        "mode": "default",
+        "normalization": [
+          [
+            {
+              "type": "Arc",
+              "start": {
+                "x": 0,
+                "y": -2
+              },
+              "radius": {
+                "x": 1,
+                "y": 1
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "x": 0,
+                "y": 0
+              }
+            },
+            {
+              "type": "Arc",
+              "start": {
+                "x": 0,
+                "y": 0
+              },
+              "radius": {
+                "x": 1,
+                "y": 1
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "x": 0,
+                "y": 2
+              }
+            },
+            {
+              "type": "Line",
+              "start": {
+                "x": 0,
+                "y": 2
+              },
+              "end": {
+                "x": -2,
+                "y": 2
+              }
+            },
+            {
+              "type": "Line",
+              "start": {
+                "x": -2,
+                "y": 2
+              },
+              "end": {
+                "x": -2,
+                "y": -2
+              }
+            },
+            {
+              "type": "Line",
+              "start": {
+                "x": -2,
+                "y": -2
+              },
+              "end": {
+                "x": 0,
+                "y": -2
+              }
+            }
+          ]
+        ],
+        "tolerance": 0.0001,
+        "milliseconds": 140.79225,
+        "result": []
+      }
+    ]
+  },
+  {
+    "id": "reversal-False-180",
+    "runs": [
+      {
+        "mode": "default",
+        "normalization": [
+          [
+            {
+              "type": "Arc",
+              "start": {
+                "x": 2,
+                "y": 0
+              },
+              "radius": {
+                "x": 1,
+                "y": 1
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "x": 0,
+                "y": 0
+              }
+            },
+            {
+              "type": "Arc",
+              "start": {
+                "x": 0,
+                "y": 0
+              },
+              "radius": {
+                "x": 1,
+                "y": 1
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "x": -2,
+                "y": 0
+              }
+            },
+            {
+              "type": "Line",
+              "start": {
+                "x": -2,
+                "y": 0
+              },
+              "end": {
+                "x": -2,
+                "y": -2
+              }
+            },
+            {
+              "type": "Line",
+              "start": {
+                "x": -2,
+                "y": -2
+              },
+              "end": {
+                "x": 2,
+                "y": -2
+              }
+            },
+            {
+              "type": "Line",
+              "start": {
+                "x": 2,
+                "y": -2
+              },
+              "end": {
+                "x": 2,
+                "y": 0
+              }
+            }
+          ]
+        ],
+        "tolerance": 0.0001,
+        "milliseconds": 141.48975,
+        "result": []
+      }
+    ]
+  },
+  {
+    "id": "reversal-False-270",
+    "runs": [
+      {
+        "mode": "default",
+        "normalization": [
+          [
+            {
+              "type": "Arc",
+              "start": {
+                "x": 0,
+                "y": 2
+              },
+              "radius": {
+                "x": 1,
+                "y": 1
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "x": 0,
+                "y": 0
+              }
+            },
+            {
+              "type": "Arc",
+              "start": {
+                "x": 0,
+                "y": 0
+              },
+              "radius": {
+                "x": 1,
+                "y": 1
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "x": 0,
+                "y": -2
+              }
+            },
+            {
+              "type": "Line",
+              "start": {
+                "x": 0,
+                "y": -2
+              },
+              "end": {
+                "x": 2,
+                "y": -2
+              }
+            },
+            {
+              "type": "Line",
+              "start": {
+                "x": 2,
+                "y": -2
+              },
+              "end": {
+                "x": 2,
+                "y": 2
+              }
+            },
+            {
+              "type": "Line",
+              "start": {
+                "x": 2,
+                "y": 2
+              },
+              "end": {
+                "x": 0,
+                "y": 2
+              }
+            }
+          ]
+        ],
+        "tolerance": 0.0001,
+        "milliseconds": 143.007375,
+        "result": []
+      }
+    ]
+  },
+  {
+    "id": "reversal-True-0",
+    "runs": [
+      {
+        "mode": "default",
+        "normalization": [
+          [
+            {
+              "type": "Line",
+              "start": {
+                "x": -2,
+                "y": 2
+              },
+              "end": {
+                "x": 2,
+                "y": 2
+              }
+            },
+            {
+              "type": "Line",
+              "start": {
+                "x": 2,
+                "y": 2
+              },
+              "end": {
+                "x": 2,
+                "y": 0
+              }
+            },
+            {
+              "type": "Arc",
+              "start": {
+                "x": 2,
+                "y": 0
+              },
+              "radius": {
+                "x": 1,
+                "y": 1
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "x": 0,
+                "y": 0
+              }
+            },
+            {
+              "type": "Arc",
+              "start": {
+                "x": 0,
+                "y": 0
+              },
+              "radius": {
+                "x": 1,
+                "y": 1
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "x": -2,
+                "y": 0
+              }
+            },
+            {
+              "type": "Line",
+              "start": {
+                "x": -2,
+                "y": 0
+              },
+              "end": {
+                "x": -2,
+                "y": 2
+              }
+            }
+          ]
+        ],
+        "tolerance": 0.0001,
+        "milliseconds": 119.083458,
+        "result": [
+          {
+            "bounds": {
+              "min": {
+                "x": -1.75,
+                "y": -0.75
+              },
+              "max": {
+                "x": 1.75,
+                "y": 1.75
+              }
+            },
+            "area": -7.793971097219579,
+            "length": 12.497787143782137,
+            "segments": [
+              {
+                "type": "Line",
+                "start": {
+                  "x": -1.75,
+                  "y": 1.75
+                },
+                "end": {
+                  "x": 1.75,
+                  "y": 1.75
+                }
+              },
+              {
+                "type": "Line",
+                "start": {
+                  "x": 1.75,
+                  "y": 1.75
+                },
+                "end": {
+                  "x": 1.75,
+                  "y": 0
+                }
+              },
+              {
+                "type": "Arc",
+                "start": {
+                  "x": 1.75,
+                  "y": 0
+                },
+                "radius": {
+                  "x": 0.75,
+                  "y": 0.75
+                },
+                "x_axis_rotation": 0,
+                "large_arc": false,
+                "sweep": false,
+                "end": {
+                  "x": 0.25,
+                  "y": 0
+                }
+              },
+              {
+                "type": "Arc",
+                "start": {
+                  "x": 0.25,
+                  "y": 0
+                },
+                "radius": {
+                  "x": 0.25,
+                  "y": 0.25
+                },
+                "x_axis_rotation": 0,
+                "large_arc": false,
+                "sweep": true,
+                "end": {
+                  "x": -0.25,
+                  "y": 0
+                }
+              },
+              {
+                "type": "Arc",
+                "start": {
+                  "x": -0.25,
+                  "y": 0
+                },
+                "radius": {
+                  "x": 0.75,
+                  "y": 0.75
+                },
+                "x_axis_rotation": 0,
+                "large_arc": false,
+                "sweep": false,
+                "end": {
+                  "x": -1.75,
+                  "y": 0
+                }
+              },
+              {
+                "type": "Line",
+                "start": {
+                  "x": -1.75,
+                  "y": 0
+                },
+                "end": {
+                  "x": -1.75,
+                  "y": 1.75
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "reversal-True-90",
+    "runs": [
+      {
+        "mode": "default",
+        "normalization": [
+          [
+            {
+              "type": "Line",
+              "start": {
+                "x": -2,
+                "y": -2
+              },
+              "end": {
+                "x": -2,
+                "y": 2
+              }
+            },
+            {
+              "type": "Line",
+              "start": {
+                "x": -2,
+                "y": 2
+              },
+              "end": {
+                "x": 0,
+                "y": 2
+              }
+            },
+            {
+              "type": "Arc",
+              "start": {
+                "x": 0,
+                "y": 2
+              },
+              "radius": {
+                "x": 1,
+                "y": 1
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "x": 0,
+                "y": 0
+              }
+            },
+            {
+              "type": "Arc",
+              "start": {
+                "x": 0,
+                "y": 0
+              },
+              "radius": {
+                "x": 1,
+                "y": 1
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "x": 0,
+                "y": -2
+              }
+            },
+            {
+              "type": "Line",
+              "start": {
+                "x": 0,
+                "y": -2
+              },
+              "end": {
+                "x": -2,
+                "y": -2
+              }
+            }
+          ]
+        ],
+        "tolerance": 0.0001,
+        "milliseconds": 117.66187499999998,
+        "result": [
+          {
+            "bounds": {
+              "min": {
+                "x": -1.75,
+                "y": -1.75
+              },
+              "max": {
+                "x": 0.75,
+                "y": 1.75
+              }
+            },
+            "area": -7.793971097219579,
+            "length": 12.497787143782137,
+            "segments": [
+              {
+                "type": "Line",
+                "start": {
+                  "x": -1.75,
+                  "y": -1.75
+                },
+                "end": {
+                  "x": -1.75,
+                  "y": 1.75
+                }
+              },
+              {
+                "type": "Line",
+                "start": {
+                  "x": -1.75,
+                  "y": 1.75
+                },
+                "end": {
+                  "x": 0,
+                  "y": 1.75
+                }
+              },
+              {
+                "type": "Arc",
+                "start": {
+                  "x": 0,
+                  "y": 1.75
+                },
+                "radius": {
+                  "x": 0.75,
+                  "y": 0.75
+                },
+                "x_axis_rotation": 0,
+                "large_arc": false,
+                "sweep": false,
+                "end": {
+                  "x": 0,
+                  "y": 0.25
+                }
+              },
+              {
+                "type": "Arc",
+                "start": {
+                  "x": 0,
+                  "y": 0.25
+                },
+                "radius": {
+                  "x": 0.25,
+                  "y": 0.25
+                },
+                "x_axis_rotation": 0,
+                "large_arc": false,
+                "sweep": true,
+                "end": {
+                  "x": 0,
+                  "y": -0.25
+                }
+              },
+              {
+                "type": "Arc",
+                "start": {
+                  "x": 0,
+                  "y": -0.25
+                },
+                "radius": {
+                  "x": 0.75,
+                  "y": 0.75
+                },
+                "x_axis_rotation": 0,
+                "large_arc": false,
+                "sweep": false,
+                "end": {
+                  "x": 0,
+                  "y": -1.75
+                }
+              },
+              {
+                "type": "Line",
+                "start": {
+                  "x": 0,
+                  "y": -1.75
+                },
+                "end": {
+                  "x": -1.75,
+                  "y": -1.75
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "reversal-True-180",
+    "runs": [
+      {
+        "mode": "default",
+        "normalization": [
+          [
+            {
+              "type": "Line",
+              "start": {
+                "x": 2,
+                "y": -2
+              },
+              "end": {
+                "x": -2,
+                "y": -2
+              }
+            },
+            {
+              "type": "Line",
+              "start": {
+                "x": -2,
+                "y": -2
+              },
+              "end": {
+                "x": -2,
+                "y": 0
+              }
+            },
+            {
+              "type": "Arc",
+              "start": {
+                "x": -2,
+                "y": 0
+              },
+              "radius": {
+                "x": 1,
+                "y": 1
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "x": 0,
+                "y": 0
+              }
+            },
+            {
+              "type": "Arc",
+              "start": {
+                "x": 0,
+                "y": 0
+              },
+              "radius": {
+                "x": 1,
+                "y": 1
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "x": 2,
+                "y": 0
+              }
+            },
+            {
+              "type": "Line",
+              "start": {
+                "x": 2,
+                "y": 0
+              },
+              "end": {
+                "x": 2,
+                "y": -2
+              }
+            }
+          ]
+        ],
+        "tolerance": 0.0001,
+        "milliseconds": 118.329834,
+        "result": [
+          {
+            "bounds": {
+              "min": {
+                "x": -1.75,
+                "y": -1.75
+              },
+              "max": {
+                "x": 1.75,
+                "y": 0.75
+              }
+            },
+            "area": -7.793971097219579,
+            "length": 12.497787143782137,
+            "segments": [
+              {
+                "type": "Line",
+                "start": {
+                  "x": 1.75,
+                  "y": -1.75
+                },
+                "end": {
+                  "x": -1.75,
+                  "y": -1.75
+                }
+              },
+              {
+                "type": "Line",
+                "start": {
+                  "x": -1.75,
+                  "y": -1.75
+                },
+                "end": {
+                  "x": -1.75,
+                  "y": 0
+                }
+              },
+              {
+                "type": "Arc",
+                "start": {
+                  "x": -1.75,
+                  "y": 0
+                },
+                "radius": {
+                  "x": 0.75,
+                  "y": 0.75
+                },
+                "x_axis_rotation": 0,
+                "large_arc": false,
+                "sweep": false,
+                "end": {
+                  "x": -0.25,
+                  "y": 0
+                }
+              },
+              {
+                "type": "Arc",
+                "start": {
+                  "x": -0.25,
+                  "y": 0
+                },
+                "radius": {
+                  "x": 0.25,
+                  "y": 0.25
+                },
+                "x_axis_rotation": 0,
+                "large_arc": false,
+                "sweep": true,
+                "end": {
+                  "x": 0.25,
+                  "y": 0
+                }
+              },
+              {
+                "type": "Arc",
+                "start": {
+                  "x": 0.25,
+                  "y": 0
+                },
+                "radius": {
+                  "x": 0.75,
+                  "y": 0.75
+                },
+                "x_axis_rotation": 0,
+                "large_arc": false,
+                "sweep": false,
+                "end": {
+                  "x": 1.75,
+                  "y": 0
+                }
+              },
+              {
+                "type": "Line",
+                "start": {
+                  "x": 1.75,
+                  "y": 0
+                },
+                "end": {
+                  "x": 1.75,
+                  "y": -1.75
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "reversal-True-270",
+    "runs": [
+      {
+        "mode": "default",
+        "normalization": [
+          [
+            {
+              "type": "Line",
+              "start": {
+                "x": 2,
+                "y": 2
+              },
+              "end": {
+                "x": 2,
+                "y": -2
+              }
+            },
+            {
+              "type": "Line",
+              "start": {
+                "x": 2,
+                "y": -2
+              },
+              "end": {
+                "x": 0,
+                "y": -2
+              }
+            },
+            {
+              "type": "Arc",
+              "start": {
+                "x": 0,
+                "y": -2
+              },
+              "radius": {
+                "x": 1,
+                "y": 1
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "x": 0,
+                "y": 0
+              }
+            },
+            {
+              "type": "Arc",
+              "start": {
+                "x": 0,
+                "y": 0
+              },
+              "radius": {
+                "x": 1,
+                "y": 1
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "x": 0,
+                "y": 2
+              }
+            },
+            {
+              "type": "Line",
+              "start": {
+                "x": 0,
+                "y": 2
+              },
+              "end": {
+                "x": 2,
+                "y": 2
+              }
+            }
+          ]
+        ],
+        "tolerance": 0.0001,
+        "milliseconds": 117.82475,
+        "result": [
+          {
+            "bounds": {
+              "min": {
+                "x": -0.75,
+                "y": -1.75
+              },
+              "max": {
+                "x": 1.75,
+                "y": 1.75
+              }
+            },
+            "area": -7.793971097219579,
+            "length": 12.497787143782137,
+            "segments": [
+              {
+                "type": "Line",
+                "start": {
+                  "x": 1.75,
+                  "y": 1.75
+                },
+                "end": {
+                  "x": 1.75,
+                  "y": -1.75
+                }
+              },
+              {
+                "type": "Line",
+                "start": {
+                  "x": 1.75,
+                  "y": -1.75
+                },
+                "end": {
+                  "x": 0,
+                  "y": -1.75
+                }
+              },
+              {
+                "type": "Arc",
+                "start": {
+                  "x": 0,
+                  "y": -1.75
+                },
+                "radius": {
+                  "x": 0.75,
+                  "y": 0.75
+                },
+                "x_axis_rotation": 0,
+                "large_arc": false,
+                "sweep": false,
+                "end": {
+                  "x": 0,
+                  "y": -0.25
+                }
+              },
+              {
+                "type": "Arc",
+                "start": {
+                  "x": 0,
+                  "y": -0.25
+                },
+                "radius": {
+                  "x": 0.25,
+                  "y": 0.25
+                },
+                "x_axis_rotation": 0,
+                "large_arc": false,
+                "sweep": true,
+                "end": {
+                  "x": 0,
+                  "y": 0.25
+                }
+              },
+              {
+                "type": "Arc",
+                "start": {
+                  "x": 0,
+                  "y": 0.25
+                },
+                "radius": {
+                  "x": 0.75,
+                  "y": 0.75
+                },
+                "x_axis_rotation": 0,
+                "large_arc": false,
+                "sweep": false,
+                "end": {
+                  "x": 0,
+                  "y": 1.75
+                }
+              },
+              {
+                "type": "Line",
+                "start": {
+                  "x": 0,
+                  "y": 1.75
+                },
+                "end": {
+                  "x": 1.75,
+                  "y": 1.75
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

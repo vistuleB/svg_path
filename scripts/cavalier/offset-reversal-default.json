@@ -1,0 +1,81 @@
+[
+  {
+    "mode": "default",
+    "normalization": [
+      [
+        {
+          "type": "Arc",
+          "start": {
+            "x": -2,
+            "y": 0
+          },
+          "radius": {
+            "x": 1,
+            "y": 1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "type": "Arc",
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "radius": {
+            "x": 1,
+            "y": 1
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 2,
+            "y": 0
+          }
+        },
+        {
+          "type": "Line",
+          "start": {
+            "x": 2,
+            "y": 0
+          },
+          "end": {
+            "x": 2,
+            "y": 2
+          }
+        },
+        {
+          "type": "Line",
+          "start": {
+            "x": 2,
+            "y": 2
+          },
+          "end": {
+            "x": -2,
+            "y": 2
+          }
+        },
+        {
+          "type": "Line",
+          "start": {
+            "x": -2,
+            "y": 2
+          },
+          "end": {
+            "x": -2,
+            "y": 0
+          }
+        }
+      ]
+    ],
+    "tolerance": 0.0001,
+    "milliseconds": 142.497458,
+    "result": []
+  }
+]
