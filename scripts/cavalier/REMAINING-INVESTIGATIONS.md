@@ -24,8 +24,10 @@ behavior. Documentation clarification suggested; see `SHAPE-CASE3-TRIAGE.md`.
    The remaining broader offset catalogue still needs review. See `REMAINING-OFFSET-DETAIL-TRIAGE.md`.
 2. **Boolean closure and geometry classification:** the 16 default boundary-guard cases now have traced short-piece filtering
    explanations and verified lower-threshold public-operation success; see
-   `BOOLEAN-MINIMUM-LENGTH-TRIAGE.md`. Remaining work is stronger equivalence checks for
-   decomposition differences, and earlier-stage correctness in cases where final
+   `BOOLEAN-MINIMUM-LENGTH-TRIAGE.md`. The 56 previously witness-free difference/XOR decomposition flags now have
+   per-family dispositions in `BOOLEAN-DECOMPOSITION-TRIAGE.md`, including real
+   numerical differences rather than an exact-parity claim. Remaining work is
+   earlier-stage correctness in cases where final
    arc reconstruction conforms to the documented tolerance contract. See
    `BOOLEAN-CONTRACT-TRIAGE.md` and the dispositions register.
 3. **Coverage closure:** overlap interval adaptation and disposition of the 31
@@ -54,5 +56,5 @@ Completed Boolean stitching decomposition follow-up: CC00704/08/12/16 split into
 the expected two cycles at an exact repeated vertex. Independent scanlines also
 find narrow nonidentical regions, not exact parity; no new contract violation is
 established. The tighter run demonstrates the existing arc reconstruction
-limitation. See `BOOLEAN-STITCHING-GEOMETRY-TRIAGE.md`. Other Boolean families
-still need their own geometry checks.
+limitation. See `BOOLEAN-STITCHING-GEOMETRY-TRIAGE.md`. The remaining previously witness-free Boolean families were subsequently reviewed
+in `BOOLEAN-DECOMPOSITION-TRIAGE.md`.

@@ -1,0 +1,303 @@
+{
+  "cases": 56,
+  "families": [
+    {
+      "test": "test_simple::rectangle_over_half_of_circle",
+      "ids": [
+        "CC00666",
+        "CC00670",
+        "CC00674",
+        "CC00678"
+      ],
+      "scanlines": 24,
+      "maxAreaDifference": 9.094947017729282e-13,
+      "maxPerimeterDifference": 0.0,
+      "maxHorizontalDifference": 0,
+      "maxSampledWitnessClearance": 0,
+      "contourCounts": [
+        [
+          2,
+          2,
+          3,
+          0
+        ]
+      ]
+    },
+    {
+      "test": "test_simple::rectangle_slicing_circle",
+      "ids": [
+        "CC00685",
+        "CC00689",
+        "CC00693",
+        "CC00697"
+      ],
+      "scanlines": 102,
+      "maxAreaDifference": 5.684341886080802e-14,
+      "maxPerimeterDifference": 1.4210854715202004e-14,
+      "maxHorizontalDifference": 2.4868995751603507e-14,
+      "maxSampledWitnessClearance": 1.7763568394002505e-15,
+      "contourCounts": [
+        [
+          2,
+          2,
+          4,
+          0
+        ]
+      ]
+    },
+    {
+      "test": "test_specific::debug_assert_stitching_slices_reported",
+      "ids": [
+        "CC00704",
+        "CC00708",
+        "CC00712",
+        "CC00716"
+      ],
+      "scanlines": 180,
+      "maxAreaDifference": 4.892819092106038e-07,
+      "maxPerimeterDifference": 1.7898971336194336e-06,
+      "maxHorizontalDifference": 2.3775134295078715e-05,
+      "maxSampledWitnessClearance": 2.335250539609035e-07,
+      "contourCounts": [
+        [
+          1,
+          2,
+          2,
+          0
+        ]
+      ]
+    },
+    {
+      "test": "test_specific::mostly_overlapping_case2",
+      "ids": [
+        "CC00742",
+        "CC00746",
+        "CC00750",
+        "CC00754"
+      ],
+      "scanlines": 282,
+      "maxAreaDifference": 9.094947017729282e-12,
+      "maxPerimeterDifference": 0.0,
+      "maxHorizontalDifference": 1.0231815394945443e-12,
+      "maxSampledWitnessClearance": 2.842170943040401e-14,
+      "contourCounts": [
+        [
+          2,
+          2,
+          2,
+          0
+        ]
+      ]
+    },
+    {
+      "test": "test_specific::opposite_direction_arc_arc_endpoints_intersect_bug_reported",
+      "ids": [
+        "CC00761",
+        "CC00765",
+        "CC00769",
+        "CC00773"
+      ],
+      "scanlines": 204,
+      "maxAreaDifference": 7.275957614183426e-11,
+      "maxPerimeterDifference": 199.41040812761275,
+      "maxHorizontalDifference": 3.1604940886609256e-11,
+      "maxSampledWitnessClearance": 1.1482371159498566e-11,
+      "contourCounts": [
+        [
+          3,
+          3,
+          2,
+          0
+        ]
+      ]
+    },
+    {
+      "test": "test_specific::overlapping_pill_shaped_ends_reported",
+      "ids": [
+        "CC00780",
+        "CC00784",
+        "CC00788",
+        "CC00792"
+      ],
+      "scanlines": 12,
+      "maxAreaDifference": 3.907985046680551e-14,
+      "maxPerimeterDifference": 3.552713678800501e-15,
+      "maxHorizontalDifference": 0,
+      "maxSampledWitnessClearance": 0,
+      "contourCounts": [
+        [
+          2,
+          2,
+          2,
+          0
+        ]
+      ]
+    },
+    {
+      "test": "test_specific::overlapping_pill_shaped_ends_reported2",
+      "ids": [
+        "CC00875",
+        "CC00879",
+        "CC00883",
+        "CC00887"
+      ],
+      "scanlines": 300,
+      "maxAreaDifference": 1.6792852974845118e-07,
+      "maxPerimeterDifference": 2.6445260203900034e-07,
+      "maxHorizontalDifference": 0.0006293910783767842,
+      "maxSampledWitnessClearance": 6.60667270890869e-08,
+      "contourCounts": [
+        [
+          2,
+          2,
+          2,
+          0
+        ]
+      ]
+    },
+    {
+      "test": "test_specific::overlapping_pill_shaped_ends_reported3",
+      "ids": [
+        "CC00894",
+        "CC00898",
+        "CC00902",
+        "CC00906"
+      ],
+      "scanlines": 300,
+      "maxAreaDifference": 1.4553740150802241e-06,
+      "maxPerimeterDifference": 1.9404983433446432e-06,
+      "maxHorizontalDifference": 0.0015240933584550476,
+      "maxSampledWitnessClearance": 2.5809566994716704e-07,
+      "contourCounts": [
+        [
+          2,
+          2,
+          2,
+          0
+        ]
+      ]
+    },
+    {
+      "test": "test_specific::overlapping_pill_shaped_ends_reported4",
+      "ids": [
+        "CC00913",
+        "CC00917",
+        "CC00921",
+        "CC00925"
+      ],
+      "scanlines": 222,
+      "maxAreaDifference": 7.744915819785092e-13,
+      "maxPerimeterDifference": 7.105427357601002e-15,
+      "maxHorizontalDifference": 1.1368683772161603e-13,
+      "maxSampledWitnessClearance": 1.3322676295501878e-14,
+      "contourCounts": [
+        [
+          1,
+          2,
+          2,
+          0
+        ]
+      ]
+    },
+    {
+      "test": "test_specific::overlapping_pill_shaped_ends_reported7",
+      "ids": [
+        "CC00989",
+        "CC00993",
+        "CC00997",
+        "CC01001"
+      ],
+      "scanlines": 240,
+      "maxAreaDifference": 2.1671553440683056e-13,
+      "maxPerimeterDifference": 1.2789769243681803e-13,
+      "maxHorizontalDifference": 6.636469151999336e-12,
+      "maxSampledWitnessClearance": 9.75552971738125e-13,
+      "contourCounts": [
+        [
+          1,
+          2,
+          2,
+          0
+        ]
+      ]
+    },
+    {
+      "test": "test_specific::parametric_from_point_debug_assert_reported1",
+      "ids": [
+        "CC01046",
+        "CC01050",
+        "CC01054",
+        "CC01058"
+      ],
+      "scanlines": 195,
+      "maxAreaDifference": 1.2434497875801753e-14,
+      "maxPerimeterDifference": 1.4210854715202004e-14,
+      "maxHorizontalDifference": 7.105427357601002e-15,
+      "maxSampledWitnessClearance": 1.2456300357381871e-15,
+      "contourCounts": [
+        [
+          2,
+          2,
+          2,
+          0
+        ]
+      ]
+    },
+    {
+      "test": "test_specific::pill_shapes_overlapping_at_ends_90_deg",
+      "ids": [
+        "CC01084",
+        "CC01088",
+        "CC01092",
+        "CC01096"
+      ],
+      "scanlines": 60,
+      "maxAreaDifference": 1.7763568394002505e-15,
+      "maxPerimeterDifference": 0.0,
+      "maxHorizontalDifference": 0,
+      "maxSampledWitnessClearance": 0,
+      "contourCounts": [
+        [
+          1,
+          2,
+          2,
+          0
+        ]
+      ]
+    },
+    {
+      "test": "test_specific::pill_shapes_overlapping_at_ends_at_acute_angle",
+      "ids": [
+        "CC01102",
+        "CC01103",
+        "CC01106",
+        "CC01107",
+        "CC01110",
+        "CC01111",
+        "CC01114",
+        "CC01115"
+      ],
+      "scanlines": 366,
+      "maxAreaDifference": 6.333893853849304e-06,
+      "maxPerimeterDifference": 3.7894925709244447,
+      "maxHorizontalDifference": 8.073541835074138e-13,
+      "maxSampledWitnessClearance": 9.155133597044475e-16,
+      "contourCounts": [
+        [
+          1,
+          1,
+          1,
+          0
+        ],
+        [
+          2,
+          2,
+          2,
+          0
+        ]
+      ]
+    }
+  ],
+  "scanlines": 2487,
+  "skippedNarrowSampleLevels": 1476
+}

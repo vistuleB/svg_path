@@ -765,3 +765,16 @@ them, consistent with the documented arc endpoint-reconstruction limitation.
 No new contract violation established. See
 `scripts/cavalier/BOOLEAN-STITCHING-GEOMETRY-TRIAGE.md` for numerical evidence,
 probe limitations and the tighter-run residual. No production edits or new commit.
+
+### Boolean decomposition batch — 2026-10-20
+
+Reviewed all 56 previously witness-free Not/Xor flags across 13 families using
+2,487 independent scanlines. Classified 36 as decomposition/orientation, eight
+as retained thin geometry under different tolerances, and twelve as nonidentical
+numerical/reconstruction comparisons (including the four prior stitching cases).
+No new confirmed bug. The 199.4104 perimeter difference in the opposite-direction
+endpoint family is exactly explained by twice a 99.7052 shared upstream seam;
+full upstream curves were recaptured and the pinned test passed. See
+`scripts/cavalier/BOOLEAN-DECOMPOSITION-TRIAGE.md` and its per-family/ID summary.
+No production edits or commit. Broader earlier-stage Boolean questions, offsets
+and coverage closure remain; this does not close the complete audit.
