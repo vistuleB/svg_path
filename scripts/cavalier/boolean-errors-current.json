@@ -1,0 +1,714 @@
+[
+  {
+    "id": "CC00804",
+    "operation": "Or",
+    "builds": [
+      {
+        "minimum_length": 0.00001,
+        "edges": 11,
+        "operand_nonzero_flows": [
+          [],
+          []
+        ]
+      },
+      {
+        "minimum_length": 1e-8,
+        "edges": 11,
+        "operand_nonzero_flows": [
+          [],
+          []
+        ]
+      }
+    ]
+  },
+  {
+    "id": "CC00805",
+    "operation": "And",
+    "builds": [
+      {
+        "minimum_length": 0.00001,
+        "edges": 11,
+        "operand_nonzero_flows": [
+          [],
+          []
+        ]
+      },
+      {
+        "minimum_length": 1e-8,
+        "edges": 11,
+        "operand_nonzero_flows": [
+          [],
+          []
+        ]
+      }
+    ]
+  },
+  {
+    "id": "CC00806",
+    "operation": "Not",
+    "builds": [
+      {
+        "minimum_length": 0.00001,
+        "edges": 11,
+        "operand_nonzero_flows": [
+          [],
+          []
+        ]
+      },
+      {
+        "minimum_length": 1e-8,
+        "edges": 11,
+        "operand_nonzero_flows": [
+          [],
+          []
+        ]
+      }
+    ]
+  },
+  {
+    "id": "CC00807",
+    "operation": "Xor",
+    "builds": [
+      {
+        "minimum_length": 0.00001,
+        "edges": 11,
+        "operand_nonzero_flows": [
+          [],
+          []
+        ]
+      },
+      {
+        "minimum_length": 1e-8,
+        "edges": 11,
+        "operand_nonzero_flows": [
+          [],
+          []
+        ]
+      }
+    ]
+  },
+  {
+    "id": "CC01059",
+    "operation": "Or",
+    "builds": [
+      {
+        "minimum_length": 0.00001,
+        "edges": 8,
+        "operand_nonzero_flows": [
+          [],
+          [
+            [
+              1,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              4,
+              -1
+            ],
+            [
+              7,
+              -1
+            ]
+          ]
+        ]
+      },
+      {
+        "minimum_length": 1e-8,
+        "edges": 10,
+        "operand_nonzero_flows": [
+          [],
+          []
+        ]
+      }
+    ]
+  },
+  {
+    "id": "CC01063",
+    "operation": "And",
+    "builds": [
+      {
+        "minimum_length": 0.00001,
+        "edges": 8,
+        "operand_nonzero_flows": [
+          [],
+          [
+            [
+              1,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              4,
+              -1
+            ],
+            [
+              7,
+              -1
+            ]
+          ]
+        ]
+      },
+      {
+        "minimum_length": 1e-8,
+        "edges": 10,
+        "operand_nonzero_flows": [
+          [],
+          []
+        ]
+      }
+    ]
+  },
+  {
+    "id": "CC01064",
+    "operation": "Not",
+    "builds": [
+      {
+        "minimum_length": 0.00001,
+        "edges": 8,
+        "operand_nonzero_flows": [
+          [],
+          [
+            [
+              1,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              4,
+              -1
+            ],
+            [
+              7,
+              -1
+            ]
+          ]
+        ]
+      },
+      {
+        "minimum_length": 1e-8,
+        "edges": 10,
+        "operand_nonzero_flows": [
+          [],
+          []
+        ]
+      }
+    ]
+  },
+  {
+    "id": "CC01065",
+    "operation": "Xor",
+    "builds": [
+      {
+        "minimum_length": 0.00001,
+        "edges": 8,
+        "operand_nonzero_flows": [
+          [],
+          [
+            [
+              1,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              4,
+              -1
+            ],
+            [
+              7,
+              -1
+            ]
+          ]
+        ]
+      },
+      {
+        "minimum_length": 1e-8,
+        "edges": 10,
+        "operand_nonzero_flows": [
+          [],
+          []
+        ]
+      }
+    ]
+  },
+  {
+    "id": "CC01066",
+    "operation": "Or",
+    "builds": [
+      {
+        "minimum_length": 0.00001,
+        "edges": 8,
+        "operand_nonzero_flows": [
+          [],
+          [
+            [
+              1,
+              -1
+            ],
+            [
+              2,
+              -1
+            ],
+            [
+              6,
+              1
+            ],
+            [
+              7,
+              1
+            ]
+          ]
+        ]
+      },
+      {
+        "minimum_length": 1e-8,
+        "edges": 10,
+        "operand_nonzero_flows": [
+          [],
+          []
+        ]
+      }
+    ]
+  },
+  {
+    "id": "CC01067",
+    "operation": "And",
+    "builds": [
+      {
+        "minimum_length": 0.00001,
+        "edges": 8,
+        "operand_nonzero_flows": [
+          [],
+          [
+            [
+              1,
+              -1
+            ],
+            [
+              2,
+              -1
+            ],
+            [
+              6,
+              1
+            ],
+            [
+              7,
+              1
+            ]
+          ]
+        ]
+      },
+      {
+        "minimum_length": 1e-8,
+        "edges": 10,
+        "operand_nonzero_flows": [
+          [],
+          []
+        ]
+      }
+    ]
+  },
+  {
+    "id": "CC01068",
+    "operation": "Not",
+    "builds": [
+      {
+        "minimum_length": 0.00001,
+        "edges": 8,
+        "operand_nonzero_flows": [
+          [],
+          [
+            [
+              1,
+              -1
+            ],
+            [
+              2,
+              -1
+            ],
+            [
+              6,
+              1
+            ],
+            [
+              7,
+              1
+            ]
+          ]
+        ]
+      },
+      {
+        "minimum_length": 1e-8,
+        "edges": 10,
+        "operand_nonzero_flows": [
+          [],
+          []
+        ]
+      }
+    ]
+  },
+  {
+    "id": "CC01069",
+    "operation": "Xor",
+    "builds": [
+      {
+        "minimum_length": 0.00001,
+        "edges": 8,
+        "operand_nonzero_flows": [
+          [],
+          [
+            [
+              1,
+              -1
+            ],
+            [
+              2,
+              -1
+            ],
+            [
+              6,
+              1
+            ],
+            [
+              7,
+              1
+            ]
+          ]
+        ]
+      },
+      {
+        "minimum_length": 1e-8,
+        "edges": 10,
+        "operand_nonzero_flows": [
+          [],
+          []
+        ]
+      }
+    ]
+  },
+  {
+    "id": "CC01070",
+    "operation": "Or",
+    "builds": [
+      {
+        "minimum_length": 0.00001,
+        "edges": 8,
+        "operand_nonzero_flows": [
+          [],
+          [
+            [
+              1,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              4,
+              -1
+            ],
+            [
+              7,
+              -1
+            ]
+          ]
+        ]
+      },
+      {
+        "minimum_length": 1e-8,
+        "edges": 10,
+        "operand_nonzero_flows": [
+          [],
+          []
+        ]
+      }
+    ]
+  },
+  {
+    "id": "CC01071",
+    "operation": "And",
+    "builds": [
+      {
+        "minimum_length": 0.00001,
+        "edges": 8,
+        "operand_nonzero_flows": [
+          [],
+          [
+            [
+              1,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              4,
+              -1
+            ],
+            [
+              7,
+              -1
+            ]
+          ]
+        ]
+      },
+      {
+        "minimum_length": 1e-8,
+        "edges": 10,
+        "operand_nonzero_flows": [
+          [],
+          []
+        ]
+      }
+    ]
+  },
+  {
+    "id": "CC01072",
+    "operation": "Not",
+    "builds": [
+      {
+        "minimum_length": 0.00001,
+        "edges": 8,
+        "operand_nonzero_flows": [
+          [],
+          [
+            [
+              1,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              4,
+              -1
+            ],
+            [
+              7,
+              -1
+            ]
+          ]
+        ]
+      },
+      {
+        "minimum_length": 1e-8,
+        "edges": 10,
+        "operand_nonzero_flows": [
+          [],
+          []
+        ]
+      }
+    ]
+  },
+  {
+    "id": "CC01073",
+    "operation": "Xor",
+    "builds": [
+      {
+        "minimum_length": 0.00001,
+        "edges": 8,
+        "operand_nonzero_flows": [
+          [],
+          [
+            [
+              1,
+              1
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              4,
+              -1
+            ],
+            [
+              7,
+              -1
+            ]
+          ]
+        ]
+      },
+      {
+        "minimum_length": 1e-8,
+        "edges": 10,
+        "operand_nonzero_flows": [
+          [],
+          []
+        ]
+      }
+    ]
+  },
+  {
+    "id": "CC01074",
+    "operation": "Or",
+    "builds": [
+      {
+        "minimum_length": 0.00001,
+        "edges": 8,
+        "operand_nonzero_flows": [
+          [],
+          [
+            [
+              1,
+              -1
+            ],
+            [
+              2,
+              -1
+            ],
+            [
+              6,
+              1
+            ],
+            [
+              7,
+              1
+            ]
+          ]
+        ]
+      },
+      {
+        "minimum_length": 1e-8,
+        "edges": 10,
+        "operand_nonzero_flows": [
+          [],
+          []
+        ]
+      }
+    ]
+  },
+  {
+    "id": "CC01075",
+    "operation": "And",
+    "builds": [
+      {
+        "minimum_length": 0.00001,
+        "edges": 8,
+        "operand_nonzero_flows": [
+          [],
+          [
+            [
+              1,
+              -1
+            ],
+            [
+              2,
+              -1
+            ],
+            [
+              6,
+              1
+            ],
+            [
+              7,
+              1
+            ]
+          ]
+        ]
+      },
+      {
+        "minimum_length": 1e-8,
+        "edges": 10,
+        "operand_nonzero_flows": [
+          [],
+          []
+        ]
+      }
+    ]
+  },
+  {
+    "id": "CC01076",
+    "operation": "Not",
+    "builds": [
+      {
+        "minimum_length": 0.00001,
+        "edges": 8,
+        "operand_nonzero_flows": [
+          [],
+          [
+            [
+              1,
+              -1
+            ],
+            [
+              2,
+              -1
+            ],
+            [
+              6,
+              1
+            ],
+            [
+              7,
+              1
+            ]
+          ]
+        ]
+      },
+      {
+        "minimum_length": 1e-8,
+        "edges": 10,
+        "operand_nonzero_flows": [
+          [],
+          []
+        ]
+      }
+    ]
+  },
+  {
+    "id": "CC01077",
+    "operation": "Xor",
+    "builds": [
+      {
+        "minimum_length": 0.00001,
+        "edges": 8,
+        "operand_nonzero_flows": [
+          [],
+          [
+            [
+              1,
+              -1
+            ],
+            [
+              2,
+              -1
+            ],
+            [
+              6,
+              1
+            ],
+            [
+              7,
+              1
+            ]
+          ]
+        ]
+      },
+      {
+        "minimum_length": 1e-8,
+        "edges": 10,
+        "operand_nonzero_flows": [
+          [],
+          []
+        ]
+      }
+    ]
+  }
+]

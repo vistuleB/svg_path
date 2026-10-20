@@ -22,8 +22,9 @@ behavior. Documentation clarification suggested; see `SHAPE-CASE3-TRIAGE.md`.
    The reduced square extra contours now have a winding-policy explanation,
    reproduced on both targets; see `SQUARE-COLLAPSE-WINDING-TRIAGE.md`.
    The remaining broader offset catalogue still needs review. See `REMAINING-OFFSET-DETAIL-TRIAGE.md`.
-2. **Boolean closure and geometry classification:** earlier construction choices
-   behind the 16 default boundary-guard cases, stronger equivalence checks for
+2. **Boolean closure and geometry classification:** the 16 default boundary-guard cases now have traced short-piece filtering
+   explanations and verified lower-threshold public-operation success; see
+   `BOOLEAN-MINIMUM-LENGTH-TRIAGE.md`. Remaining work is stronger equivalence checks for
    decomposition differences, and earlier-stage correctness in cases where final
    arc reconstruction conforms to the documented tolerance contract. See
    `BOOLEAN-CONTRACT-TRIAGE.md` and the dispositions register.

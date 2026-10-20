@@ -121,3 +121,12 @@ both targets. The original CC01059 trace has the same mechanism. The subsequent 
 experiment makes all 16 affected arrangements build at minimum length 1e-8; see
 `cyclic-repaired-original.json` and the cyclic-order report.
 This does not change the default minimum-length boundary-guard disposition.
+
+## Default guard follow-up — 2026-10-20
+
+`BOOLEAN-MINIMUM-LENGTH-TRIAGE.md` now traces the representative discarded line
+and arc pieces (both about 3.94908e-6, below default 1e-5). All 16 public operations
+succeed at minimum lengths 1e-6, 1e-7 and 1e-8 on current JavaScript. The default
+closure failure is understood filtering behavior; the former smaller-threshold
+cyclic-order blocker is repaired. This does not close separate geometry-equivalence
+questions.

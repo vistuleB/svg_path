@@ -741,3 +741,14 @@ no public API or tolerance changes. See
 This supersedes the earlier experiment-only checkpoint: the numerical repair is
 implemented and fully tested in Gleam. Three broader investigation groups remain
 in `REMAINING-INVESTIGATIONS.md`; F# remains deferred until audit completion.
+
+### Boolean minimum-length closure follow-up — 2026-10-20
+
+Investigated the 16 remaining default guard failures on `b009298`. The representative
+case demonstrably discards two ~3.94908e-6 pieces below the default 1e-5 threshold,
+opening the boundary as documented. All 16 public Boolean calls succeed at 1e-6,
+1e-7 and 1e-8; the old smaller-threshold cyclic-order blocker is gone. Classify the
+default failures as understood option semantics, not a new confirmed bug.
+See `scripts/cavalier/BOOLEAN-MINIMUM-LENGTH-TRIAGE.md`. Geometry equivalence is
+still a separate open check. JavaScript diagnostics only; no production changes,
+full-suite rerun, F# port or commit in this batch.
