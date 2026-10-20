@@ -36,8 +36,17 @@ behavior. Documentation clarification suggested; see `SHAPE-CASE3-TRIAGE.md`.
    see `SEMICIRCLE-ACCURACY-TRIAGE.md`. The circular rotation case now has
    a validated production repair: compute circles before coordinate rotation
    and adjust the angle afterward. Full release tests pass and all 47 figures
-   are byte-identical. Unequal-radius ellipse conditioning still needs assessment;
-   see `CIRCLE-ROTATION-TRIAGE.md`.
+   are byte-identical. Unequal-radius conditioning is now reproduced against a high-precision
+   exact-input oracle on 16 inputs, including two radius-enlargement branch
+   discrepancies reproduced on Erlang. Compensated coordinates alone are
+   insufficient; a broader precision fallback or documented limitation remains
+   a decision. A standalone double-double experiment improves all problematic
+   cases in a 136-input set, but costs about 8.8x in the local kernel probe;
+   a conditioning-weighted dispatch candidate now passes 3,274 isolated checks
+   (383 independently checked). Full arc reconstruction and Gleam validation
+   remain pending; see `ELLIPSE-PRECISION-THRESHOLD.md`.
+   See `ELLIPSE-HIGH-PRECISION-EXPERIMENT.md`, `CIRCLE-ROTATION-TRIAGE.md` and
+   `UNEQUAL-ELLIPSE-ROTATION-TRIAGE.md`.
 4. **Coverage closure:** overlap interval adaptation and disposition of the 31
    tests without selected adaptations (8 representation/API reviews and 23
    math/internal gaps). See `TEST-COVERAGE.md` and `REVIEW.md`.

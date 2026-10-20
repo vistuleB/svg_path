@@ -677,3 +677,47 @@ suite passed; all 13 README + 34 Gallery outputs are byte-identical. The 84-case
 production probe has zero center variation and ~4.1e-12 maximum sampled error
 relative to rotation zero. See `scripts/cavalier/CIRCLE-ROTATION-TRIAGE.md`.
 Not yet committed; F# deferred. Unequal-radius conditioning remains open.
+
+
+### Unequal-radius ellipse assessment — 2026-10-20
+
+Committed circular fix as `1230e93`. Assessed unequal-radius near-semicircles
+using 16 exact native inputs and a converged 80/90-digit center oracle. Errors
+reach 1.80e-5 at radii up to 2,000. Two examples choose the wrong side of the
+radius-enlargement boundary relative to exact input geometry; both reproduce on
+Erlang. High-precision subsequent arithmetic with rounded trig still has up to
+1.54e-5 error, so compensating the half-chord alone is insufficient.
+See `scripts/cavalier/UNEQUAL-ELLIPSE-ROTATION-TRIAGE.md`. No production repair
+attempted; broader precision fallback versus documented limitation is unresolved.
+
+
+### Isolated higher-precision ellipse experiment — 2026-10-20
+
+Standalone JS double-double center/radius kernel covers trig, coordinate rotation,
+radius correction and center calculation. Against the converged Decimal oracle,
+64 audit/flag cases improve from maximum error 1.80e-5 to 1.02e-12; 72 wider
+controls improve from 0.00604 to 6.14e-11 at scales up to 1024. All 136 midpoint
+branch decisions match. No cases worsen. Local kernel timings are about 8.8x the
+current complete conversion; selective fallback needs investigation before adoption.
+No angle reconstruction, Gleam/Erlang port, production changes or full suite yet.
+See `scripts/cavalier/ELLIPSE-HIGH-PRECISION-EXPERIMENT.md` and raw results.
+
+
+### Selective precision threshold — 2026-10-20
+
+Tested fixed and conditioning-weighted cutoffs on 3,274 cases. Proposed next
+candidate: abs(1-lambda) <= 1e-8*K², before radius correction; lambda is normalized
+half-chord squared and K estimates rotation/axis-ratio sensitivity. Worst observed
+fast-path relative center error is 4.58e-13. Independent 80/90-digit checks on
+383 cases confirm that result; all 72 ordinary arc controls avoid the slow path.
+This is an empirical internal guard, not a certified bound or new API tolerance.
+No production changes. See `scripts/cavalier/ELLIPSE-PRECISION-THRESHOLD.md`.
+Gleam integration, full reconstruction and broad validation remain pending.
+
+
+### Higher-precision experiment checkpoint
+
+User authorized committing the unequal-ellipse experiments and deferring full
+testing. Production has not adopted the precision fallback. Keep implementation,
+portable regressions, full arc reconstruction, release tests, and figure checks
+on the pending list before considering this issue repaired or release-ready.

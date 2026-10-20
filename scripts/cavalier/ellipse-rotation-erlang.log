@@ -1,0 +1,38 @@
+  Compiling svg_path
+  Compiling cavalier_audit_probe
+warning: Unused result value
+   ┌─ /Users/jpsteinb/github.com/vistuleB/svg_path/scripts/cavalier/probe/src/ellipse_rotation_audit_probe.gleam:4:3
+   │  
+ 4 │ ╭   echo ellipse.endpoint_to_center(ellipse.EndpointArcData(
+ 5 │ │     ellipse.EllipsePoint(-193.78556423268984, -666.4658569031494),
+ 6 │ │     ellipse.EllipsePoint(1000.0, 500.0),
+ 7 │ │     37.0,
+   · │
+10 │ │     ellipse.EllipsePoint(193.78556423268984, 666.4658569031494),
+11 │ │   ))
+   │ ╰────^ The Result value created here is unused
+
+Hint: If you are sure you don't need it you can assign it to `_`.
+
+warning: Unused result value
+  ┌─ /Users/jpsteinb/github.com/vistuleB/svg_path/scripts/cavalier/probe/src/short_arc_normalization_audit_probe.gleam:9:3
+  │
+9 │   echo degeneracy.normalize_degenerate_segments(alone, 0.001)
+  │   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The Result value created here is unused
+
+Hint: If you are sure you don't need it you can assign it to `_`.
+
+warning: Unused result value
+   ┌─ /Users/jpsteinb/github.com/vistuleB/svg_path/scripts/cavalier/probe/src/short_arc_normalization_audit_probe.gleam:16:3
+   │
+16 │   echo offset.normalize_short_source_runs(source, 0.001)
+   │   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The Result value created here is unused
+
+Hint: If you are sure you don't need it you can assign it to `_`.
+
+   Compiled in 1.79s
+    Running ellipse_rotation_audit_probe.main
+[90msrc/ellipse_rotation_audit_probe.gleam:4[39m
+Ok(CenterArcData(EllipsePoint(-5.317086647315435e-6, -1.7804538320007271e-6), EllipsePoint(1.0e3, 500.0), 37.0, -123.76950070102554, 179.99999926692792))
+[90msrc/ellipse_rotation_audit_probe.gleam:12[39m
+Ok(CenterArcData(EllipsePoint(-1.6895201711150356e-5, -6.078439923143248e-6), EllipsePoint(1.0e3, 2.0e3), 73.0, -123.76950032644709, 179.99999851777102))
