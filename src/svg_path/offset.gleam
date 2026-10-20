@@ -860,7 +860,9 @@ pub fn subpath_offset_map_with(
 ///
 /// Curves return an open subpath because the result may need several pieces to
 /// stay within tolerance. Circular arcs offset to circular arcs; non-circular
-/// arcs and Beziers use cubic fitting.
+/// arcs and Beziers use cubic fitting. An exactly collapsed stalled run is
+/// represented by a zero-length line. Construction retains its source tangents
+/// for joins, then omits the point segment when other output segments survive.
 /// `join` connects any separate traversals produced by degenerate normalization.
 pub fn segment(
   segment: svg_path.Segment,
@@ -1851,6 +1853,19 @@ fn cull_adjacent_preimage_loops(
   subpath: HPreimageSubpath,
 ) -> Result(ICulledOffsetSubpath, InternalError) {
   let HPreimageSubpath(segments:, closed:, side:) = subpath
+  // Joins already carry the two source endpoint directions around a collapsed
+  // run. Omit its point geometry, unless the whole output is a single point.
+  let nonpoints =
+    list.filter(segments, fn(piece) {
+      case piece.segment {
+        svg_path.Line(start:, end:) -> start != end
+        _ -> True
+      }
+    })
+  let segments = case nonpoints, segments {
+    [], [first, ..] -> [first]
+    _, _ -> nonpoints
+  }
   let segments =
     list.map(segments, fn(preimage) {
       let HPreimageSegment(segment:, ..) = preimage
@@ -9130,7 +9145,20 @@ fn offset_c_stalled_run(
         ),
       )
       case stalled_run_collapsed(start, end, samples) {
-        True -> Ok([])
+        True -> {
+          // Keep the source endpoint directions until both neighbouring joins
+          // have been constructed. The point itself has no tangent.
+          use start_tangent <- result.try(unit_tangent(first, t: 0.0))
+          use end_tangent <- result.try(unit_tangent(last, t: 1.0))
+          Ok([
+            make_offset_segment(
+              segment: svg_path.Line(start, start),
+              source: OffsetFromStalledRun(run),
+              nudged_start_tangent_direction: start_tangent,
+              nudged_end_tangent_direction: end_tangent,
+            ),
+          ])
+        }
         False -> {
           case rest, circular_arc_offset_radius(first, offset) {
             [], Ok(radius) -> {

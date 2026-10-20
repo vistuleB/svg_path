@@ -525,5 +525,31 @@
     ],
     "status": "different-api-contract",
     "reason": "Exact inward circular-radius collapse deliberately returns DegenerateTangent; case6 isolates the same rejection on its fourth segment in both traversals. See EXACT-COLLAPSE-ERROR-TRIAGE.md."
+  },
+  {
+    "ids": [
+      "CC01297"
+    ],
+    "status": "understood-offset-detail-difference",
+    "reason": "Fitting tolerance 0.001 preserves Line/Arc/Line source; length and bounds match captured properties within 1.1e-7. Default source is one Line. See SHORT-TRANSITION-TRIAGE.md."
+  },
+  {
+    "ids": [
+      "CC01301"
+    ],
+    "status": "understood-source-normalization-limitation",
+    "reason": "Fixed 0.001 short-run cleanup removes a 1.327e-5 backtrack before extrusion. Tighter fitting preserves the long arc and matches the first upstream walk properties, but cannot restore the removed reversal. Missing reversal-join attribution is geometric inference, not an upstream trace. See SHORT-TRANSITION-TRIAGE.md."
+  },
+  {
+    "ids": [
+      "CC01309",
+      "CC01310",
+      "CC01311",
+      "CC01312",
+      "CC01475",
+      "CC01479"
+    ],
+    "status": "repaired-collapsed-stalled-run-joining",
+    "reason": "Supersedes earlier different-api-contract classification. Collapsed stalled runs now retain point geometry and source tangents until joins are built; redundant point lines are then omitted. All six JS public-operation replays match captured properties. See COLLAPSED-STALLED-RUN-REPAIR.md; full release suite passes (2100 + 31 + 846 per portable target), and all 47 figures regenerate without new geometry changes."
   }
 ]

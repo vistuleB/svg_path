@@ -1,0 +1,8 @@
+{
+  "files": 47,
+  "identical": 46,
+  "changed": [
+    "test/generated/readme/band_cusp_trimming.svg"
+  ],
+  "baseline": "Gallery working-tree hashes before generation; README committed HEAD (existing band cusp centering spelling difference expected)."
+}

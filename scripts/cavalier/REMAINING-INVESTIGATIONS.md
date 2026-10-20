@@ -34,8 +34,11 @@ behavior. Documentation clarification suggested; see `SHAPE-CASE3-TRIAGE.md`.
    centering changes in one README SVG. See `TANGENT-CIRCLE-REPAIR.md`.
    The 402-case offset replay introduces no flags for previously matching cases. See
    `OFFSET-POST-REVERSAL-TRIAGE.md` and `OFFSET-POST-REVERSAL-REPLAY.md`.
-   All six remaining error records now have an exact-radius collapse explanation;
-   see `EXACT-COLLAPSE-ERROR-TRIAGE.md`. No additional defect was found in case6.
+   The six exact-collapse errors were reopened: preserving collapsed stalled
+   runs through join construction repairs all six property comparisons. See
+   `COLLAPSED-STALLED-RUN-REPAIR.md`, superseding the earlier policy disposition.
+   CC01297 and CC01301 now have source-normalization dispositions; see
+   `SHORT-TRANSITION-TRIAGE.md`, including the fixed short-run threshold limitation.
    Remaining mismatches are not all classified; raw counts are not bug counts.
 2. **Boolean closure and geometry classification:** the 16 default boundary-guard cases now have traced short-piece filtering
    explanations and verified lower-threshold public-operation success; see

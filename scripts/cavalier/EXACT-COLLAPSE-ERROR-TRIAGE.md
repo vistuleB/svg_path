@@ -42,3 +42,11 @@ No production behavior or public API changed here.
 
 These are diagnostic probes, not additions to the counted test suite. No full
 suite or figure rerun was needed for this documentation-only investigation.
+
+## Reopened after review
+
+The conclusion above is superseded by `COLLAPSED-STALLED-RUN-REPAIR.md`.
+The stalled-run mechanism can represent the collapsed run while retaining its
+source tangents for both joins. Treating all six errors as settled API policy
+was premature; the existing rejection test described the old behavior, not a
+sufficient reason to retain it.

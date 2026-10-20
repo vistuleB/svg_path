@@ -1397,7 +1397,7 @@ pub fn segment_offsets_near_collapsed_circular_arc_exactly_test() {
     == "M 0.001 0 A 0.001 0.001 0 0 0 0 -0.001"
 }
 
-pub fn segment_rejects_collapsed_circular_arc_offset_test() {
+pub fn segment_preserves_collapsed_circular_arc_offset_as_point_test() {
   let arc =
     svg_path.Arc(
       start: svg_path.Point(40.0, 0.0),
@@ -1408,12 +1408,14 @@ pub fn segment_rejects_collapsed_circular_arc_offset_test() {
       end: svg_path.Point(0.0, -40.0),
     )
 
-  assert offset.segment(
+  let assert Ok(result) =
+    offset.segment(
       arc,
       offset: 40.0,
       join: offset.Miter(offset.default_miter_limit),
     )
-    == Error(offset.DegenerateTangent(0.0))
+  assert svg_path.subpath_segments(result)
+    == [svg_path.Line(svg_path.Point(0.0, 0.0), svg_path.Point(0.0, 0.0))]
 }
 
 pub fn subpath_offsets_one_small_circular_arc_as_arc_test() {

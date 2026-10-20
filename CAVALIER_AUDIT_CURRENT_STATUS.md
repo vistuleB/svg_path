@@ -871,3 +871,24 @@ JavaScript segment isolation and Erlang full-input reproduction agree; see
 `scripts/cavalier/EXACT-COLLAPSE-ERROR-TRIAGE.md`. No production changes.
 These new findings remain uncommitted. Other offset property discrepancies,
 Boolean correctness classification and coverage closure remain open. F# deferred.
+
+## 2026-10-20 — Short-transition investigation
+
+Exact-collapse findings committed as `4cd55fe`. CC01297 is explained by
+fitting-controlled source normalization; CC01301 loses a short backtrack in
+the fixed 0.001 preprocessing step, before extrusion. See
+`scripts/cavalier/SHORT-TRANSITION-TRIAGE.md` for seven JS diagnostic settings
+and the deferred documentation suggestion. No new production fix; findings
+uncommitted. The audit remains open.
+
+## 2026-10-20 — Collapsed stalled-run joining repaired
+
+Reopened the six exact-collapse cases after review: the old isolated-arc
+rejection test was not sufficient grounds to reject embedded collapsed runs.
+The candidate keeps a point line with source tangents until joins are built,
+then removes redundant point geometry (retaining one if the whole raw output
+collapses). All six public-operation comparisons now match. Full release suite
+passes: 2100 ordinary + 31 slow + 846 on each portable target. All 47 figures
+regenerated without new geometry changes; only the already recorded README
+centering spelling differs from HEAD. See
+`scripts/cavalier/COLLAPSED-STALLED-RUN-REPAIR.md`. Uncommitted; F# deferred.
