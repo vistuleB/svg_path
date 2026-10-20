@@ -3964,10 +3964,14 @@ fn arc_line_classified_roots(
     True -> Ok([])
     False -> {
       let cosine = { 0.0 -. constant } /. radius
-      let cosine_tolerance = signed_line_distance_tolerance /. radius
       case cosine <. -1.0 || cosine >. 1.0 {
         True -> {
-          case float.absolute_value(cosine) <=. 1.0 +. cosine_tolerance {
+          // Compare excess distance directly: adding a small relative tolerance
+          // to one can round upward and admit a candidate that fails polishing.
+          case
+            float.absolute_value(constant) -. radius
+            <=. signed_line_distance_tolerance
+          {
             True ->
               arc_line_roots_from_angle(
                 arc,

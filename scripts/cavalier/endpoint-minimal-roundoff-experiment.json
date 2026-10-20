@@ -1,0 +1,292 @@
+[
+  {
+    "shift": 0,
+    "gap": 0,
+    "actual_gap": 0,
+    "tolerance": 1e-13,
+    "endpoint_matches": {
+      "ok": true,
+      "values": [
+        0
+      ]
+    },
+    "intersections": {
+      "ok": true,
+      "values": [
+        {
+          "left_t": 1,
+          "right_t": 0,
+          "point": {
+            "x": 0,
+            "y": 1
+          }
+        }
+      ]
+    }
+  },
+  {
+    "shift": 0,
+    "gap": 0,
+    "actual_gap": 0,
+    "tolerance": 1e-9,
+    "endpoint_matches": {
+      "ok": true,
+      "values": [
+        0
+      ]
+    },
+    "intersections": {
+      "ok": true,
+      "values": [
+        {
+          "left_t": 1,
+          "right_t": 0,
+          "point": {
+            "x": 0,
+            "y": 1
+          }
+        }
+      ]
+    }
+  },
+  {
+    "shift": 0,
+    "gap": 1e-12,
+    "actual_gap": 1.000088900582341e-12,
+    "tolerance": 1e-13,
+    "endpoint_matches": {
+      "ok": true,
+      "values": []
+    },
+    "intersections": {
+      "ok": true,
+      "values": []
+    }
+  },
+  {
+    "shift": 0,
+    "gap": 1e-12,
+    "actual_gap": 1.000088900582341e-12,
+    "tolerance": 1e-9,
+    "endpoint_matches": {
+      "ok": true,
+      "values": [
+        0
+      ]
+    },
+    "intersections": {
+      "ok": true,
+      "values": []
+    }
+  },
+  {
+    "shift": 0,
+    "gap": 1e-10,
+    "actual_gap": 1.000000082740371e-10,
+    "tolerance": 1e-13,
+    "endpoint_matches": {
+      "ok": true,
+      "values": []
+    },
+    "intersections": {
+      "ok": true,
+      "values": []
+    }
+  },
+  {
+    "shift": 0,
+    "gap": 1e-10,
+    "actual_gap": 1.000000082740371e-10,
+    "tolerance": 1e-9,
+    "endpoint_matches": {
+      "ok": true,
+      "values": [
+        0
+      ]
+    },
+    "intersections": {
+      "ok": true,
+      "values": []
+    }
+  },
+  {
+    "shift": 0,
+    "gap": 2e-9,
+    "actual_gap": 1.999999943436137e-9,
+    "tolerance": 1e-13,
+    "endpoint_matches": {
+      "ok": true,
+      "values": []
+    },
+    "intersections": {
+      "ok": true,
+      "values": []
+    }
+  },
+  {
+    "shift": 0,
+    "gap": 2e-9,
+    "actual_gap": 1.999999943436137e-9,
+    "tolerance": 1e-9,
+    "endpoint_matches": {
+      "ok": true,
+      "values": []
+    },
+    "intersections": {
+      "ok": true,
+      "values": []
+    }
+  },
+  {
+    "shift": 1000,
+    "gap": 0,
+    "actual_gap": 0,
+    "tolerance": 1e-13,
+    "endpoint_matches": {
+      "ok": true,
+      "values": [
+        0
+      ]
+    },
+    "intersections": {
+      "ok": true,
+      "values": [
+        {
+          "left_t": 1,
+          "right_t": 0,
+          "point": {
+            "x": 1000,
+            "y": 1001
+          }
+        }
+      ]
+    }
+  },
+  {
+    "shift": 1000,
+    "gap": 0,
+    "actual_gap": 0,
+    "tolerance": 1e-9,
+    "endpoint_matches": {
+      "ok": true,
+      "values": [
+        0
+      ]
+    },
+    "intersections": {
+      "ok": true,
+      "values": [
+        {
+          "left_t": 1,
+          "right_t": 0,
+          "point": {
+            "x": 1000,
+            "y": 1001
+          }
+        }
+      ]
+    }
+  },
+  {
+    "shift": 1000,
+    "gap": 1e-12,
+    "actual_gap": 1.0231815394945443e-12,
+    "tolerance": 1e-13,
+    "endpoint_matches": {
+      "ok": true,
+      "values": []
+    },
+    "intersections": {
+      "ok": false,
+      "error": {
+        "type": "InternalUncertifiedSegmentIntersection",
+        "left_distance": 4.547473508864641e-13,
+        "right_distance": 5.684341886080801e-13,
+        "tolerance": 1e-13
+      }
+    }
+  },
+  {
+    "shift": 1000,
+    "gap": 1e-12,
+    "actual_gap": 1.0231815394945443e-12,
+    "tolerance": 1e-9,
+    "endpoint_matches": {
+      "ok": true,
+      "values": [
+        0
+      ]
+    },
+    "intersections": {
+      "ok": true,
+      "values": [
+        {
+          "left_t": 1,
+          "right_t": 0,
+          "point": {
+            "x": 1000,
+            "y": 1001.0000000000005
+          }
+        }
+      ]
+    }
+  },
+  {
+    "shift": 1000,
+    "gap": 1e-10,
+    "actual_gap": 1.000444171950221e-10,
+    "tolerance": 1e-13,
+    "endpoint_matches": {
+      "ok": true,
+      "values": []
+    },
+    "intersections": {
+      "ok": true,
+      "values": []
+    }
+  },
+  {
+    "shift": 1000,
+    "gap": 1e-10,
+    "actual_gap": 1.000444171950221e-10,
+    "tolerance": 1e-9,
+    "endpoint_matches": {
+      "ok": true,
+      "values": [
+        0
+      ]
+    },
+    "intersections": {
+      "ok": true,
+      "values": []
+    }
+  },
+  {
+    "shift": 1000,
+    "gap": 2e-9,
+    "actual_gap": 1.999978849198669e-9,
+    "tolerance": 1e-13,
+    "endpoint_matches": {
+      "ok": true,
+      "values": []
+    },
+    "intersections": {
+      "ok": true,
+      "values": []
+    }
+  },
+  {
+    "shift": 1000,
+    "gap": 2e-9,
+    "actual_gap": 1.999978849198669e-9,
+    "tolerance": 1e-9,
+    "endpoint_matches": {
+      "ok": true,
+      "values": []
+    },
+    "intersections": {
+      "ok": true,
+      "values": []
+    }
+  }
+]

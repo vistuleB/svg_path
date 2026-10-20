@@ -610,3 +610,30 @@ second-offset arrangement <=2.622e-9). Evidence and limitations are recorded in
 Non-quadrant rotation can still lose half-chord accuracy before the compensated
 calculation; this remains recorded follow-up work. Bulge-to-SVG information loss
 is also unchanged. No public API changes. F# remains deferred; audit not closed.
+
+
+### Endpoint crossing roundoff follow-up
+
+Committed near-semicircle repair as `5fe1d99`. Next investigation reproduced the
+reduced endpoint-gap failure on both targets and isolated it to near-tangent
+arc-line candidate admission: adding tolerance/radius to one rounds upward,
+while later distance verification rejects the same candidate. A copied-JS
+direct-distance comparison returns empty for both failing rows, preserving the
+other 14 endpoint controls. Production is unchanged; regression/broad validation
+is pending. See `scripts/cavalier/ENDPOINT-CROSSING-ROUNDOFF-TRIAGE.md`.
+
+
+### Endpoint crossing roundoff repair validated
+
+Applied the direct excess-distance admission check in the arc-line solver.
+Final certification and endpoint tolerance semantics are unchanged. Added two
+portable tests covering the reduced arc pair in both orders and 48 direct
+arc-line controls across three scales and four quadrant orientations.
+
+`scripts/test-release`: 2,086 ordinary + 31 slow + 832 portable Erlang + 832
+portable JavaScript, all passed. `scripts/generate-published-figures`: repeat
+ordinary suite passed, all 13 README and 33 Gallery figures byte-identical.
+Production endpoint probe matches all 16 isolated-experiment results.
+Evidence: `scripts/cavalier/ENDPOINT-CROSSING-ROUNDOFF-TRIAGE.md`.
+This closes the reduced endpoint-search investigation; four broader groups
+remain. F# is deferred. Production repair and validation records are ready for the fix commit.

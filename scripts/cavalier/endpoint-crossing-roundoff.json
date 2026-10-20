@@ -1,0 +1,251 @@
+[
+  {
+    "gap": 0,
+    "name": "a at b start",
+    "axis": "x",
+    "result": {
+      "ok": true,
+      "values": [
+        [
+          1,
+          0
+        ]
+      ]
+    }
+  },
+  {
+    "gap": 0,
+    "name": "a at b start",
+    "axis": "y",
+    "result": {
+      "ok": true,
+      "values": [
+        [
+          1,
+          0
+        ]
+      ]
+    }
+  },
+  {
+    "gap": 0,
+    "name": "b at a end",
+    "axis": "x",
+    "result": {
+      "ok": true,
+      "values": [
+        [
+          0,
+          0
+        ]
+      ]
+    }
+  },
+  {
+    "gap": 0,
+    "name": "b at a end",
+    "axis": "y",
+    "result": {
+      "ok": true,
+      "values": [
+        [
+          0,
+          0
+        ]
+      ]
+    }
+  },
+  {
+    "gap": 5e-13,
+    "name": "a at b start",
+    "axis": "x",
+    "result": {
+      "ok": true,
+      "values": [
+        [
+          1,
+          -5.000444502911705e-13
+        ]
+      ]
+    }
+  },
+  {
+    "gap": 5e-13,
+    "name": "a at b start",
+    "axis": "y",
+    "result": {
+      "ok": true,
+      "values": [
+        [
+          1,
+          0
+        ]
+      ]
+    }
+  },
+  {
+    "gap": 5e-13,
+    "name": "b at a end",
+    "axis": "x",
+    "result": {
+      "ok": true,
+      "values": [
+        [
+          0,
+          5.000444502911705e-13
+        ]
+      ]
+    }
+  },
+  {
+    "gap": 5e-13,
+    "name": "b at a end",
+    "axis": "y",
+    "result": {
+      "ok": true,
+      "values": []
+    }
+  },
+  {
+    "gap": 1e-12,
+    "name": "a at b start",
+    "axis": "x",
+    "result": {
+      "ok": true,
+      "values": [
+        [
+          1,
+          -1.000088900582341e-12
+        ]
+      ]
+    }
+  },
+  {
+    "gap": 1e-12,
+    "name": "a at b start",
+    "axis": "y",
+    "result": {
+      "ok": false,
+      "error": {
+        "type": "CrossingMaxIterationsReached",
+        "estimate": 1,
+        "value": 1.000088900582341e-12
+      }
+    }
+  },
+  {
+    "gap": 1e-12,
+    "name": "b at a end",
+    "axis": "x",
+    "result": {
+      "ok": true,
+      "values": [
+        [
+          0,
+          1.000088900582341e-12
+        ]
+      ]
+    }
+  },
+  {
+    "gap": 1e-12,
+    "name": "b at a end",
+    "axis": "y",
+    "result": {
+      "ok": true,
+      "values": []
+    }
+  },
+  {
+    "gap": 2e-12,
+    "name": "a at b start",
+    "axis": "x",
+    "result": {
+      "ok": true,
+      "values": [
+        [
+          1,
+          -1.999955756559757e-12
+        ]
+      ]
+    }
+  },
+  {
+    "gap": 2e-12,
+    "name": "a at b start",
+    "axis": "y",
+    "result": {
+      "ok": true,
+      "values": []
+    }
+  },
+  {
+    "gap": 2e-12,
+    "name": "b at a end",
+    "axis": "x",
+    "result": {
+      "ok": true,
+      "values": [
+        [
+          1.4135798584282292e-16,
+          2.000177801164682e-12
+        ]
+      ]
+    }
+  },
+  {
+    "gap": 2e-12,
+    "name": "b at a end",
+    "axis": "y",
+    "result": {
+      "ok": true,
+      "values": []
+    }
+  },
+  {
+    "gap": 1e-10,
+    "name": "a at b start",
+    "axis": "x",
+    "result": {
+      "ok": true,
+      "values": [
+        [
+          1,
+          -1.000000082740371e-10
+        ]
+      ]
+    }
+  },
+  {
+    "gap": 1e-10,
+    "name": "a at b start",
+    "axis": "y",
+    "result": {
+      "ok": true,
+      "values": []
+    }
+  },
+  {
+    "gap": 1e-10,
+    "name": "b at a end",
+    "axis": "x",
+    "result": {
+      "ok": true,
+      "values": [
+        [
+          0,
+          1.000000082740371e-10
+        ]
+      ]
+    }
+  },
+  {
+    "gap": 1e-10,
+    "name": "b at a end",
+    "axis": "y",
+    "result": {
+      "ok": true,
+      "values": []
+    }
+  }
+]

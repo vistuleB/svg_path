@@ -1,7 +1,7 @@
 # Remaining investigation groups — 2026-10-19
 
-Five investigation groups remain after the tested exact-arc overlap repair.
-These are work groups, not five confirmed bugs or a count of individual fixture
+Four investigation groups remain after the tested endpoint-crossing repair.
+These are work groups, not four confirmed bugs or a count of individual fixture
 discrepancies. Original baseline totals remain historical.
 
 Completed tangent-arc follow-up: exact-arc full-map preference repairs overlap
@@ -33,13 +33,15 @@ behavior. Documentation clarification suggested; see `SHAPE-CASE3-TRIAGE.md`.
    Full release tests pass. Rotated-half-chord rounding remains a limitation;
    all 46 published figures regenerated, with only numeric changes in three;
    see `SEMICIRCLE-ACCURACY-TRIAGE.md`.
-4. **Reduced endpoint-search robustness:** the 1e-12-gap iteration error from
-   `ENDPOINT-REPAIR-EXPERIMENT.md`. Missing proximity matches are understood under
-   the clarified necessary-not-sufficient tolerance contract; this narrower
-   iteration failure remains a separate concern.
-5. **Coverage closure:** overlap interval adaptation and disposition of the 31
+4. **Coverage closure:** overlap interval adaptation and disposition of the 31
    tests without selected adaptations (8 representation/API reviews and 23
    math/internal gaps). See `TEST-COVERAGE.md` and `REVIEW.md`.
 
 The F# port and final validation follow the Gleam audit; they are not counted as
 additional investigations. The audit is not ready to be called complete.
+
+Completed reduced endpoint-search robustness: direct excess-distance comparison
+repairs the arc-line candidate admission inconsistency without widening endpoint
+capture. Full release suite passes (2,086 + 31 + 832 per portable target); all
+46 published figures regenerate byte-identically. See
+`ENDPOINT-CROSSING-ROUNDOFF-TRIAGE.md`.
