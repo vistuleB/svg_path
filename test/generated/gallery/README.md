@@ -29,3 +29,5 @@
 - [nested contours · nonzero](gallery-difference-nested-nonzero.svg)
 - [nested contours · even–odd](gallery-difference-nested-evenodd.svg)
 - [self-crossing contour minus rectangle](gallery-difference-bowtie-rectangle.svg)
+
+- [Square inward offsets through collapse](gallery-square-inward-collapse.svg)

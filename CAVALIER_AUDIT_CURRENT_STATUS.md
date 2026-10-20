@@ -637,3 +637,16 @@ Production endpoint probe matches all 16 isolated-experiment results.
 Evidence: `scripts/cavalier/ENDPOINT-CROSSING-ROUNDOFF-TRIAGE.md`.
 This closes the reduced endpoint-search investigation; four broader groups
 remain. F# is deferred. Production repair and validation records are ready for the fix commit.
+
+
+### Square collapse investigation
+
+After endpoint repair commit `c64cd00`, reproduced square inward-offset contours
+on both targets. A copied-build winding trace shows the central loop edges
+exactly match expected/measured (1,0); at distance 2 the extra square edges match
+(2,0). Independent raw-walk winding explains why the center reappears after the
+corner circles pass it at distance sqrt(2). This reduced case follows the current
+winding trimming mechanism but differs from erosion; classified as an understood
+policy limitation, not a confirmed solver bug. Documentation clarification is
+recommended, not implemented. See `scripts/cavalier/SQUARE-COLLAPSE-WINDING-TRIAGE.md`.
+No production change, full-suite rerun, F# change, or commit in this investigation.

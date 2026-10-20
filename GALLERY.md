@@ -53,6 +53,16 @@ regression fixtures for the convex-hull implementation.
 Shows one open subpath and several one-sided untrimmed offsets in different
 colors.
 
+### Square Inward Offsets Through Collapse
+
+![Square inward offsets through collapse](docs/gallery/gallery-square-inward-collapse.svg)
+
+Shows inward distances 0.5, 1, 1.5, and 2 for a square of side length 2,
+with round joins. Gray is the source, orange the raw offset, and blue the default
+trimmed output. The output disappears at distance 1 but contours reappear beyond
+collapse: winding-based offset trimming is not filled-region erosion.
+Both raw and trimmed geometry are recomputed by the library.
+
 ### Earth-Tone Offsets
 
 ![Earth-tone offsets](docs/gallery/gallery-earth-tone-offsets.svg)

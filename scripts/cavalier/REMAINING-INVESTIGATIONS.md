@@ -19,8 +19,9 @@ behavior. Documentation clarification suggested; see `SHAPE-CASE3-TRIAGE.md`.
    ownership fixes 1e-5 and the reduced reversed-order JS case. Both original
    calls now return empty; canonical release tests pass. See
    `DUAL-NARROW-FACE-TRIAGE.md` and `CYCLIC-CLUSTER-RADIUS-TRIAGE.md`.
-   Square extra contours, collapse policy and the remaining broader offset
-   catalogue still need review. See `REMAINING-OFFSET-DETAIL-TRIAGE.md`.
+   The reduced square extra contours now have a winding-policy explanation,
+   reproduced on both targets; see `SQUARE-COLLAPSE-WINDING-TRIAGE.md`.
+   The remaining broader offset catalogue still needs review. See `REMAINING-OFFSET-DETAIL-TRIAGE.md`.
 2. **Boolean closure and geometry classification:** earlier construction choices
    behind the 16 default boundary-guard cases, stronger equivalence checks for
    decomposition differences, and earlier-stage correctness in cases where final

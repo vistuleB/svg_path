@@ -77,6 +77,11 @@ pub fn gallery_jobs() -> List(#(String, String, fn() -> String)) {
       stroke_offset_tracks,
     ),
     #(
+      "gallery-square-inward-collapse.svg",
+      "Square inward offsets through collapse",
+      square_inward_collapse,
+    ),
+    #(
       "gallery-earth-tone-offsets.svg",
       "Earth-tone offsets",
       earth_tone_offsets,
@@ -1684,6 +1689,49 @@ fn stroke_offset_tracks() -> String {
     width: 730.0,
     height: 280.0,
   )
+}
+
+// Recompute both walks through the public offset API; no saved audit geometry.
+fn square_inward_collapse() -> String {
+  let assert Ok(source) =
+    svg_path.subpath_polygon([
+      svg_path.Point(-1.0, -1.0),
+      svg_path.Point(1.0, -1.0),
+      svg_path.Point(1.0, 1.0),
+      svg_path.Point(-1.0, 1.0),
+    ])
+  let panels =
+    [#(140, 0.5), #(420, 1.0), #(700, 1.5), #(980, 2.0)]
+    |> list.map(fn(panel) {
+      let #(center, distance) = panel
+      let assert Ok(raw) =
+        offset.subpath_untrimmed(source, 0.0 -. distance, offset.Round)
+      let assert Ok(trimmed) =
+        offset.subpath(source, 0.0 -. distance, offset.Round, offset.Butt)
+      "<text x=\""
+      <> int.to_string(center)
+      <> "\" y=\"25\" text-anchor=\"middle\" font-family=\"sans-serif\" font-size=\"18\">Inward distance "
+      <> float.to_string(distance)
+      <> "</text>"
+      <> "<g transform=\"translate("
+      <> int.to_string(center)
+      <> " 158) scale(85)\">"
+      <> "<path d=\""
+      <> serialize.subpath(source)
+      <> "\" fill=\"none\" stroke=\"#94a3b8\" stroke-width=\"0.015\"/>"
+      <> "<path d=\""
+      <> serialize.subpath(raw)
+      <> "\" fill=\"none\" stroke=\"#e2a665\" stroke-width=\"0.016\"/>"
+      <> "<path d=\""
+      <> serialize.path(trimmed)
+      <> "\" fill=\"none\" stroke=\"#164eae\" stroke-width=\"0.04\"/>"
+      <> "</g>"
+    })
+    |> string.join("")
+  "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1120\" height=\"330\" viewBox=\"0 0 1120 330\">"
+  <> "<rect x=\"0\" y=\"0\" width=\"1120\" height=\"330\" fill=\"white\"/>"
+  <> panels
+  <> "<text x=\"560\" y=\"307\" text-anchor=\"middle\" font-family=\"sans-serif\" font-size=\"15\">Gray: source square · Orange: raw offset · Blue: default trimmed output</text></svg>"
 }
 
 fn earth_tone_offsets() -> String {

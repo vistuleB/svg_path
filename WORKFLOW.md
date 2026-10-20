@@ -131,7 +131,7 @@ their generated SVGs are included in the Gallery.
 
 Build the root and `examples/readme_arrangement_figures` projects with
 `gleam build`, then run `escript scripts/gallery/run.escript` from the root.
-This runs the 29 Erlang gallery figures concurrently without requiring passing tests
+This runs the 30 Erlang gallery figures concurrently without requiring passing tests
 or promoting images. Pass one or more exact SVG filenames to select jobs.
 
 Each job prints START, DONE or FAILED with elapsed wall time and Erlang
@@ -156,7 +156,7 @@ After `gleam build --target javascript` in `examples/public_api_smoke`, run
 `node scripts/gallery/w3c_join_comparison.mjs` from the root. This writes to
 `test/generated/gallery`; an optional directory argument selects another output
 location (use `examples/debug` for chat previews). The canonical published-figure
-generator runs this step and promotes all 33 Gallery figures. W3C reference SVGs
+generator runs this step and promotes all 34 Gallery figures. W3C reference SVGs
 are vendored in `scripts/gallery/w3c-join-reference`; generation needs no network.
 
 ## Gallery Figures

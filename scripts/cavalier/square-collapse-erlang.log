@@ -1,0 +1,31 @@
+warning: Unused result value
+  ┌─ /Users/jpsteinb/github.com/vistuleB/svg_path/scripts/cavalier/probe/src/short_arc_normalization_audit_probe.gleam:9:3
+  │
+9 │   echo degeneracy.normalize_degenerate_segments(alone, 0.001)
+  │   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The Result value created here is unused
+
+Hint: If you are sure you don't need it you can assign it to `_`.
+
+warning: Unused result value
+   ┌─ /Users/jpsteinb/github.com/vistuleB/svg_path/scripts/cavalier/probe/src/short_arc_normalization_audit_probe.gleam:16:3
+   │
+16 │   echo offset.normalize_short_source_runs(source, 0.001)
+   │   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The Result value created here is unused
+
+Hint: If you are sure you don't need it you can assign it to `_`.
+
+  Compiling cavalier_audit_probe
+   Compiled in 0.34s
+    Running square_collapse_audit_probe.main
+[90msrc/square_collapse_audit_probe.gleam:16[39m
+#(0.5, Ok([#(1.0, "M -0.5 -0.5 H 0.5 V 0.5 H -0.5 Z")]))
+[90msrc/square_collapse_audit_probe.gleam:16[39m
+#(1.0, Ok([]))
+[90msrc/square_collapse_audit_probe.gleam:16[39m
+#(1.25, Ok([]))
+[90msrc/square_collapse_audit_probe.gleam:16[39m
+#(1.5, Ok([#(0.028898609534757938, "M 0 0.11803 A 1.5 1.5 0 0 1 -0.11803 0 A 1.5 1.5 0 0 1 0 -0.11803 A 1.5 1.5 0 0 1 0.11803 0 A 1.5 1.5 0 0 1 0 0.11803 Z")]))
+[90msrc/square_collapse_audit_probe.gleam:16[39m
+#(2.0, Ok([#(-4.0, "M 1 -1 H -1 V 1 H 1 Z"), #(1.2605869745108829, "M 0 0.73205 A 2 2 0 0 1 -0.73205 0 A 2 2 0 0 1 0 -0.73205 A 2 2 0 0 1 0.73205 0 A 2 2 0 0 1 0 0.73205 Z")]))
+[90msrc/square_collapse_audit_probe.gleam:16[39m
+#(2.5, Ok([]))

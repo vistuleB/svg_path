@@ -1,0 +1,27 @@
+[
+  {
+    "distance": 0.5,
+    "raw_center_winding": 1.000000000000006,
+    "band_center_winding": 0
+  },
+  {
+    "distance": 1.25,
+    "raw_center_winding": -2.9999999999999942,
+    "band_center_winding": 4
+  },
+  {
+    "distance": 1.5,
+    "raw_center_winding": 0.9999999999999981,
+    "band_center_winding": 0
+  },
+  {
+    "distance": 2,
+    "raw_center_winding": 0.9999999999999993,
+    "band_center_winding": 0
+  },
+  {
+    "distance": 2.5,
+    "raw_center_winding": 0.9999999999999996,
+    "band_center_winding": 0
+  }
+]
