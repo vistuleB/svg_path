@@ -74,6 +74,7 @@
 import gleam/float
 import gleam/list
 import svg_path/affine
+import svg_path/internal/ellipse_precision
 import svg_path/internal/number
 import svg_path/internal/parameter
 import svg_path/trig
@@ -857,42 +858,90 @@ fn endpoint_to_center_general(
         EllipsePoint({ start.x -. end.x } /. 2.0, { start.y -. end.y } /. 2.0)
       let x1p = cos_phi *. half_delta.x +. sin_phi *. half_delta.y
       let y1p = 0.0 -. sin_phi *. half_delta.x +. cos_phi *. half_delta.y
-      let radius_scale =
-        float.max(1.0, x1p *. x1p /. { rx *. rx } +. y1p *. y1p /. { ry *. ry })
-      let scale = square_root(radius_scale)
-      let rx = rx *. scale
-      let ry = ry *. scale
-      // Enlarging insufficient radii leaves exactly one center, the midpoint.
-      // Rounded corrected radii must not introduce an artificial displacement.
-      let center_prime = case radius_scale >. 1.0 {
-        True -> EllipsePoint(0.0, 0.0)
-        False -> center_prime(rx, ry, x1p, y1p, large_arc, sweep)
+      let precise = case
+        rx != ry
+        && ellipse_precision.needed(
+          half_delta.x,
+          half_delta.y,
+          rx,
+          ry,
+          x1p,
+          y1p,
+        )
+      {
+        True ->
+          ellipse_precision.convert(
+            start.x,
+            start.y,
+            end.x,
+            end.y,
+            rx,
+            ry,
+            x_axis_rotation,
+            large_arc,
+            sweep,
+          )
+        False -> Error(Nil)
       }
-      let center =
-        EllipsePoint(
-          cos_phi *. center_prime.x -. sin_phi *. center_prime.y +. midpoint.x,
-          sin_phi *. center_prime.x +. cos_phi *. center_prime.y +. midpoint.y,
-        )
-      let start_vector =
-        EllipsePoint(
-          { x1p -. center_prime.x } /. rx,
-          { y1p -. center_prime.y } /. ry,
-        )
-      let end_vector =
-        EllipsePoint(
-          { 0.0 -. x1p -. center_prime.x } /. rx,
-          { 0.0 -. y1p -. center_prime.y } /. ry,
-        )
-      let start_angle = vector_angle(EllipsePoint(1.0, 0.0), start_vector)
-      let delta_angle = swept_delta_angle(start_vector, end_vector, sweep)
+      case precise {
+        Ok(data) ->
+          Ok(CenterArcData(
+            EllipsePoint(data.cx, data.cy),
+            EllipsePoint(data.rx, data.ry),
+            x_axis_rotation,
+            data.start,
+            data.delta,
+          ))
+        Error(_) -> {
+          let radius_scale =
+            float.max(
+              1.0,
+              x1p *. x1p /. { rx *. rx } +. y1p *. y1p /. { ry *. ry },
+            )
+          let scale = square_root(radius_scale)
+          let rx = rx *. scale
+          let ry = ry *. scale
+          // Enlarging insufficient radii leaves exactly one center, the midpoint.
+          // Rounded corrected radii must not introduce an artificial displacement.
+          let center_prime = case radius_scale >. 1.0 {
+            True -> EllipsePoint(0.0, 0.0)
+            False -> center_prime(rx, ry, x1p, y1p, large_arc, sweep)
+          }
+          let center =
+            EllipsePoint(
+              cos_phi
+                *. center_prime.x
+                -. sin_phi
+                *. center_prime.y
+                +. midpoint.x,
+              sin_phi
+                *. center_prime.x
+                +. cos_phi
+                *. center_prime.y
+                +. midpoint.y,
+            )
+          let start_vector =
+            EllipsePoint(
+              { x1p -. center_prime.x } /. rx,
+              { y1p -. center_prime.y } /. ry,
+            )
+          let end_vector =
+            EllipsePoint(
+              { 0.0 -. x1p -. center_prime.x } /. rx,
+              { 0.0 -. y1p -. center_prime.y } /. ry,
+            )
+          let start_angle = vector_angle(EllipsePoint(1.0, 0.0), start_vector)
+          let delta_angle = swept_delta_angle(start_vector, end_vector, sweep)
 
-      Ok(CenterArcData(
-        center:,
-        radius: EllipsePoint(rx, ry),
-        x_axis_rotation:,
-        start_angle:,
-        delta_angle:,
-      ))
+          Ok(CenterArcData(
+            center:,
+            radius: EllipsePoint(rx, ry),
+            x_axis_rotation:,
+            start_angle:,
+            delta_angle:,
+          ))
+        }
+      }
     }
   }
 }

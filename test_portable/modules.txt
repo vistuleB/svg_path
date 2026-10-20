@@ -79,3 +79,5 @@ svg_path_semicircle_accuracy_test.gleam
 svg_path_arc_line_roundoff_test.gleam
 
 svg_path_circle_rotation_test.gleam
+
+svg_path_ellipse_precision_test.gleam

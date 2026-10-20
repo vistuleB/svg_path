@@ -1,7 +1,7 @@
 # Remaining investigation groups — 2026-10-19
 
-Four investigation groups remain after the tested endpoint-crossing repair.
-These are work groups, not four confirmed bugs or a count of individual fixture
+Three investigation groups remain after the selective ellipse precision repair.
+These are work groups, not three confirmed bugs or a count of individual fixture
 discrepancies. Original baseline totals remain historical.
 
 Completed tangent-arc follow-up: exact-arc full-map preference repairs overlap
@@ -27,27 +27,7 @@ behavior. Documentation clarification suggested; see `SHAPE-CASE3-TRIAGE.md`.
    decomposition differences, and earlier-stage correctness in cases where final
    arc reconstruction conforms to the documented tolerance contract. See
    `BOOLEAN-CONTRACT-TRIAGE.md` and the dispositions register.
-3. **Near-semicircle numerical accuracy:** six center/bounds flags (CX00420/21,
-   CX00622/23, CX00636/37). Conversion conditioning and additional native
-   cancellation are separated. The production compensated center calculation
-   improves exact-SVG-input accuracy in 24/27 targeted cases (three already exact).
-   Full release tests pass. Rotated-half-chord rounding remains a limitation;
-   all 46 published figures regenerated, with only numeric changes in three;
-   see `SEMICIRCLE-ACCURACY-TRIAGE.md`. The circular rotation case now has
-   a validated production repair: compute circles before coordinate rotation
-   and adjust the angle afterward. Full release tests pass and all 47 figures
-   are byte-identical. Unequal-radius conditioning is now reproduced against a high-precision
-   exact-input oracle on 16 inputs, including two radius-enlargement branch
-   discrepancies reproduced on Erlang. Compensated coordinates alone are
-   insufficient; a broader precision fallback or documented limitation remains
-   a decision. A standalone double-double experiment improves all problematic
-   cases in a 136-input set, but costs about 8.8x in the local kernel probe;
-   a conditioning-weighted dispatch candidate now passes 3,274 isolated checks
-   (383 independently checked). Full arc reconstruction and Gleam validation
-   remain pending; see `ELLIPSE-PRECISION-THRESHOLD.md`.
-   See `ELLIPSE-HIGH-PRECISION-EXPERIMENT.md`, `CIRCLE-ROTATION-TRIAGE.md` and
-   `UNEQUAL-ELLIPSE-ROTATION-TRIAGE.md`.
-4. **Coverage closure:** overlap interval adaptation and disposition of the 31
+3. **Coverage closure:** overlap interval adaptation and disposition of the 31
    tests without selected adaptations (8 representation/API reviews and 23
    math/internal gaps). See `TEST-COVERAGE.md` and `REVIEW.md`.
 
@@ -59,3 +39,12 @@ repairs the arc-line candidate admission inconsistency without widening endpoint
 capture. Full release suite passes (2,086 + 31 + 832 per portable target); all
 46 published figures regenerate byte-identically. See
 `ENDPOINT-CROSSING-ROUNDOFF-TRIAGE.md`.
+
+Completed near-semicircle numerical accuracy: compensated center arithmetic,
+circular rotation handling and the selective unequal-radius precision fallback
+are implemented. The latest full release run passes 2,092 + 31 + 838 per portable
+target; all 47 published figures are byte-identical. The production replay covers
+3,274 inputs, including 383 independent oracle comparisons. Finite precision and
+range limitations remain documented, rather than implying exact arithmetic.
+See `ELLIPSE-PRECISION-PRODUCTION.md`, `ELLIPSE-PRECISION-THRESHOLD.md`,
+`CIRCLE-ROTATION-TRIAGE.md` and `SEMICIRCLE-ACCURACY-TRIAGE.md`.

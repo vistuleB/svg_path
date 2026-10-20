@@ -1,5 +1,9 @@
 # Unequal-radius near-semicircle conditioning — 2026-10-20
 
+Production follow-up: the selective fallback is now implemented. See
+[ELLIPSE-PRECISION-PRODUCTION.md](ELLIPSE-PRECISION-PRODUCTION.md) for validation
+and scope. The experiment-only statements below describe the earlier checkpoint.
+
 Baseline: `1230e93` (circular rotation repair committed). Investigation only.
 
 ## Exact-input experiment
