@@ -922,3 +922,68 @@ all 47 figures byte-identically to the saved pre-change outputs. Portable tests
 pass 846 on each target; the preceding unchanged-production slow run passed 31.
 See `scripts/cavalier/ARC-CHORD-CLEANUP-EXPERIMENT.md`. F# deferred. Offset
 normalization's reversal preservation remains separate unfinished work.
+
+## 2026-10-20 — Traversal-preserving pre-offset candidate
+
+Arc-chord cleanup committed as `4d1edd2`. New uncommitted offset experiment
+uses per-segment 1e-9 straightening and merges only same-direction collinear
+lines. Reduced reversals survive on JS/Erlang; CC01297 improves. CC01301 still
+fails because stalled-run fitting reintroduces a cubic with non-affine overlap.
+An additional copied-JS control straightening those fitted cubics exposes
+InternalNormalizationError instead. See
+`scripts/cavalier/TRAVERSAL-NORMALIZATION-EXPERIMENT.md`. No full tests/figures
+or F# port; candidate remains experimental and uncommitted.
+
+### 2026-10-20: all-segment straightening control, not adopted
+
+An isolated JS control straightens each generated graph-input segment to at most
+one Line at 1e-9, including the generated zero-offset side. No merging. It removes
+CC01301's non-affine overlap failures but exposes an independently reproduced
+near-semicircle split/reparameterization discrepancy: 1.76e-6 endpoint error
+against a 2e-9 arrangement certification tolerance. Erlang and JS agree on the
+standalone arc reproduction. Existing targeted JS tests: 55 passed, 0 failed;
+CC01297 still succeeds. CC01301 remains unresolved. Late straightening also needs
+construction-preimage parameter handling before production adoption. See the
+new section of `scripts/cavalier/TRAVERSAL-NORMALIZATION-EXPERIMENT.md` and its
+`offset-straightening-*` / `offset-arc-reparameterization*` evidence. No new
+production change, full suite, figures, F# port, or commit in this step; earlier
+source-normalization candidate remains uncommitted.
+
+### 2026-10-20: stage-letter shift validated
+
+Existing H preimages are now I (`IPreimage*`); existing I culled geometry is
+now J (`JCulled*`). H is reserved for the proposed straightening stage, not
+yet implemented. Private helper names, two debug-script constructor references,
+and documentation were updated; historical notes retain their original names
+with a mapping note. No public API or behavior change from the rename.
+`scripts/test-release` passed: 2100 ordinary + 31 slow + 846 portable Erlang
++ 846 portable JavaScript tests. This validates the current worktree including
+the earlier source-normalization candidate, not the isolated late-straightening
+control. Log: `scripts/cavalier/offset-stage-shift-tests.log`. No commit or F#
+port. Next: introduce the explicit H straightening representation before I
+preimages, handling earlier construction provenance correctly.
+
+### 2026-10-20: H straightening implemented and verified
+
+The formerly reserved H stage now retains original/replacement segment pairs.
+Every assembled healed piece and join, including the generated zero-offset
+side, is independently straightened at 1e-9 only when exactly one Line results.
+No merging or reversal deletion in H. Immutable I preimages record the new
+geometry and retain H and earlier construction provenance; J/trimming intervals
+therefore use the new parameterization.
+
+Figure generation exposed a separate consequence of the earlier source cleanup:
+a retained nonzero one-ulp Line failed general tangent thresholds. H-disabled
+controls failed identically; old source cleanup passed. Offset now computes
+nonzero Line directions using scaled endpoint differences and treats their
+curvature as exactly zero. Point lines retain their existing error behavior.
+
+Final `scripts/test-release`: 2106 ordinary + 31 slow + 852 Erlang portable +
+852 JavaScript portable, all passed. Seven provenance checks also passed.
+Canonical figure generation succeeded for all 47 figures: 41 byte-identical,
+four Gallery changes with before/after previews, two README miter-clip changes
+limited to numerical rounding (maximum 8.88e-16). See the final section of
+`scripts/cavalier/TRAVERSAL-NORMALIZATION-EXPERIMENT.md` and its final logs/hash
+record. CC01301 remains blocked by the separately isolated near-semicircle
+reconstruction error, not by its original overlap incompatibility. No commit or
+F# port yet. Earlier "not implemented" notes above describe earlier steps only.

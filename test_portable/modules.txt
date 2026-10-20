@@ -86,3 +86,5 @@ svg_path_offset_reversal_join_test.gleam
 svg_path_circle_intersection_precision_test.gleam
 
 svg_path_collapsed_offset_test.gleam
+
+svg_path_offset_straightening_test.gleam

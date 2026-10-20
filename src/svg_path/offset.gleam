@@ -9,7 +9,10 @@
 ////
 //// Subpath and path offsets first normalize the source, split it into stalled
 //// and not-stalled pieces, fit the offset pieces, heal their boundaries, add
-//// joins, and cull adjacent reversal loops. A trimmed single offset then nodes
+//// joins, straighten individually degenerate segments at tolerance 1e-9, and
+//// cull adjacent reversal loops. Straightening accepts only one Line per
+//// segment; it does not merge neighbours or erase reversals.
+//// A trimmed single offset then nodes
 //// that walk with its final refined zero-offset source. With default trimming,
 //// for each closed source subpath the dual floods the signed source-side faces and
 //// removes offside offset occurrences. A second arrangement classifies the
@@ -49,16 +52,16 @@ fn traced_subpath_geometry(
 }
 
 /// Lower a traced walk to the structural input expected by the cusp trimmer.
-/// This does not restore older I geometry: the traced segment's current
-/// geometry and current H-parameter interval remain authoritative.
+/// This does not restore older J geometry: the traced segment's current
+/// geometry and current I-parameter interval remain authoritative.
 fn cusp_trim_traced_subpath(
   traced: TracedOffsetSubpath,
   zero_source: svg_path.Subpath,
   offset: Float,
   options: Options,
 ) -> Result(Option(TracedOffsetSubpath), InternalError) {
-  use trimmed <- result.try(cusp_trim_i_subpath(
-    i_subpath_from_traced(traced),
+  use trimmed <- result.try(cusp_trim_j_subpath(
+    j_subpath_from_traced(traced),
     zero_source,
     offset,
     options,
@@ -176,8 +179,8 @@ type SynchronizedUntrimmedBuild {
   SynchronizedUntrimmedBuild(
     inner: svg_path.Subpath,
     outer: svg_path.Subpath,
-    inner_culled: ICulledOffsetSubpath,
-    outer_culled: ICulledOffsetSubpath,
+    inner_culled: JCulledOffsetSubpath,
+    outer_culled: JCulledOffsetSubpath,
     correspondences: List(OffsetCorrespondence),
     portions: List(SynchronizedHealedPortion),
     join_correspondences: List(OffsetJoinCorrespondence),
@@ -466,8 +469,8 @@ pub fn internal_single_offset_band_candidate(
 
 /// Run the configurable single-offset trimming pipeline.
 ///
-/// Small-loop culling has already produced one I walk per untrimmed build.
-/// This function first enters Traced form, optionally replaces each closed I
+/// Small-loop culling has already produced one J walk per untrimmed build.
+/// This function first enters Traced form, optionally replaces each closed J
 /// walk with its offside survivor walks, and then selects exactly one terminal
 /// operation: cusp-only trimming, general in-band trimming, or materialization
 /// without further trimming. Cusp and in-band trimming are alternatives;
@@ -963,7 +966,7 @@ pub fn subpath_with(
 @internal
 pub fn normalize_source_subpath(
   subpath: svg_path.Subpath,
-  options: Options,
+  _options: Options,
 ) -> Result(svg_path.Subpath, InternalError) {
   // Isolated point lines survive generic line-degeneracy cleanup beside
   // curved segments, but cannot supply offset tangents. Remove only exact
@@ -991,17 +994,32 @@ pub fn normalize_source_subpath(
       }
     }
   })
-  use subpath <- result.try(normalize_short_source_runs(
-    subpath,
-    tolerance: 0.001,
-  ))
-  use subpath <- result.try(
-    degeneracy.normalize_degenerate_segments(
-      subpath,
-      tolerance: options.fitting.tolerance,
-    )
-    |> result.map_error(InternalSourceNormalizationError),
+  use replacements <- result.try(
+    list.try_map(svg_path.subpath_segments(subpath), fn(segment) {
+      degeneracy.segment_linearize_if_degenerate(
+        segment,
+        tolerance: 0.000000001,
+      )
+      |> result.map(fn(replacement) { option.unwrap(replacement, [segment]) })
+      |> result.map_error(InternalSourceNormalizationError)
+    }),
   )
+  let segments =
+    merge_same_direction_source_lines(list.flatten(replacements), [])
+  use subpath <- result.try(case segments {
+    [] -> Ok(subpath)
+    _ -> {
+      use cleaned <- result.try(
+        svg_path.subpath_with(segments, policy: svg_path.Strict)
+        |> result.map_error(InternalPathError),
+      )
+      case svg_path.subpath_is_closed(subpath) {
+        True ->
+          svg_path.subpath_close(cleaned) |> result.map_error(InternalPathError)
+        False -> Ok(cleaned)
+      }
+    }
+  })
   case svg_path.subpath_segments(subpath) {
     [] -> Ok(subpath)
     [_, ..] ->
@@ -1009,6 +1027,44 @@ pub fn normalize_source_subpath(
         subpath,
         tolerance: source_tangent_colinearization_angle_degrees,
       )
+  }
+}
+
+// Preserve the original seam and every reversal; only combine adjacent lines
+// whose directions are exactly collinear in the working arithmetic.
+fn merge_same_direction_source_lines(
+  segments: List(svg_path.Segment),
+  reversed: List(svg_path.Segment),
+) -> List(svg_path.Segment) {
+  case segments, reversed {
+    [], _ -> list.reverse(reversed)
+    [svg_path.Line(start: middle, end: end), ..rest],
+      [svg_path.Line(start: start, end: previous_end), ..before]
+    -> {
+      let a = point_helpers.subtract(middle, start)
+      let b = point_helpers.subtract(end, middle)
+      let cross = point_helpers.cross(a, b)
+      let dot = point_helpers.dot(a, b)
+      case
+        previous_end == middle
+        && number.is_finite(cross)
+        && cross == 0.0
+        && dot >. 0.0
+      {
+        True ->
+          merge_same_direction_source_lines(rest, [
+            svg_path.Line(start, end),
+            ..before
+          ])
+        False ->
+          merge_same_direction_source_lines(rest, [
+            svg_path.Line(middle, end),
+            ..reversed
+          ])
+      }
+    }
+    [first, ..rest], _ ->
+      merge_same_direction_source_lines(rest, [first, ..reversed])
   }
 }
 
@@ -1216,7 +1272,7 @@ pub fn subpath_band_with(
 }
 
 fn trim_band_side_cusps(
-  subpath: ICulledOffsetSubpath,
+  subpath: JCulledOffsetSubpath,
   zero_source: svg_path.Subpath,
   offset: Float,
   options: Options,
@@ -1224,11 +1280,11 @@ fn trim_band_side_cusps(
 ) -> Result(Option(svg_path.Subpath), InternalError) {
   case enabled {
     False ->
-      traced_subpath_from_i(subpath, 0)
+      traced_subpath_from_j(subpath, 0)
       |> traced_subpath_geometry(options.fitting.tolerance)
       |> result.map(Some)
     True -> {
-      use trimmed <- result.try(cusp_trim_i_subpath(
+      use trimmed <- result.try(cusp_trim_j_subpath(
         subpath,
         zero_source,
         offset,
@@ -1747,12 +1803,12 @@ fn build_synchronized_untrimmed(
         SynchronizedUntrimmedBuild(
           inner: svg_path.subpath_empty(at: start),
           outer: svg_path.subpath_empty(at: start),
-          inner_culled: ICulledOffsetSubpath(
+          inner_culled: JCulledOffsetSubpath(
             segments: [],
             closed: svg_path.subpath_is_closed(subpath),
             side: Inner,
           ),
-          outer_culled: ICulledOffsetSubpath(
+          outer_culled: JCulledOffsetSubpath(
             segments: [],
             closed: svg_path.subpath_is_closed(subpath),
             side: Outer,
@@ -1779,20 +1835,18 @@ fn build_synchronized_untrimmed(
         closed: svg_path.subpath_is_closed(subpath),
       ))
       let closed = svg_path.subpath_is_closed(subpath)
-      let inner_preimage =
-        assemble_preimage_subpath(
-          portions,
-          join_correspondences,
-          side: Inner,
-          closed:,
-        )
-      let outer_preimage =
-        assemble_preimage_subpath(
-          portions,
-          join_correspondences,
-          side: Outer,
-          closed:,
-        )
+      use inner_preimage <- result.try(assemble_preimage_subpath(
+        portions,
+        join_correspondences,
+        side: Inner,
+        closed:,
+      ))
+      use outer_preimage <- result.try(assemble_preimage_subpath(
+        portions,
+        join_correspondences,
+        side: Outer,
+        closed:,
+      ))
       use inner_culled <- result.try(cull_adjacent_preimage_loops(
         inner_preimage,
       ))
@@ -1850,9 +1904,9 @@ fn subpath_from_synchronized_segments(
 }
 
 fn cull_adjacent_preimage_loops(
-  subpath: HPreimageSubpath,
-) -> Result(ICulledOffsetSubpath, InternalError) {
-  let HPreimageSubpath(segments:, closed:, side:) = subpath
+  subpath: IPreimageSubpath,
+) -> Result(JCulledOffsetSubpath, InternalError) {
+  let IPreimageSubpath(segments:, closed:, side:) = subpath
   // Joins already carry the two source endpoint directions around a collapsed
   // run. Omit its point geometry, unless the whole output is a single point.
   let nonpoints =
@@ -1868,8 +1922,8 @@ fn cull_adjacent_preimage_loops(
   }
   let segments =
     list.map(segments, fn(preimage) {
-      let HPreimageSegment(segment:, ..) = preimage
-      ICulledOffsetSegment(
+      let IPreimageSegment(segment:, ..) = preimage
+      JCulledOffsetSegment(
         segment:,
         preimage:,
         preimage_from: 0.0,
@@ -1888,7 +1942,7 @@ fn cull_adjacent_preimage_loops(
         InsideCuspTrimming -> Ok(segments)
       }
   })
-  Ok(ICulledOffsetSubpath(segments:, closed:, side:))
+  Ok(JCulledOffsetSubpath(segments:, closed:, side:))
 }
 
 // Private experiment: the embedded policy runs only when cusp trimming runs.
@@ -1899,7 +1953,7 @@ type SmallLoopCullingStage {
 }
 
 // Intentionally retained, hardcoded experiment switch (not a public option).
-// BeforeCuspTrimming cuts adjacent opposite-REVERSED loops during I construction,
+// BeforeCuspTrimming cuts adjacent opposite-REVERSED loops during J construction,
 // even when no cusp-trimming stage follows. InsideCuspTrimming instead marks
 // their arrangement edges for deletion within cusp trimming; with no cusp stage,
 // it performs no small-loop culling. Keep both policies available for comparison.
@@ -1907,8 +1961,8 @@ type SmallLoopCullingStage {
 const small_loop_culling_stage = BeforeCuspTrimming
 
 fn cull_adjacent_offset_segment_loops(
-  segments: List(ICulledOffsetSegment),
-) -> Result(List(ICulledOffsetSegment), InternalError) {
+  segments: List(JCulledOffsetSegment),
+) -> Result(List(JCulledOffsetSegment), InternalError) {
   case segments {
     [] | [_] -> Ok(segments)
     [first, second, ..rest] -> {
@@ -1923,10 +1977,10 @@ fn cull_adjacent_offset_segment_loops(
 }
 
 fn cull_adjacent_offset_segment_loops_loop(
-  previous: ICulledOffsetSegment,
-  rest: List(ICulledOffsetSegment),
-  culled culled: List(ICulledOffsetSegment),
-) -> Result(List(ICulledOffsetSegment), InternalError) {
+  previous: JCulledOffsetSegment,
+  rest: List(JCulledOffsetSegment),
+  culled culled: List(JCulledOffsetSegment),
+) -> Result(List(JCulledOffsetSegment), InternalError) {
   case rest {
     [] -> Ok(list.reverse([previous, ..culled]))
     [next, ..remaining] -> {
@@ -1948,8 +2002,8 @@ fn cull_adjacent_offset_segment_loops_loop(
 }
 
 fn cull_wrapping_offset_segment_loop(
-  segments: List(ICulledOffsetSegment),
-) -> Result(List(ICulledOffsetSegment), InternalError) {
+  segments: List(JCulledOffsetSegment),
+) -> Result(List(JCulledOffsetSegment), InternalError) {
   case segments {
     [] | [_] -> Ok(segments)
     [first, ..rest] -> {
@@ -1964,10 +2018,10 @@ fn cull_wrapping_offset_segment_loop(
 }
 
 fn cull_offset_segment_loop(
-  left: ICulledOffsetSegment,
-  right: ICulledOffsetSegment,
+  left: JCulledOffsetSegment,
+  right: JCulledOffsetSegment,
 ) -> Result(
-  #(ICulledOffsetSegment, Option(ICulledOffsetSegment)),
+  #(JCulledOffsetSegment, Option(JCulledOffsetSegment)),
   InternalError,
 ) {
   // This adjacent-pair rule could later be generalized to non-adjacent
@@ -1976,8 +2030,8 @@ fn cull_offset_segment_loop(
   // opposite REVERSED/NON-REVERSED states. Defining and measuring the smaller
   // side robustly is deliberately outside the present heuristic.
   case
-    h_preimage_is_reversed(left.preimage)
-    == h_preimage_is_reversed(right.preimage)
+    i_preimage_is_reversed(left.preimage)
+    == i_preimage_is_reversed(right.preimage)
   {
     True -> Ok(#(left, Some(right)))
     False -> {
@@ -2000,13 +2054,13 @@ fn cull_offset_segment_loop(
               right_from,
             )
           Ok(#(
-            ICulledOffsetSegment(
+            JCulledOffsetSegment(
               ..left,
               segment: left_segment,
               preimage_to: left_preimage_to,
             ),
             Some(
-              ICulledOffsetSegment(
+              JCulledOffsetSegment(
                 ..right,
                 segment: right_segment,
                 preimage_from: right_preimage_from,
@@ -2020,10 +2074,10 @@ fn cull_offset_segment_loop(
 }
 
 fn cull_adjacent_offset_segment_overlap(
-  left: ICulledOffsetSegment,
-  right: ICulledOffsetSegment,
+  left: JCulledOffsetSegment,
+  right: JCulledOffsetSegment,
 ) -> Result(
-  #(ICulledOffsetSegment, Option(ICulledOffsetSegment)),
+  #(JCulledOffsetSegment, Option(JCulledOffsetSegment)),
   InternalError,
 ) {
   use found <- result.try(
@@ -2045,7 +2099,7 @@ fn cull_adjacent_offset_segment_overlap(
         |> result.map_error(InternalPathError),
       )
       let left =
-        ICulledOffsetSegment(
+        JCulledOffsetSegment(
           ..left,
           segment: segment_with_end(left_segment, shared),
           preimage_to: interval_parameter(
@@ -2068,7 +2122,7 @@ fn cull_adjacent_offset_segment_overlap(
           Ok(#(
             left,
             Some(
-              ICulledOffsetSegment(
+              JCulledOffsetSegment(
                 ..right,
                 segment: segment_with_start(right_segment, shared),
                 preimage_from: interval_parameter(
@@ -2085,13 +2139,13 @@ fn cull_adjacent_offset_segment_overlap(
   }
 }
 
-fn cusp_trim_i_subpath(
-  subpath: ICulledOffsetSubpath,
+fn cusp_trim_j_subpath(
+  subpath: JCulledOffsetSubpath,
   zero_source: svg_path.Subpath,
   offset: Float,
   options: Options,
 ) -> Result(Option(CuspTrimmedSubpath), InternalError) {
-  let ICulledOffsetSubpath(segments:, closed:, ..) = subpath
+  let JCulledOffsetSubpath(segments:, closed:, ..) = subpath
   case segments {
     [] -> Ok(None)
     [_, ..] -> {
@@ -2118,7 +2172,7 @@ fn cusp_trim_i_subpath(
         winding_path:,
       ))
       use edge_windings <- result.try(arrangement_edge_windings(build))
-      use split <- result.try(arrangement_split_subpath_from_i_arrangement(
+      use split <- result.try(arrangement_split_subpath_from_j_arrangement(
         subpath,
         build,
         edge_windings,
@@ -2134,7 +2188,7 @@ fn cusp_trim_i_subpath(
           cusp_small_loop_edges(
             build.graph,
             span.0,
-            list.map(segments, fn(s) { h_preimage_is_reversed(s.preimage) }),
+            list.map(segments, fn(s) { i_preimage_is_reversed(s.preimage) }),
             closed,
           )
         }
@@ -2925,6 +2979,7 @@ pub type InternalError {
 
   /// Source normalization failed before offset construction.
   InternalSourceNormalizationError(error: degeneracy.Error)
+  InternalStraighteningError(error: degeneracy.Error)
 
   /// The offset tolerance must be finite and greater than zero.
   InternalInvalidTolerance(tolerance: Float)
@@ -3442,7 +3497,7 @@ type SingleOffsetUntrimmedBuild {
   SingleOffsetUntrimmedBuild(
     subpath: svg_path.Subpath,
     zero_source: svg_path.Subpath,
-    culled: ICulledOffsetSubpath,
+    culled: JCulledOffsetSubpath,
     correspondences: List(OffsetCorrespondence),
     portions: List(SynchronizedHealedPortion),
     join_correspondences: List(OffsetJoinCorrespondence),
@@ -3461,9 +3516,9 @@ type BandSide {
 
 /// One immutable segment of an assembled untrimmed offset side.
 ///
-/// Healed offset pieces and joins first meet at this stage. Later geometric
-/// cleanup retains this payload as provenance rather than rewriting it.
-type HPreimageSource {
+/// Construction provenance retained across H straightening. Later geometric
+/// cleanup retains this payload rather than rewriting the earlier fitting data.
+type IPreimageSource {
   HealedPreimage(GHealedOffsetSegment)
   JoinPreimage(
     after_portion_index: Int,
@@ -3473,13 +3528,25 @@ type HPreimageSource {
   )
 }
 
-type HPreimageSegment {
-  HPreimageSegment(segment: svg_path.Segment, source: HPreimageSource)
+/// One generated segment before and after conservative straightening.
+/// The original geometry is diagnostic provenance, not the parameter space
+/// used by subsequent trimming. Exactly one segment survives this stage.
+@internal
+pub type HStraightenedSegment {
+  HStraightenedSegment(original: svg_path.Segment, segment: svg_path.Segment)
 }
 
-type HPreimageSubpath {
-  HPreimageSubpath(
-    segments: List(HPreimageSegment),
+type IPreimageSegment {
+  IPreimageSegment(
+    segment: svg_path.Segment,
+    source: IPreimageSource,
+    straightening: HStraightenedSegment,
+  )
+}
+
+type IPreimageSubpath {
+  IPreimageSubpath(
+    segments: List(IPreimageSegment),
     closed: Bool,
     side: BandSide,
   )
@@ -3487,16 +3554,17 @@ type HPreimageSubpath {
 
 // Trimming-stage data flow
 //
-//   H: healed offset pieces and joins with immutable construction provenance
-//   I: H geometry after adjacent-loop culling; a piece may represent an
-//      interval of its immutable H preimage
+//   H: generated pieces and joins straightened individually, originals retained
+//   I: straightened geometry with immutable construction provenance
+//   J: I geometry after adjacent-loop culling; a piece may represent an
+//      interval of its immutable I preimage
 //   Traced: the common interchange representation between optional trimmers
-//   ArrangementSplit: an I/Traced walk split into source order by arrangement
+//   ArrangementSplit: a J/Traced walk split into source order by arrangement
 //                     vertices
 //   CuspTrimmed: the optional single survivor of side-local cusp trimming
 //
-// Offside trimming maps one I walk to zero or more Traced walks. Cusp trimming
-// temporarily lowers one Traced walk to I, splits it by an arrangement, and
+// Offside trimming maps one J walk to zero or more Traced walks. Cusp trimming
+// temporarily lowers one Traced walk to J, splits it by an arrangement, and
 // raises its optional CuspTrimmed survivor back to Traced. Final in-band
 // trimming consumes Traced geometry and returns ordinary Subpaths; no later
 // stage needs construction provenance.
@@ -3506,18 +3574,18 @@ type HPreimageSubpath {
 /// `preimage` remains immutable even when `segment` is shortened.
 /// `segment` is the current geometry representing the ordered parameter
 /// interval `preimage_from..preimage_to` of `preimage.segment`.
-type ICulledOffsetSegment {
-  ICulledOffsetSegment(
+type JCulledOffsetSegment {
+  JCulledOffsetSegment(
     segment: svg_path.Segment,
-    preimage: HPreimageSegment,
+    preimage: IPreimageSegment,
     preimage_from: Float,
     preimage_to: Float,
   )
 }
 
-type ICulledOffsetSubpath {
-  ICulledOffsetSubpath(
-    segments: List(ICulledOffsetSegment),
+type JCulledOffsetSubpath {
+  JCulledOffsetSubpath(
+    segments: List(JCulledOffsetSegment),
     closed: Bool,
     side: BandSide,
   )
@@ -3527,7 +3595,7 @@ type ICulledOffsetSubpath {
 ///
 /// This is the common segment representation accepted and returned by optional
 /// trimming stages. `segment` is the current surviving geometry. `preimage`
-/// identifies its immutable H-stage construction source, and the ordered
+/// identifies its immutable I-stage construction source, and the ordered
 /// `preimage_from..preimage_to` interval identifies the represented portion of
 /// `preimage.segment`. Arrangement noding may narrow that interval but must not
 /// replace its coordinate system.
@@ -3538,7 +3606,7 @@ type ICulledOffsetSubpath {
 type TracedOffsetSegment {
   TracedOffsetSegment(
     segment: svg_path.Segment,
-    preimage: HPreimageSegment,
+    preimage: IPreimageSegment,
     preimage_from: Float,
     preimage_to: Float,
     reversed: Bool,
@@ -3561,20 +3629,20 @@ type TracedOffsetSubpath {
   )
 }
 
-/// One I-segment section in original traversal order after arrangement noding.
+/// One J-segment section in original traversal order after arrangement noding.
 ///
-/// Initially `segment` follows the I walk; reconstruction can reverse this
-/// section together with its directed H interval and endpoint vertices.
+/// Initially `segment` follows the J walk; reconstruction can reverse this
+/// section together with its directed I interval and endpoint vertices.
 /// `edge_id` and
 /// the vertex ids identify its arrangement image. `preimage_from..preimage_to`
-/// is expressed directly in the immutable H preimage's parameter space, not
-/// in the immediate I segment's local parameter space. `deletion_candidate`
+/// is expressed directly in the immutable I preimage's parameter space, not
+/// in the immediate J segment's local parameter space. `deletion_candidate`
 /// records the current trimming classification and may later be cleared when
 /// a submerged run is rescued.
 type ArrangementSplitTracedSegment {
   ArrangementSplitTracedSegment(
     segment: svg_path.Segment,
-    preimage: ICulledOffsetSegment,
+    preimage: JCulledOffsetSegment,
     preimage_from: Float,
     preimage_to: Float,
     edge_id: Int,
@@ -3623,11 +3691,11 @@ type CuspTrimmedSubpath {
   CuspTrimmedSubpath(segments: List(CuspTrimmedSegment), closed: Bool)
 }
 
-fn traced_subpath_from_i(
-  subpath: ICulledOffsetSubpath,
+fn traced_subpath_from_j(
+  subpath: JCulledOffsetSubpath,
   source_subpath_index: Int,
 ) -> TracedOffsetSubpath {
-  let ICulledOffsetSubpath(segments:, closed:, side:) = subpath
+  let JCulledOffsetSubpath(segments:, closed:, side:) = subpath
   TracedOffsetSubpath(
     segments: list.map(segments, fn(segment) {
       TracedOffsetSegment(
@@ -3635,7 +3703,7 @@ fn traced_subpath_from_i(
         preimage: segment.preimage,
         preimage_from: segment.preimage_from,
         preimage_to: segment.preimage_to,
-        reversed: h_preimage_is_reversed(segment.preimage),
+        reversed: i_preimage_is_reversed(segment.preimage),
       )
     }),
     closed:,
@@ -3647,8 +3715,8 @@ fn traced_subpath_from_i(
 /// Raise an offside survivor chain into the common traced representation.
 ///
 /// Every survivor edge must carry the arrangement-split preimage installed when
-/// the original I walk was split by the arrangement. This preserves provenance
-/// and the H-parameter interval through offside reconstruction.
+/// the original J walk was split by the arrangement. This preserves provenance
+/// and the I-parameter interval through offside reconstruction.
 fn traced_subpath_from_survivor_chain(
   chain: SurvivorChain,
   side: BandSide,
@@ -3680,12 +3748,12 @@ fn traced_subpath_from_survivor_chain(
 }
 
 /// Adapt the current traced walk to the cusp trimmer's structural input.
-/// Preserve current geometry, H-preimages, and their parameter intervals;
+/// Preserve current geometry, I-preimages, and their parameter intervals;
 /// the caller retains the source-subpath index when raising the result again.
-fn i_subpath_from_traced(traced: TracedOffsetSubpath) -> ICulledOffsetSubpath {
-  ICulledOffsetSubpath(
+fn j_subpath_from_traced(traced: TracedOffsetSubpath) -> JCulledOffsetSubpath {
+  JCulledOffsetSubpath(
     segments: list.map(traced.segments, fn(segment) {
-      ICulledOffsetSegment(
+      JCulledOffsetSegment(
         segment: segment.segment,
         preimage: segment.preimage,
         preimage_from: segment.preimage_from,
@@ -3698,7 +3766,7 @@ fn i_subpath_from_traced(traced: TracedOffsetSubpath) -> ICulledOffsetSubpath {
 }
 
 /// Raise the unique cusp-trimmed survivor into the common traced representation.
-/// Its arrangement-split preimage supplies the narrowed H-parameter interval
+/// Its arrangement-split preimage supplies the narrowed I-parameter interval
 /// and REVERSED classification established before parity reconstruction.
 fn traced_subpath_from_cusp_trimmed(
   subpath: CuspTrimmedSubpath,
@@ -3710,7 +3778,7 @@ fn traced_subpath_from_cusp_trimmed(
     segments: list.map(segments, fn(segment) {
       let CuspTrimmedSegment(segment: geometry, arrangement_preimage:) = segment
       let ArrangementSplitTracedSegment(
-        preimage: i_segment,
+        preimage: j_segment,
         preimage_from:,
         preimage_to:,
         reversed:,
@@ -3718,7 +3786,7 @@ fn traced_subpath_from_cusp_trimmed(
       ) = arrangement_preimage
       TracedOffsetSegment(
         segment: geometry,
-        preimage: i_segment.preimage,
+        preimage: j_segment.preimage,
         preimage_from:,
         preimage_to:,
         reversed:,
@@ -3784,7 +3852,7 @@ fn offside_trimmed_single_offset_subpaths(
       Ok(
         builds
         |> list.index_map(fn(build, index) {
-          traced_subpath_from_i(build.culled, index)
+          traced_subpath_from_j(build.culled, index)
         }),
       )
     True ->
@@ -3897,7 +3965,7 @@ fn offside_trimmed_single_offset_subpath(
   case svg_path.subpath_is_closed(build.subpath) && !number.is_zero(offset) {
     False ->
       Ok([
-        traced_subpath_from_i(build.culled, source_subpath_index),
+        traced_subpath_from_j(build.culled, source_subpath_index),
       ])
     True -> {
       let barriers = segment_image_edge_ids(zero_images, ids: [])
@@ -3905,7 +3973,7 @@ fn offside_trimmed_single_offset_subpath(
         contamination_seed_faces(zero_images, dual, offset, seeded: []),
       )
       let contaminated = propagate_contaminated_faces(dual, barriers, seeds)
-      use split <- result.try(arrangement_split_subpath_from_i_contamination(
+      use split <- result.try(arrangement_split_subpath_from_j_contamination(
         build.culled,
         offset_images,
         arrangement,
@@ -4033,16 +4101,16 @@ fn dual_edge_faces(
   })
 }
 
-fn arrangement_split_subpath_from_i_contamination(
-  subpath: ICulledOffsetSubpath,
+fn arrangement_split_subpath_from_j_contamination(
+  subpath: JCulledOffsetSubpath,
   images: List(arrangement_graph.ArrangementSourceSegmentImage),
   build: OffsetArrangementBuild,
   dual: arrangement_graph.DualArrangementGraph,
   contaminated: List(Int),
 ) -> Result(ArrangementSplitTracedSubpath, InternalError) {
-  let ICulledOffsetSubpath(segments:, closed:, side:) = subpath
+  let JCulledOffsetSubpath(segments:, closed:, side:) = subpath
   use split <- result.try(
-    arrangement_split_segments_from_i_contamination_images(
+    arrangement_split_segments_from_j_contamination_images(
       segments,
       images,
       build,
@@ -4054,8 +4122,8 @@ fn arrangement_split_subpath_from_i_contamination(
   Ok(ArrangementSplitTracedSubpath(segments: split, closed:, side:))
 }
 
-fn arrangement_split_segments_from_i_contamination_images(
-  segments: List(ICulledOffsetSegment),
+fn arrangement_split_segments_from_j_contamination_images(
+  segments: List(JCulledOffsetSegment),
   images: List(arrangement_graph.ArrangementSourceSegmentImage),
   build: OffsetArrangementBuild,
   dual: arrangement_graph.DualArrangementGraph,
@@ -4066,7 +4134,7 @@ fn arrangement_split_segments_from_i_contamination_images(
     [], [] -> Ok(list.reverse(split))
     [segment, ..remaining_segments], [image, ..remaining_images] -> {
       use pieces <- result.try(
-        arrangement_split_segments_from_i_contamination_image(
+        arrangement_split_segments_from_j_contamination_image(
           segment,
           image,
           build,
@@ -4075,7 +4143,7 @@ fn arrangement_split_segments_from_i_contamination_images(
           split: [],
         ),
       )
-      arrangement_split_segments_from_i_contamination_images(
+      arrangement_split_segments_from_j_contamination_images(
         remaining_segments,
         remaining_images,
         build,
@@ -4088,8 +4156,8 @@ fn arrangement_split_segments_from_i_contamination_images(
   }
 }
 
-fn arrangement_split_segments_from_i_contamination_image(
-  source: ICulledOffsetSegment,
+fn arrangement_split_segments_from_j_contamination_image(
+  source: JCulledOffsetSegment,
   source_image: arrangement_graph.ArrangementSourceSegmentImage,
   build: OffsetArrangementBuild,
   dual: arrangement_graph.DualArrangementGraph,
@@ -4097,7 +4165,7 @@ fn arrangement_split_segments_from_i_contamination_image(
   split split: List(ArrangementSplitTracedSegment),
 ) -> Result(List(ArrangementSplitTracedSegment), InternalError) {
   let arrangement_graph.ArrangementSourceSegmentImage(edges:, ..) = source_image
-  arrangement_split_segments_from_i_contamination_edges(
+  arrangement_split_segments_from_j_contamination_edges(
     source,
     edges,
     build,
@@ -4107,8 +4175,8 @@ fn arrangement_split_segments_from_i_contamination_image(
   )
 }
 
-fn arrangement_split_segments_from_i_contamination_edges(
-  source: ICulledOffsetSegment,
+fn arrangement_split_segments_from_j_contamination_edges(
+  source: JCulledOffsetSegment,
   edges: List(arrangement_graph.ArrangementSegmentEdgeImage),
   build: OffsetArrangementBuild,
   dual: arrangement_graph.DualArrangementGraph,
@@ -4149,7 +4217,7 @@ fn arrangement_split_segments_from_i_contamination_edges(
         interval_parameter(source.preimage_from, source.preimage_to, ta)
       let preimage_to =
         interval_parameter(source.preimage_from, source.preimage_to, tb)
-      arrangement_split_segments_from_i_contamination_edges(
+      arrangement_split_segments_from_j_contamination_edges(
         source,
         rest,
         build,
@@ -4164,7 +4232,7 @@ fn arrangement_split_segments_from_i_contamination_edges(
             edge_id:,
             start_vertex:,
             end_vertex:,
-            reversed: h_preimage_is_reversed(source.preimage),
+            reversed: i_preimage_is_reversed(source.preimage),
             deletion_candidate: offside,
           ),
           ..split
@@ -4937,8 +5005,8 @@ fn reverse_survivor_edges(
           start_vertex: end_vertex,
           end_vertex: start_vertex,
           segment: svg_path.segment_reverse(segment),
-          // Keep the directed H interval aligned with the reversed geometry.
-          // The immutable I/H preimages and geometric REVERSED label do not
+          // Keep the directed I interval aligned with the reversed geometry.
+          // The immutable J/I preimages and geometric REVERSED label do not
           // change; this is only a reversal of the survivor's traversal.
           arrangement_preimage: option.map(arrangement_preimage, fn(split) {
             ArrangementSplitTracedSegment(
@@ -5915,19 +5983,44 @@ fn assemble_preimage_subpath(
   joins: List(OffsetJoinCorrespondence),
   side side: BandSide,
   closed closed: Bool,
-) -> HPreimageSubpath {
-  HPreimageSubpath(
-    segments: assemble_preimage_segments(portions, joins, side:),
-    closed:,
-    side:,
+) -> Result(IPreimageSubpath, InternalError) {
+  use segments <- result.try(
+    list.try_map(assemble_preimage_segments(portions, joins, side:), fn(item) {
+      let #(original, source) = item
+      use straightening <- result.try(straighten_generated_segment(original))
+      Ok(IPreimageSegment(
+        segment: straightening.segment,
+        source:,
+        straightening:,
+      ))
+    }),
   )
+  Ok(IPreimageSubpath(segments:, closed:, side:))
+}
+
+/// Straighten one generated piece or join before immutable preimages exist.
+/// Do not merge neighbours, remove point segments, or replace reversing
+/// curves with multiple lines. The tolerance is independent of fitting options.
+@internal
+pub fn straighten_generated_segment(
+  original: svg_path.Segment,
+) -> Result(HStraightenedSegment, InternalError) {
+  use replacement <- result.try(
+    degeneracy.segment_linearize_if_degenerate(original, tolerance: 0.000000001)
+    |> result.map_error(InternalStraighteningError),
+  )
+  let segment = case replacement {
+    Some([svg_path.Line(..) as line]) -> line
+    _ -> original
+  }
+  Ok(HStraightenedSegment(original:, segment:))
 }
 
 fn assemble_preimage_segments(
   portions: List(SynchronizedHealedPortion),
   joins: List(OffsetJoinCorrespondence),
   side side: BandSide,
-) -> List(HPreimageSegment) {
+) -> List(#(svg_path.Segment, IPreimageSource)) {
   case portions {
     [] -> []
     [first, ..rest] -> {
@@ -5938,10 +6031,7 @@ fn assemble_preimage_segments(
       }
       let portion_segments =
         list.map(portion, fn(offset) {
-          HPreimageSegment(
-            segment: offset.segment,
-            source: HealedPreimage(offset),
-          )
+          #(offset.segment, HealedPreimage(offset))
         })
       case joins {
         [] ->
@@ -5990,8 +6080,8 @@ fn indexed_join_preimage_segments(
   side: BandSide,
   reversed: Bool,
   index index: Int,
-  assembled assembled: List(HPreimageSegment),
-) -> List(HPreimageSegment) {
+  assembled assembled: List(#(svg_path.Segment, IPreimageSource)),
+) -> List(#(svg_path.Segment, IPreimageSource)) {
   case segments {
     [] -> list.reverse(assembled)
     [segment, ..rest] ->
@@ -6002,9 +6092,9 @@ fn indexed_join_preimage_segments(
         reversed,
         index: index + 1,
         assembled: [
-          HPreimageSegment(
-            segment:,
-            source: JoinPreimage(
+          #(
+            segment,
+            JoinPreimage(
               after_portion_index:,
               side:,
               join_segment_index: index,
@@ -6044,8 +6134,8 @@ fn adjacent_endpoint_overlap(
   }
 }
 
-fn h_preimage_is_reversed(preimage: HPreimageSegment) -> Bool {
-  let HPreimageSegment(segment: offset_segment, source:) = preimage
+fn i_preimage_is_reversed(preimage: IPreimageSegment) -> Bool {
+  let IPreimageSegment(segment: offset_segment, source:, ..) = preimage
   case source {
     HealedPreimage(GHealedOffsetSegment(
       source: OffsetFromJoinFree(EJoinFreeSegment(segment: source_segment, ..)),
@@ -6066,9 +6156,9 @@ fn h_preimage_is_reversed(preimage: HPreimageSegment) -> Bool {
 }
 
 fn replace_last_culled_offset(
-  segments: List(ICulledOffsetSegment),
-  replacement: ICulledOffsetSegment,
-) -> List(ICulledOffsetSegment) {
+  segments: List(JCulledOffsetSegment),
+  replacement: JCulledOffsetSegment,
+) -> List(JCulledOffsetSegment) {
   case segments {
     [] -> []
     [_] -> [replacement]
@@ -6077,13 +6167,13 @@ fn replace_last_culled_offset(
 }
 
 fn culled_offset_subpath_segments(
-  subpath: ICulledOffsetSubpath,
+  subpath: JCulledOffsetSubpath,
 ) -> List(svg_path.Segment) {
-  let ICulledOffsetSubpath(segments:, ..) = subpath
+  let JCulledOffsetSubpath(segments:, ..) = subpath
   list.map(segments, fn(segment) { segment.segment })
 }
 
-/// Trim one I-side in source order while using an arrangement for noding and
+/// Trim one J-side in source order while using an arrangement for noding and
 /// winding classification only.
 ///
 /// The offset and its zero source define a temporary closed semantic band.
@@ -6331,12 +6421,12 @@ fn cusp_trim_subpath_from_chain(
   Ok(CuspTrimmedSubpath(segments:, closed: expected_closed))
 }
 
-fn arrangement_split_subpath_from_i_arrangement(
-  subpath: ICulledOffsetSubpath,
+fn arrangement_split_subpath_from_j_arrangement(
+  subpath: JCulledOffsetSubpath,
   build: OffsetArrangementBuild,
   edge_windings: Dict(Int, #(Int, Int)),
 ) -> Result(ArrangementSplitTracedSubpath, InternalError) {
-  let ICulledOffsetSubpath(segments:, closed:, side:) = subpath
+  let JCulledOffsetSubpath(segments:, closed:, side:) = subpath
   let OffsetArrangementBuild(segment_images:, ..) = build
   use image_span <- result.try(take_segment_images(
     segment_images,
@@ -6344,7 +6434,7 @@ fn arrangement_split_subpath_from_i_arrangement(
   ))
   let #(images, _) = image_span
   use split_segments <- result.try(
-    arrangement_split_segments_from_i_images(
+    arrangement_split_segments_from_j_images(
       segments,
       images,
       build,
@@ -6355,8 +6445,8 @@ fn arrangement_split_subpath_from_i_arrangement(
   Ok(ArrangementSplitTracedSubpath(segments: split_segments, closed:, side:))
 }
 
-fn arrangement_split_segments_from_i_images(
-  segments: List(ICulledOffsetSegment),
+fn arrangement_split_segments_from_j_images(
+  segments: List(JCulledOffsetSegment),
   images: List(arrangement_graph.ArrangementSourceSegmentImage),
   build: OffsetArrangementBuild,
   edge_windings: Dict(Int, #(Int, Int)),
@@ -6366,7 +6456,7 @@ fn arrangement_split_segments_from_i_images(
     [], [] -> Ok(list.reverse(split))
     [segment, ..remaining_segments], [image, ..remaining_images] -> {
       use pieces <- result.try(
-        arrangement_split_segments_from_i_image(
+        arrangement_split_segments_from_j_image(
           segment,
           image,
           build,
@@ -6374,7 +6464,7 @@ fn arrangement_split_segments_from_i_images(
           split: [],
         ),
       )
-      arrangement_split_segments_from_i_images(
+      arrangement_split_segments_from_j_images(
         remaining_segments,
         remaining_images,
         build,
@@ -6386,15 +6476,15 @@ fn arrangement_split_segments_from_i_images(
   }
 }
 
-fn arrangement_split_segments_from_i_image(
-  source: ICulledOffsetSegment,
+fn arrangement_split_segments_from_j_image(
+  source: JCulledOffsetSegment,
   image: arrangement_graph.ArrangementSourceSegmentImage,
   build: OffsetArrangementBuild,
   edge_windings: Dict(Int, #(Int, Int)),
   split split: List(ArrangementSplitTracedSegment),
 ) -> Result(List(ArrangementSplitTracedSegment), InternalError) {
   let arrangement_graph.ArrangementSourceSegmentImage(edges:, ..) = image
-  arrangement_split_segments_from_i_edge_images(
+  arrangement_split_segments_from_j_edge_images(
     source,
     edges,
     build,
@@ -6403,8 +6493,8 @@ fn arrangement_split_segments_from_i_image(
   )
 }
 
-fn arrangement_split_segments_from_i_edge_images(
-  source: ICulledOffsetSegment,
+fn arrangement_split_segments_from_j_edge_images(
+  source: JCulledOffsetSegment,
   images: List(arrangement_graph.ArrangementSegmentEdgeImage),
   build: OffsetArrangementBuild,
   edge_windings: Dict(Int, #(Int, Int)),
@@ -6447,7 +6537,7 @@ fn arrangement_split_segments_from_i_edge_images(
         interval_parameter(source.preimage_from, source.preimage_to, ta)
       let preimage_to =
         interval_parameter(source.preimage_from, source.preimage_to, tb)
-      arrangement_split_segments_from_i_edge_images(
+      arrangement_split_segments_from_j_edge_images(
         source,
         rest,
         build,
@@ -6461,7 +6551,7 @@ fn arrangement_split_segments_from_i_edge_images(
             edge_id:,
             start_vertex:,
             end_vertex:,
-            reversed: h_preimage_is_reversed(source.preimage),
+            reversed: i_preimage_is_reversed(source.preimage),
             deletion_candidate: !matches,
           ),
           ..split
@@ -11538,7 +11628,12 @@ fn offset_direction(
   offset offset: Float,
 ) -> Result(svg_path.Point, InternalError) {
   use tangent <- result.try(unit_tangent(segment, t:))
-  case number.is_zero(offset) {
+  let is_line = case segment {
+    svg_path.Line(..) -> True
+    _ -> False
+  }
+  // A nonzero line has zero curvature regardless of its absolute length.
+  case is_line || number.is_zero(offset) {
     True -> Ok(tangent)
     False ->
       case curvature.segment_left_normal_curvature(segment, at: t) {
@@ -11751,6 +11846,27 @@ fn unit_normal(
 /// Internal offset construction helper.
 @internal
 pub fn unit_tangent(
+  segment: svg_path.Segment,
+  t t: Float,
+) -> Result(svg_path.Point, InternalError) {
+  case segment {
+    svg_path.Line(start:, end:) if start != end -> {
+      let delta = point_helpers.subtract(end, start)
+      let scale =
+        float.max(float.absolute_value(delta.x), float.absolute_value(delta.y))
+      // Retained traversal can include one-ulp lines. Their direction is
+      // defined even below the general curve stationary-point threshold.
+      case number.is_finite(scale) && scale >. 0.0 {
+        True ->
+          unit_vector(svg_path.Point(delta.x /. scale, delta.y /. scale), t:)
+        False -> curve_unit_tangent(segment, t:)
+      }
+    }
+    _ -> curve_unit_tangent(segment, t:)
+  }
+}
+
+fn curve_unit_tangent(
   segment: svg_path.Segment,
   t t: Float,
 ) -> Result(svg_path.Point, InternalError) {

@@ -1,0 +1,47 @@
+level=1 elapsed_ms=5741 result=ok
+TRACE unit_tangent {line,{point,10.010000000000002,-0.7999997700000001},
+                         {point,10.010000000000002,-0.79999977}} 0.5 {error,
+                                                                      {internal_degenerate_tangent,
+                                                                       0.5}}
+TRACE unit_tangent {line,{point,10.010000000000002,-0.7999997700000001},
+                         {point,10.010000000000002,-0.79999977}} 0.5 {error,
+                                                                      {internal_degenerate_tangent,
+                                                                       0.5}}
+TRACE unit_tangent {line,{point,10.010000000000002,-0.7999997700000001},
+                         {point,10.010000000000002,-0.79999977}} 0.5 {error,
+                                                                      {internal_degenerate_tangent,
+                                                                       0.5}}
+TRACE unit_tangent {line,{point,10.010000000000002,-0.7999997700000001},
+                         {point,10.010000000000002,-0.79999977}} 0.5 {error,
+                                                                      {internal_degenerate_tangent,
+                                                                       0.5}}
+TRACE unit_tangent {line,{point,10.010000000000002,-0.7999997700000001},
+                         {point,10.010000000000002,-0.79999977}} 0.5 {error,
+                                                                      {internal_degenerate_tangent,
+                                                                       0.5}}
+TRACE unit_tangent {line,{point,10.010000000000002,-0.7999997700000001},
+                         {point,10.010000000000002,-0.79999977}} 0.5 {error,
+                                                                      {internal_degenerate_tangent,
+                                                                       0.5}}
+TRACE unit_tangent {line,{point,11.05,-0.7999997700000001},
+                         {point,11.05,-0.79999977}} 0.5 {error,
+                                                         {internal_degenerate_tangent,
+                                                          0.5}}
+TRACE unit_tangent {line,{point,10.010000000000002,-0.7999997700000001},
+                         {point,10.010000000000002,-0.79999977}} 0.5 {error,
+                                                                      {internal_degenerate_tangent,
+                                                                       0.5}}
+TRACE unit_tangent {line,{point,11.05,-0.7999997700000001},
+                         {point,11.05,-0.79999977}} 0.5 {error,
+                                                         {internal_degenerate_tangent,
+                                                          0.5}}
+TRACE unit_tangent {line,{point,10.010000000000002,-0.7999997700000001},
+                         {point,10.010000000000002,-0.79999977}} 0.5 {error,
+                                                                      {internal_degenerate_tangent,
+                                                                       0.5}}
+level=2 elapsed_ms=14499 result=ok
+TRACE unit_tangent {line,{point,65.13497199999999,13.465},
+                         {point,65.13497199999999,13.464999999999996}} 0.25 {error,
+                                                                             {internal_degenerate_tangent,
+                                                                              0.25}}
+level=3 elapsed_ms=140 result={error,{degenerate_tangent,0.25}}

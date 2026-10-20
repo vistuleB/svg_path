@@ -1,0 +1,17 @@
+file:///Users/jpsteinb/github.com/vistuleB/svg_path/examples/public_api_smoke/build/dev/javascript/svg_path/svg_path/intersections.mjs:3206
+          (item) => {
+          ^
+
+RangeError: Maximum call stack size exceeded
+    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/examples/public_api_smoke/build/dev/javascript/svg_path/svg_path/intersections.mjs:3206:11
+    at try_map_loop (file:///Users/jpsteinb/github.com/vistuleB/svg_path/examples/public_api_smoke/build/dev/javascript/gleam_stdlib/gleam/list.mjs:597:15)
+    at Module.try_map (file:///Users/jpsteinb/github.com/vistuleB/svg_path/examples/public_api_smoke/build/dev/javascript/gleam_stdlib/gleam/list.mjs:640:10)
+    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/examples/public_api_smoke/build/dev/javascript/svg_path/svg_path/intersections.mjs:3204:27
+    at elizabeth_beam_generation (file:///Users/jpsteinb/github.com/vistuleB/svg_path/examples/public_api_smoke/build/dev/javascript/svg_path/svg_path/intersections.mjs:3218:9)
+    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/examples/public_api_smoke/build/dev/javascript/svg_path/svg_path/intersections.mjs:3307:24
+    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/examples/public_api_smoke/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)
+    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/examples/public_api_smoke/build/dev/javascript/svg_path/svg_path/intersections.mjs:3251:28
+    at Module.try$ (file:///Users/jpsteinb/github.com/vistuleB/svg_path/examples/public_api_smoke/build/dev/javascript/gleam_stdlib/gleam/result.mjs:161:12)
+    at file:///Users/jpsteinb/github.com/vistuleB/svg_path/examples/public_api_smoke/build/dev/javascript/svg_path/svg_path/intersections.mjs:3230:24
+
+Node.js v24.10.0

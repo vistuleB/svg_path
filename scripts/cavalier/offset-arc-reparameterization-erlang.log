@@ -1,0 +1,39 @@
+warning: Unused result value
+   ┌─ /Users/jpsteinb/github.com/vistuleB/svg_path/scripts/cavalier/probe/src/ellipse_rotation_audit_probe.gleam:4:3
+   │
+ 4 │ ╭   echo ellipse.endpoint_to_center(ellipse.EndpointArcData(
+ 5 │ │     ellipse.EllipsePoint(-193.78556423268984, -666.4658569031494),
+ 6 │ │     ellipse.EllipsePoint(1000.0, 500.0),
+ 7 │ │     37.0,
+   · │
+10 │ │     ellipse.EllipsePoint(193.78556423268984, 666.4658569031494),
+11 │ │   ))
+   │ ╰────^ The Result value created here is unused
+
+Hint: If you are sure you don't need it you can assign it to `_`.
+
+warning: Unused result value
+  ┌─ /Users/jpsteinb/github.com/vistuleB/svg_path/scripts/cavalier/probe/src/short_arc_normalization_audit_probe.gleam:9:3
+  │
+9 │   echo degeneracy.normalize_degenerate_segments(alone, 0.001)
+  │   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The Result value created here is unused
+
+Hint: If you are sure you don't need it you can assign it to `_`.
+
+warning: Unused result value
+   ┌─ /Users/jpsteinb/github.com/vistuleB/svg_path/scripts/cavalier/probe/src/short_arc_normalization_audit_probe.gleam:16:3
+   │
+16 │   echo offset.normalize_short_source_runs(source, 0.001)
+   │   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ The Result value created here is unused
+
+Hint: If you are sure you don't need it you can assign it to `_`.
+
+  Compiling cavalier_audit_probe
+   Compiled in 0.38s
+    Running offset_arc_reparameterization_probe.main
+[90msrc/offset_arc_reparameterization_probe.gleam:22[39m
+#("original", Point(130.20434937875103, 6530.6322029541525))
+[90msrc/offset_arc_reparameterization_probe.gleam:23[39m
+#("reconstructed", Point(130.20434780090363, 6530.632202184364))
+[90msrc/offset_arc_reparameterization_probe.gleam:24[39m
+#("distance", Ok(1.7556127651307453e-6))

@@ -1,0 +1,17 @@
+file:///private/tmp/offset-h-disabled/svg_path/svg_path/internal/query.mjs:1350
+export function segment_bounding_polygon_between(segment, from, to) {
+                                                ^
+
+RangeError: Maximum call stack size exceeded
+    at Module.segment_bounding_polygon_between (file:///private/tmp/offset-h-disabled/svg_path/svg_path/internal/query.mjs:1350:49)
+    at elizabeth_window_overlaps (file:///private/tmp/offset-h-disabled/svg_path/svg_path/intersections.mjs:3002:12)
+    at file:///private/tmp/offset-h-disabled/svg_path/svg_path/intersections.mjs:3209:15
+    at try_map_loop (file:///private/tmp/offset-h-disabled/gleam_stdlib/gleam/list.mjs:597:15)
+    at Module.try_map (file:///private/tmp/offset-h-disabled/gleam_stdlib/gleam/list.mjs:640:10)
+    at file:///private/tmp/offset-h-disabled/svg_path/svg_path/intersections.mjs:3204:27
+    at elizabeth_beam_generation (file:///private/tmp/offset-h-disabled/svg_path/svg_path/intersections.mjs:3218:9)
+    at file:///private/tmp/offset-h-disabled/svg_path/svg_path/intersections.mjs:3307:24
+    at Module.try$ (file:///private/tmp/offset-h-disabled/gleam_stdlib/gleam/result.mjs:161:12)
+    at file:///private/tmp/offset-h-disabled/svg_path/svg_path/intersections.mjs:3251:28
+
+Node.js v24.10.0

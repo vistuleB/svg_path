@@ -1,0 +1,89 @@
+Running fast test profile.
+Downloading packages
+ Downloaded 2 packages in 0.01s
+  Compiling gleam_stdlib
+  Compiling gleeunit
+  Compiling svg_path
+   Compiled in 4.04s
+    Running svg_path_test.main
+.........................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................
+2105 passed, no failures
+  Compiling svg_path
+   Compiled in 1.08s
+START gallery-rounded-rectangle-union.svg pid=<0.83.0>
+START gallery-stroke-caps.svg pid=<0.84.0>
+START gallery-dashed-strokes.svg pid=<0.85.0>
+START gallery-recursive-dashes.svg pid=<0.86.0>
+START gallery-figure-eight-band.svg pid=<0.87.0>
+START gallery-symmetric-figure-eight-bands.svg pid=<0.88.0>
+START gallery-figure-eight-correspondence-blocks.svg pid=<0.89.0>
+START gallery-figure-eight-convex-hulls.svg pid=<0.90.0>
+START gallery-stroke-offset-tracks.svg pid=<0.91.0>
+START gallery-square-inward-collapse.svg pid=<0.92.0>
+START gallery-earth-tone-offsets.svg pid=<0.93.0>
+START gallery-package-title-first-offset.svg pid=<0.94.0>
+START gallery-package-title-second-offset-arrangement.svg pid=<0.95.0>
+START gallery-lazy-dog-offset-coil.svg pid=<0.96.0>
+START gallery-lazy-dog-offset-decaying-spiral.svg pid=<0.97.0>
+START gallery-crescent-hull.svg pid=<0.98.0>
+START gallery-package-title-nine-offsets.svg pid=<0.99.0>
+START gallery-cut-radiator.svg pid=<0.100.0>
+START gallery-intersection-rectangles.svg pid=<0.101.0>
+START gallery-intersection-circle-rectangle.svg pid=<0.102.0>
+START gallery-intersection-nested-nonzero.svg pid=<0.103.0>
+START gallery-intersection-nested-evenodd.svg pid=<0.104.0>
+START gallery-intersection-bowtie-rectangle.svg pid=<0.105.0>
+START gallery-intersection-edge-tangent.svg pid=<0.106.0>
+START gallery-difference-rectangles.svg pid=<0.107.0>
+START gallery-difference-hole.svg pid=<0.108.0>
+START gallery-difference-circle-rectangle.svg pid=<0.109.0>
+START gallery-difference-nested-nonzero.svg pid=<0.110.0>
+START gallery-difference-nested-evenodd.svg pid=<0.111.0>
+START gallery-difference-bowtie-rectangle.svg pid=<0.112.0>
+DONE gallery-crescent-hull.svg elapsed=0.14s reductions=1706658
+DONE gallery-intersection-nested-evenodd.svg elapsed=0.17s reductions=992575
+DONE gallery-difference-hole.svg elapsed=0.17s reductions=712663
+DONE gallery-intersection-rectangles.svg elapsed=0.17s reductions=799522
+DONE gallery-intersection-edge-tangent.svg elapsed=0.18s reductions=707342
+DONE gallery-intersection-nested-nonzero.svg elapsed=0.19s reductions=1029167
+DONE gallery-difference-nested-nonzero.svg elapsed=0.20s reductions=1066389
+DONE gallery-difference-bowtie-rectangle.svg elapsed=0.20s reductions=1566857
+DONE gallery-difference-rectangles.svg elapsed=0.20s reductions=803042
+DONE gallery-difference-nested-evenodd.svg elapsed=0.20s reductions=1066521
+DONE gallery-intersection-bowtie-rectangle.svg elapsed=0.20s reductions=1553260
+DONE gallery-difference-circle-rectangle.svg elapsed=0.20s reductions=3539127
+DONE gallery-rounded-rectangle-union.svg elapsed=0.21s reductions=2774875
+DONE gallery-earth-tone-offsets.svg elapsed=0.21s reductions=13185750
+DONE gallery-intersection-circle-rectangle.svg elapsed=0.24s reductions=3540435
+DONE gallery-cut-radiator.svg elapsed=0.37s reductions=40797699
+DONE gallery-square-inward-collapse.svg elapsed=0.63s reductions=42303254
+DONE gallery-stroke-offset-tracks.svg elapsed=0.65s reductions=30590905
+DONE gallery-stroke-caps.svg elapsed=1.03s reductions=61932608
+DONE gallery-figure-eight-band.svg elapsed=1.06s reductions=108728943
+DONE gallery-figure-eight-correspondence-blocks.svg elapsed=1.06s reductions=110345297
+DONE gallery-symmetric-figure-eight-bands.svg elapsed=2.18s reductions=213881350
+DONE gallery-figure-eight-convex-hulls.svg elapsed=2.60s reductions=308036862
+DONE gallery-recursive-dashes.svg elapsed=2.98s reductions=336008023
+DONE gallery-dashed-strokes.svg elapsed=3.36s reductions=342346018
+DONE gallery-package-title-first-offset.svg elapsed=7.36s reductions=1210155937
+DONE gallery-package-title-second-offset-arrangement.svg elapsed=9.74s reductions=2857
+RUNNING gallery-lazy-dog-offset-coil.svg elapsed=19.74s reductions=2115856035 pid=<0.96.0>
+RUNNING gallery-lazy-dog-offset-decaying-spiral.svg elapsed=19.74s reductions=2077384857 pid=<0.97.0>
+RUNNING gallery-package-title-nine-offsets.svg elapsed=19.74s reductions=3712170261 pid=<0.99.0>
+DONE gallery-lazy-dog-offset-coil.svg elapsed=20.49s reductions=2175577174
+FAILED gallery-package-title-nine-offsets.svg elapsed=21.78s reductions=4065610563 error={error,
+                                                                                          error,
+                                                                                          #{function =>
+                                                                                             <<"package_titl"...>>,
+                                                                                            line =>
+                                                                                             1846,
+                                                                                            message =>
+                                                                                             <<"Pattern matc"...>>,
+                                                                                            module =>
+                                                                                             <<"svg_path_gal"...>>,...},
+                                                                                          [{svg_path_gallery_test,
+                                                                                            '-package_title_nine_offsets/0-anonymous-0-',...},
+                                                                                           {gleam@list,...},
+                                                                                           {...}|...]} (see test/generated/gallery/gallery-package-title-nine-offsets.svg.error.txt)
+DONE gallery-lazy-dog-offset-decaying-spiral.svg elapsed=31.20s reductions=3214529071
+Gallery: 29 succeeded, 1 failed.

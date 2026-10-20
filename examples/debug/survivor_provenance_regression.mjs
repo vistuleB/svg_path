@@ -11,16 +11,17 @@ const source = (await readFile(url, 'utf8')).replace(/from "([^"]+)"/g,
 const off = await import('data:text/javascript;base64,' + Buffer.from(source + `
 export {reverse_survivor_chain, traced_subpath_from_survivor_chain,
   cusp_trim_subpath_from_chain, traced_subpath_from_cusp_trimmed, interval_parameter,
-  SurvivorEdge, SurvivorChain, ArrangementSplitTracedSegment, ICulledOffsetSegment,
-  HPreimageSegment, JoinPreimage, Outer};`).toString('base64'));
+  SurvivorEdge, SurvivorChain, ArrangementSplitTracedSegment, JCulledOffsetSegment,
+  IPreimageSegment, JoinPreimage, Outer};`).toString('base64'));
 const ok = r => { assert(r.isOk(), JSON.stringify(r)); return r[0]; };
 let checks = 0;
 for (const geometricallyReversed of [false, true]) {
-  const h = new off.HPreimageSegment(new s.Line(new s.Point(0,0), new s.Point(10,0)),
-    new off.JoinPreimage(0, new off.Outer(), 0, geometricallyReversed));
+  const preimage = new off.IPreimageSegment(new s.Line(new s.Point(0,0), new s.Point(10,0)),
+    new off.JoinPreimage(0, new off.Outer(), 0, geometricallyReversed),
+    ok(off.straighten_generated_segment(new s.Line(new s.Point(0,0), new s.Point(10,0)))));
   const geometry = new s.Line(new s.Point(2,0), new s.Point(7,0));
-  const i = new off.ICulledOffsetSegment(geometry, h, .2, .7);
-  const split = new off.ArrangementSplitTracedSegment(geometry, i, .2, .7, 42, 2, 7,
+  const culled = new off.JCulledOffsetSegment(geometry, preimage, .2, .7);
+  const split = new off.ArrangementSplitTracedSegment(geometry, culled, .2, .7, 42, 2, 7,
     geometricallyReversed, false);
   const edge = new off.SurvivorEdge(42, false, 2, 7, geometry, new Some(split));
   const chain = new off.SurvivorChain(2, 7, toList([edge]), false);
@@ -28,14 +29,14 @@ for (const geometricallyReversed of [false, true]) {
   const checkTrace = traced => {
     const [segment] = traced.segments;
     assert.deepEqual(segment.segment, s.segment_reverse(geometry));
-    assert.equal(segment.preimage, h);
+    assert.equal(segment.preimage, preimage);
     assert.equal(segment.preimage_from, .7);
     assert.equal(segment.preimage_to, .2);
     assert.equal(segment.reversed, geometricallyReversed);
-    // A later local cut must still map back to the same H geometry.
-    const hParameter = off.interval_parameter(segment.preimage_from, segment.preimage_to, .25);
+    // A later local cut must still map back to the same I geometry.
+    const preimageParameter = off.interval_parameter(segment.preimage_from, segment.preimage_to, .25);
     const localPoint = ok(s.segment_point(segment.segment, .25));
-    const sourcePoint = ok(s.segment_point(h.segment, hParameter));
+    const sourcePoint = ok(s.segment_point(preimage.segment, preimageParameter));
     assert(Math.abs(localPoint.x-sourcePoint.x) < 1e-12);
     checks++;
   };

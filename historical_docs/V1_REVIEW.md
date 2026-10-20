@@ -1282,3 +1282,7 @@ downstream logic; inherited failures are not counted again.
 Verification: scripts/test-all completed successfully in the unchanged
 production tree: ordinary profile 1,521 passed; slow profile 26 passed.
 The new diagnostic probes are deliberately not permanent tests or fixes.
+
+Stage-name note (2026-10-20): historical offset H/I references above are now
+I/J respectively; H is reserved for the proposed generated-segment straightening
+stage. This renaming does not change the historical behavior described.

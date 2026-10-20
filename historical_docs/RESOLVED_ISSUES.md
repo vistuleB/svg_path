@@ -895,3 +895,7 @@ not a fresh verification performed while writing this document.
 IX2, IX3, IX4, and the other recorded reproducers have since been addressed as
 described above. Use the opening status section for current follow-ups and
 verification, rather than these historical counts.
+
+Stage-name note (2026-10-20): historical offset H/I references above are now
+I/J respectively; H is reserved for the proposed generated-segment straightening
+stage. This renaming does not change the historical behavior described.

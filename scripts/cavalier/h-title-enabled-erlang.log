@@ -1,0 +1,3 @@
+level=1 elapsed_ms=5525 result=ok
+level=2 elapsed_ms=13639 result=ok
+level=3 elapsed_ms=131 result={error,{degenerate_tangent,0.25}}

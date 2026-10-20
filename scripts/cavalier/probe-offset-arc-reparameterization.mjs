@@ -1,0 +1,14 @@
+import fs from 'node:fs';
+const build=process.env.AUDIT_JS_BUILD??new URL('../../test_portable/build/dev/javascript',import.meta.url).pathname;
+const g=await import(`${build}/svg_path/svg_path.mjs`);
+const unwrap=r=>{if(!r.isOk())throw r[0];return r[0]};
+const rows=fs.readFileSync(new URL('./offset-straightening-CC01301-trace.jsonl',import.meta.url),'utf8').trim().split('\n').map(JSON.parse);
+const r=rows.find(r=>r.normalizationSite==='certify_segment_edge_geometry');
+const p=q=>new g.Point(q.x,q.y),a=r.source;
+const arc=new g.Arc(p(a.start),p(a.radius),a.x_axis_rotation,a.large_arc,a.sweep,p(a.end));
+const start=r.image.ta,end=r.image.tb;
+const tail=unwrap(g.segment_between(arc,start,1));
+const local=(end-start)/(1-start);
+const original=unwrap(g.segment_point(arc,end)), reconstructed=unwrap(g.segment_point(tail,local));
+const direct=unwrap(g.segment_between(arc,start,end));
+console.log(JSON.stringify({arc,originalCenter:unwrap(g.arc_center_data(arc)),tailCenter:unwrap(g.arc_center_data(tail)),trim:start,parameter:end,local,tail,original,reconstructed,distance:Math.hypot(original.x-reconstructed.x,original.y-reconstructed.y),directEnd:g.segment_end(direct)},null,2));

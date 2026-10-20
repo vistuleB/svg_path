@@ -11,15 +11,15 @@ const url = new URL('../public_api_smoke/build/dev/javascript/svg_path/svg_path/
 const source = (await readFile(url, 'utf8')).replace(/from "([^"]+)"/g,
   (_, specifier) => `from "${new URL(specifier, url).href}"`);
 const off = await import('data:text/javascript;base64,' + Buffer.from(source +
-  '\nexport {finish_cusp_trim_with_parity, ArrangementSplitTracedSegment, ArrangementSplitTracedSubpath, OffsetArrangementBuild, ICulledOffsetSegment, HPreimageSegment, JoinPreimage, Outer};').toString('base64'));
+  '\nexport {finish_cusp_trim_with_parity, ArrangementSplitTracedSegment, ArrangementSplitTracedSubpath, OffsetArrangementBuild, JCulledOffsetSegment, IPreimageSegment, JoinPreimage, Outer};').toString('base64'));
 const ok = r => { assert(r.isOk(), JSON.stringify(r)); return r[0]; };
 const points = [[0,0],[10,0],[10,10],[0,10],[0,0]].map(([x,y]) => new s.Point(x,y));
 const square = s.case true { True -> subpath_assert_close(s.subpath_assert_polyline(toList(points))) False -> subpath_open(s.subpath_assert_polyline(toList(points))) };
 const built = ok(ag.build(toList([s.subpath_as_path(square)]), 1e-9, 1e-8));
 const segments = [...built.graph.edges].map(edge => new off.ArrangementSplitTracedSegment(
   edge.segment,
-  new off.ICulledOffsetSegment(edge.segment,
-    new off.HPreimageSegment(edge.segment, new off.JoinPreimage(0, new off.Outer(), edge.id, false)), 0, 1),
+  new off.JCulledOffsetSegment(edge.segment,
+    new off.IPreimageSegment(edge.segment, new off.JoinPreimage(0, new off.Outer(), edge.id, false), ok(off.straighten_generated_segment(edge.segment))), 0, 1),
   0, 1, edge.id, edge.start_vertex, edge.end_vertex, false, false));
 const split = new off.ArrangementSplitTracedSubpath(toList(segments), true, new off.Outer());
 const build = new off.OffsetArrangementBuild(built.graph, toList([]), toList([]), toList([]));
