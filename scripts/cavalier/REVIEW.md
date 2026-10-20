@@ -1,5 +1,12 @@
 # Coverage and interpretation
 
+> Current status (2026-10-20): investigation of the original selected-case
+> queue is complete. See [ORIGINAL-AUDIT-CLOSURE.md](ORIGINAL-AUDIT-CLOSURE.md)
+> for scope, validation and the separate deferred-review list. Older pending
+> wording below is historical. This is not full parity, release readiness, or
+> completion of the F# port.
+
+
 > Coverage update (2026-10-20): the original overlap-adaptation gap and 31
 > uncaptured-test reviews are now dispositioned in
 > [ORIGINAL-OVERLAP-ADAPTATION.md](ORIGINAL-OVERLAP-ADAPTATION.md) and

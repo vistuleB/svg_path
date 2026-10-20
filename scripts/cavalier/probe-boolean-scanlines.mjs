@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import * as g from '../../test_portable/build/dev/javascript/svg_path/svg_path.mjs';
 import * as csg from '../../test_portable/build/dev/javascript/svg_path/svg_path/csg.mjs';
 import {path} from './triage-geometry.mjs';
+import {toList} from '../../test_portable/build/dev/javascript/prelude.mjs';
 const tau=2*Math.PI,mod=x=>(x%tau+tau)%tau;
 function arc(p,q,c,r,sweep){return {p,q,c,r,start:Math.atan2(p.y-c.y,p.x-c.x),sweep};}
 function source(input){return input.vertices.map((v,i)=>{const w=input.vertices[(i+1)%input.vertices.length],p={x:v[0],y:v[1]},q={x:w[0],y:w[1]},b=v[2];if(!b)return {p,q};const dx=q.x-p.x,dy=q.y-p.y,k=(1-b*b)/(4*b),c={x:(p.x+q.x)/2-dy*k,y:(p.y+q.y)/2+dx*k};return arc(p,q,c,Math.hypot(dx,dy)*(1+b*b)/(4*Math.abs(b)),4*Math.atan(b));});}
@@ -26,11 +27,29 @@ for(const c of cases.filter(c=>c.kind==='boolean'&&(process.env.CASE_ID?c.id===p
  const options=new csg.Options(Number(process.env.TOLERANCE??1e-6),Number(process.env.MIN_LENGTH??1e-5));
  const cached=process.env.RAW_INPUT?JSON.parse(fs.readFileSync(process.env.RAW_INPUT)):null;
  const operation={Or:csg.union_path_with,And:csg.intersection_path_with,Not:csg.difference_path_with,Xor:csg.symmetric_difference_path_with}[c.operation];
- const result=cached?{isOk:()=>true,0:{subpaths:[]}}:operation(path(c.input),path(c.other),new g.Nonzero(),options);if(!result.isOk())throw result[0];
- const groups=cached?cached.groups:[source(c.input),source(c.other),output(result[0])],all=(process.env.INPUT_MODEL==='svg'?(groups[0]=output(path(c.input)),groups[1]=output(path(c.other)),groups.flat()):groups.flat()),ys=all.flatMap(s=>[s.p.y,s.q.y,...(s.c?[s.c.y-s.r,s.c.y+s.r]:[])]);
+ let result=cached?{isOk:()=>true,0:{subpaths:[]}}:operation(path(c.input),path(c.other),new g.Nonzero(),options);if(!result.isOk())throw result[0];
+ let preSnap=null;
+ if(process.env.PRE_SNAP && !cached){
+  const fn={Or:csg.union_with,And:csg.intersection_with,Not:csg.difference_with,Xor:csg.symmetric_difference_with}[c.operation];
+  const detailed=fn(path(c.input),path(c.other),new g.Nonzero(),options);if(!detailed.isOk())throw detailed[0];
+  const edges=[...detailed[0].build.graph.edges],shape=s=>JSON.stringify(Object.fromEntries(Object.entries(s).filter(([k])=>!['start','end'].includes(k)))),dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+  const subs=[];preSnap={connectors:0,maxEndpointAdjustment:0};
+  for(const sub of detailed[0].path.subpaths){
+   const selected=[...sub.segments].map(out=>{
+    const candidates=edges.flatMap(e=>[e.segment,g.segment_reverse(e.segment)]).filter(s=>s.constructor===out.constructor&&shape(s)===shape(out)).map(s=>({s,gap:Math.max(dist(s.start,out.start),dist(s.end,out.end))})).sort((a,b)=>a.gap-b.gap);
+    if(!candidates.length||candidates[0].gap>options.tolerance)throw Error('No conforming stored edge');
+    preSnap.maxEndpointAdjustment=Math.max(preSnap.maxEndpointAdjustment,candidates[0].gap);return candidates[0].s;
+   });
+   const joined=[];for(let i=0;i<selected.length;i++){const a=selected[i],b=selected[(i+1)%selected.length];joined.push(a);if(a.end.x!==b.start.x||a.end.y!==b.start.y){joined.push(new g.Line(a.end,b.start));preSnap.connectors++;}}
+   const built=g.subpath(toList(joined));if(!built.isOk())throw built[0];subs.push(built[0]);
+  }
+  result={isOk:()=>true,0:new g.Path(toList(subs))};
+ }
+
+ const groups=cached?cached.groups:[source(c.input),source(c.other),output(result[0])],all=(process.env.INPUT_MODEL==='svg'?(groups[0]=output(path(c.input)),groups[1]=output(path(c.other)),groups.flat()):groups.flat());if(process.env.SCAN_AXIS==='x')for(const s of all){const rotate=p=>({x:-p.y,y:p.x});s.p=rotate(s.p);s.q=rotate(s.q);if(s.c){s.c=rotate(s.c);s.start=Math.atan2(s.p.y-s.c.y,s.p.x-s.c.x);}}const ys=all.flatMap(s=>[s.p.y,s.q.y,...(s.c?[s.c.y-s.r,s.c.y+s.r]:[])]);
  for(let i=0;i<all.length;i++)for(let j=0;j<i;j++)for(const p of intersections(all[i],all[j]))ys.push(p.y);
  if(process.env.RAW_OUTPUT)fs.writeFileSync(process.env.RAW_OUTPUT,JSON.stringify({groups,options,id:c.id}));
  const levels=[...new Set(ys)].sort((a,b)=>a-b);let skippedNarrowStrips=0,checked=0,maxWidth=0,maxEndpointDelta=0,topology=0,maxWitnessClearance=0,witnesses=[];
  for(let i=1;i<levels.length;i++)for(const t of [.25,.5,.75]){if(levels[i]-levels[i-1]<1e-11){skippedNarrowStrips++;continue;}const y=levels[i-1]+t*(levels[i]-levels[i-1]);if(y===levels[i-1]||y===levels[i])continue;const events=groups.flatMap((ss,group)=>ss.flatMap(s=>cross(s,y).map(v=>({...v,group}))));const expected=intervals(events.filter(e=>e.group<2),w=>({Or:w[0]!==0||w[1]!==0,And:w[0]!==0&&w[1]!==0,Not:w[0]!==0&&w[1]===0,Xor:(w[0]!==0)!==(w[1]!==0)})[c.operation]),actual=intervals(events.filter(e=>e.group===2),w=>w[2]!==0),diff=symmetricWidth(expected,actual),width=diff.reduce((s,[a,b])=>s+b-a,0);for(const [l,r] of diff){const p={x:(l+r)/2,y};maxWitnessClearance=Math.max(maxWitnessClearance,boundaryDistance(all,p));}checked++;maxWidth=Math.max(maxWidth,width);if(expected.length!==actual.length)topology++;else for(let k=0;k<expected.length;k++)for(let j=0;j<2;j++)maxEndpointDelta=Math.max(maxEndpointDelta,Math.abs(expected[k][j]-actual[k][j]));if(width>1e-5&&witnesses.length<12)witnesses.push({y,width,expected,actual,clearances:diff.map(([l,r])=>groups.map(ss=>boundaryDistance(ss,{x:(l+r)/2,y})))});}
- console.log(JSON.stringify({id:c.id,test:c.test,operation:c.operation,inputModel:process.env.INPUT_MODEL??'bulge',decomposedCycles:splitCycles(groups[2]).map(properties),upstreamProperties:[...c.positive,...c.negative],options,maxWitnessClearance,contours:cached?null:[...result[0].subpaths].length,upstreamPositive:c.positive.length,upstreamNegative:c.negative.length,eventLevels:levels.length,skippedNarrowStrips,checked,maxSymmetricDifferenceWidth:maxWidth,maxMatchedEndpointDelta:maxEndpointDelta,topologyDifferenceScanlines:topology,witnesses,output:cached?null:[...result[0].subpaths].map(s=>[...s.segments])}));
+ console.log(JSON.stringify({id:c.id,test:c.test,operation:c.operation,preSnap,scanAxis:process.env.SCAN_AXIS??'y',inputModel:process.env.INPUT_MODEL??'bulge',decomposedCycles:splitCycles(groups[2]).map(properties),upstreamProperties:[...c.positive,...c.negative],options,maxWitnessClearance,contours:cached?null:[...result[0].subpaths].length,upstreamPositive:c.positive.length,upstreamNegative:c.negative.length,eventLevels:levels.length,skippedNarrowStrips,checked,maxSymmetricDifferenceWidth:maxWidth,maxMatchedEndpointDelta:maxEndpointDelta,topologyDifferenceScanlines:topology,witnesses,output:cached?null:[...result[0].subpaths].map(s=>[...s.segments])}));
 }

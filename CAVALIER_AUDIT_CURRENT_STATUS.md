@@ -1079,3 +1079,25 @@ See `scripts/cavalier/ORIGINAL-OFFSET-TOPOLOGY-TRIAGE.md` and machine-readable
 per-ID evidence. No new confirmed bug or production edits. Findings uncommitted;
 no full-suite rerun or F# work. Next: reconcile remaining original inventory and
 continue Boolean classification before deferred follow-ups.
+
+### 2026-10-20: original selected-case investigation completed
+
+Topology findings committed as `29f2708`. Reconciled all original missing IDs:
+21 offset replays yield 12 property matches and nine previously understood policy
+differences; CC00937's historical timeout was already a serial-replay match.
+Every one of the final queue's 437 original flags now has an explicit disposition.
+
+Boolean stage checks cover 181 cases: 165 successful output/stored-edge pairs
+(12012/9849 scanlines), maximum sampled difference clearance 2.35e-4 versus
+1.31e-7. Six diagnostic unbalanced-scanline failures complete on the orthogonal
+axis; original failures retained. All endpoint matches conform to tolerance.
+The other 16 cases hit the known default minimum-length guard; all succeed at
+1e-6, 1e-7 and 1e-8. No new confirmed defect is established.
+
+`scripts/cavalier/ORIGINAL-AUDIT-CLOSURE.md` separates original investigation
+completion from deferred policies/numerical work, exact parity, F# migration
+and release readiness. `validate-records.py` verifies baseline source/totals,
+all 437 final dispositions and the 31 reviewed uncaptured tests. No production
+edits, full-suite/figure rerun or F# port. This final batch is included in the original-audit closure commit.
+Next work is the explicitly deferred review, if requested, not another original
+queue batch. Preserve DEFERRED-API.md's 4.0.0 Error-variant entry.

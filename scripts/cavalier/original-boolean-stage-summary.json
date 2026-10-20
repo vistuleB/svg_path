@@ -1,0 +1,1073 @@
+{
+  "cases": 181,
+  "orthogonal_rechecks": [
+    [
+      "CC00968",
+      "output"
+    ],
+    [
+      "CC00972",
+      "output"
+    ],
+    [
+      "CC00972",
+      "stored-edges"
+    ],
+    [
+      "CC00976",
+      "output"
+    ],
+    [
+      "CC00980",
+      "output"
+    ],
+    [
+      "CC00980",
+      "stored-edges"
+    ]
+  ],
+  "modes": {
+    "output": {
+      "completed": 165,
+      "scanlines": 12012,
+      "maxSampledClearance": 0.0002353335259639433,
+      "maxEndpointAdjustment": 0,
+      "errorIds": [
+        "CC01059",
+        "CC01063",
+        "CC01064",
+        "CC01065",
+        "CC01066",
+        "CC01067",
+        "CC01068",
+        "CC01069",
+        "CC01070",
+        "CC01071",
+        "CC01072",
+        "CC01073",
+        "CC01074",
+        "CC01075",
+        "CC01076",
+        "CC01077"
+      ],
+      "timeoutIds": []
+    },
+    "stored-edges": {
+      "completed": 165,
+      "scanlines": 9849,
+      "maxSampledClearance": 1.3065072144014896e-07,
+      "maxEndpointAdjustment": 4.915100078052176e-07,
+      "errorIds": [
+        "CC01059",
+        "CC01063",
+        "CC01064",
+        "CC01065",
+        "CC01066",
+        "CC01067",
+        "CC01068",
+        "CC01069",
+        "CC01070",
+        "CC01071",
+        "CC01072",
+        "CC01073",
+        "CC01074",
+        "CC01075",
+        "CC01076",
+        "CC01077"
+      ],
+      "timeoutIds": []
+    }
+  },
+  "pairs": [
+    {
+      "id": "CC00666",
+      "outputClearance": 0,
+      "storedEdgeClearance": 0,
+      "maxEndpointAdjustment": 0
+    },
+    {
+      "id": "CC00670",
+      "outputClearance": 0,
+      "storedEdgeClearance": 0,
+      "maxEndpointAdjustment": 0
+    },
+    {
+      "id": "CC00674",
+      "outputClearance": 0,
+      "storedEdgeClearance": 0,
+      "maxEndpointAdjustment": 0
+    },
+    {
+      "id": "CC00678",
+      "outputClearance": 0,
+      "storedEdgeClearance": 0,
+      "maxEndpointAdjustment": 0
+    },
+    {
+      "id": "CC00685",
+      "outputClearance": 8.881784197001252e-16,
+      "storedEdgeClearance": 0,
+      "maxEndpointAdjustment": 1.9860273225978185e-15
+    },
+    {
+      "id": "CC00689",
+      "outputClearance": 8.881784197001252e-16,
+      "storedEdgeClearance": 0,
+      "maxEndpointAdjustment": 8.881784197001252e-16
+    },
+    {
+      "id": "CC00693",
+      "outputClearance": 8.881784197001252e-16,
+      "storedEdgeClearance": 8.881784197001252e-16,
+      "maxEndpointAdjustment": 1.9860273225978185e-15
+    },
+    {
+      "id": "CC00697",
+      "outputClearance": 1.7763568394002505e-15,
+      "storedEdgeClearance": 8.881784197001252e-16,
+      "maxEndpointAdjustment": 1.2560739669470201e-15
+    },
+    {
+      "id": "CC00704",
+      "outputClearance": 2.3523179970563746e-07,
+      "storedEdgeClearance": 3.628710887326747e-09,
+      "maxEndpointAdjustment": 4.6485855875760586e-07
+    },
+    {
+      "id": "CC00708",
+      "outputClearance": 2.3523179970563746e-07,
+      "storedEdgeClearance": 3.628710887326747e-09,
+      "maxEndpointAdjustment": 4.6485855875760586e-07
+    },
+    {
+      "id": "CC00712",
+      "outputClearance": 2.3523179970563746e-07,
+      "storedEdgeClearance": 3.628710887326747e-09,
+      "maxEndpointAdjustment": 4.6485855875760586e-07
+    },
+    {
+      "id": "CC00716",
+      "outputClearance": 2.3523179970563746e-07,
+      "storedEdgeClearance": 3.628710887326747e-09,
+      "maxEndpointAdjustment": 4.6485855875760586e-07
+    },
+    {
+      "id": "CC00742",
+      "outputClearance": 1.4210854715202004e-14,
+      "storedEdgeClearance": 1.4210854715202004e-14,
+      "maxEndpointAdjustment": 2.0097183471152322e-14
+    },
+    {
+      "id": "CC00746",
+      "outputClearance": 1.4210854715202004e-14,
+      "storedEdgeClearance": 1.4210854715202004e-14,
+      "maxEndpointAdjustment": 1.4210854715202004e-14
+    },
+    {
+      "id": "CC00750",
+      "outputClearance": 1.4210854715202004e-14,
+      "storedEdgeClearance": 1.4210854715202004e-14,
+      "maxEndpointAdjustment": 2.842170943040401e-14
+    },
+    {
+      "id": "CC00754",
+      "outputClearance": 1.4210854715202004e-14,
+      "storedEdgeClearance": 1.4210854715202004e-14,
+      "maxEndpointAdjustment": 1.4210854715202004e-14
+    },
+    {
+      "id": "CC00761",
+      "outputClearance": 1.1482371159498566e-11,
+      "storedEdgeClearance": 1.1482371159498566e-11,
+      "maxEndpointAdjustment": 1.1510792319313623e-11
+    },
+    {
+      "id": "CC00765",
+      "outputClearance": 1.1482370747287058e-11,
+      "storedEdgeClearance": 1.1482370747287058e-11,
+      "maxEndpointAdjustment": 1.1510792319313623e-11
+    },
+    {
+      "id": "CC00769",
+      "outputClearance": 1.1482371159498566e-11,
+      "storedEdgeClearance": 1.1482371159498566e-11,
+      "maxEndpointAdjustment": 1.1510792319313623e-11
+    },
+    {
+      "id": "CC00773",
+      "outputClearance": 1.1482370747287058e-11,
+      "storedEdgeClearance": 1.1482370747287058e-11,
+      "maxEndpointAdjustment": 1.1510792319313623e-11
+    },
+    {
+      "id": "CC00780",
+      "outputClearance": 0,
+      "storedEdgeClearance": 0,
+      "maxEndpointAdjustment": 0
+    },
+    {
+      "id": "CC00784",
+      "outputClearance": 0,
+      "storedEdgeClearance": 0,
+      "maxEndpointAdjustment": 0
+    },
+    {
+      "id": "CC00788",
+      "outputClearance": 0,
+      "storedEdgeClearance": 0,
+      "maxEndpointAdjustment": 0
+    },
+    {
+      "id": "CC00792",
+      "outputClearance": 0,
+      "storedEdgeClearance": 0,
+      "maxEndpointAdjustment": 0
+    },
+    {
+      "id": "CC00797",
+      "outputClearance": 0.00012535792063672613,
+      "storedEdgeClearance": 7.515246348972084e-08,
+      "maxEndpointAdjustment": 1.1076869973396244e-07
+    },
+    {
+      "id": "CC00798",
+      "outputClearance": 0.00012535908136090956,
+      "storedEdgeClearance": 7.515246348972084e-08,
+      "maxEndpointAdjustment": 9.969183262678554e-08
+    },
+    {
+      "id": "CC00799",
+      "outputClearance": 0.00012535792254098066,
+      "storedEdgeClearance": 8.307652432648638e-08,
+      "maxEndpointAdjustment": 1.1076870059800362e-07
+    },
+    {
+      "id": "CC00801",
+      "outputClearance": 0.00012535792063650408,
+      "storedEdgeClearance": 7.515246400432712e-08,
+      "maxEndpointAdjustment": 1.1076870059800362e-07
+    },
+    {
+      "id": "CC00802",
+      "outputClearance": 0.00012535908136090956,
+      "storedEdgeClearance": 7.515246348972084e-08,
+      "maxEndpointAdjustment": 9.969183262678554e-08
+    },
+    {
+      "id": "CC00803",
+      "outputClearance": 0.00012535792254098066,
+      "storedEdgeClearance": 8.307652432648638e-08,
+      "maxEndpointAdjustment": 1.1076870059800362e-07
+    },
+    {
+      "id": "CC00804",
+      "outputClearance": 5.532819533422509e-08,
+      "storedEdgeClearance": 8.307652432648638e-08,
+      "maxEndpointAdjustment": 1.1076870059800362e-07
+    },
+    {
+      "id": "CC00805",
+      "outputClearance": 0.00012535913438382895,
+      "storedEdgeClearance": 7.515246340989761e-08,
+      "maxEndpointAdjustment": 1.1076869973396244e-07
+    },
+    {
+      "id": "CC00806",
+      "outputClearance": 0.0001253602951195587,
+      "storedEdgeClearance": 7.515246340989761e-08,
+      "maxEndpointAdjustment": 9.969183262678554e-08
+    },
+    {
+      "id": "CC00807",
+      "outputClearance": 0.00012535913628974882,
+      "storedEdgeClearance": 8.307652432648638e-08,
+      "maxEndpointAdjustment": 1.1076870059800362e-07
+    },
+    {
+      "id": "CC00809",
+      "outputClearance": 0.00012535913438538326,
+      "storedEdgeClearance": 7.515246340989761e-08,
+      "maxEndpointAdjustment": 1.1076870059800362e-07
+    },
+    {
+      "id": "CC00810",
+      "outputClearance": 0.0001253602951195587,
+      "storedEdgeClearance": 7.515246340989761e-08,
+      "maxEndpointAdjustment": 9.969183262678554e-08
+    },
+    {
+      "id": "CC00811",
+      "outputClearance": 0.00012535913628974882,
+      "storedEdgeClearance": 8.307652432648638e-08,
+      "maxEndpointAdjustment": 1.1076870059800362e-07
+    },
+    {
+      "id": "CC00816",
+      "outputClearance": 9.593508579985865e-05,
+      "storedEdgeClearance": 4.6614104598851245e-08,
+      "maxEndpointAdjustment": 6.253421758472315e-08
+    },
+    {
+      "id": "CC00817",
+      "outputClearance": 9.593508579985865e-05,
+      "storedEdgeClearance": 4.6614104598853475e-08,
+      "maxEndpointAdjustment": 6.253421758472315e-08
+    },
+    {
+      "id": "CC00818",
+      "outputClearance": 9.593508579985865e-05,
+      "storedEdgeClearance": 4.6614104598853475e-08,
+      "maxEndpointAdjustment": 6.253421758472315e-08
+    },
+    {
+      "id": "CC00820",
+      "outputClearance": 9.593513126748832e-05,
+      "storedEdgeClearance": 4.6614104598851245e-08,
+      "maxEndpointAdjustment": 6.253421758472315e-08
+    },
+    {
+      "id": "CC00821",
+      "outputClearance": 9.593513126748832e-05,
+      "storedEdgeClearance": 4.6614104598853475e-08,
+      "maxEndpointAdjustment": 6.253421758472315e-08
+    },
+    {
+      "id": "CC00822",
+      "outputClearance": 9.593513126748832e-05,
+      "storedEdgeClearance": 4.6614104598853475e-08,
+      "maxEndpointAdjustment": 6.253421758472315e-08
+    },
+    {
+      "id": "CC00824",
+      "outputClearance": 9.593508579985865e-05,
+      "storedEdgeClearance": 4.661410417499275e-08,
+      "maxEndpointAdjustment": 6.253421758472315e-08
+    },
+    {
+      "id": "CC00825",
+      "outputClearance": 9.593508579985865e-05,
+      "storedEdgeClearance": 4.661410417891082e-08,
+      "maxEndpointAdjustment": 6.253421758472315e-08
+    },
+    {
+      "id": "CC00826",
+      "outputClearance": 9.593508579985865e-05,
+      "storedEdgeClearance": 4.661410417891082e-08,
+      "maxEndpointAdjustment": 6.253421758472315e-08
+    },
+    {
+      "id": "CC00828",
+      "outputClearance": 9.593513126748832e-05,
+      "storedEdgeClearance": 4.661410417499275e-08,
+      "maxEndpointAdjustment": 6.253421758472315e-08
+    },
+    {
+      "id": "CC00829",
+      "outputClearance": 9.593513126748832e-05,
+      "storedEdgeClearance": 4.661410417891082e-08,
+      "maxEndpointAdjustment": 6.253421758472315e-08
+    },
+    {
+      "id": "CC00830",
+      "outputClearance": 9.593513126748832e-05,
+      "storedEdgeClearance": 4.661410417891082e-08,
+      "maxEndpointAdjustment": 6.253421758472315e-08
+    },
+    {
+      "id": "CC00835",
+      "outputClearance": 0.00011168429172025984,
+      "storedEdgeClearance": 7.534986183434256e-08,
+      "maxEndpointAdjustment": 1.0477804557012395e-07
+    },
+    {
+      "id": "CC00836",
+      "outputClearance": 0.00011123055904960211,
+      "storedEdgeClearance": 5.99407765235448e-08,
+      "maxEndpointAdjustment": 7.858353804146245e-08
+    },
+    {
+      "id": "CC00837",
+      "outputClearance": 0.00011168429172025984,
+      "storedEdgeClearance": 9.841363923790425e-08,
+      "maxEndpointAdjustment": 1.0477804834224464e-07
+    },
+    {
+      "id": "CC00839",
+      "outputClearance": 0.0001116842917230354,
+      "storedEdgeClearance": 5.99407765235448e-08,
+      "maxEndpointAdjustment": 1.0477804834224464e-07
+    },
+    {
+      "id": "CC00840",
+      "outputClearance": 0.00011123055904960211,
+      "storedEdgeClearance": 5.99407765235448e-08,
+      "maxEndpointAdjustment": 7.858353804146245e-08
+    },
+    {
+      "id": "CC00841",
+      "outputClearance": 0.0001116842917230354,
+      "storedEdgeClearance": 9.841363923790425e-08,
+      "maxEndpointAdjustment": 1.0477804834224464e-07
+    },
+    {
+      "id": "CC00843",
+      "outputClearance": 0.00011168429172025984,
+      "storedEdgeClearance": 7.520654639814118e-08,
+      "maxEndpointAdjustment": 1.0477804557012395e-07
+    },
+    {
+      "id": "CC00844",
+      "outputClearance": 0.00011123055904960211,
+      "storedEdgeClearance": 5.994077943638214e-08,
+      "maxEndpointAdjustment": 7.858353804146245e-08
+    },
+    {
+      "id": "CC00845",
+      "outputClearance": 0.00011168429172025984,
+      "storedEdgeClearance": 9.841363923790425e-08,
+      "maxEndpointAdjustment": 1.0477804834224464e-07
+    },
+    {
+      "id": "CC00847",
+      "outputClearance": 0.0001116842917230354,
+      "storedEdgeClearance": 6.173382847386407e-08,
+      "maxEndpointAdjustment": 1.0477804834224464e-07
+    },
+    {
+      "id": "CC00848",
+      "outputClearance": 0.00011123055904960211,
+      "storedEdgeClearance": 5.994077943638214e-08,
+      "maxEndpointAdjustment": 7.858353804146245e-08
+    },
+    {
+      "id": "CC00849",
+      "outputClearance": 0.0001116842917230354,
+      "storedEdgeClearance": 9.841363923790425e-08,
+      "maxEndpointAdjustment": 1.0477804834224464e-07
+    },
+    {
+      "id": "CC00854",
+      "outputClearance": 0.0002302846775021905,
+      "storedEdgeClearance": 1.1373803016805982e-07,
+      "maxEndpointAdjustment": 1.5033221201665352e-07
+    },
+    {
+      "id": "CC00855",
+      "outputClearance": 0.0002302846775021905,
+      "storedEdgeClearance": 1.1123905052998951e-07,
+      "maxEndpointAdjustment": 1.5033221201665352e-07
+    },
+    {
+      "id": "CC00856",
+      "outputClearance": 0.0002302846775021905,
+      "storedEdgeClearance": 1.1123905052998951e-07,
+      "maxEndpointAdjustment": 1.5033221201665352e-07
+    },
+    {
+      "id": "CC00858",
+      "outputClearance": 0.0002302846775021905,
+      "storedEdgeClearance": 1.1373803102971948e-07,
+      "maxEndpointAdjustment": 1.5033221201665352e-07
+    },
+    {
+      "id": "CC00859",
+      "outputClearance": 0.0002302846775021905,
+      "storedEdgeClearance": 1.1123905052998951e-07,
+      "maxEndpointAdjustment": 1.5033221201665352e-07
+    },
+    {
+      "id": "CC00860",
+      "outputClearance": 0.0002302846775021905,
+      "storedEdgeClearance": 1.1123905052998951e-07,
+      "maxEndpointAdjustment": 1.5033221201665352e-07
+    },
+    {
+      "id": "CC00862",
+      "outputClearance": 0.00023028819666759404,
+      "storedEdgeClearance": 1.1123905139164916e-07,
+      "maxEndpointAdjustment": 1.5033221201665352e-07
+    },
+    {
+      "id": "CC00863",
+      "outputClearance": 0.00023028819666759404,
+      "storedEdgeClearance": 1.112390522532299e-07,
+      "maxEndpointAdjustment": 1.5033221201665352e-07
+    },
+    {
+      "id": "CC00864",
+      "outputClearance": 0.00023028819666759404,
+      "storedEdgeClearance": 1.112390522532299e-07,
+      "maxEndpointAdjustment": 1.5033221201665352e-07
+    },
+    {
+      "id": "CC00866",
+      "outputClearance": 0.00023028819666759404,
+      "storedEdgeClearance": 1.3065072144014896e-07,
+      "maxEndpointAdjustment": 1.5033221201665352e-07
+    },
+    {
+      "id": "CC00867",
+      "outputClearance": 0.00023028819666759404,
+      "storedEdgeClearance": 1.112390522532299e-07,
+      "maxEndpointAdjustment": 1.5033221201665352e-07
+    },
+    {
+      "id": "CC00868",
+      "outputClearance": 0.00023028819666759404,
+      "storedEdgeClearance": 1.112390522532299e-07,
+      "maxEndpointAdjustment": 1.5033221201665352e-07
+    },
+    {
+      "id": "CC00875",
+      "outputClearance": 6.60667270890869e-08,
+      "storedEdgeClearance": 1.1024870356872673e-14,
+      "maxEndpointAdjustment": 3.2116720005331363e-08
+    },
+    {
+      "id": "CC00879",
+      "outputClearance": 6.606672642295308e-08,
+      "storedEdgeClearance": 9.547918011776346e-15,
+      "maxEndpointAdjustment": 3.2116720005331363e-08
+    },
+    {
+      "id": "CC00883",
+      "outputClearance": 6.60667270890869e-08,
+      "storedEdgeClearance": 1.1024870356872673e-14,
+      "maxEndpointAdjustment": 3.2116720005331363e-08
+    },
+    {
+      "id": "CC00887",
+      "outputClearance": 6.606672642295308e-08,
+      "storedEdgeClearance": 1.1374233532693354e-14,
+      "maxEndpointAdjustment": 3.2116720005331363e-08
+    },
+    {
+      "id": "CC00894",
+      "outputClearance": 2.5809566994716704e-07,
+      "storedEdgeClearance": 1.2789769243681803e-13,
+      "maxEndpointAdjustment": 4.915100078052176e-07
+    },
+    {
+      "id": "CC00898",
+      "outputClearance": 2.5809566994716704e-07,
+      "storedEdgeClearance": 1.2789769243681803e-13,
+      "maxEndpointAdjustment": 4.915100078052176e-07
+    },
+    {
+      "id": "CC00902",
+      "outputClearance": 2.5809566994716704e-07,
+      "storedEdgeClearance": 1.2789769243681803e-13,
+      "maxEndpointAdjustment": 4.915100078052176e-07
+    },
+    {
+      "id": "CC00906",
+      "outputClearance": 2.5809566994716704e-07,
+      "storedEdgeClearance": 1.2789769243681803e-13,
+      "maxEndpointAdjustment": 4.915100078052176e-07
+    },
+    {
+      "id": "CC00913",
+      "outputClearance": 1.3322676295501878e-14,
+      "storedEdgeClearance": 1.3322676295501878e-14,
+      "maxEndpointAdjustment": 0
+    },
+    {
+      "id": "CC00917",
+      "outputClearance": 1.3322676295501878e-14,
+      "storedEdgeClearance": 1.3322676295501878e-14,
+      "maxEndpointAdjustment": 0
+    },
+    {
+      "id": "CC00921",
+      "outputClearance": 1.3322676295501878e-14,
+      "storedEdgeClearance": 1.3322676295501878e-14,
+      "maxEndpointAdjustment": 0
+    },
+    {
+      "id": "CC00925",
+      "outputClearance": 1.3322676295501878e-14,
+      "storedEdgeClearance": 1.3322676295501878e-14,
+      "maxEndpointAdjustment": 0
+    },
+    {
+      "id": "CC00930",
+      "outputClearance": 0.00011168429236108057,
+      "storedEdgeClearance": 5.99407987171714e-08,
+      "maxEndpointAdjustment": 1.0477801921364313e-07
+    },
+    {
+      "id": "CC00931",
+      "outputClearance": 0.00011126604083111502,
+      "storedEdgeClearance": 5.994079961878737e-08,
+      "maxEndpointAdjustment": 7.858356467381437e-08
+    },
+    {
+      "id": "CC00932",
+      "outputClearance": 0.00011168429236108057,
+      "storedEdgeClearance": 7.85835116978717e-08,
+      "maxEndpointAdjustment": 1.0477802059970349e-07
+    },
+    {
+      "id": "CC00934",
+      "outputClearance": 0.0001116842923617467,
+      "storedEdgeClearance": 5.994079892523639e-08,
+      "maxEndpointAdjustment": 1.0477802059970349e-07
+    },
+    {
+      "id": "CC00935",
+      "outputClearance": 0.00011126604083111502,
+      "storedEdgeClearance": 5.994079961878737e-08,
+      "maxEndpointAdjustment": 7.858356467381437e-08
+    },
+    {
+      "id": "CC00936",
+      "outputClearance": 0.0001116842923617467,
+      "storedEdgeClearance": 7.85835116978717e-08,
+      "maxEndpointAdjustment": 1.0477802059970349e-07
+    },
+    {
+      "id": "CC00938",
+      "outputClearance": 0.00011168429236108057,
+      "storedEdgeClearance": 7.529238179596826e-08,
+      "maxEndpointAdjustment": 1.0477801921364313e-07
+    },
+    {
+      "id": "CC00939",
+      "outputClearance": 0.00011126604083111502,
+      "storedEdgeClearance": 5.994079968342677e-08,
+      "maxEndpointAdjustment": 7.858356384155288e-08
+    },
+    {
+      "id": "CC00940",
+      "outputClearance": 0.00011168429236108057,
+      "storedEdgeClearance": 7.85835116978717e-08,
+      "maxEndpointAdjustment": 1.0477802059970349e-07
+    },
+    {
+      "id": "CC00942",
+      "outputClearance": 0.0001116842923617467,
+      "storedEdgeClearance": 7.529290097411485e-08,
+      "maxEndpointAdjustment": 1.0477802059970349e-07
+    },
+    {
+      "id": "CC00943",
+      "outputClearance": 0.00011126604083111502,
+      "storedEdgeClearance": 5.994079968342677e-08,
+      "maxEndpointAdjustment": 7.858356384155288e-08
+    },
+    {
+      "id": "CC00944",
+      "outputClearance": 0.0001116842923617467,
+      "storedEdgeClearance": 7.85835116978717e-08,
+      "maxEndpointAdjustment": 1.0477802059970349e-07
+    },
+    {
+      "id": "CC00949",
+      "outputClearance": 0.00011127353679041274,
+      "storedEdgeClearance": 8.056227667376067e-08,
+      "maxEndpointAdjustment": 1.0517378980558077e-07
+    },
+    {
+      "id": "CC00950",
+      "outputClearance": 0.00011127584342107699,
+      "storedEdgeClearance": 8.056227717643703e-08,
+      "maxEndpointAdjustment": 1.0517378980558077e-07
+    },
+    {
+      "id": "CC00951",
+      "outputClearance": 0.00011127353712814259,
+      "storedEdgeClearance": 8.056227717643703e-08,
+      "maxEndpointAdjustment": 1.0517378980558077e-07
+    },
+    {
+      "id": "CC00953",
+      "outputClearance": 0.00011127353679041274,
+      "storedEdgeClearance": 8.056227667376067e-08,
+      "maxEndpointAdjustment": 1.0517378980558077e-07
+    },
+    {
+      "id": "CC00954",
+      "outputClearance": 0.00011127584342107699,
+      "storedEdgeClearance": 8.056227717643703e-08,
+      "maxEndpointAdjustment": 1.0517378980558077e-07
+    },
+    {
+      "id": "CC00955",
+      "outputClearance": 0.00011127353712814259,
+      "storedEdgeClearance": 8.056227717643703e-08,
+      "maxEndpointAdjustment": 1.0517378980558077e-07
+    },
+    {
+      "id": "CC00957",
+      "outputClearance": 0.00011127353679041274,
+      "storedEdgeClearance": 8.80678144497466e-08,
+      "maxEndpointAdjustment": 1.0517379036042125e-07
+    },
+    {
+      "id": "CC00958",
+      "outputClearance": 0.00011127584342107699,
+      "storedEdgeClearance": 8.056227728899916e-08,
+      "maxEndpointAdjustment": 1.0517379036042125e-07
+    },
+    {
+      "id": "CC00959",
+      "outputClearance": 0.00011127353712814259,
+      "storedEdgeClearance": 8.056227728899916e-08,
+      "maxEndpointAdjustment": 1.0517379036042125e-07
+    },
+    {
+      "id": "CC00961",
+      "outputClearance": 0.00011127353679041274,
+      "storedEdgeClearance": 8.80678144497466e-08,
+      "maxEndpointAdjustment": 1.0517379036042125e-07
+    },
+    {
+      "id": "CC00962",
+      "outputClearance": 0.00011127584342107699,
+      "storedEdgeClearance": 8.056227728899916e-08,
+      "maxEndpointAdjustment": 1.0517379036042125e-07
+    },
+    {
+      "id": "CC00963",
+      "outputClearance": 0.00011127353712814259,
+      "storedEdgeClearance": 8.056227728899916e-08,
+      "maxEndpointAdjustment": 1.0517379036042125e-07
+    },
+    {
+      "id": "CC00968",
+      "outputClearance": 0.00023533347606874422,
+      "storedEdgeClearance": 9.240025941207737e-08,
+      "maxEndpointAdjustment": 1.5033220124590813e-07
+    },
+    {
+      "id": "CC00969",
+      "outputClearance": 0.0001296714152771994,
+      "storedEdgeClearance": 9.240025941207737e-08,
+      "maxEndpointAdjustment": 1.2160632296236915e-07
+    },
+    {
+      "id": "CC00970",
+      "outputClearance": 0.00022873709511372908,
+      "storedEdgeClearance": 1.1123904880667026e-07,
+      "maxEndpointAdjustment": 1.5033220813918518e-07
+    },
+    {
+      "id": "CC00972",
+      "outputClearance": 0.00023533347606874422,
+      "storedEdgeClearance": 9.222029451194658e-08,
+      "maxEndpointAdjustment": 1.503322008150783e-07
+    },
+    {
+      "id": "CC00973",
+      "outputClearance": 0.0001296714152771994,
+      "storedEdgeClearance": 9.240025984299593e-08,
+      "maxEndpointAdjustment": 1.2160632296236915e-07
+    },
+    {
+      "id": "CC00974",
+      "outputClearance": 0.00022873709511372908,
+      "storedEdgeClearance": 1.1123905483765659e-07,
+      "maxEndpointAdjustment": 1.5033220813918518e-07
+    },
+    {
+      "id": "CC00976",
+      "outputClearance": 0.0002353335259639433,
+      "storedEdgeClearance": 9.240025941207737e-08,
+      "maxEndpointAdjustment": 1.5033220124590813e-07
+    },
+    {
+      "id": "CC00977",
+      "outputClearance": 0.0001296714152771994,
+      "storedEdgeClearance": 9.240025941207737e-08,
+      "maxEndpointAdjustment": 1.2160632296236915e-07
+    },
+    {
+      "id": "CC00978",
+      "outputClearance": 0.0002287371436118235,
+      "storedEdgeClearance": 1.1123904880667026e-07,
+      "maxEndpointAdjustment": 1.5033220813918518e-07
+    },
+    {
+      "id": "CC00980",
+      "outputClearance": 0.00023533347606874422,
+      "storedEdgeClearance": 9.222029451194658e-08,
+      "maxEndpointAdjustment": 1.503322008150783e-07
+    },
+    {
+      "id": "CC00981",
+      "outputClearance": 0.0001296714152771994,
+      "storedEdgeClearance": 9.240025984299593e-08,
+      "maxEndpointAdjustment": 1.2160632296236915e-07
+    },
+    {
+      "id": "CC00982",
+      "outputClearance": 0.00022873709511372908,
+      "storedEdgeClearance": 1.1123905483765659e-07,
+      "maxEndpointAdjustment": 1.5033220813918518e-07
+    },
+    {
+      "id": "CC00989",
+      "outputClearance": 9.75552971738125e-13,
+      "storedEdgeClearance": 4.3520742565306136e-14,
+      "maxEndpointAdjustment": 4.412378852824695e-14
+    },
+    {
+      "id": "CC00993",
+      "outputClearance": 9.75552971738125e-13,
+      "storedEdgeClearance": 4.3520742565306136e-14,
+      "maxEndpointAdjustment": 4.412378852824695e-14
+    },
+    {
+      "id": "CC00997",
+      "outputClearance": 9.504619313815965e-13,
+      "storedEdgeClearance": 4.3520742565306136e-14,
+      "maxEndpointAdjustment": 4.440892098500626e-14
+    },
+    {
+      "id": "CC01001",
+      "outputClearance": 9.504619313815965e-13,
+      "storedEdgeClearance": 4.3520742565306136e-14,
+      "maxEndpointAdjustment": 4.440892098500626e-14
+    },
+    {
+      "id": "CC01006",
+      "outputClearance": 0.00012535913438516122,
+      "storedEdgeClearance": 7.627099401762926e-08,
+      "maxEndpointAdjustment": 1.1076870059800362e-07
+    },
+    {
+      "id": "CC01007",
+      "outputClearance": 0.00012536029511966973,
+      "storedEdgeClearance": 7.515246357598723e-08,
+      "maxEndpointAdjustment": 9.969183262678554e-08
+    },
+    {
+      "id": "CC01008",
+      "outputClearance": 0.00012535913629041495,
+      "storedEdgeClearance": 8.307652343830796e-08,
+      "maxEndpointAdjustment": 1.1076870059800362e-07
+    },
+    {
+      "id": "CC01010",
+      "outputClearance": 0.00012535913438516122,
+      "storedEdgeClearance": 7.51524643523951e-08,
+      "maxEndpointAdjustment": 1.1076870059800362e-07
+    },
+    {
+      "id": "CC01011",
+      "outputClearance": 0.00012536029511966973,
+      "storedEdgeClearance": 7.515246357598723e-08,
+      "maxEndpointAdjustment": 9.969183262678554e-08
+    },
+    {
+      "id": "CC01012",
+      "outputClearance": 0.00012535913629041495,
+      "storedEdgeClearance": 8.307652343830796e-08,
+      "maxEndpointAdjustment": 1.1076870059800362e-07
+    },
+    {
+      "id": "CC01014",
+      "outputClearance": 0.00012535913438516122,
+      "storedEdgeClearance": 7.515246375462015e-08,
+      "maxEndpointAdjustment": 1.1076870059800362e-07
+    },
+    {
+      "id": "CC01015",
+      "outputClearance": 0.00012536029511966973,
+      "storedEdgeClearance": 7.515246375462015e-08,
+      "maxEndpointAdjustment": 9.969183262678554e-08
+    },
+    {
+      "id": "CC01016",
+      "outputClearance": 0.00012535913629041495,
+      "storedEdgeClearance": 8.307652343830796e-08,
+      "maxEndpointAdjustment": 1.1076870059800362e-07
+    },
+    {
+      "id": "CC01018",
+      "outputClearance": 0.00012535913438516122,
+      "storedEdgeClearance": 7.515246375462015e-08,
+      "maxEndpointAdjustment": 1.1076870059800362e-07
+    },
+    {
+      "id": "CC01019",
+      "outputClearance": 0.00012536029511966973,
+      "storedEdgeClearance": 7.515246375462015e-08,
+      "maxEndpointAdjustment": 9.969183262678554e-08
+    },
+    {
+      "id": "CC01020",
+      "outputClearance": 0.00012535913629041495,
+      "storedEdgeClearance": 8.307652343830796e-08,
+      "maxEndpointAdjustment": 1.1076870059800362e-07
+    },
+    {
+      "id": "CC01025",
+      "outputClearance": 9.663710326746067e-05,
+      "storedEdgeClearance": 4.288471612175499e-08,
+      "maxEndpointAdjustment": 6.253421715389281e-08
+    },
+    {
+      "id": "CC01026",
+      "outputClearance": 6.751866412824103e-05,
+      "storedEdgeClearance": 4.288471741424379e-08,
+      "maxEndpointAdjustment": 5.684928798084071e-08
+    },
+    {
+      "id": "CC01027",
+      "outputClearance": 9.663913817303804e-05,
+      "storedEdgeClearance": 4.6614104598853475e-08,
+      "maxEndpointAdjustment": 6.253421715389281e-08
+    },
+    {
+      "id": "CC01029",
+      "outputClearance": 9.663710326746067e-05,
+      "storedEdgeClearance": 4.288471659131273e-08,
+      "maxEndpointAdjustment": 6.253421715389281e-08
+    },
+    {
+      "id": "CC01030",
+      "outputClearance": 6.751866412824103e-05,
+      "storedEdgeClearance": 4.2884717454658575e-08,
+      "maxEndpointAdjustment": 5.684928798084071e-08
+    },
+    {
+      "id": "CC01031",
+      "outputClearance": 9.663913817303804e-05,
+      "storedEdgeClearance": 4.661410460971433e-08,
+      "maxEndpointAdjustment": 6.253421715389281e-08
+    },
+    {
+      "id": "CC01033",
+      "outputClearance": 9.663710326746067e-05,
+      "storedEdgeClearance": 4.288471612175499e-08,
+      "maxEndpointAdjustment": 6.253421715389281e-08
+    },
+    {
+      "id": "CC01034",
+      "outputClearance": 6.751866412824103e-05,
+      "storedEdgeClearance": 4.288471741424379e-08,
+      "maxEndpointAdjustment": 5.684928798084071e-08
+    },
+    {
+      "id": "CC01035",
+      "outputClearance": 9.663913817303804e-05,
+      "storedEdgeClearance": 4.6614104598853475e-08,
+      "maxEndpointAdjustment": 6.253421715389281e-08
+    },
+    {
+      "id": "CC01037",
+      "outputClearance": 9.663710326746067e-05,
+      "storedEdgeClearance": 5.4669068236218596e-08,
+      "maxEndpointAdjustment": 6.253421715389281e-08
+    },
+    {
+      "id": "CC01038",
+      "outputClearance": 6.751866412824103e-05,
+      "storedEdgeClearance": 4.2884717454658575e-08,
+      "maxEndpointAdjustment": 5.684928798084071e-08
+    },
+    {
+      "id": "CC01039",
+      "outputClearance": 9.663913817303804e-05,
+      "storedEdgeClearance": 4.661410460971433e-08,
+      "maxEndpointAdjustment": 6.253421715389281e-08
+    },
+    {
+      "id": "CC01046",
+      "outputClearance": 1.2456300357381871e-15,
+      "storedEdgeClearance": 1.2456300357381871e-15,
+      "maxEndpointAdjustment": 0
+    },
+    {
+      "id": "CC01050",
+      "outputClearance": 1.2456300357381871e-15,
+      "storedEdgeClearance": 1.2456300357381871e-15,
+      "maxEndpointAdjustment": 0
+    },
+    {
+      "id": "CC01054",
+      "outputClearance": 9.329476144999288e-16,
+      "storedEdgeClearance": 9.329476144999288e-16,
+      "maxEndpointAdjustment": 0
+    },
+    {
+      "id": "CC01058",
+      "outputClearance": 8.790575689240909e-16,
+      "storedEdgeClearance": 8.790575689240909e-16,
+      "maxEndpointAdjustment": 0
+    },
+    {
+      "id": "CC01084",
+      "outputClearance": 0,
+      "storedEdgeClearance": 0,
+      "maxEndpointAdjustment": 0
+    },
+    {
+      "id": "CC01088",
+      "outputClearance": 0,
+      "storedEdgeClearance": 0,
+      "maxEndpointAdjustment": 0
+    },
+    {
+      "id": "CC01092",
+      "outputClearance": 0,
+      "storedEdgeClearance": 0,
+      "maxEndpointAdjustment": 0
+    },
+    {
+      "id": "CC01096",
+      "outputClearance": 0,
+      "storedEdgeClearance": 0,
+      "maxEndpointAdjustment": 0
+    },
+    {
+      "id": "CC01102",
+      "outputClearance": 2.220446049250313e-16,
+      "storedEdgeClearance": 2.220446049250313e-16,
+      "maxEndpointAdjustment": 4.440892098500626e-16
+    },
+    {
+      "id": "CC01103",
+      "outputClearance": 9.155133597044475e-16,
+      "storedEdgeClearance": 9.930136612989092e-16,
+      "maxEndpointAdjustment": 4.440892098500626e-16
+    },
+    {
+      "id": "CC01106",
+      "outputClearance": 2.220446049250313e-16,
+      "storedEdgeClearance": 1.7554167342883506e-16,
+      "maxEndpointAdjustment": 8.881784197001252e-16
+    },
+    {
+      "id": "CC01107",
+      "outputClearance": 4.440892098500626e-16,
+      "storedEdgeClearance": 4.440892098500626e-16,
+      "maxEndpointAdjustment": 8.881784197001252e-16
+    },
+    {
+      "id": "CC01110",
+      "outputClearance": 2.220446049250313e-16,
+      "storedEdgeClearance": 2.220446049250313e-16,
+      "maxEndpointAdjustment": 0
+    },
+    {
+      "id": "CC01111",
+      "outputClearance": 6.661338147750939e-16,
+      "storedEdgeClearance": 6.661338147750939e-16,
+      "maxEndpointAdjustment": 0
+    },
+    {
+      "id": "CC01114",
+      "outputClearance": 1.7554167342883506e-16,
+      "storedEdgeClearance": 1.7554167342883506e-16,
+      "maxEndpointAdjustment": 0
+    },
+    {
+      "id": "CC01115",
+      "outputClearance": 4.440892098500626e-16,
+      "storedEdgeClearance": 4.440892098500626e-16,
+      "maxEndpointAdjustment": 0
+    }
+  ]
+}

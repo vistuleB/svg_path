@@ -1,0 +1,2187 @@
+[
+  {
+    "id": "CC00013",
+    "kind": "pline_seg_intr",
+    "status": "documented-near-tangent-candidates"
+  },
+  {
+    "id": "CC00016",
+    "kind": "pline_seg_intr",
+    "status": "documented-near-tangent-candidates"
+  },
+  {
+    "id": "CC00020",
+    "kind": "pline_seg_intr",
+    "status": "different-api-contract"
+  },
+  {
+    "id": "CC00057",
+    "kind": "line_line_intr",
+    "status": "different-api-contract"
+  },
+  {
+    "id": "CC00070",
+    "kind": "circle_circle_intr",
+    "status": "documented-near-tangent-candidates"
+  },
+  {
+    "id": "CC00071",
+    "kind": "circle_circle_intr",
+    "status": "documented-near-tangent-candidates"
+  },
+  {
+    "id": "CC00073",
+    "kind": "line_circle_intr",
+    "status": "different-api-contract"
+  },
+  {
+    "id": "CC00074",
+    "kind": "line_circle_intr",
+    "status": "different-api-contract"
+  },
+  {
+    "id": "CC00075",
+    "kind": "line_circle_intr",
+    "status": "different-api-contract"
+  },
+  {
+    "id": "CC00082",
+    "kind": "line_circle_intr",
+    "status": "different-api-contract"
+  },
+  {
+    "id": "CC00666",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC00670",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC00674",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC00678",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC00685",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC00689",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC00693",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC00697",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC00704",
+    "kind": "boolean",
+    "status": "reviewed-boolean-nonidentical-numerical-reconstruction"
+  },
+  {
+    "id": "CC00708",
+    "kind": "boolean",
+    "status": "reviewed-boolean-nonidentical-numerical-reconstruction"
+  },
+  {
+    "id": "CC00712",
+    "kind": "boolean",
+    "status": "reviewed-boolean-nonidentical-numerical-reconstruction"
+  },
+  {
+    "id": "CC00716",
+    "kind": "boolean",
+    "status": "reviewed-boolean-nonidentical-numerical-reconstruction"
+  },
+  {
+    "id": "CC00742",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC00746",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC00750",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC00754",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC00761",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC00765",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC00769",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC00773",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC00780",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC00784",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC00788",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC00792",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC00797",
+    "kind": "boolean",
+    "status": "documented-arc-reconstruction-displacement"
+  },
+  {
+    "id": "CC00798",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00799",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00801",
+    "kind": "boolean",
+    "status": "documented-arc-reconstruction-displacement"
+  },
+  {
+    "id": "CC00802",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00803",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00804",
+    "kind": "boolean",
+    "status": "baseline-error-no-longer-reproduced"
+  },
+  {
+    "id": "CC00805",
+    "kind": "boolean",
+    "status": "baseline-error-no-longer-reproduced"
+  },
+  {
+    "id": "CC00806",
+    "kind": "boolean",
+    "status": "baseline-error-no-longer-reproduced"
+  },
+  {
+    "id": "CC00807",
+    "kind": "boolean",
+    "status": "baseline-error-no-longer-reproduced"
+  },
+  {
+    "id": "CC00809",
+    "kind": "boolean",
+    "status": "documented-arc-reconstruction-displacement"
+  },
+  {
+    "id": "CC00810",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00811",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00816",
+    "kind": "boolean",
+    "status": "documented-arc-reconstruction-displacement"
+  },
+  {
+    "id": "CC00817",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00818",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00820",
+    "kind": "boolean",
+    "status": "documented-arc-reconstruction-displacement"
+  },
+  {
+    "id": "CC00821",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00822",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00824",
+    "kind": "boolean",
+    "status": "documented-arc-reconstruction-displacement"
+  },
+  {
+    "id": "CC00825",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00826",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00828",
+    "kind": "boolean",
+    "status": "documented-arc-reconstruction-displacement"
+  },
+  {
+    "id": "CC00829",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00830",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00835",
+    "kind": "boolean",
+    "status": "documented-arc-reconstruction-displacement"
+  },
+  {
+    "id": "CC00836",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00837",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00839",
+    "kind": "boolean",
+    "status": "documented-arc-reconstruction-displacement"
+  },
+  {
+    "id": "CC00840",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00841",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00843",
+    "kind": "boolean",
+    "status": "documented-arc-reconstruction-displacement"
+  },
+  {
+    "id": "CC00844",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00845",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00847",
+    "kind": "boolean",
+    "status": "documented-arc-reconstruction-displacement"
+  },
+  {
+    "id": "CC00848",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00849",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00854",
+    "kind": "boolean",
+    "status": "documented-arc-reconstruction-displacement"
+  },
+  {
+    "id": "CC00855",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00856",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00858",
+    "kind": "boolean",
+    "status": "documented-arc-reconstruction-displacement"
+  },
+  {
+    "id": "CC00859",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00860",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00862",
+    "kind": "boolean",
+    "status": "documented-arc-reconstruction-displacement"
+  },
+  {
+    "id": "CC00863",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00864",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00866",
+    "kind": "boolean",
+    "status": "documented-arc-reconstruction-displacement"
+  },
+  {
+    "id": "CC00867",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00868",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00875",
+    "kind": "boolean",
+    "status": "reviewed-boolean-nonidentical-numerical-reconstruction"
+  },
+  {
+    "id": "CC00879",
+    "kind": "boolean",
+    "status": "reviewed-boolean-nonidentical-numerical-reconstruction"
+  },
+  {
+    "id": "CC00883",
+    "kind": "boolean",
+    "status": "reviewed-boolean-nonidentical-numerical-reconstruction"
+  },
+  {
+    "id": "CC00887",
+    "kind": "boolean",
+    "status": "reviewed-boolean-nonidentical-numerical-reconstruction"
+  },
+  {
+    "id": "CC00894",
+    "kind": "boolean",
+    "status": "reviewed-boolean-nonidentical-numerical-reconstruction"
+  },
+  {
+    "id": "CC00898",
+    "kind": "boolean",
+    "status": "reviewed-boolean-nonidentical-numerical-reconstruction"
+  },
+  {
+    "id": "CC00902",
+    "kind": "boolean",
+    "status": "reviewed-boolean-nonidentical-numerical-reconstruction"
+  },
+  {
+    "id": "CC00906",
+    "kind": "boolean",
+    "status": "reviewed-boolean-nonidentical-numerical-reconstruction"
+  },
+  {
+    "id": "CC00913",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC00917",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC00921",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC00925",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC00930",
+    "kind": "boolean",
+    "status": "documented-arc-reconstruction-displacement"
+  },
+  {
+    "id": "CC00931",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00932",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00934",
+    "kind": "boolean",
+    "status": "documented-arc-reconstruction-displacement"
+  },
+  {
+    "id": "CC00935",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00936",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00938",
+    "kind": "boolean",
+    "status": "documented-arc-reconstruction-displacement"
+  },
+  {
+    "id": "CC00939",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00940",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00942",
+    "kind": "boolean",
+    "status": "documented-arc-reconstruction-displacement"
+  },
+  {
+    "id": "CC00943",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00944",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00949",
+    "kind": "boolean",
+    "status": "documented-arc-reconstruction-displacement"
+  },
+  {
+    "id": "CC00950",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00951",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00953",
+    "kind": "boolean",
+    "status": "documented-arc-reconstruction-displacement"
+  },
+  {
+    "id": "CC00954",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00955",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00957",
+    "kind": "boolean",
+    "status": "documented-arc-reconstruction-displacement"
+  },
+  {
+    "id": "CC00958",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00959",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00961",
+    "kind": "boolean",
+    "status": "documented-arc-reconstruction-displacement"
+  },
+  {
+    "id": "CC00962",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00963",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00968",
+    "kind": "boolean",
+    "status": "documented-arc-reconstruction-displacement"
+  },
+  {
+    "id": "CC00969",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00970",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00972",
+    "kind": "boolean",
+    "status": "documented-arc-reconstruction-displacement"
+  },
+  {
+    "id": "CC00973",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00974",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00976",
+    "kind": "boolean",
+    "status": "documented-arc-reconstruction-displacement"
+  },
+  {
+    "id": "CC00977",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00978",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00980",
+    "kind": "boolean",
+    "status": "documented-arc-reconstruction-displacement"
+  },
+  {
+    "id": "CC00981",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00982",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC00989",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC00993",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC00997",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC01001",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC01006",
+    "kind": "boolean",
+    "status": "documented-arc-reconstruction-displacement"
+  },
+  {
+    "id": "CC01007",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC01008",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC01010",
+    "kind": "boolean",
+    "status": "documented-arc-reconstruction-displacement"
+  },
+  {
+    "id": "CC01011",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC01012",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC01014",
+    "kind": "boolean",
+    "status": "documented-arc-reconstruction-displacement"
+  },
+  {
+    "id": "CC01015",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC01016",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC01018",
+    "kind": "boolean",
+    "status": "documented-arc-reconstruction-displacement"
+  },
+  {
+    "id": "CC01019",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC01020",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC01025",
+    "kind": "boolean",
+    "status": "documented-arc-reconstruction-displacement"
+  },
+  {
+    "id": "CC01026",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC01027",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC01029",
+    "kind": "boolean",
+    "status": "documented-arc-reconstruction-displacement"
+  },
+  {
+    "id": "CC01030",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC01031",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC01033",
+    "kind": "boolean",
+    "status": "documented-arc-reconstruction-displacement"
+  },
+  {
+    "id": "CC01034",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC01035",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC01037",
+    "kind": "boolean",
+    "status": "documented-arc-reconstruction-displacement"
+  },
+  {
+    "id": "CC01038",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC01039",
+    "kind": "boolean",
+    "status": "region-displacement-with-conforming-reconstruction"
+  },
+  {
+    "id": "CC01046",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC01050",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC01054",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC01058",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC01059",
+    "kind": "boolean",
+    "status": "documented-minimum-length-guard-smaller-threshold-verified"
+  },
+  {
+    "id": "CC01063",
+    "kind": "boolean",
+    "status": "documented-minimum-length-guard-smaller-threshold-verified"
+  },
+  {
+    "id": "CC01064",
+    "kind": "boolean",
+    "status": "documented-minimum-length-guard-smaller-threshold-verified"
+  },
+  {
+    "id": "CC01065",
+    "kind": "boolean",
+    "status": "documented-minimum-length-guard-smaller-threshold-verified"
+  },
+  {
+    "id": "CC01066",
+    "kind": "boolean",
+    "status": "documented-minimum-length-guard-smaller-threshold-verified"
+  },
+  {
+    "id": "CC01067",
+    "kind": "boolean",
+    "status": "documented-minimum-length-guard-smaller-threshold-verified"
+  },
+  {
+    "id": "CC01068",
+    "kind": "boolean",
+    "status": "documented-minimum-length-guard-smaller-threshold-verified"
+  },
+  {
+    "id": "CC01069",
+    "kind": "boolean",
+    "status": "documented-minimum-length-guard-smaller-threshold-verified"
+  },
+  {
+    "id": "CC01070",
+    "kind": "boolean",
+    "status": "documented-minimum-length-guard-smaller-threshold-verified"
+  },
+  {
+    "id": "CC01071",
+    "kind": "boolean",
+    "status": "documented-minimum-length-guard-smaller-threshold-verified"
+  },
+  {
+    "id": "CC01072",
+    "kind": "boolean",
+    "status": "documented-minimum-length-guard-smaller-threshold-verified"
+  },
+  {
+    "id": "CC01073",
+    "kind": "boolean",
+    "status": "documented-minimum-length-guard-smaller-threshold-verified"
+  },
+  {
+    "id": "CC01074",
+    "kind": "boolean",
+    "status": "documented-minimum-length-guard-smaller-threshold-verified"
+  },
+  {
+    "id": "CC01075",
+    "kind": "boolean",
+    "status": "documented-minimum-length-guard-smaller-threshold-verified"
+  },
+  {
+    "id": "CC01076",
+    "kind": "boolean",
+    "status": "documented-minimum-length-guard-smaller-threshold-verified"
+  },
+  {
+    "id": "CC01077",
+    "kind": "boolean",
+    "status": "documented-minimum-length-guard-smaller-threshold-verified"
+  },
+  {
+    "id": "CC01084",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC01088",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC01092",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC01096",
+    "kind": "boolean",
+    "status": "reviewed-boolean-decomposition-orientation"
+  },
+  {
+    "id": "CC01102",
+    "kind": "boolean",
+    "status": "reviewed-boolean-tolerance-dependent-thin-geometry"
+  },
+  {
+    "id": "CC01103",
+    "kind": "boolean",
+    "status": "reviewed-boolean-tolerance-dependent-thin-geometry"
+  },
+  {
+    "id": "CC01106",
+    "kind": "boolean",
+    "status": "reviewed-boolean-tolerance-dependent-thin-geometry"
+  },
+  {
+    "id": "CC01107",
+    "kind": "boolean",
+    "status": "reviewed-boolean-tolerance-dependent-thin-geometry"
+  },
+  {
+    "id": "CC01110",
+    "kind": "boolean",
+    "status": "reviewed-boolean-tolerance-dependent-thin-geometry"
+  },
+  {
+    "id": "CC01111",
+    "kind": "boolean",
+    "status": "reviewed-boolean-tolerance-dependent-thin-geometry"
+  },
+  {
+    "id": "CC01114",
+    "kind": "boolean",
+    "status": "reviewed-boolean-tolerance-dependent-thin-geometry"
+  },
+  {
+    "id": "CC01115",
+    "kind": "boolean",
+    "status": "reviewed-boolean-tolerance-dependent-thin-geometry"
+  },
+  {
+    "id": "CC01131",
+    "kind": "offset",
+    "status": "understood-offset-detail-difference"
+  },
+  {
+    "id": "CC01142",
+    "kind": "offset",
+    "status": "original-topology-traversal-multiplicity"
+  },
+  {
+    "id": "CC01143",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01146",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01150",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01151",
+    "kind": "offset",
+    "status": "understood-offset-detail-difference"
+  },
+  {
+    "id": "CC01160",
+    "kind": "offset",
+    "status": "understood-offset-detail-difference"
+  },
+  {
+    "id": "CC01167",
+    "kind": "offset",
+    "status": "understood-offset-detail-difference"
+  },
+  {
+    "id": "CC01179",
+    "kind": "offset",
+    "status": "understood-offset-detail-difference"
+  },
+  {
+    "id": "CC01183",
+    "kind": "offset",
+    "status": "understood-detail-and-touching-contour-policy"
+  },
+  {
+    "id": "CC01188",
+    "kind": "pline_seg_intr",
+    "status": "documented-near-tangent-candidates"
+  },
+  {
+    "id": "CC01189",
+    "kind": "offset",
+    "status": "tight-tolerance-construction-repaired-collapse-policy-open"
+  },
+  {
+    "id": "CC01192",
+    "kind": "offset",
+    "status": "fixed-native-reversal-join-defect"
+  },
+  {
+    "id": "CC01196",
+    "kind": "offset",
+    "status": "fixed-native-reversal-join-defect"
+  },
+  {
+    "id": "CC01248",
+    "kind": "offset",
+    "status": "understood-offset-detail-difference"
+  },
+  {
+    "id": "CC01252",
+    "kind": "offset",
+    "status": "understood-offset-detail-difference"
+  },
+  {
+    "id": "CC01253",
+    "kind": "offset",
+    "status": "understood-offset-detail-difference"
+  },
+  {
+    "id": "CC01254",
+    "kind": "offset",
+    "status": "understood-offset-detail-difference"
+  },
+  {
+    "id": "CC01267",
+    "kind": "offset",
+    "status": "fixed-native-construction-defect"
+  },
+  {
+    "id": "CC01271",
+    "kind": "offset",
+    "status": "fixed-native-construction-defect"
+  },
+  {
+    "id": "CC01287",
+    "kind": "offset",
+    "status": "understood-open-band-trimming-policy"
+  },
+  {
+    "id": "CC01291",
+    "kind": "offset",
+    "status": "understood-open-band-trimming-policy"
+  },
+  {
+    "id": "CC01292",
+    "kind": "offset",
+    "status": "understood-offset-detail-difference"
+  },
+  {
+    "id": "CC01296",
+    "kind": "offset",
+    "status": "native-endpoint-loss-repaired-comparison-partly-open"
+  },
+  {
+    "id": "CC01297",
+    "kind": "offset",
+    "status": "understood-offset-detail-difference"
+  },
+  {
+    "id": "CC01301",
+    "kind": "offset",
+    "status": "arrangement-repaired-extra-fragment-deferred"
+  },
+  {
+    "id": "CC01305",
+    "kind": "offset",
+    "status": "understood-beyond-center-normal-extrusion-policy"
+  },
+  {
+    "id": "CC01306",
+    "kind": "offset",
+    "status": "understood-beyond-center-normal-extrusion-policy"
+  },
+  {
+    "id": "CC01307",
+    "kind": "offset",
+    "status": "understood-beyond-center-normal-extrusion-policy"
+  },
+  {
+    "id": "CC01308",
+    "kind": "offset",
+    "status": "understood-beyond-center-normal-extrusion-policy"
+  },
+  {
+    "id": "CC01309",
+    "kind": "offset",
+    "status": "repaired-collapsed-stalled-run-joining"
+  },
+  {
+    "id": "CC01310",
+    "kind": "offset",
+    "status": "repaired-collapsed-stalled-run-joining"
+  },
+  {
+    "id": "CC01311",
+    "kind": "offset",
+    "status": "repaired-collapsed-stalled-run-joining"
+  },
+  {
+    "id": "CC01312",
+    "kind": "offset",
+    "status": "repaired-collapsed-stalled-run-joining"
+  },
+  {
+    "id": "CC01383",
+    "kind": "offset",
+    "status": "understood-post-collapse-square-winding-policy"
+  },
+  {
+    "id": "CC01384",
+    "kind": "offset",
+    "status": "understood-post-collapse-square-winding-policy"
+  },
+  {
+    "id": "CC01385",
+    "kind": "offset",
+    "status": "understood-post-collapse-square-winding-policy"
+  },
+  {
+    "id": "CC01386",
+    "kind": "offset",
+    "status": "understood-post-collapse-square-winding-policy"
+  },
+  {
+    "id": "CC01398",
+    "kind": "offset",
+    "status": "original-failure-recovered-current-property-match"
+  },
+  {
+    "id": "CC01402",
+    "kind": "offset",
+    "status": "original-failure-recovered-current-property-match"
+  },
+  {
+    "id": "CC01405",
+    "kind": "offset",
+    "status": "different-source-distance-trimming-contract"
+  },
+  {
+    "id": "CC01409",
+    "kind": "offset",
+    "status": "different-source-distance-trimming-contract"
+  },
+  {
+    "id": "CC01410",
+    "kind": "offset",
+    "status": "different-source-distance-trimming-contract"
+  },
+  {
+    "id": "CC01411",
+    "kind": "offset",
+    "status": "different-source-distance-trimming-contract"
+  },
+  {
+    "id": "CC01412",
+    "kind": "offset",
+    "status": "original-failure-recovered-current-property-match"
+  },
+  {
+    "id": "CC01416",
+    "kind": "offset",
+    "status": "original-failure-recovered-current-property-match"
+  },
+  {
+    "id": "CC01426",
+    "kind": "offset",
+    "status": "original-failure-recovered-current-property-match"
+  },
+  {
+    "id": "CC01430",
+    "kind": "offset",
+    "status": "original-failure-recovered-current-property-match"
+  },
+  {
+    "id": "CC01438",
+    "kind": "offset",
+    "status": "original-failure-recovered-current-property-match"
+  },
+  {
+    "id": "CC01439",
+    "kind": "offset",
+    "status": "original-failure-recovered-current-property-match"
+  },
+  {
+    "id": "CC01470",
+    "kind": "offset",
+    "status": "different-source-distance-trimming-contract"
+  },
+  {
+    "id": "CC01474",
+    "kind": "offset",
+    "status": "different-source-distance-trimming-contract"
+  },
+  {
+    "id": "CC01475",
+    "kind": "offset",
+    "status": "repaired-collapsed-stalled-run-joining"
+  },
+  {
+    "id": "CC01479",
+    "kind": "offset",
+    "status": "repaired-collapsed-stalled-run-joining"
+  },
+  {
+    "id": "CC01485",
+    "kind": "offset",
+    "status": "original-failure-recovered-current-property-match"
+  },
+  {
+    "id": "CC01489",
+    "kind": "offset",
+    "status": "original-failure-recovered-current-property-match"
+  },
+  {
+    "id": "CC01492",
+    "kind": "offset",
+    "status": "original-failure-recovered-current-property-match"
+  },
+  {
+    "id": "CC01496",
+    "kind": "offset",
+    "status": "original-failure-recovered-current-property-match"
+  },
+  {
+    "id": "CC01499",
+    "kind": "offset",
+    "status": "understood-winding-parity-removal-different-policy"
+  },
+  {
+    "id": "CC01503",
+    "kind": "offset",
+    "status": "understood-winding-parity-removal-different-policy"
+  },
+  {
+    "id": "CC01504",
+    "kind": "offset",
+    "status": "trimming-policy-classified-numerical-residual-open"
+  },
+  {
+    "id": "CC01508",
+    "kind": "offset",
+    "status": "trimming-policy-classified-numerical-residual-open"
+  },
+  {
+    "id": "CC01520",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01521",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01522",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01523",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01524",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01525",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01526",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01527",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01539",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01540",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01541",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01542",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01543",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01544",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01545",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01546",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01547",
+    "kind": "offset",
+    "status": "original-topology-traversal-multiplicity"
+  },
+  {
+    "id": "CC01551",
+    "kind": "offset",
+    "status": "original-topology-traversal-multiplicity"
+  },
+  {
+    "id": "CC01552",
+    "kind": "offset",
+    "status": "original-topology-traversal-multiplicity"
+  },
+  {
+    "id": "CC01553",
+    "kind": "offset",
+    "status": "original-topology-traversal-multiplicity"
+  },
+  {
+    "id": "CC01554",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01555",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01556",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01557",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01558",
+    "kind": "offset",
+    "status": "original-topology-property-match"
+  },
+  {
+    "id": "CC01562",
+    "kind": "offset",
+    "status": "original-topology-property-match"
+  },
+  {
+    "id": "CC01563",
+    "kind": "offset",
+    "status": "original-topology-property-match"
+  },
+  {
+    "id": "CC01564",
+    "kind": "offset",
+    "status": "original-topology-property-match"
+  },
+  {
+    "id": "CC01565",
+    "kind": "offset",
+    "status": "original-topology-property-match"
+  },
+  {
+    "id": "CC01566",
+    "kind": "offset",
+    "status": "original-topology-property-match"
+  },
+  {
+    "id": "CC01567",
+    "kind": "offset",
+    "status": "original-topology-property-match"
+  },
+  {
+    "id": "CC01568",
+    "kind": "offset",
+    "status": "original-topology-property-match"
+  },
+  {
+    "id": "CC01574",
+    "kind": "offset",
+    "status": "original-topology-property-match"
+  },
+  {
+    "id": "CC01575",
+    "kind": "offset",
+    "status": "original-topology-property-match"
+  },
+  {
+    "id": "CC01578",
+    "kind": "offset",
+    "status": "original-topology-property-match"
+  },
+  {
+    "id": "CC01579",
+    "kind": "offset",
+    "status": "original-topology-property-match"
+  },
+  {
+    "id": "CC01580",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01581",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01582",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01583",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01584",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01585",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01586",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01587",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01593",
+    "kind": "offset",
+    "status": "original-topology-property-match"
+  },
+  {
+    "id": "CC01594",
+    "kind": "offset",
+    "status": "original-topology-property-match"
+  },
+  {
+    "id": "CC01597",
+    "kind": "offset",
+    "status": "original-topology-property-match"
+  },
+  {
+    "id": "CC01598",
+    "kind": "offset",
+    "status": "original-topology-property-match"
+  },
+  {
+    "id": "CC01599",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01600",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01601",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01602",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01603",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01604",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01605",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01606",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01607",
+    "kind": "offset",
+    "status": "original-topology-traversal-multiplicity"
+  },
+  {
+    "id": "CC01611",
+    "kind": "offset",
+    "status": "original-topology-traversal-multiplicity"
+  },
+  {
+    "id": "CC01612",
+    "kind": "offset",
+    "status": "original-topology-traversal-multiplicity"
+  },
+  {
+    "id": "CC01613",
+    "kind": "offset",
+    "status": "original-topology-traversal-multiplicity"
+  },
+  {
+    "id": "CC01614",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01615",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01616",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01617",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01618",
+    "kind": "offset",
+    "status": "original-topology-traversal-multiplicity"
+  },
+  {
+    "id": "CC01622",
+    "kind": "offset",
+    "status": "original-topology-traversal-multiplicity"
+  },
+  {
+    "id": "CC01623",
+    "kind": "offset",
+    "status": "original-topology-traversal-multiplicity"
+  },
+  {
+    "id": "CC01624",
+    "kind": "offset",
+    "status": "original-topology-traversal-multiplicity"
+  },
+  {
+    "id": "CC01625",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01626",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01627",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01628",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01629",
+    "kind": "offset",
+    "status": "original-topology-traversal-multiplicity"
+  },
+  {
+    "id": "CC01633",
+    "kind": "offset",
+    "status": "original-topology-traversal-multiplicity"
+  },
+  {
+    "id": "CC01634",
+    "kind": "offset",
+    "status": "original-topology-traversal-multiplicity"
+  },
+  {
+    "id": "CC01635",
+    "kind": "offset",
+    "status": "original-topology-traversal-multiplicity"
+  },
+  {
+    "id": "CC01636",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01637",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01638",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01639",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01640",
+    "kind": "offset",
+    "status": "original-topology-property-match"
+  },
+  {
+    "id": "CC01644",
+    "kind": "offset",
+    "status": "original-topology-property-match"
+  },
+  {
+    "id": "CC01645",
+    "kind": "offset",
+    "status": "original-topology-property-match"
+  },
+  {
+    "id": "CC01646",
+    "kind": "offset",
+    "status": "original-topology-property-match"
+  },
+  {
+    "id": "CC01647",
+    "kind": "offset",
+    "status": "original-topology-property-match"
+  },
+  {
+    "id": "CC01648",
+    "kind": "offset",
+    "status": "original-topology-property-match"
+  },
+  {
+    "id": "CC01649",
+    "kind": "offset",
+    "status": "original-topology-property-match"
+  },
+  {
+    "id": "CC01650",
+    "kind": "offset",
+    "status": "original-topology-property-match"
+  },
+  {
+    "id": "CC01651",
+    "kind": "offset",
+    "status": "original-topology-contour-grouping"
+  },
+  {
+    "id": "CC01652",
+    "kind": "offset",
+    "status": "original-topology-contour-grouping"
+  },
+  {
+    "id": "CC01653",
+    "kind": "offset",
+    "status": "original-topology-contour-grouping"
+  },
+  {
+    "id": "CC01654",
+    "kind": "offset",
+    "status": "original-topology-contour-grouping"
+  },
+  {
+    "id": "CC01655",
+    "kind": "offset",
+    "status": "original-topology-contour-grouping"
+  },
+  {
+    "id": "CC01656",
+    "kind": "offset",
+    "status": "original-topology-contour-grouping"
+  },
+  {
+    "id": "CC01657",
+    "kind": "offset",
+    "status": "original-topology-contour-grouping"
+  },
+  {
+    "id": "CC01658",
+    "kind": "offset",
+    "status": "original-topology-contour-grouping"
+  },
+  {
+    "id": "CC01670",
+    "kind": "offset",
+    "status": "original-topology-contour-grouping"
+  },
+  {
+    "id": "CC01671",
+    "kind": "offset",
+    "status": "original-topology-contour-grouping"
+  },
+  {
+    "id": "CC01672",
+    "kind": "offset",
+    "status": "original-topology-contour-grouping"
+  },
+  {
+    "id": "CC01673",
+    "kind": "offset",
+    "status": "original-topology-contour-grouping"
+  },
+  {
+    "id": "CC01674",
+    "kind": "offset",
+    "status": "original-topology-contour-grouping"
+  },
+  {
+    "id": "CC01675",
+    "kind": "offset",
+    "status": "original-topology-contour-grouping"
+  },
+  {
+    "id": "CC01676",
+    "kind": "offset",
+    "status": "original-topology-contour-grouping"
+  },
+  {
+    "id": "CC01677",
+    "kind": "offset",
+    "status": "original-topology-contour-grouping"
+  },
+  {
+    "id": "CC01689",
+    "kind": "offset",
+    "status": "original-topology-contour-grouping"
+  },
+  {
+    "id": "CC01690",
+    "kind": "offset",
+    "status": "original-topology-contour-grouping"
+  },
+  {
+    "id": "CC01691",
+    "kind": "offset",
+    "status": "original-topology-contour-grouping"
+  },
+  {
+    "id": "CC01692",
+    "kind": "offset",
+    "status": "original-topology-contour-grouping"
+  },
+  {
+    "id": "CC01693",
+    "kind": "offset",
+    "status": "original-topology-contour-grouping"
+  },
+  {
+    "id": "CC01694",
+    "kind": "offset",
+    "status": "original-topology-contour-grouping"
+  },
+  {
+    "id": "CC01695",
+    "kind": "offset",
+    "status": "original-topology-contour-grouping"
+  },
+  {
+    "id": "CC01696",
+    "kind": "offset",
+    "status": "original-topology-contour-grouping"
+  },
+  {
+    "id": "CC01697",
+    "kind": "offset",
+    "status": "original-topology-round-retrace-source-distance-policy"
+  },
+  {
+    "id": "CC01701",
+    "kind": "offset",
+    "status": "original-topology-round-retrace-source-distance-policy"
+  },
+  {
+    "id": "CC01702",
+    "kind": "offset",
+    "status": "original-topology-round-retrace-source-distance-policy"
+  },
+  {
+    "id": "CC01703",
+    "kind": "offset",
+    "status": "original-topology-round-retrace-source-distance-policy"
+  },
+  {
+    "id": "CC01704",
+    "kind": "offset",
+    "status": "original-topology-round-retrace-source-distance-policy"
+  },
+  {
+    "id": "CC01705",
+    "kind": "offset",
+    "status": "original-topology-round-retrace-source-distance-policy"
+  },
+  {
+    "id": "CC01706",
+    "kind": "offset",
+    "status": "original-topology-round-retrace-source-distance-policy"
+  },
+  {
+    "id": "CC01707",
+    "kind": "offset",
+    "status": "original-topology-round-retrace-source-distance-policy"
+  },
+  {
+    "id": "CC01727",
+    "kind": "offset",
+    "status": "original-topology-traversal-multiplicity"
+  },
+  {
+    "id": "CC01731",
+    "kind": "offset",
+    "status": "original-topology-traversal-multiplicity"
+  },
+  {
+    "id": "CC01732",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01733",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01734",
+    "kind": "offset",
+    "status": "original-topology-traversal-multiplicity"
+  },
+  {
+    "id": "CC01735",
+    "kind": "offset",
+    "status": "original-topology-traversal-multiplicity"
+  },
+  {
+    "id": "CC01736",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01737",
+    "kind": "offset",
+    "status": "original-topology-coincident-discard-policy"
+  },
+  {
+    "id": "CC01738",
+    "kind": "offset",
+    "status": "original-topology-winding-parity-removal"
+  },
+  {
+    "id": "CC01739",
+    "kind": "offset",
+    "status": "original-topology-winding-parity-removal"
+  },
+  {
+    "id": "CC01751",
+    "kind": "pline_seg_intr",
+    "status": "understood-tolerance-semantics-not-a-confirmed-bug"
+  },
+  {
+    "id": "CC01752",
+    "kind": "pline_seg_intr",
+    "status": "understood-tolerance-semantics-not-a-confirmed-bug"
+  },
+  {
+    "id": "CC01753",
+    "kind": "pline_seg_intr",
+    "status": "understood-tolerance-semantics-not-a-confirmed-bug"
+  },
+  {
+    "id": "CC01761",
+    "kind": "pline_seg_intr",
+    "status": "different-api-contract"
+  },
+  {
+    "id": "CC01763",
+    "kind": "pline_seg_intr",
+    "status": "different-api-contract"
+  },
+  {
+    "id": "CC01765",
+    "kind": "pline_seg_intr",
+    "status": "different-api-contract"
+  },
+  {
+    "id": "CC01767",
+    "kind": "pline_seg_intr",
+    "status": "different-api-contract"
+  },
+  {
+    "id": "CC01807",
+    "kind": "shape_offset",
+    "status": "understood-source-normalization-and-retrace-policy"
+  },
+  {
+    "id": "CX00167",
+    "kind": "dist_from_segment_start",
+    "status": "different-api-contract"
+  },
+  {
+    "id": "CX00420",
+    "kind": "seg_arc_radius_and_center",
+    "status": "mixed-adapter-conditioning-and-native-accuracy"
+  },
+  {
+    "id": "CX00421",
+    "kind": "seg_bounding_box",
+    "status": "mixed-adapter-conditioning-and-native-accuracy"
+  },
+  {
+    "id": "CX00622",
+    "kind": "seg_arc_radius_and_center",
+    "status": "mixed-adapter-conditioning-and-native-accuracy"
+  },
+  {
+    "id": "CX00623",
+    "kind": "seg_bounding_box",
+    "status": "mixed-adapter-conditioning-and-native-accuracy"
+  },
+  {
+    "id": "CX00636",
+    "kind": "seg_arc_radius_and_center",
+    "status": "mixed-adapter-conditioning-and-native-accuracy"
+  },
+  {
+    "id": "CX00637",
+    "kind": "seg_bounding_box",
+    "status": "mixed-adapter-conditioning-and-native-accuracy"
+  },
+  {
+    "id": "CX00755",
+    "kind": "seg_closest_point",
+    "status": "valid-tied-minimum"
+  },
+  {
+    "id": "CX00804",
+    "kind": "seg_closest_point",
+    "status": "valid-tied-minimum"
+  },
+  {
+    "id": "CX00832",
+    "kind": "seg_closest_point",
+    "status": "valid-tied-minimum"
+  },
+  {
+    "id": "CX00881",
+    "kind": "seg_closest_point",
+    "status": "fixed-native-convergence-defect"
+  },
+  {
+    "id": "CX00882",
+    "kind": "seg_distance_is_greater_than",
+    "status": "fixed-native-convergence-defect"
+  },
+  {
+    "id": "CX00883",
+    "kind": "seg_distance_is_greater_than",
+    "status": "fixed-native-convergence-defect"
+  },
+  {
+    "id": "CX00884",
+    "kind": "seg_distance_is_greater_than",
+    "status": "fixed-native-convergence-defect"
+  },
+  {
+    "id": "CX00885",
+    "kind": "seg_distance_is_greater_than",
+    "status": "fixed-native-convergence-defect"
+  },
+  {
+    "id": "CX00886",
+    "kind": "seg_distance_is_greater_than",
+    "status": "fixed-native-convergence-defect"
+  },
+  {
+    "id": "CX00887",
+    "kind": "seg_distance_is_greater_than",
+    "status": "fixed-native-convergence-defect"
+  },
+  {
+    "id": "CX00888",
+    "kind": "seg_closest_point",
+    "status": "fixed-native-convergence-defect"
+  },
+  {
+    "id": "CX00889",
+    "kind": "seg_distance_is_greater_than",
+    "status": "fixed-native-convergence-defect"
+  },
+  {
+    "id": "CX00890",
+    "kind": "seg_distance_is_greater_than",
+    "status": "fixed-native-convergence-defect"
+  },
+  {
+    "id": "CX00891",
+    "kind": "seg_distance_is_greater_than",
+    "status": "fixed-native-convergence-defect"
+  },
+  {
+    "id": "CX00892",
+    "kind": "seg_distance_is_greater_than",
+    "status": "fixed-native-convergence-defect"
+  },
+  {
+    "id": "CX00893",
+    "kind": "seg_distance_is_greater_than",
+    "status": "fixed-native-convergence-defect"
+  },
+  {
+    "id": "CX00894",
+    "kind": "seg_distance_is_greater_than",
+    "status": "fixed-native-convergence-defect"
+  },
+  {
+    "id": "CX00902",
+    "kind": "seg_closest_point",
+    "status": "fixed-native-convergence-defect"
+  },
+  {
+    "id": "CX00903",
+    "kind": "seg_distance_is_greater_than",
+    "status": "fixed-native-convergence-defect"
+  },
+  {
+    "id": "CX00904",
+    "kind": "seg_distance_is_greater_than",
+    "status": "fixed-native-convergence-defect"
+  },
+  {
+    "id": "CX00905",
+    "kind": "seg_distance_is_greater_than",
+    "status": "fixed-native-convergence-defect"
+  },
+  {
+    "id": "CX00906",
+    "kind": "seg_distance_is_greater_than",
+    "status": "fixed-native-convergence-defect"
+  },
+  {
+    "id": "CX00907",
+    "kind": "seg_distance_is_greater_than",
+    "status": "fixed-native-convergence-defect"
+  },
+  {
+    "id": "CX00908",
+    "kind": "seg_distance_is_greater_than",
+    "status": "fixed-native-convergence-defect"
+  },
+  {
+    "id": "CX00909",
+    "kind": "seg_closest_point",
+    "status": "fixed-native-convergence-defect"
+  },
+  {
+    "id": "CX00910",
+    "kind": "seg_distance_is_greater_than",
+    "status": "fixed-native-convergence-defect"
+  },
+  {
+    "id": "CX00911",
+    "kind": "seg_distance_is_greater_than",
+    "status": "fixed-native-convergence-defect"
+  },
+  {
+    "id": "CX00912",
+    "kind": "seg_distance_is_greater_than",
+    "status": "fixed-native-convergence-defect"
+  },
+  {
+    "id": "CX00913",
+    "kind": "seg_distance_is_greater_than",
+    "status": "fixed-native-convergence-defect"
+  },
+  {
+    "id": "CX00914",
+    "kind": "seg_distance_is_greater_than",
+    "status": "fixed-native-convergence-defect"
+  },
+  {
+    "id": "CX00915",
+    "kind": "seg_distance_is_greater_than",
+    "status": "fixed-native-convergence-defect"
+  },
+  {
+    "id": "CX00916",
+    "kind": "seg_closest_point",
+    "status": "fixed-native-convergence-defect"
+  },
+  {
+    "id": "CX00917",
+    "kind": "seg_distance_is_greater_than",
+    "status": "fixed-native-convergence-defect"
+  },
+  {
+    "id": "CX00918",
+    "kind": "seg_distance_is_greater_than",
+    "status": "fixed-native-convergence-defect"
+  },
+  {
+    "id": "CX00919",
+    "kind": "seg_distance_is_greater_than",
+    "status": "fixed-native-convergence-defect"
+  },
+  {
+    "id": "CX00920",
+    "kind": "seg_distance_is_greater_than",
+    "status": "fixed-native-convergence-defect"
+  },
+  {
+    "id": "CX00921",
+    "kind": "seg_distance_is_greater_than",
+    "status": "fixed-native-convergence-defect"
+  },
+  {
+    "id": "CX00922",
+    "kind": "seg_distance_is_greater_than",
+    "status": "fixed-native-convergence-defect"
+  },
+  {
+    "id": "CX00982",
+    "kind": "find_point_at_path_length",
+    "status": "different-api-contract"
+  }
+]

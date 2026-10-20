@@ -1,0 +1,5930 @@
+[
+  {
+    "id": "CC01059",
+    "operation": "Or",
+    "runs": [
+      {
+        "minimum": 0.00001,
+        "gaps": [
+          {
+            "segment": 6,
+            "lo": 0.9999954351177222,
+            "hi": 1,
+            "lengthUpperBound": 0.000003949079659102007,
+            "geometry": {
+              "type": "Line",
+              "start": {
+                "type": "Point",
+                "x": 15.310990000020194,
+                "y": 18.965100455035472
+              },
+              "end": {
+                "type": "Point",
+                "x": 15.310989999974545,
+                "y": 18.96510440411513
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999967007057828,
+            "hi": 1,
+            "lengthUpperBound": 0.000003949079658936149,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          }
+        ],
+        "result": {
+          "type": "ArrangementGraphError",
+          "error": {
+            "type": "ConstructionFailed"
+          }
+        }
+      },
+      {
+        "minimum": 0.000001,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0,
+            "hi": 8.452175049141269e-7,
+            "lengthUpperBound": 0.0000010116803892436678,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002822,
+                "y": 18.965098533284138
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.0000018641265485426333,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.0000017178193481773723,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000009471,
+                "y": 18.965097313704216
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999975459232877,
+            "lengthUpperBound": 0.0000010116803892436728,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002824,
+                "y": 18.965098533284138
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999985648323313,
+            "hi": 1,
+            "lengthUpperBound": 0.0000017178193517300866,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000009471,
+                "y": 18.96509731370422
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      },
+      {
+        "minimum": 1e-7,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0,
+            "hi": 8.452175049141269e-7,
+            "lengthUpperBound": 0.0000010116803892436678,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002822,
+                "y": 18.965098533284138
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.0000018641265485426333,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.0000017178193481773723,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000009471,
+                "y": 18.965097313704216
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999975459232877,
+            "lengthUpperBound": 0.0000010116803892436728,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002824,
+                "y": 18.965098533284138
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999985648323313,
+            "hi": 1,
+            "lengthUpperBound": 0.0000017178193517300866,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000009471,
+                "y": 18.96509731370422
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      },
+      {
+        "minimum": 1e-8,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0,
+            "hi": 8.452175049141269e-7,
+            "lengthUpperBound": 0.0000010116803892436678,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002822,
+                "y": 18.965098533284138
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.0000018641265485426333,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.0000017178193481773723,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000009471,
+                "y": 18.965097313704216
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999975459232877,
+            "lengthUpperBound": 0.0000010116803892436728,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002824,
+                "y": 18.965098533284138
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999985648323313,
+            "hi": 1,
+            "lengthUpperBound": 0.0000017178193517300866,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000009471,
+                "y": 18.96509731370422
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "CC01063",
+    "operation": "And",
+    "runs": [
+      {
+        "minimum": 0.00001,
+        "gaps": [
+          {
+            "segment": 6,
+            "lo": 0.9999954351177222,
+            "hi": 1,
+            "lengthUpperBound": 0.000003949079659102007,
+            "geometry": {
+              "type": "Line",
+              "start": {
+                "type": "Point",
+                "x": 15.310990000020194,
+                "y": 18.965100455035472
+              },
+              "end": {
+                "type": "Point",
+                "x": 15.310989999974545,
+                "y": 18.96510440411513
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999967007057828,
+            "hi": 1,
+            "lengthUpperBound": 0.000003949079658936149,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          }
+        ],
+        "result": {
+          "type": "ArrangementGraphError",
+          "error": {
+            "type": "ConstructionFailed"
+          }
+        }
+      },
+      {
+        "minimum": 0.000001,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0,
+            "hi": 8.452175049141269e-7,
+            "lengthUpperBound": 0.0000010116803892436678,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002822,
+                "y": 18.965098533284138
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.0000018641265485426333,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.0000017178193481773723,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000009471,
+                "y": 18.965097313704216
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999975459232877,
+            "lengthUpperBound": 0.0000010116803892436728,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002824,
+                "y": 18.965098533284138
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999985648323313,
+            "hi": 1,
+            "lengthUpperBound": 0.0000017178193517300866,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000009471,
+                "y": 18.96509731370422
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      },
+      {
+        "minimum": 1e-7,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0,
+            "hi": 8.452175049141269e-7,
+            "lengthUpperBound": 0.0000010116803892436678,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002822,
+                "y": 18.965098533284138
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.0000018641265485426333,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.0000017178193481773723,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000009471,
+                "y": 18.965097313704216
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999975459232877,
+            "lengthUpperBound": 0.0000010116803892436728,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002824,
+                "y": 18.965098533284138
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999985648323313,
+            "hi": 1,
+            "lengthUpperBound": 0.0000017178193517300866,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000009471,
+                "y": 18.96509731370422
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      },
+      {
+        "minimum": 1e-8,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0,
+            "hi": 8.452175049141269e-7,
+            "lengthUpperBound": 0.0000010116803892436678,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002822,
+                "y": 18.965098533284138
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.0000018641265485426333,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.0000017178193481773723,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000009471,
+                "y": 18.965097313704216
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999975459232877,
+            "lengthUpperBound": 0.0000010116803892436728,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002824,
+                "y": 18.965098533284138
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999985648323313,
+            "hi": 1,
+            "lengthUpperBound": 0.0000017178193517300866,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000009471,
+                "y": 18.96509731370422
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "CC01064",
+    "operation": "Not",
+    "runs": [
+      {
+        "minimum": 0.00001,
+        "gaps": [
+          {
+            "segment": 6,
+            "lo": 0.9999954351177222,
+            "hi": 1,
+            "lengthUpperBound": 0.000003949079659102007,
+            "geometry": {
+              "type": "Line",
+              "start": {
+                "type": "Point",
+                "x": 15.310990000020194,
+                "y": 18.965100455035472
+              },
+              "end": {
+                "type": "Point",
+                "x": 15.310989999974545,
+                "y": 18.96510440411513
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999967007057828,
+            "hi": 1,
+            "lengthUpperBound": 0.000003949079658936149,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          }
+        ],
+        "result": {
+          "type": "ArrangementGraphError",
+          "error": {
+            "type": "ConstructionFailed"
+          }
+        }
+      },
+      {
+        "minimum": 0.000001,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0,
+            "hi": 8.452175049141269e-7,
+            "lengthUpperBound": 0.0000010116803892436678,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002822,
+                "y": 18.965098533284138
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.0000018641265485426333,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.0000017178193481773723,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000009471,
+                "y": 18.965097313704216
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999975459232877,
+            "lengthUpperBound": 0.0000010116803892436728,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002824,
+                "y": 18.965098533284138
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999985648323313,
+            "hi": 1,
+            "lengthUpperBound": 0.0000017178193517300866,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000009471,
+                "y": 18.96509731370422
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      },
+      {
+        "minimum": 1e-7,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0,
+            "hi": 8.452175049141269e-7,
+            "lengthUpperBound": 0.0000010116803892436678,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002822,
+                "y": 18.965098533284138
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.0000018641265485426333,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.0000017178193481773723,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000009471,
+                "y": 18.965097313704216
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999975459232877,
+            "lengthUpperBound": 0.0000010116803892436728,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002824,
+                "y": 18.965098533284138
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999985648323313,
+            "hi": 1,
+            "lengthUpperBound": 0.0000017178193517300866,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000009471,
+                "y": 18.96509731370422
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      },
+      {
+        "minimum": 1e-8,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0,
+            "hi": 8.452175049141269e-7,
+            "lengthUpperBound": 0.0000010116803892436678,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002822,
+                "y": 18.965098533284138
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.0000018641265485426333,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.0000017178193481773723,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000009471,
+                "y": 18.965097313704216
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999975459232877,
+            "lengthUpperBound": 0.0000010116803892436728,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002824,
+                "y": 18.965098533284138
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999985648323313,
+            "hi": 1,
+            "lengthUpperBound": 0.0000017178193517300866,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000009471,
+                "y": 18.96509731370422
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "CC01065",
+    "operation": "Xor",
+    "runs": [
+      {
+        "minimum": 0.00001,
+        "gaps": [
+          {
+            "segment": 6,
+            "lo": 0.9999954351177222,
+            "hi": 1,
+            "lengthUpperBound": 0.000003949079659102007,
+            "geometry": {
+              "type": "Line",
+              "start": {
+                "type": "Point",
+                "x": 15.310990000020194,
+                "y": 18.965100455035472
+              },
+              "end": {
+                "type": "Point",
+                "x": 15.310989999974545,
+                "y": 18.96510440411513
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999967007057828,
+            "hi": 1,
+            "lengthUpperBound": 0.000003949079658936149,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          }
+        ],
+        "result": {
+          "type": "ArrangementGraphError",
+          "error": {
+            "type": "ConstructionFailed"
+          }
+        }
+      },
+      {
+        "minimum": 0.000001,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0,
+            "hi": 8.452175049141269e-7,
+            "lengthUpperBound": 0.0000010116803892436678,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002822,
+                "y": 18.965098533284138
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.0000018641265485426333,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.0000017178193481773723,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000009471,
+                "y": 18.965097313704216
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999975459232877,
+            "lengthUpperBound": 0.0000010116803892436728,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002824,
+                "y": 18.965098533284138
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999985648323313,
+            "hi": 1,
+            "lengthUpperBound": 0.0000017178193517300866,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000009471,
+                "y": 18.96509731370422
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 2
+        }
+      },
+      {
+        "minimum": 1e-7,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0,
+            "hi": 8.452175049141269e-7,
+            "lengthUpperBound": 0.0000010116803892436678,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002822,
+                "y": 18.965098533284138
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.0000018641265485426333,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.0000017178193481773723,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000009471,
+                "y": 18.965097313704216
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999975459232877,
+            "lengthUpperBound": 0.0000010116803892436728,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002824,
+                "y": 18.965098533284138
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999985648323313,
+            "hi": 1,
+            "lengthUpperBound": 0.0000017178193517300866,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000009471,
+                "y": 18.96509731370422
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 2
+        }
+      },
+      {
+        "minimum": 1e-8,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0,
+            "hi": 8.452175049141269e-7,
+            "lengthUpperBound": 0.0000010116803892436678,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002822,
+                "y": 18.965098533284138
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.0000018641265485426333,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.0000017178193481773723,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000009471,
+                "y": 18.965097313704216
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999975459232877,
+            "lengthUpperBound": 0.0000010116803892436728,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002824,
+                "y": 18.965098533284138
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999985648323313,
+            "hi": 1,
+            "lengthUpperBound": 0.0000017178193517300866,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000009471,
+                "y": 18.96509731370422
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 2
+        }
+      }
+    ]
+  },
+  {
+    "id": "CC01066",
+    "operation": "Or",
+    "runs": [
+      {
+        "minimum": 0.00001,
+        "gaps": [
+          {
+            "segment": 4,
+            "lo": 0,
+            "hi": 0.0000045648822778888155,
+            "lengthUpperBound": 0.000003949079659102007,
+            "geometry": {
+              "type": "Line",
+              "start": {
+                "type": "Point",
+                "x": 15.310989999974545,
+                "y": 18.96510440411513
+              },
+              "end": {
+                "type": "Point",
+                "x": 15.310990000020194,
+                "y": 18.965100455035472
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.000003949079658936149,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          }
+        ],
+        "result": {
+          "type": "ArrangementGraphError",
+          "error": {
+            "type": "ConstructionFailed"
+          }
+        }
+      },
+      {
+        "minimum": 0.000001,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0,
+            "hi": 8.452524260624236e-7,
+            "lengthUpperBound": 0.0000010117221869200989,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002822,
+                "y": 18.96509853324234
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.0000018651874201346243,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.000001716549540806979,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.54899000000948,
+                "y": 18.96509731243441
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0,
+            "hi": 0.0000014341067971007801,
+            "lengthUpperBound": 0.0000017165495443596923,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.54899000000948,
+                "y": 18.965097312434413
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.000002454041791172981,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.000001011722190472817,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000002824,
+                "y": 18.965098533242337
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      },
+      {
+        "minimum": 1e-7,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0,
+            "hi": 8.452524260624236e-7,
+            "lengthUpperBound": 0.0000010117221869200989,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002822,
+                "y": 18.96509853324234
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.0000018651874201346243,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.000001716549540806979,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.54899000000948,
+                "y": 18.96509731243441
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0,
+            "hi": 0.0000014341067971007801,
+            "lengthUpperBound": 0.0000017165495443596923,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.54899000000948,
+                "y": 18.965097312434413
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.000002454041791172981,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.000001011722190472817,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000002824,
+                "y": 18.965098533242337
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      },
+      {
+        "minimum": 1e-8,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0,
+            "hi": 8.452524260624236e-7,
+            "lengthUpperBound": 0.0000010117221869200989,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002822,
+                "y": 18.96509853324234
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.0000018651874201346243,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.000001716549540806979,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.54899000000948,
+                "y": 18.96509731243441
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0,
+            "hi": 0.0000014341067971007801,
+            "lengthUpperBound": 0.0000017165495443596923,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.54899000000948,
+                "y": 18.965097312434413
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.000002454041791172981,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.000001011722190472817,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000002824,
+                "y": 18.965098533242337
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "CC01067",
+    "operation": "And",
+    "runs": [
+      {
+        "minimum": 0.00001,
+        "gaps": [
+          {
+            "segment": 4,
+            "lo": 0,
+            "hi": 0.0000045648822778888155,
+            "lengthUpperBound": 0.000003949079659102007,
+            "geometry": {
+              "type": "Line",
+              "start": {
+                "type": "Point",
+                "x": 15.310989999974545,
+                "y": 18.96510440411513
+              },
+              "end": {
+                "type": "Point",
+                "x": 15.310990000020194,
+                "y": 18.965100455035472
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.000003949079658936149,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          }
+        ],
+        "result": {
+          "type": "ArrangementGraphError",
+          "error": {
+            "type": "ConstructionFailed"
+          }
+        }
+      },
+      {
+        "minimum": 0.000001,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0,
+            "hi": 8.452524260624236e-7,
+            "lengthUpperBound": 0.0000010117221869200989,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002822,
+                "y": 18.96509853324234
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.0000018651874201346243,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.000001716549540806979,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.54899000000948,
+                "y": 18.96509731243441
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0,
+            "hi": 0.0000014341067971007801,
+            "lengthUpperBound": 0.0000017165495443596923,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.54899000000948,
+                "y": 18.965097312434413
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.000002454041791172981,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.000001011722190472817,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000002824,
+                "y": 18.965098533242337
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      },
+      {
+        "minimum": 1e-7,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0,
+            "hi": 8.452524260624236e-7,
+            "lengthUpperBound": 0.0000010117221869200989,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002822,
+                "y": 18.96509853324234
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.0000018651874201346243,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.000001716549540806979,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.54899000000948,
+                "y": 18.96509731243441
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0,
+            "hi": 0.0000014341067971007801,
+            "lengthUpperBound": 0.0000017165495443596923,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.54899000000948,
+                "y": 18.965097312434413
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.000002454041791172981,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.000001011722190472817,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000002824,
+                "y": 18.965098533242337
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      },
+      {
+        "minimum": 1e-8,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0,
+            "hi": 8.452524260624236e-7,
+            "lengthUpperBound": 0.0000010117221869200989,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002822,
+                "y": 18.96509853324234
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.0000018651874201346243,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.000001716549540806979,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.54899000000948,
+                "y": 18.96509731243441
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0,
+            "hi": 0.0000014341067971007801,
+            "lengthUpperBound": 0.0000017165495443596923,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.54899000000948,
+                "y": 18.965097312434413
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.000002454041791172981,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.000001011722190472817,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000002824,
+                "y": 18.965098533242337
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "CC01068",
+    "operation": "Not",
+    "runs": [
+      {
+        "minimum": 0.00001,
+        "gaps": [
+          {
+            "segment": 4,
+            "lo": 0,
+            "hi": 0.0000045648822778888155,
+            "lengthUpperBound": 0.000003949079659102007,
+            "geometry": {
+              "type": "Line",
+              "start": {
+                "type": "Point",
+                "x": 15.310989999974545,
+                "y": 18.96510440411513
+              },
+              "end": {
+                "type": "Point",
+                "x": 15.310990000020194,
+                "y": 18.965100455035472
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.000003949079658936149,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          }
+        ],
+        "result": {
+          "type": "ArrangementGraphError",
+          "error": {
+            "type": "ConstructionFailed"
+          }
+        }
+      },
+      {
+        "minimum": 0.000001,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0,
+            "hi": 8.452524260624236e-7,
+            "lengthUpperBound": 0.0000010117221869200989,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002822,
+                "y": 18.96509853324234
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.0000018651874201346243,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.000001716549540806979,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.54899000000948,
+                "y": 18.96509731243441
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0,
+            "hi": 0.0000014341067971007801,
+            "lengthUpperBound": 0.0000017165495443596923,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.54899000000948,
+                "y": 18.965097312434413
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.000002454041791172981,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.000001011722190472817,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000002824,
+                "y": 18.965098533242337
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      },
+      {
+        "minimum": 1e-7,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0,
+            "hi": 8.452524260624236e-7,
+            "lengthUpperBound": 0.0000010117221869200989,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002822,
+                "y": 18.96509853324234
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.0000018651874201346243,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.000001716549540806979,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.54899000000948,
+                "y": 18.96509731243441
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0,
+            "hi": 0.0000014341067971007801,
+            "lengthUpperBound": 0.0000017165495443596923,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.54899000000948,
+                "y": 18.965097312434413
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.000002454041791172981,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.000001011722190472817,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000002824,
+                "y": 18.965098533242337
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      },
+      {
+        "minimum": 1e-8,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0,
+            "hi": 8.452524260624236e-7,
+            "lengthUpperBound": 0.0000010117221869200989,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002822,
+                "y": 18.96509853324234
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.0000018651874201346243,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.000001716549540806979,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.54899000000948,
+                "y": 18.96509731243441
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0,
+            "hi": 0.0000014341067971007801,
+            "lengthUpperBound": 0.0000017165495443596923,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.54899000000948,
+                "y": 18.965097312434413
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.000002454041791172981,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.000001011722190472817,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000002824,
+                "y": 18.965098533242337
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "CC01069",
+    "operation": "Xor",
+    "runs": [
+      {
+        "minimum": 0.00001,
+        "gaps": [
+          {
+            "segment": 4,
+            "lo": 0,
+            "hi": 0.0000045648822778888155,
+            "lengthUpperBound": 0.000003949079659102007,
+            "geometry": {
+              "type": "Line",
+              "start": {
+                "type": "Point",
+                "x": 15.310989999974545,
+                "y": 18.96510440411513
+              },
+              "end": {
+                "type": "Point",
+                "x": 15.310990000020194,
+                "y": 18.965100455035472
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.000003949079658936149,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          }
+        ],
+        "result": {
+          "type": "ArrangementGraphError",
+          "error": {
+            "type": "ConstructionFailed"
+          }
+        }
+      },
+      {
+        "minimum": 0.000001,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0,
+            "hi": 8.452524260624236e-7,
+            "lengthUpperBound": 0.0000010117221869200989,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002822,
+                "y": 18.96509853324234
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.0000018651874201346243,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.000001716549540806979,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.54899000000948,
+                "y": 18.96509731243441
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0,
+            "hi": 0.0000014341067971007801,
+            "lengthUpperBound": 0.0000017165495443596923,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.54899000000948,
+                "y": 18.965097312434413
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.000002454041791172981,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.000001011722190472817,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000002824,
+                "y": 18.965098533242337
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 2
+        }
+      },
+      {
+        "minimum": 1e-7,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0,
+            "hi": 8.452524260624236e-7,
+            "lengthUpperBound": 0.0000010117221869200989,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002822,
+                "y": 18.96509853324234
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.0000018651874201346243,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.000001716549540806979,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.54899000000948,
+                "y": 18.96509731243441
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0,
+            "hi": 0.0000014341067971007801,
+            "lengthUpperBound": 0.0000017165495443596923,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.54899000000948,
+                "y": 18.965097312434413
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.000002454041791172981,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.000001011722190472817,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000002824,
+                "y": 18.965098533242337
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 2
+        }
+      },
+      {
+        "minimum": 1e-8,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0,
+            "hi": 8.452524260624236e-7,
+            "lengthUpperBound": 0.0000010117221869200989,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000002822,
+                "y": 18.96509853324234
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.0000018651874201346243,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.000001716549540806979,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.54899000000948,
+                "y": 18.96509731243441
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0,
+            "hi": 0.0000014341067971007801,
+            "lengthUpperBound": 0.0000017165495443596923,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.54899000000948,
+                "y": 18.965097312434413
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.000002454041791172981,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.000001011722190472817,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000002824,
+                "y": 18.965098533242337
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 2
+        }
+      }
+    ]
+  },
+  {
+    "id": "CC01070",
+    "operation": "Or",
+    "runs": [
+      {
+        "minimum": 0.00001,
+        "gaps": [
+          {
+            "segment": 6,
+            "lo": 0.9999954351177222,
+            "hi": 1,
+            "lengthUpperBound": 0.000003949079659102007,
+            "geometry": {
+              "type": "Line",
+              "start": {
+                "type": "Point",
+                "x": 15.310990000020194,
+                "y": 18.965100455035472
+              },
+              "end": {
+                "type": "Point",
+                "x": 15.310989999974545,
+                "y": 18.96510440411513
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999967007057828,
+            "hi": 1,
+            "lengthUpperBound": 0.000003949079658936149,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          }
+        ],
+        "result": {
+          "type": "ArrangementGraphError",
+          "error": {
+            "type": "ConstructionFailed"
+          }
+        }
+      },
+      {
+        "minimum": 0.000001,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0.999998355632969,
+            "hi": 1,
+            "lengthUpperBound": 0.0000019682198555577477,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000007706,
+                "y": 18.96509757674467
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999983450728138,
+            "lengthUpperBound": 0.000001968219855557754,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964524
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000007707,
+                "y": 18.965097576744668
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      },
+      {
+        "minimum": 1e-7,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0.999998355632969,
+            "hi": 1,
+            "lengthUpperBound": 0.0000019682198555577477,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000007706,
+                "y": 18.96509757674467
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999983450728138,
+            "lengthUpperBound": 0.000001968219855557754,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964524
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000007707,
+                "y": 18.965097576744668
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      },
+      {
+        "minimum": 1e-8,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0.999998355632969,
+            "hi": 1,
+            "lengthUpperBound": 0.0000019682198555577477,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000007706,
+                "y": 18.96509757674467
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999983450728138,
+            "lengthUpperBound": 0.000001968219855557754,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964524
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000007707,
+                "y": 18.965097576744668
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "CC01071",
+    "operation": "And",
+    "runs": [
+      {
+        "minimum": 0.00001,
+        "gaps": [
+          {
+            "segment": 6,
+            "lo": 0.9999954351177222,
+            "hi": 1,
+            "lengthUpperBound": 0.000003949079659102007,
+            "geometry": {
+              "type": "Line",
+              "start": {
+                "type": "Point",
+                "x": 15.310990000020194,
+                "y": 18.965100455035472
+              },
+              "end": {
+                "type": "Point",
+                "x": 15.310989999974545,
+                "y": 18.96510440411513
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999967007057828,
+            "hi": 1,
+            "lengthUpperBound": 0.000003949079658936149,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          }
+        ],
+        "result": {
+          "type": "ArrangementGraphError",
+          "error": {
+            "type": "ConstructionFailed"
+          }
+        }
+      },
+      {
+        "minimum": 0.000001,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0.999998355632969,
+            "hi": 1,
+            "lengthUpperBound": 0.0000019682198555577477,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000007706,
+                "y": 18.96509757674467
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999983450728138,
+            "lengthUpperBound": 0.000001968219855557754,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964524
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000007707,
+                "y": 18.965097576744668
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      },
+      {
+        "minimum": 1e-7,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0.999998355632969,
+            "hi": 1,
+            "lengthUpperBound": 0.0000019682198555577477,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000007706,
+                "y": 18.96509757674467
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999983450728138,
+            "lengthUpperBound": 0.000001968219855557754,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964524
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000007707,
+                "y": 18.965097576744668
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      },
+      {
+        "minimum": 1e-8,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0.999998355632969,
+            "hi": 1,
+            "lengthUpperBound": 0.0000019682198555577477,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000007706,
+                "y": 18.96509757674467
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999983450728138,
+            "lengthUpperBound": 0.000001968219855557754,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964524
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000007707,
+                "y": 18.965097576744668
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "CC01072",
+    "operation": "Not",
+    "runs": [
+      {
+        "minimum": 0.00001,
+        "gaps": [
+          {
+            "segment": 6,
+            "lo": 0.9999954351177222,
+            "hi": 1,
+            "lengthUpperBound": 0.000003949079659102007,
+            "geometry": {
+              "type": "Line",
+              "start": {
+                "type": "Point",
+                "x": 15.310990000020194,
+                "y": 18.965100455035472
+              },
+              "end": {
+                "type": "Point",
+                "x": 15.310989999974545,
+                "y": 18.96510440411513
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999967007057828,
+            "hi": 1,
+            "lengthUpperBound": 0.000003949079658936149,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          }
+        ],
+        "result": {
+          "type": "ArrangementGraphError",
+          "error": {
+            "type": "ConstructionFailed"
+          }
+        }
+      },
+      {
+        "minimum": 0.000001,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0.999998355632969,
+            "hi": 1,
+            "lengthUpperBound": 0.0000019682198555577477,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000007706,
+                "y": 18.96509757674467
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999983450728138,
+            "lengthUpperBound": 0.000001968219855557754,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964524
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000007707,
+                "y": 18.965097576744668
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      },
+      {
+        "minimum": 1e-7,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0.999998355632969,
+            "hi": 1,
+            "lengthUpperBound": 0.0000019682198555577477,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000007706,
+                "y": 18.96509757674467
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999983450728138,
+            "lengthUpperBound": 0.000001968219855557754,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964524
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000007707,
+                "y": 18.965097576744668
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      },
+      {
+        "minimum": 1e-8,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0.999998355632969,
+            "hi": 1,
+            "lengthUpperBound": 0.0000019682198555577477,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000007706,
+                "y": 18.96509757674467
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999983450728138,
+            "lengthUpperBound": 0.000001968219855557754,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964524
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000007707,
+                "y": 18.965097576744668
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "CC01073",
+    "operation": "Xor",
+    "runs": [
+      {
+        "minimum": 0.00001,
+        "gaps": [
+          {
+            "segment": 6,
+            "lo": 0.9999954351177222,
+            "hi": 1,
+            "lengthUpperBound": 0.000003949079659102007,
+            "geometry": {
+              "type": "Line",
+              "start": {
+                "type": "Point",
+                "x": 15.310990000020194,
+                "y": 18.965100455035472
+              },
+              "end": {
+                "type": "Point",
+                "x": 15.310989999974545,
+                "y": 18.96510440411513
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999967007057828,
+            "hi": 1,
+            "lengthUpperBound": 0.000003949079658936149,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              }
+            }
+          }
+        ],
+        "result": {
+          "type": "ArrangementGraphError",
+          "error": {
+            "type": "ConstructionFailed"
+          }
+        }
+      },
+      {
+        "minimum": 0.000001,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0.999998355632969,
+            "hi": 1,
+            "lengthUpperBound": 0.0000019682198555577477,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000007706,
+                "y": 18.96509757674467
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999983450728138,
+            "lengthUpperBound": 0.000001968219855557754,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964524
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000007707,
+                "y": 18.965097576744668
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 2
+        }
+      },
+      {
+        "minimum": 1e-7,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0.999998355632969,
+            "hi": 1,
+            "lengthUpperBound": 0.0000019682198555577477,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000007706,
+                "y": 18.96509757674467
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999983450728138,
+            "lengthUpperBound": 0.000001968219855557754,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964524
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000007707,
+                "y": 18.965097576744668
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 2
+        }
+      },
+      {
+        "minimum": 1e-8,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0.999998355632969,
+            "hi": 1,
+            "lengthUpperBound": 0.0000019682198555577477,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000007706,
+                "y": 18.96509757674467
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999983450728138,
+            "lengthUpperBound": 0.000001968219855557754,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964524
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": true,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000007707,
+                "y": 18.965097576744668
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 2
+        }
+      }
+    ]
+  },
+  {
+    "id": "CC01074",
+    "operation": "Or",
+    "runs": [
+      {
+        "minimum": 0.00001,
+        "gaps": [
+          {
+            "segment": 4,
+            "lo": 0,
+            "hi": 0.0000045648822778888155,
+            "lengthUpperBound": 0.000003949079659102007,
+            "geometry": {
+              "type": "Line",
+              "start": {
+                "type": "Point",
+                "x": 15.310989999974545,
+                "y": 18.96510440411513
+              },
+              "end": {
+                "type": "Point",
+                "x": 15.310990000020194,
+                "y": 18.965100455035472
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.000003949079658936149,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          }
+        ],
+        "result": {
+          "type": "ArrangementGraphError",
+          "error": {
+            "type": "ConstructionFailed"
+          }
+        }
+      },
+      {
+        "minimum": 0.000001,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999975391066795,
+            "lengthUpperBound": 0.0000010035212732436228,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025453,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000015175,
+                "y": 18.96509659940614
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.9999984683063414,
+            "hi": 1,
+            "lengthUpperBound": 0.0000018333558245012787,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000006873,
+                "y": 18.965097711608703
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0,
+            "hi": 8.384008967666101e-7,
+            "lengthUpperBound": 0.0000010035212732436234,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000015177,
+                "y": 18.96509659940614
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.0000017676005586363408,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.0000018333558280539915,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000006873,
+                "y": 18.9650977116087
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      },
+      {
+        "minimum": 1e-7,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999975391066795,
+            "lengthUpperBound": 0.0000010035212732436228,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025453,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000015175,
+                "y": 18.96509659940614
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.9999984683063414,
+            "hi": 1,
+            "lengthUpperBound": 0.0000018333558245012787,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000006873,
+                "y": 18.965097711608703
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0,
+            "hi": 8.384008967666101e-7,
+            "lengthUpperBound": 0.0000010035212732436234,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000015177,
+                "y": 18.96509659940614
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.0000017676005586363408,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.0000018333558280539915,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000006873,
+                "y": 18.9650977116087
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      },
+      {
+        "minimum": 1e-8,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999975391066795,
+            "lengthUpperBound": 0.0000010035212732436228,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025453,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000015175,
+                "y": 18.96509659940614
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.9999984683063414,
+            "hi": 1,
+            "lengthUpperBound": 0.0000018333558245012787,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000006873,
+                "y": 18.965097711608703
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0,
+            "hi": 8.384008967666101e-7,
+            "lengthUpperBound": 0.0000010035212732436234,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000015177,
+                "y": 18.96509659940614
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.0000017676005586363408,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.0000018333558280539915,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000006873,
+                "y": 18.9650977116087
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "CC01075",
+    "operation": "And",
+    "runs": [
+      {
+        "minimum": 0.00001,
+        "gaps": [
+          {
+            "segment": 4,
+            "lo": 0,
+            "hi": 0.0000045648822778888155,
+            "lengthUpperBound": 0.000003949079659102007,
+            "geometry": {
+              "type": "Line",
+              "start": {
+                "type": "Point",
+                "x": 15.310989999974545,
+                "y": 18.96510440411513
+              },
+              "end": {
+                "type": "Point",
+                "x": 15.310990000020194,
+                "y": 18.965100455035472
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.000003949079658936149,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          }
+        ],
+        "result": {
+          "type": "ArrangementGraphError",
+          "error": {
+            "type": "ConstructionFailed"
+          }
+        }
+      },
+      {
+        "minimum": 0.000001,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999975391066795,
+            "lengthUpperBound": 0.0000010035212732436228,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025453,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000015175,
+                "y": 18.96509659940614
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.9999984683063414,
+            "hi": 1,
+            "lengthUpperBound": 0.0000018333558245012787,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000006873,
+                "y": 18.965097711608703
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0,
+            "hi": 8.384008967666101e-7,
+            "lengthUpperBound": 0.0000010035212732436234,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000015177,
+                "y": 18.96509659940614
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.0000017676005586363408,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.0000018333558280539915,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000006873,
+                "y": 18.9650977116087
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      },
+      {
+        "minimum": 1e-7,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999975391066795,
+            "lengthUpperBound": 0.0000010035212732436228,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025453,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000015175,
+                "y": 18.96509659940614
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.9999984683063414,
+            "hi": 1,
+            "lengthUpperBound": 0.0000018333558245012787,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000006873,
+                "y": 18.965097711608703
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0,
+            "hi": 8.384008967666101e-7,
+            "lengthUpperBound": 0.0000010035212732436234,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000015177,
+                "y": 18.96509659940614
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.0000017676005586363408,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.0000018333558280539915,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000006873,
+                "y": 18.9650977116087
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      },
+      {
+        "minimum": 1e-8,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999975391066795,
+            "lengthUpperBound": 0.0000010035212732436228,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025453,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000015175,
+                "y": 18.96509659940614
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.9999984683063414,
+            "hi": 1,
+            "lengthUpperBound": 0.0000018333558245012787,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000006873,
+                "y": 18.965097711608703
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0,
+            "hi": 8.384008967666101e-7,
+            "lengthUpperBound": 0.0000010035212732436234,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000015177,
+                "y": 18.96509659940614
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.0000017676005586363408,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.0000018333558280539915,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000006873,
+                "y": 18.9650977116087
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "CC01076",
+    "operation": "Not",
+    "runs": [
+      {
+        "minimum": 0.00001,
+        "gaps": [
+          {
+            "segment": 4,
+            "lo": 0,
+            "hi": 0.0000045648822778888155,
+            "lengthUpperBound": 0.000003949079659102007,
+            "geometry": {
+              "type": "Line",
+              "start": {
+                "type": "Point",
+                "x": 15.310989999974545,
+                "y": 18.96510440411513
+              },
+              "end": {
+                "type": "Point",
+                "x": 15.310990000020194,
+                "y": 18.965100455035472
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.000003949079658936149,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          }
+        ],
+        "result": {
+          "type": "ArrangementGraphError",
+          "error": {
+            "type": "ConstructionFailed"
+          }
+        }
+      },
+      {
+        "minimum": 0.000001,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999975391066795,
+            "lengthUpperBound": 0.0000010035212732436228,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025453,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000015175,
+                "y": 18.96509659940614
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.9999984683063414,
+            "hi": 1,
+            "lengthUpperBound": 0.0000018333558245012787,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000006873,
+                "y": 18.965097711608703
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0,
+            "hi": 8.384008967666101e-7,
+            "lengthUpperBound": 0.0000010035212732436234,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000015177,
+                "y": 18.96509659940614
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.0000017676005586363408,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.0000018333558280539915,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000006873,
+                "y": 18.9650977116087
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      },
+      {
+        "minimum": 1e-7,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999975391066795,
+            "lengthUpperBound": 0.0000010035212732436228,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025453,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000015175,
+                "y": 18.96509659940614
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.9999984683063414,
+            "hi": 1,
+            "lengthUpperBound": 0.0000018333558245012787,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000006873,
+                "y": 18.965097711608703
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0,
+            "hi": 8.384008967666101e-7,
+            "lengthUpperBound": 0.0000010035212732436234,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000015177,
+                "y": 18.96509659940614
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.0000017676005586363408,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.0000018333558280539915,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000006873,
+                "y": 18.9650977116087
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      },
+      {
+        "minimum": 1e-8,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999975391066795,
+            "lengthUpperBound": 0.0000010035212732436228,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025453,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000015175,
+                "y": 18.96509659940614
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.9999984683063414,
+            "hi": 1,
+            "lengthUpperBound": 0.0000018333558245012787,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000006873,
+                "y": 18.965097711608703
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0,
+            "hi": 8.384008967666101e-7,
+            "lengthUpperBound": 0.0000010035212732436234,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000015177,
+                "y": 18.96509659940614
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.0000017676005586363408,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.0000018333558280539915,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000006873,
+                "y": 18.9650977116087
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "CC01077",
+    "operation": "Xor",
+    "runs": [
+      {
+        "minimum": 0.00001,
+        "gaps": [
+          {
+            "segment": 4,
+            "lo": 0,
+            "hi": 0.0000045648822778888155,
+            "lengthUpperBound": 0.000003949079659102007,
+            "geometry": {
+              "type": "Line",
+              "start": {
+                "type": "Point",
+                "x": 15.310989999974545,
+                "y": 18.96510440411513
+              },
+              "end": {
+                "type": "Point",
+                "x": 15.310990000020194,
+                "y": 18.965100455035472
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.000003949079658936149,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          }
+        ],
+        "result": {
+          "type": "ArrangementGraphError",
+          "error": {
+            "type": "ConstructionFailed"
+          }
+        }
+      },
+      {
+        "minimum": 0.000001,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999975391066795,
+            "lengthUpperBound": 0.0000010035212732436228,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025453,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000015175,
+                "y": 18.96509659940614
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.9999984683063414,
+            "hi": 1,
+            "lengthUpperBound": 0.0000018333558245012787,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000006873,
+                "y": 18.965097711608703
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0,
+            "hi": 8.384008967666101e-7,
+            "lengthUpperBound": 0.0000010035212732436234,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000015177,
+                "y": 18.96509659940614
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.0000017676005586363408,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.0000018333558280539915,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000006873,
+                "y": 18.9650977116087
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 2
+        }
+      },
+      {
+        "minimum": 1e-7,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999975391066795,
+            "lengthUpperBound": 0.0000010035212732436228,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025453,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000015175,
+                "y": 18.96509659940614
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.9999984683063414,
+            "hi": 1,
+            "lengthUpperBound": 0.0000018333558245012787,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000006873,
+                "y": 18.965097711608703
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0,
+            "hi": 8.384008967666101e-7,
+            "lengthUpperBound": 0.0000010035212732436234,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000015177,
+                "y": 18.96509659940614
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.0000017676005586363408,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.0000018333558280539915,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000006873,
+                "y": 18.9650977116087
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 2
+        }
+      },
+      {
+        "minimum": 1e-8,
+        "gaps": [
+          {
+            "segment": 1,
+            "lo": 0.9999967007057828,
+            "hi": 0.9999975391066795,
+            "lengthUpperBound": 0.0000010035212732436228,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025453,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000015175,
+                "y": 18.96509659940614
+              }
+            }
+          },
+          {
+            "segment": 1,
+            "lo": 0.9999984683063414,
+            "hi": 1,
+            "lengthUpperBound": 0.0000018333558245012787,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000006873,
+                "y": 18.965097711608703
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38100000000000017,
+                "y": 0.38100000000000017
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0,
+            "hi": 8.384008967666101e-7,
+            "lengthUpperBound": 0.0000010035212732436234,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000025455,
+                "y": 18.96509559588487
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000015177,
+                "y": 18.96509659940614
+              }
+            }
+          },
+          {
+            "segment": 7,
+            "lo": 0.0000017676005586363408,
+            "hi": 0.0000032992942172354044,
+            "lengthUpperBound": 0.0000018333558280539915,
+            "geometry": {
+              "type": "Arc",
+              "start": {
+                "type": "Point",
+                "x": 14.548990000006873,
+                "y": 18.9650977116087
+              },
+              "radius": {
+                "type": "Point",
+                "x": 0.38099999999999945,
+                "y": 0.38099999999999945
+              },
+              "x_axis_rotation": 0,
+              "large_arc": false,
+              "sweep": false,
+              "end": {
+                "type": "Point",
+                "x": 14.548990000000272,
+                "y": 18.965099544964527
+              }
+            }
+          }
+        ],
+        "result": {
+          "subpaths": 2
+        }
+      }
+    ]
+  }
+]

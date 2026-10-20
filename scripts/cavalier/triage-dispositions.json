@@ -807,5 +807,220 @@
     ],
     "status": "original-topology-winding-parity-removal",
     "reason": "Current 192-record topology batch on 1b4113b: no errors/timeouts. See ORIGINAL-OFFSET-TOPOLOGY-TRIAGE.md and per-ID boundary checks for evidence and limits. Boundary samples are not a proof of exact equivalence; winding/parity policy remains eligible for deferred review."
+  },
+  {
+    "ids": [
+      "CC01398",
+      "CC01402",
+      "CC01412",
+      "CC01416",
+      "CC01426",
+      "CC01430",
+      "CC01438",
+      "CC01439",
+      "CC01485",
+      "CC01489",
+      "CC01492",
+      "CC01496"
+    ],
+    "status": "original-failure-recovered-current-property-match",
+    "reason": "Fresh original-offset-reconciliation replay matches; no per-fix attribution isolated. See ORIGINAL-INVENTORY-RECONCILIATION.md."
+  },
+  {
+    "ids": [
+      "CC01305",
+      "CC01306",
+      "CC01307",
+      "CC01308"
+    ],
+    "status": "understood-beyond-center-normal-extrusion-policy",
+    "reason": "Current results confirm earlier circle collapse analysis; no filled-region erosion guarantee. Policy reconsideration deferred. See ORIGINAL-INVENTORY-RECONCILIATION.md."
+  },
+  {
+    "ids": [
+      "CC01383",
+      "CC01384",
+      "CC01385",
+      "CC01386"
+    ],
+    "status": "understood-post-collapse-square-winding-policy",
+    "reason": "Current results confirm prior SQUARE-COLLAPSE-WINDING-TRIAGE.md; policy reconsideration deferred. See ORIGINAL-INVENTORY-RECONCILIATION.md."
+  },
+  {
+    "ids": [
+      "CC01291"
+    ],
+    "status": "understood-open-band-trimming-policy",
+    "reason": "Reversed CC01287 presentation remains empty. Representative winding/parity trace is OFFSET-POST-REVERSAL-TRIAGE.md; reverse result replayed, not independently re-traced. See ORIGINAL-INVENTORY-RECONCILIATION.md."
+  },
+  {
+    "ids": [
+      "CC00937"
+    ],
+    "status": "original-timeout-recovered-property-match",
+    "reason": "Original serial 30-second replay already matched; current scanline review completes with sampled clearance 5.24e-8. Not in final 181-record discrepancy queue. See ORIGINAL-INVENTORY-RECONCILIATION.md."
+  },
+  {
+    "ids": [
+      "CC00666",
+      "CC00670",
+      "CC00674",
+      "CC00678"
+    ],
+    "status": "reviewed-boolean-decomposition-orientation",
+    "reason": "Reconciles the completed 56-case BOOLEAN-DECOMPOSITION-TRIAGE.md review into the per-ID register; original counts and raw samples preserved. Current stage checks are recorded in ORIGINAL-BOOLEAN-STAGE-REVIEW.md, without claiming exact equivalence."
+  },
+  {
+    "ids": [
+      "CC00685",
+      "CC00689",
+      "CC00693",
+      "CC00697"
+    ],
+    "status": "reviewed-boolean-decomposition-orientation",
+    "reason": "Reconciles the completed 56-case BOOLEAN-DECOMPOSITION-TRIAGE.md review into the per-ID register; original counts and raw samples preserved. Current stage checks are recorded in ORIGINAL-BOOLEAN-STAGE-REVIEW.md, without claiming exact equivalence."
+  },
+  {
+    "ids": [
+      "CC00704",
+      "CC00708",
+      "CC00712",
+      "CC00716"
+    ],
+    "status": "reviewed-boolean-nonidentical-numerical-reconstruction",
+    "reason": "Reconciles the completed 56-case BOOLEAN-DECOMPOSITION-TRIAGE.md review into the per-ID register; original counts and raw samples preserved. Current stage checks are recorded in ORIGINAL-BOOLEAN-STAGE-REVIEW.md, without claiming exact equivalence."
+  },
+  {
+    "ids": [
+      "CC00742",
+      "CC00746",
+      "CC00750",
+      "CC00754"
+    ],
+    "status": "reviewed-boolean-decomposition-orientation",
+    "reason": "Reconciles the completed 56-case BOOLEAN-DECOMPOSITION-TRIAGE.md review into the per-ID register; original counts and raw samples preserved. Current stage checks are recorded in ORIGINAL-BOOLEAN-STAGE-REVIEW.md, without claiming exact equivalence."
+  },
+  {
+    "ids": [
+      "CC00761",
+      "CC00765",
+      "CC00769",
+      "CC00773"
+    ],
+    "status": "reviewed-boolean-decomposition-orientation",
+    "reason": "Reconciles the completed 56-case BOOLEAN-DECOMPOSITION-TRIAGE.md review into the per-ID register; original counts and raw samples preserved. Current stage checks are recorded in ORIGINAL-BOOLEAN-STAGE-REVIEW.md, without claiming exact equivalence."
+  },
+  {
+    "ids": [
+      "CC00780",
+      "CC00784",
+      "CC00788",
+      "CC00792"
+    ],
+    "status": "reviewed-boolean-decomposition-orientation",
+    "reason": "Reconciles the completed 56-case BOOLEAN-DECOMPOSITION-TRIAGE.md review into the per-ID register; original counts and raw samples preserved. Current stage checks are recorded in ORIGINAL-BOOLEAN-STAGE-REVIEW.md, without claiming exact equivalence."
+  },
+  {
+    "ids": [
+      "CC00875",
+      "CC00879",
+      "CC00883",
+      "CC00887"
+    ],
+    "status": "reviewed-boolean-nonidentical-numerical-reconstruction",
+    "reason": "Reconciles the completed 56-case BOOLEAN-DECOMPOSITION-TRIAGE.md review into the per-ID register; original counts and raw samples preserved. Current stage checks are recorded in ORIGINAL-BOOLEAN-STAGE-REVIEW.md, without claiming exact equivalence."
+  },
+  {
+    "ids": [
+      "CC00894",
+      "CC00898",
+      "CC00902",
+      "CC00906"
+    ],
+    "status": "reviewed-boolean-nonidentical-numerical-reconstruction",
+    "reason": "Reconciles the completed 56-case BOOLEAN-DECOMPOSITION-TRIAGE.md review into the per-ID register; original counts and raw samples preserved. Current stage checks are recorded in ORIGINAL-BOOLEAN-STAGE-REVIEW.md, without claiming exact equivalence."
+  },
+  {
+    "ids": [
+      "CC00913",
+      "CC00917",
+      "CC00921",
+      "CC00925"
+    ],
+    "status": "reviewed-boolean-decomposition-orientation",
+    "reason": "Reconciles the completed 56-case BOOLEAN-DECOMPOSITION-TRIAGE.md review into the per-ID register; original counts and raw samples preserved. Current stage checks are recorded in ORIGINAL-BOOLEAN-STAGE-REVIEW.md, without claiming exact equivalence."
+  },
+  {
+    "ids": [
+      "CC00989",
+      "CC00993",
+      "CC00997",
+      "CC01001"
+    ],
+    "status": "reviewed-boolean-decomposition-orientation",
+    "reason": "Reconciles the completed 56-case BOOLEAN-DECOMPOSITION-TRIAGE.md review into the per-ID register; original counts and raw samples preserved. Current stage checks are recorded in ORIGINAL-BOOLEAN-STAGE-REVIEW.md, without claiming exact equivalence."
+  },
+  {
+    "ids": [
+      "CC01046",
+      "CC01050",
+      "CC01054",
+      "CC01058"
+    ],
+    "status": "reviewed-boolean-decomposition-orientation",
+    "reason": "Reconciles the completed 56-case BOOLEAN-DECOMPOSITION-TRIAGE.md review into the per-ID register; original counts and raw samples preserved. Current stage checks are recorded in ORIGINAL-BOOLEAN-STAGE-REVIEW.md, without claiming exact equivalence."
+  },
+  {
+    "ids": [
+      "CC01084",
+      "CC01088",
+      "CC01092",
+      "CC01096"
+    ],
+    "status": "reviewed-boolean-decomposition-orientation",
+    "reason": "Reconciles the completed 56-case BOOLEAN-DECOMPOSITION-TRIAGE.md review into the per-ID register; original counts and raw samples preserved. Current stage checks are recorded in ORIGINAL-BOOLEAN-STAGE-REVIEW.md, without claiming exact equivalence."
+  },
+  {
+    "ids": [
+      "CC01102",
+      "CC01103",
+      "CC01106",
+      "CC01107",
+      "CC01110",
+      "CC01111",
+      "CC01114",
+      "CC01115"
+    ],
+    "status": "reviewed-boolean-tolerance-dependent-thin-geometry",
+    "reason": "Reconciles the completed 56-case BOOLEAN-DECOMPOSITION-TRIAGE.md review into the per-ID register; original counts and raw samples preserved. Current stage checks are recorded in ORIGINAL-BOOLEAN-STAGE-REVIEW.md, without claiming exact equivalence."
+  },
+  {
+    "ids": [
+      "CC01301"
+    ],
+    "status": "arrangement-repaired-extra-fragment-deferred",
+    "reason": "Production arc-subdivision fix 09d30a1 repairs construction after traversal-preserving source normalization. Full tests and 47 figures passed. Cavalier additional fragment is separately deferred. Supersedes historical source-normalization limitation status; see CC01301-ARC-SPLITTING-INVESTIGATION.md."
+  },
+  {
+    "ids": [
+      "CC01059",
+      "CC01063",
+      "CC01064",
+      "CC01065",
+      "CC01066",
+      "CC01067",
+      "CC01068",
+      "CC01069",
+      "CC01070",
+      "CC01071",
+      "CC01072",
+      "CC01073",
+      "CC01074",
+      "CC01075",
+      "CC01076",
+      "CC01077"
+    ],
+    "status": "documented-minimum-length-guard-smaller-threshold-verified",
+    "reason": "Current replay of all 16 original guard cases fails at minimum_length=1e-5 and succeeds at 1e-6, 1e-7 and 1e-8. Original missing short-piece trace in BOOLEAN-MINIMUM-LENGTH-TRIAGE.md; new records original-boolean-minimum-length-recheck.json. Former small-threshold cyclic-order defect is repaired. Successful alternative calls are not an exact-boundary-equivalence proof."
   }
 ]

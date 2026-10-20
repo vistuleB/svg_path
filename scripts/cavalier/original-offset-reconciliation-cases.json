@@ -1,0 +1,1406 @@
+[
+  {
+    "id": "CC01291",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_past_failures::open_pline4",
+    "input": {
+      "closed": false,
+      "vertices": [
+        [
+          280.0,
+          120.0,
+          -0.0
+        ],
+        [
+          390.0,
+          210.0,
+          -0.5
+        ],
+        [
+          280.0,
+          0.0,
+          0.5
+        ],
+        [
+          320.0,
+          0.0,
+          -1.0
+        ],
+        [
+          230.0,
+          0.0,
+          -0.0
+        ],
+        [
+          210.0,
+          0.0,
+          -0.374794619217547
+        ],
+        [
+          80.0,
+          90.0,
+          0.5
+        ],
+        [
+          100.0,
+          100.0,
+          -0.5
+        ]
+      ]
+    },
+    "offset": -57.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 0.0,
+        "length": 174.88800474044382,
+        "bounds": [
+          151.66902255125936,
+          51.22499389946279,
+          302.1362925265431,
+          89.80352814601788
+        ],
+        "closed": false,
+        "vertices": 8
+      }
+    ],
+    "observations": 1,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_past_failures::open_pline4",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01305",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_simple::circle_collapsed",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          2.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "offset": 2.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [],
+    "observations": 2,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_simple::circle_collapsed",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01306",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_simple::circle_collapsed",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          0.0,
+          0.0,
+          1.0
+        ],
+        [
+          2.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "offset": 2.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: true, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [],
+    "observations": 2,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_simple::circle_collapsed",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01307",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_simple::circle_collapsed",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          2.0,
+          0.0,
+          -1.0
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0
+        ]
+      ]
+    },
+    "offset": -2.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [],
+    "observations": 2,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_simple::circle_collapsed",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01308",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_simple::circle_collapsed",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          2.0,
+          0.0,
+          -1.0
+        ],
+        [
+          0.0,
+          0.0,
+          -1.0
+        ]
+      ]
+    },
+    "offset": -2.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: true, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [],
+    "observations": 2,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_simple::circle_collapsed",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01383",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_simple::square_collapsed",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          -1.0,
+          -1.0,
+          0.0
+        ],
+        [
+          1.0,
+          -1.0,
+          0.0
+        ],
+        [
+          1.0,
+          1.0,
+          0.0
+        ],
+        [
+          -1.0,
+          1.0,
+          0.0
+        ]
+      ]
+    },
+    "offset": 2.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [],
+    "observations": 4,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_simple::square_collapsed",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01384",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_simple::square_collapsed",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          -1.0,
+          -1.0,
+          0.0
+        ],
+        [
+          1.0,
+          -1.0,
+          0.0
+        ],
+        [
+          1.0,
+          1.0,
+          0.0
+        ],
+        [
+          -1.0,
+          1.0,
+          0.0
+        ]
+      ]
+    },
+    "offset": 2.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: true, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [],
+    "observations": 4,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_simple::square_collapsed",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01385",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_simple::square_collapsed",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          -1.0,
+          1.0,
+          -0.0
+        ],
+        [
+          1.0,
+          1.0,
+          -0.0
+        ],
+        [
+          1.0,
+          -1.0,
+          -0.0
+        ],
+        [
+          -1.0,
+          -1.0,
+          -0.0
+        ]
+      ]
+    },
+    "offset": -2.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [],
+    "observations": 4,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_simple::square_collapsed",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01386",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_simple::square_collapsed",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          -1.0,
+          1.0,
+          -0.0
+        ],
+        [
+          1.0,
+          1.0,
+          -0.0
+        ],
+        [
+          1.0,
+          -1.0,
+          -0.0
+        ],
+        [
+          -1.0,
+          -1.0,
+          -0.0
+        ]
+      ]
+    },
+    "offset": -2.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: true, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [],
+    "observations": 4,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_simple::square_collapsed",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01398",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_specific::case10",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          30.0,
+          0.0,
+          1.0
+        ],
+        [
+          30.0,
+          150.0,
+          0.0
+        ],
+        [
+          -380.0,
+          0.0,
+          0.0
+        ],
+        [
+          30.0,
+          -150.0,
+          1.0
+        ]
+      ]
+    },
+    "offset": 77.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 4682.865221417138,
+        "length": 359.74976552142607,
+        "bounds": [
+          -155.89016581645112,
+          -45.20300291217571,
+          -32.335291189837505,
+          45.203002912175705
+        ],
+        "closed": true,
+        "vertices": 3
+      }
+    ],
+    "observations": 4,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_specific::case10",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01402",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_specific::case10",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          30.0,
+          0.0,
+          1.0
+        ],
+        [
+          30.0,
+          150.0,
+          0.0
+        ],
+        [
+          -380.0,
+          0.0,
+          0.0
+        ],
+        [
+          30.0,
+          -150.0,
+          1.0
+        ]
+      ]
+    },
+    "offset": 77.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: true, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 4682.865221417138,
+        "length": 359.74976552142607,
+        "bounds": [
+          -155.89016581645112,
+          -45.20300291217571,
+          -32.335291189837505,
+          45.203002912175705
+        ],
+        "closed": true,
+        "vertices": 3
+      }
+    ],
+    "observations": 4,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_specific::case10",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01412",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_specific::case12",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          -225.0,
+          0.0,
+          0.0
+        ],
+        [
+          -200.0,
+          0.0,
+          0.0
+        ],
+        [
+          -175.0,
+          0.0,
+          1.0
+        ],
+        [
+          -150.0,
+          0.0,
+          1.0
+        ],
+        [
+          -125.0,
+          0.0,
+          1.0
+        ],
+        [
+          -100.0,
+          0.0,
+          0.0
+        ],
+        [
+          -75.0,
+          0.0,
+          -1.0
+        ],
+        [
+          -50.0,
+          0.0,
+          -1.0
+        ],
+        [
+          -25.0,
+          0.0,
+          -1.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          25.0,
+          0.0,
+          1.0
+        ],
+        [
+          50.0,
+          0.0,
+          0.0
+        ],
+        [
+          75.0,
+          0.0,
+          1.0
+        ],
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          125.0,
+          0.0,
+          1.0
+        ],
+        [
+          150.0,
+          0.0,
+          1.0
+        ],
+        [
+          165.0,
+          0.0,
+          1.0
+        ],
+        [
+          190.0,
+          0.0,
+          0.0
+        ],
+        [
+          215.0,
+          0.0,
+          1.0
+        ],
+        [
+          230.0,
+          0.0,
+          1.0
+        ],
+        [
+          255.0,
+          0.0,
+          1.0
+        ],
+        [
+          270.0,
+          0.0,
+          0.0
+        ],
+        [
+          280.0,
+          0.0,
+          0.0
+        ],
+        [
+          390.0,
+          200.0,
+          0.0
+        ],
+        [
+          365.0,
+          200.0,
+          1.0
+        ],
+        [
+          340.0,
+          200.0,
+          1.0
+        ],
+        [
+          352.5,
+          200.0,
+          -1.0
+        ],
+        [
+          290.0,
+          200.0,
+          0.0
+        ],
+        [
+          310.0,
+          200.0,
+          1.0
+        ],
+        [
+          270.0,
+          200.0,
+          -1.0
+        ],
+        [
+          280.0,
+          200.0,
+          -1.0
+        ],
+        [
+          225.0,
+          200.0,
+          1.0
+        ],
+        [
+          200.0,
+          200.0,
+          -1.0
+        ],
+        [
+          175.0,
+          200.0,
+          1.0
+        ],
+        [
+          150.0,
+          200.0,
+          0.0
+        ],
+        [
+          -340.0,
+          200.0,
+          0.0
+        ]
+      ]
+    },
+    "offset": 9.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 105309.44963383304,
+        "length": 1837.9627621817647,
+        "bounds": [
+          -324.4432552044466,
+          -3.5,
+          374.77855901053806,
+          203.5
+        ],
+        "closed": true,
+        "vertices": 46
+      },
+      {
+        "area": 17.514629264722736,
+        "length": 24.0979845096945,
+        "bounds": [
+          285.0,
+          208.2192186706253,
+          296.32455532033674,
+          211.0
+        ],
+        "closed": true,
+        "vertices": 4
+      }
+    ],
+    "observations": 36,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_specific::case12",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01416",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_specific::case12",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          -225.0,
+          0.0,
+          0.0
+        ],
+        [
+          -200.0,
+          0.0,
+          0.0
+        ],
+        [
+          -175.0,
+          0.0,
+          1.0
+        ],
+        [
+          -150.0,
+          0.0,
+          1.0
+        ],
+        [
+          -125.0,
+          0.0,
+          1.0
+        ],
+        [
+          -100.0,
+          0.0,
+          0.0
+        ],
+        [
+          -75.0,
+          0.0,
+          -1.0
+        ],
+        [
+          -50.0,
+          0.0,
+          -1.0
+        ],
+        [
+          -25.0,
+          0.0,
+          -1.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          25.0,
+          0.0,
+          1.0
+        ],
+        [
+          50.0,
+          0.0,
+          0.0
+        ],
+        [
+          75.0,
+          0.0,
+          1.0
+        ],
+        [
+          100.0,
+          0.0,
+          0.0
+        ],
+        [
+          125.0,
+          0.0,
+          1.0
+        ],
+        [
+          150.0,
+          0.0,
+          1.0
+        ],
+        [
+          165.0,
+          0.0,
+          1.0
+        ],
+        [
+          190.0,
+          0.0,
+          0.0
+        ],
+        [
+          215.0,
+          0.0,
+          1.0
+        ],
+        [
+          230.0,
+          0.0,
+          1.0
+        ],
+        [
+          255.0,
+          0.0,
+          1.0
+        ],
+        [
+          270.0,
+          0.0,
+          0.0
+        ],
+        [
+          280.0,
+          0.0,
+          0.0
+        ],
+        [
+          390.0,
+          200.0,
+          0.0
+        ],
+        [
+          365.0,
+          200.0,
+          1.0
+        ],
+        [
+          340.0,
+          200.0,
+          1.0
+        ],
+        [
+          352.5,
+          200.0,
+          -1.0
+        ],
+        [
+          290.0,
+          200.0,
+          0.0
+        ],
+        [
+          310.0,
+          200.0,
+          1.0
+        ],
+        [
+          270.0,
+          200.0,
+          -1.0
+        ],
+        [
+          280.0,
+          200.0,
+          -1.0
+        ],
+        [
+          225.0,
+          200.0,
+          1.0
+        ],
+        [
+          200.0,
+          200.0,
+          -1.0
+        ],
+        [
+          175.0,
+          200.0,
+          1.0
+        ],
+        [
+          150.0,
+          200.0,
+          0.0
+        ],
+        [
+          -340.0,
+          200.0,
+          0.0
+        ]
+      ]
+    },
+    "offset": 9.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: true, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 105309.44963383304,
+        "length": 1837.9627621817647,
+        "bounds": [
+          -324.4432552044466,
+          -3.5,
+          374.77855901053806,
+          203.5
+        ],
+        "closed": true,
+        "vertices": 46
+      },
+      {
+        "area": 17.514629264722736,
+        "length": 24.0979845096945,
+        "bounds": [
+          285.0,
+          208.2192186706253,
+          296.32455532033674,
+          211.0
+        ],
+        "closed": true,
+        "vertices": 4
+      }
+    ],
+    "observations": 36,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_specific::case12",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01426",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_specific::case14",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          -1.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    "offset": 1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": -7.141592653589793,
+        "length": 10.283185307179586,
+        "bounds": [
+          -2.0,
+          -1.0,
+          2.0,
+          1.0
+        ],
+        "closed": true,
+        "vertices": 4
+      }
+    ],
+    "observations": 2,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_specific::case14",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01430",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_specific::case14",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          -1.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    "offset": 1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: true, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": -7.141592653589793,
+        "length": 10.283185307179586,
+        "bounds": [
+          -2.0,
+          -1.0,
+          2.0,
+          1.0
+        ],
+        "closed": true,
+        "vertices": 4
+      }
+    ],
+    "observations": 2,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_specific::case14",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01438",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_specific::case15",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          -1.0,
+          0.0,
+          -0.0
+        ],
+        [
+          1.0,
+          0.0,
+          -0.0
+        ]
+      ]
+    },
+    "offset": 1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": -7.141592653589793,
+        "length": 10.283185307179586,
+        "bounds": [
+          -2.0,
+          -1.0,
+          2.0,
+          1.0
+        ],
+        "closed": true,
+        "vertices": 4
+      }
+    ],
+    "observations": 2,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_specific::case15",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01439",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_specific::case15",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          -1.0,
+          0.0,
+          -0.0
+        ],
+        [
+          1.0,
+          0.0,
+          -0.0
+        ]
+      ]
+    },
+    "offset": 1.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: true, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": -7.141592653589793,
+        "length": 10.283185307179586,
+        "bounds": [
+          -2.0,
+          -1.0,
+          2.0,
+          1.0
+        ],
+        "closed": true,
+        "vertices": 4
+      }
+    ],
+    "observations": 2,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_specific::case15",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01485",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_specific::case8",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          30.0,
+          0.0,
+          1.0
+        ],
+        [
+          30.0,
+          150.0,
+          0.0
+        ],
+        [
+          -380.0,
+          0.0,
+          0.0
+        ],
+        [
+          30.0,
+          -150.0,
+          1.0
+        ]
+      ]
+    },
+    "offset": 71.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 7211.747093261723,
+        "length": 504.56017942610254,
+        "bounds": [
+          -173.3532697788056,
+          -61.27715478753254,
+          -5.862380026216449,
+          61.27715478753261
+        ],
+        "closed": true,
+        "vertices": 3
+      },
+      {
+        "area": 31.56308032686883,
+        "length": 36.43002208996429,
+        "bounds": [
+          17.851377192815534,
+          -75.82916586272849,
+          34.00000000000002,
+          -69.9529196237638
+        ],
+        "closed": true,
+        "vertices": 3
+      },
+      {
+        "area": 31.563080326869454,
+        "length": 36.43002208996468,
+        "bounds": [
+          17.851377192815338,
+          69.95291962376375,
+          34.00000000000001,
+          75.8291658627285
+        ],
+        "closed": true,
+        "vertices": 3
+      }
+    ],
+    "observations": 4,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_specific::case8",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01489",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_specific::case8",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          30.0,
+          0.0,
+          1.0
+        ],
+        [
+          30.0,
+          150.0,
+          0.0
+        ],
+        [
+          -380.0,
+          0.0,
+          0.0
+        ],
+        [
+          30.0,
+          -150.0,
+          1.0
+        ]
+      ]
+    },
+    "offset": 71.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: true, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 7211.747093261723,
+        "length": 504.56017942610254,
+        "bounds": [
+          -173.3532697788056,
+          -61.27715478753254,
+          -5.862380026216449,
+          61.27715478753261
+        ],
+        "closed": true,
+        "vertices": 3
+      },
+      {
+        "area": 31.56308032686883,
+        "length": 36.43002208996429,
+        "bounds": [
+          17.851377192815534,
+          -75.82916586272849,
+          34.00000000000002,
+          -69.9529196237638
+        ],
+        "closed": true,
+        "vertices": 3
+      },
+      {
+        "area": 31.563080326869454,
+        "length": 36.43002208996468,
+        "bounds": [
+          17.851377192815338,
+          69.95291962376375,
+          34.00000000000001,
+          75.8291658627285
+        ],
+        "closed": true,
+        "vertices": 3
+      }
+    ],
+    "observations": 4,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_specific::case8",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01492",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_specific::case9",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          30.0,
+          0.0,
+          1.0
+        ],
+        [
+          30.0,
+          150.0,
+          0.0
+        ],
+        [
+          -380.0,
+          0.0,
+          0.0
+        ],
+        [
+          30.0,
+          -150.0,
+          1.0
+        ]
+      ]
+    },
+    "offset": 73.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: false, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 6273.618943028114,
+        "length": 440.3020798034933,
+        "bounds": [
+          -167.53223512468745,
+          -54.499133794769804,
+          -18.56793608564996,
+          54.4991337947698
+        ],
+        "closed": true,
+        "vertices": 3
+      }
+    ],
+    "observations": 4,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_specific::case9",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  },
+  {
+    "id": "CC01496",
+    "kind": "offset",
+    "binary": "test_pline_parallel_offset",
+    "test": "test_specific::case9",
+    "input": {
+      "closed": true,
+      "vertices": [
+        [
+          30.0,
+          0.0,
+          1.0
+        ],
+        [
+          30.0,
+          150.0,
+          0.0
+        ],
+        [
+          -380.0,
+          0.0,
+          0.0
+        ],
+        [
+          30.0,
+          -150.0,
+          1.0
+        ]
+      ]
+    },
+    "offset": 73.0,
+    "options": "PlineOffsetOptions { aabb_index: None, handle_self_intersects: true, pos_equal_eps: 1e-5, offset_dist_eps: 0.0001, touching_loop_behavior: Preserve, coincident_segment_behavior: Preserve }",
+    "result": [
+      {
+        "area": 6273.618943028114,
+        "length": 440.3020798034933,
+        "bounds": [
+          -167.53223512468745,
+          -54.499133794769804,
+          -18.56793608564996,
+          54.4991337947698
+        ],
+        "closed": true,
+        "vertices": 3
+      }
+    ],
+    "observations": 4,
+    "references": [
+      {
+        "file": "tests/test_pline_parallel_offset.rs",
+        "test": "test_specific::case9",
+        "binary": "test_pline_parallel_offset"
+      }
+    ],
+    "helper_only": false
+  }
+]

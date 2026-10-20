@@ -1,5 +1,12 @@
 # Remaining investigation groups — 2026-10-19
 
+> Current status (2026-10-20): investigation of the original selected-case
+> queue is complete. See [ORIGINAL-AUDIT-CLOSURE.md](ORIGINAL-AUDIT-CLOSURE.md)
+> for scope, validation and the separate deferred-review list. Older pending
+> wording below is historical. This is not full parity, release readiness, or
+> completion of the F# port.
+
+
 Three investigation groups remain after the selective ellipse precision repair.
 These are work groups, not three confirmed bugs or a count of individual fixture
 discrepancies. Original baseline totals remain historical.
