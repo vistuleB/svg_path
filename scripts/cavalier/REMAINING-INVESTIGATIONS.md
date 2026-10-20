@@ -29,11 +29,13 @@ behavior. Documentation clarification suggested; see `SHAPE-CASE3-TRIAGE.md`.
    149 property mismatches, six errors and eight timeouts. Early numerical
    mismatches are explained by fitting detail; CC01287 is traced to existing
    open-band winding/parity policy. Eight upstream tangent arc–arc option variants share one native call. The
-   uncommitted circular intersection repair now completes these in 824–922 ms.
+   circular intersection repair (80d0953) now completes these in 824–922 ms.
    Full release tests pass; all 47 figures regenerate with only last-bit panel
    centering changes in one README SVG. See `TANGENT-CIRCLE-REPAIR.md`.
    The 402-case offset replay introduces no flags for previously matching cases. See
    `OFFSET-POST-REVERSAL-TRIAGE.md` and `OFFSET-POST-REVERSAL-REPLAY.md`.
+   All six remaining error records now have an exact-radius collapse explanation;
+   see `EXACT-COLLAPSE-ERROR-TRIAGE.md`. No additional defect was found in case6.
    Remaining mismatches are not all classified; raw counts are not bug counts.
 2. **Boolean closure and geometry classification:** the 16 default boundary-guard cases now have traced short-piece filtering
    explanations and verified lower-threshold public-operation success; see

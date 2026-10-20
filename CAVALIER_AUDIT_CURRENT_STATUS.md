@@ -861,3 +861,13 @@ All 47 published figures regenerate; all Gallery figures and 12 README figures
 are byte-identical. The last README changes only three centering coordinates by
 2.22e-16, with identical path data. See `scripts/cavalier/TANGENT-CIRCLE-REPAIR.md`.
 No public API change; no commit or F# port in this step. Broader audit still open.
+
+## 2026-10-20 — Circular fix committed; six offset errors classified
+
+Circular-intersection repair and validation committed as `80d0953`.
+The next investigation identifies all six remaining offset errors as the
+existing exact-radius collapse limitation, including both case6 traversals.
+JavaScript segment isolation and Erlang full-input reproduction agree; see
+`scripts/cavalier/EXACT-COLLAPSE-ERROR-TRIAGE.md`. No production changes.
+These new findings remain uncommitted. Other offset property discrepancies,
+Boolean correctness classification and coverage closure remain open. F# deferred.

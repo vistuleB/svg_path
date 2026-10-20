@@ -1,0 +1,622 @@
+{
+  "rows": [
+    {
+      "id": "CC01309",
+      "offset": -1,
+      "segments": [
+        {
+          "index": 0,
+          "source": {
+            "start": {
+              "x": 0,
+              "y": 0
+            },
+            "radius": {
+              "x": 1,
+              "y": 1
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": 2,
+              "y": 0
+            }
+          },
+          "result": {
+            "error": "DegenerateTangent",
+            "t": 0
+          }
+        },
+        {
+          "index": 1,
+          "source": {
+            "start": {
+              "x": 2,
+              "y": 0
+            },
+            "radius": {
+              "x": 1,
+              "y": 1
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "result": {
+            "error": "DegenerateTangent",
+            "t": 0
+          }
+        }
+      ],
+      "path": {
+        "error": "DegenerateTangent",
+        "t": 0
+      },
+      "untrimmed": {
+        "error": "DegenerateTangent",
+        "t": 0
+      }
+    },
+    {
+      "id": "CC01310",
+      "offset": -1,
+      "segments": [
+        {
+          "index": 0,
+          "source": {
+            "start": {
+              "x": 0,
+              "y": 0
+            },
+            "radius": {
+              "x": 1,
+              "y": 1
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": 2,
+              "y": 0
+            }
+          },
+          "result": {
+            "error": "DegenerateTangent",
+            "t": 0
+          }
+        },
+        {
+          "index": 1,
+          "source": {
+            "start": {
+              "x": 2,
+              "y": 0
+            },
+            "radius": {
+              "x": 1,
+              "y": 1
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "result": {
+            "error": "DegenerateTangent",
+            "t": 0
+          }
+        }
+      ],
+      "path": {
+        "error": "DegenerateTangent",
+        "t": 0
+      },
+      "untrimmed": {
+        "error": "DegenerateTangent",
+        "t": 0
+      }
+    },
+    {
+      "id": "CC01311",
+      "offset": 1,
+      "segments": [
+        {
+          "index": 0,
+          "source": {
+            "start": {
+              "x": 2,
+              "y": 0
+            },
+            "radius": {
+              "x": 1,
+              "y": 1
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "result": {
+            "error": "DegenerateTangent",
+            "t": 0
+          }
+        },
+        {
+          "index": 1,
+          "source": {
+            "start": {
+              "x": 0,
+              "y": 0
+            },
+            "radius": {
+              "x": 1,
+              "y": 1
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": 2,
+              "y": 0
+            }
+          },
+          "result": {
+            "error": "DegenerateTangent",
+            "t": 0
+          }
+        }
+      ],
+      "path": {
+        "error": "DegenerateTangent",
+        "t": 0
+      },
+      "untrimmed": {
+        "error": "DegenerateTangent",
+        "t": 0
+      }
+    },
+    {
+      "id": "CC01312",
+      "offset": 1,
+      "segments": [
+        {
+          "index": 0,
+          "source": {
+            "start": {
+              "x": 2,
+              "y": 0
+            },
+            "radius": {
+              "x": 1,
+              "y": 1
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "result": {
+            "error": "DegenerateTangent",
+            "t": 0
+          }
+        },
+        {
+          "index": 1,
+          "source": {
+            "start": {
+              "x": 0,
+              "y": 0
+            },
+            "radius": {
+              "x": 1,
+              "y": 1
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": 2,
+              "y": 0
+            }
+          },
+          "result": {
+            "error": "DegenerateTangent",
+            "t": 0
+          }
+        }
+      ],
+      "path": {
+        "error": "DegenerateTangent",
+        "t": 0
+      },
+      "untrimmed": {
+        "error": "DegenerateTangent",
+        "t": 0
+      }
+    },
+    {
+      "id": "CC01475",
+      "offset": -45,
+      "segments": [
+        {
+          "index": 0,
+          "source": {
+            "start": {
+              "x": 100,
+              "y": 100
+            },
+            "radius": {
+              "x": 13.975424859373685,
+              "y": 13.975424859373685
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": 80,
+              "y": 90
+            }
+          },
+          "result": {
+            "ok": true
+          }
+        },
+        {
+          "index": 1,
+          "source": {
+            "start": {
+              "x": 80,
+              "y": 90
+            },
+            "radius": {
+              "x": 120.28207587906756,
+              "y": 120.28207587906756
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": 210,
+              "y": 0
+            }
+          },
+          "result": {
+            "ok": true
+          }
+        },
+        {
+          "index": 2,
+          "source": {
+            "start": {
+              "x": 210,
+              "y": 0
+            },
+            "end": {
+              "x": 230,
+              "y": 0
+            }
+          },
+          "result": {
+            "ok": true
+          }
+        },
+        {
+          "index": 3,
+          "source": {
+            "start": {
+              "x": 230,
+              "y": 0
+            },
+            "radius": {
+              "x": 45,
+              "y": 45
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": 320,
+              "y": 0
+            }
+          },
+          "result": {
+            "error": "DegenerateTangent",
+            "t": 0
+          }
+        },
+        {
+          "index": 4,
+          "source": {
+            "start": {
+              "x": 320,
+              "y": 0
+            },
+            "radius": {
+              "x": 25,
+              "y": 25
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": 280,
+              "y": 0
+            }
+          },
+          "result": {
+            "ok": true
+          }
+        },
+        {
+          "index": 5,
+          "source": {
+            "start": {
+              "x": 280,
+              "y": 0
+            },
+            "radius": {
+              "x": 148.1658698891212,
+              "y": 148.1658698891212
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": 390,
+              "y": 210
+            }
+          },
+          "result": {
+            "ok": true
+          }
+        },
+        {
+          "index": 6,
+          "source": {
+            "start": {
+              "x": 390,
+              "y": 210
+            },
+            "end": {
+              "x": 280,
+              "y": 120
+            }
+          },
+          "result": {
+            "ok": true
+          }
+        }
+      ],
+      "path": {
+        "error": "DegenerateTangent",
+        "t": 0
+      },
+      "untrimmed": {
+        "error": "DegenerateTangent",
+        "t": 0
+      }
+    },
+    {
+      "id": "CC01479",
+      "offset": 45,
+      "segments": [
+        {
+          "index": 0,
+          "source": {
+            "start": {
+              "x": 280,
+              "y": 120
+            },
+            "end": {
+              "x": 390,
+              "y": 210
+            }
+          },
+          "result": {
+            "ok": true
+          }
+        },
+        {
+          "index": 1,
+          "source": {
+            "start": {
+              "x": 390,
+              "y": 210
+            },
+            "radius": {
+              "x": 148.1658698891212,
+              "y": 148.1658698891212
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": 280,
+              "y": 0
+            }
+          },
+          "result": {
+            "ok": true
+          }
+        },
+        {
+          "index": 2,
+          "source": {
+            "start": {
+              "x": 280,
+              "y": 0
+            },
+            "radius": {
+              "x": 25,
+              "y": 25
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": 320,
+              "y": 0
+            }
+          },
+          "result": {
+            "ok": true
+          }
+        },
+        {
+          "index": 3,
+          "source": {
+            "start": {
+              "x": 320,
+              "y": 0
+            },
+            "radius": {
+              "x": 45,
+              "y": 45
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": 230,
+              "y": 0
+            }
+          },
+          "result": {
+            "error": "DegenerateTangent",
+            "t": 0
+          }
+        },
+        {
+          "index": 4,
+          "source": {
+            "start": {
+              "x": 230,
+              "y": 0
+            },
+            "end": {
+              "x": 210,
+              "y": 0
+            }
+          },
+          "result": {
+            "ok": true
+          }
+        },
+        {
+          "index": 5,
+          "source": {
+            "start": {
+              "x": 210,
+              "y": 0
+            },
+            "radius": {
+              "x": 120.28207587906756,
+              "y": 120.28207587906756
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": 80,
+              "y": 90
+            }
+          },
+          "result": {
+            "ok": true
+          }
+        },
+        {
+          "index": 6,
+          "source": {
+            "start": {
+              "x": 80,
+              "y": 90
+            },
+            "radius": {
+              "x": 13.975424859373685,
+              "y": 13.975424859373685
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": 100,
+              "y": 100
+            }
+          },
+          "result": {
+            "ok": true
+          }
+        }
+      ],
+      "path": {
+        "error": "DegenerateTangent",
+        "t": 0
+      },
+      "untrimmed": {
+        "error": "DegenerateTangent",
+        "t": 0
+      }
+    }
+  ],
+  "controls": [
+    {
+      "reverse": false,
+      "distance": 44.999,
+      "result": {
+        "ok": true
+      }
+    },
+    {
+      "reverse": false,
+      "distance": 45,
+      "result": {
+        "error": "DegenerateTangent",
+        "t": 0
+      }
+    },
+    {
+      "reverse": false,
+      "distance": 45.001,
+      "result": {
+        "ok": true
+      }
+    },
+    {
+      "reverse": true,
+      "distance": 44.999,
+      "result": {
+        "ok": true
+      }
+    },
+    {
+      "reverse": true,
+      "distance": 45,
+      "result": {
+        "error": "DegenerateTangent",
+        "t": 0
+      }
+    },
+    {
+      "reverse": true,
+      "distance": 45.001,
+      "result": {
+        "ok": true
+      }
+    }
+  ]
+}

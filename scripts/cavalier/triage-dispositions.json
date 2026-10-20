@@ -513,5 +513,17 @@
     ],
     "status": "validated-circular-root-localization-performance-repair",
     "reason": "Uncommitted compensated circular intersection candidate reduces all eight identical native calls to 824\u2013922 ms. Preserve variants match; Separate variants retain known grouping difference with agreeing aggregate geometry. All 402 offset records replayed without previously matching cases becoming flagged. Full validation tracked in TANGENT-CIRCLE-REPAIR.md; F# deferred. Full release suite passes (2098 + 31 + 844 per portable target); 47 figures regenerated, one README centering-only last-bit difference. Uncommitted."
+  },
+  {
+    "ids": [
+      "CC01309",
+      "CC01310",
+      "CC01311",
+      "CC01312",
+      "CC01475",
+      "CC01479"
+    ],
+    "status": "different-api-contract",
+    "reason": "Exact inward circular-radius collapse deliberately returns DegenerateTangent; case6 isolates the same rejection on its fourth segment in both traversals. See EXACT-COLLAPSE-ERROR-TRIAGE.md."
   }
 ]
