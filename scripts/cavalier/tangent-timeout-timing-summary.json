@@ -1,0 +1,42 @@
+{
+  "arrangement.pair_cuts_with_common_endpoint_sliver": {
+    "calls": 883,
+    "inclusive_milliseconds": 89199.22473399989,
+    "max_milliseconds": 3738.387125000001
+  },
+  "intersections.shared_endpoint_circle_intersections": {
+    "calls": 400,
+    "inclusive_milliseconds": 17.007205999976193,
+    "max_milliseconds": 0.38275000000430737
+  },
+  "intersections.curve_curve_intersections": {
+    "calls": 291,
+    "inclusive_milliseconds": 88863.313873,
+    "max_milliseconds": 3737.0287499999977
+  },
+  "arrangement.build_with": {
+    "calls": 2,
+    "inclusive_milliseconds": 89481.02562500001,
+    "max_milliseconds": 80498.14925
+  },
+  "offset.single_offset_segment_arrangement": {
+    "calls": 2,
+    "inclusive_milliseconds": 89493.284709,
+    "max_milliseconds": 80500.086417
+  },
+  "offset.offside_trimmed_single_offset_subpath": {
+    "calls": 1,
+    "inclusive_milliseconds": 637.3466659999976,
+    "max_milliseconds": 637.3466659999976
+  },
+  "offset.forced_parity_reduce_trim_graph": {
+    "calls": 1,
+    "inclusive_milliseconds": 1.3002090000081807,
+    "max_milliseconds": 1.3002090000081807
+  },
+  "offset.trim_single_offset_arrangement": {
+    "calls": 1,
+    "inclusive_milliseconds": 13.682208999991417,
+    "max_milliseconds": 13.682208999991417
+  }
+}

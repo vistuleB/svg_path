@@ -1,0 +1,53 @@
+{
+  "records": 402,
+  "status": {
+    "match": 237,
+    "discrepancy": 153,
+    "scope": 6,
+    "error": 6
+  },
+  "original_matches_now_flagged": [],
+  "prior_replay_matches_now_flagged": [],
+  "former_timeouts": [
+    {
+      "id": "CC01640",
+      "status": "match",
+      "milliseconds": 867
+    },
+    {
+      "id": "CC01644",
+      "status": "match",
+      "milliseconds": 872
+    },
+    {
+      "id": "CC01647",
+      "status": "match",
+      "milliseconds": 834
+    },
+    {
+      "id": "CC01648",
+      "status": "match",
+      "milliseconds": 824
+    },
+    {
+      "id": "CC01651",
+      "status": "discrepancy",
+      "milliseconds": 922
+    },
+    {
+      "id": "CC01652",
+      "status": "discrepancy",
+      "milliseconds": 854
+    },
+    {
+      "id": "CC01655",
+      "status": "discrepancy",
+      "milliseconds": 860
+    },
+    {
+      "id": "CC01656",
+      "status": "discrepancy",
+      "milliseconds": 858
+    }
+  ]
+}

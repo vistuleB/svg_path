@@ -83,3 +83,4 @@ svg_path_circle_rotation_test.gleam
 svg_path_ellipse_precision_test.gleam
 
 svg_path_offset_reversal_join_test.gleam
+svg_path_circle_intersection_precision_test.gleam

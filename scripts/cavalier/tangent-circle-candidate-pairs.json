@@ -1,0 +1,112 @@
+[
+  {
+    "file": "tangent-timeout-original-pair.json",
+    "operation": "intersections",
+    "reverse": false,
+    "milliseconds": 5.119124999999997,
+    "result": {
+      "hits": [
+        {
+          "left_t": 0.4999999756000666,
+          "right_t": 0.5000000243999327,
+          "point": {
+            "x": 10.999999961672675,
+            "y": 10.999999961672675
+          }
+        },
+        {
+          "left_t": 0.5000000243999327,
+          "right_t": 0.4999999756000666,
+          "point": {
+            "x": 11.000000038327325,
+            "y": 11.000000038327325
+          }
+        }
+      ]
+    }
+  },
+  {
+    "file": "tangent-timeout-original-pair.json",
+    "operation": "intersections",
+    "reverse": true,
+    "milliseconds": 5.05041700000001,
+    "result": {
+      "hits": [
+        {
+          "left_t": 0.4999999756000666,
+          "right_t": 0.5000000243999327,
+          "point": {
+            "x": 11.000000038327325,
+            "y": 11.000000038327325
+          }
+        },
+        {
+          "left_t": 0.5000000243999327,
+          "right_t": 0.4999999756000666,
+          "point": {
+            "x": 10.999999961672675,
+            "y": 10.999999961672675
+          }
+        }
+      ]
+    }
+  },
+  {
+    "file": "tangent-timeout-original-pair.json",
+    "operation": "arrangement",
+    "reverse": false,
+    "milliseconds": 73.22287499999999,
+    "result": {
+      "edges": 5,
+      "vertices": 6
+    }
+  },
+  {
+    "file": "tangent-timeout-original-pair.json",
+    "operation": "arrangement",
+    "reverse": true,
+    "milliseconds": 73.36787500000003,
+    "result": {
+      "edges": 5,
+      "vertices": 6
+    }
+  },
+  {
+    "file": "tangent-timeout-reduced-pair.json",
+    "operation": "intersections",
+    "reverse": false,
+    "milliseconds": 10.141624999999976,
+    "result": {
+      "hits": []
+    }
+  },
+  {
+    "file": "tangent-timeout-reduced-pair.json",
+    "operation": "intersections",
+    "reverse": true,
+    "milliseconds": 10.323750000000018,
+    "result": {
+      "hits": []
+    }
+  },
+  {
+    "file": "tangent-timeout-reduced-pair.json",
+    "operation": "arrangement",
+    "reverse": false,
+    "milliseconds": 13.461000000000013,
+    "result": {
+      "edges": 1,
+      "vertices": 2
+    }
+  },
+  {
+    "file": "tangent-timeout-reduced-pair.json",
+    "operation": "arrangement",
+    "reverse": true,
+    "milliseconds": 14.005915999999957,
+    "result": {
+      "edges": 1,
+      "vertices": 2
+    }
+  }
+]

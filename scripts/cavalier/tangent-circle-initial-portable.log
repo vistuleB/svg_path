@@ -1,0 +1,13 @@
+Portable numerical tests (all, all): Erlang
+  Compiling svg_path
+  Compiling svg_path_portable_tests
+   Compiled in 2.04s
+    Running svg_path_portable_tests_test.main
+.............................................................................................................................................................................................................................
+let assert test/svg_path_intersections_test.gleam:245
+ test: svg_path_intersections_test.elizabeth_terminal_newton_recovers_loop8_arc_crossing_test
+ code: let assert Ok([hit]) = intersections.segment_with(left, right, options:)
+value: Error(InternalUncertifiedSegmentIntersection(0.0, 1.4210854715202004e-14, 1.0e-16))
+ info: Pattern match failed, no pattern matched the value.
+..........................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................
+839 passed, 1 failures

@@ -1,7 +1,10 @@
-//// Selective double-double SVG endpoint conversion. Internal, not an error bound.
+//// Double-double SVG endpoint conversion and circular intersection arithmetic.
+//// Internal numerical helpers, not a certified error bound.
 
 import gleam/float
 import gleam/int
+import gleam/list
+import gleam/result
 import svg_path/internal/number
 import svg_path/trig
 
@@ -285,3 +288,138 @@ fn taylor(xx: DD, s: DD, c: DD, st: DD, ct: DD, n: Float) -> #(DD, DD) {
 @external(erlang, "math", "fmod")
 @external(javascript, "../trig_ffi.mjs", "remainder")
 fn remainder(value: Float, modulus: Float) -> Float
+
+// Circle endpoint records keep center corrections below a binary64 ulp until
+// the circle intersection discriminant has been evaluated. Rounding centers
+// first can lose the sign and separation of nearly tangent roots.
+@internal
+pub fn circle_intersections(
+  a: #(Float, Float, Float, Float, Float, Bool, Bool),
+  b: #(Float, Float, Float, Float, Float, Bool, Bool),
+) -> Result(List(#(Float, Float)), Nil) {
+  let origin = #(a.0, a.1)
+  let magnitude =
+    list.fold(
+      [
+        a.2 -. a.0,
+        a.3 -. a.1,
+        a.4,
+        b.0 -. a.0,
+        b.1 -. a.1,
+        b.2 -. a.0,
+        b.3 -. a.1,
+        b.4,
+      ],
+      0.0,
+      fn(m, x) { float.max(m, float.absolute_value(x)) },
+    )
+  case
+    !number.is_finite(magnitude)
+    || magnitude >. 1.0e150
+    || magnitude <. 1.0e-150
+    || float.absolute_value(a.4) /. magnitude <. 1.0e-30
+    || float.absolute_value(b.4) /. magnitude <. 1.0e-30
+  {
+    True -> Error(Nil)
+    False -> {
+      let scale = power_scale(magnitude, 1.0)
+      use a <- result.try(circle_center(a, origin, scale))
+      use b <- result.try(circle_center(b, origin, scale))
+      let dx = sub(b.0, a.0)
+      let dy = sub(b.1, a.1)
+      let d2 = add(mul(dx, dx), mul(dy, dy))
+      let radii = add(a.2, b.2)
+      case value(d2) <=. value(radii) *. 1.0e-16 {
+        True -> Error(Nil)
+        False -> {
+          let along = add(sub(a.2, b.2), d2)
+          let first = mul(dd(4.0), mul(a.2, d2))
+          let second = mul(along, along)
+          let h = sub(first, second)
+          // Leave unresolved double-double cancellation to the general solver.
+          // This guard is arithmetic conditioning, not geometric tolerance.
+          case
+            float.absolute_value(value(h))
+            <=. {
+              float.absolute_value(value(first))
+              +. float.absolute_value(value(second))
+            }
+            *. 1.0e-28
+          {
+            True -> Error(Nil)
+            False ->
+              case positive(h) {
+                False -> Ok([])
+                True -> {
+                  let denominator = mul(dd(2.0), d2)
+                  let t = divide(along, denominator)
+                  let n = divide(root(h), denominator)
+                  let x = add(a.0, mul(t, dx))
+                  let y = add(a.1, mul(t, dy))
+                  let nx = mul(n, dy)
+                  let ny = mul(n, dx)
+                  Ok([
+                    #(
+                      value(add(mul(sub(x, nx), dd(scale)), dd(origin.0))),
+                      value(add(mul(add(y, ny), dd(scale)), dd(origin.1))),
+                    ),
+                    #(
+                      value(add(mul(add(x, nx), dd(scale)), dd(origin.0))),
+                      value(add(mul(sub(y, ny), dd(scale)), dd(origin.1))),
+                    ),
+                  ])
+                }
+              }
+          }
+        }
+      }
+    }
+  }
+}
+
+fn circle_center(
+  a: #(Float, Float, Float, Float, Float, Bool, Bool),
+  origin: #(Float, Float),
+  scale: Float,
+) -> Result(#(DD, DD, DD), Nil) {
+  let ax = divide(sub(dd(a.0), dd(origin.0)), dd(scale))
+  let ay = divide(sub(dd(a.1), dd(origin.1)), dd(scale))
+  let bx = divide(sub(dd(a.2), dd(origin.0)), dd(scale))
+  let by = divide(sub(dd(a.3), dd(origin.1)), dd(scale))
+  let dx = mul(dd(0.5), sub(ax, bx))
+  let dy = mul(dd(0.5), sub(ay, by))
+  let q = add(mul(dx, dx), mul(dy, dy))
+  let r = dd(a.4 /. scale)
+  let r2 = mul(r, r)
+  case positive(q) {
+    False -> Error(Nil)
+    True -> {
+      let excess = sub(r2, q)
+      use _ <- result.try(
+        case
+          float.absolute_value(value(excess)) <=. value(add(r2, q)) *. 1.0e-28
+        {
+          True -> Error(Nil)
+          False -> Ok(Nil)
+        },
+      )
+      let corrected = case positive(excess) {
+        True -> r2
+        False -> q
+      }
+      let factor = case positive(excess) {
+        True -> root(divide(excess, q))
+        False -> dd(0.0)
+      }
+      let factor = case a.5 == a.6 {
+        True -> neg(factor)
+        False -> factor
+      }
+      Ok(#(
+        add(mul(dd(0.5), add(ax, bx)), mul(factor, dy)),
+        sub(mul(dd(0.5), add(ay, by)), mul(factor, dx)),
+        corrected,
+      ))
+    }
+  }
+}

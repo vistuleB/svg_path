@@ -1,0 +1,166 @@
+[
+  {
+    "file": "tangent-timeout-original-pair.json",
+    "operation": "intersections",
+    "reverse": false,
+    "milliseconds": 48.098958999999994,
+    "result": {
+      "hits": [
+        {
+          "left_t": 0.499999984028981,
+          "right_t": 0.5000000159710191,
+          "point": {
+            "x": 10.999999974912782,
+            "y": 10.999999974912782
+          }
+        },
+        {
+          "left_t": 0.5000001568063687,
+          "right_t": 0.49999984319363083,
+          "point": {
+            "x": 11.000000246310869,
+            "y": 11.000000246310869
+          }
+        }
+      ]
+    }
+  },
+  {
+    "file": "tangent-timeout-original-pair.json",
+    "operation": "intersections",
+    "reverse": true,
+    "milliseconds": 46.74954199999999,
+    "result": {
+      "hits": [
+        {
+          "left_t": 0.499999984028981,
+          "right_t": 0.5000000159710191,
+          "point": {
+            "x": 11.000000025087218,
+            "y": 11.000000025087218
+          }
+        },
+        {
+          "left_t": 0.5000001568063687,
+          "right_t": 0.4999998431936314,
+          "point": {
+            "x": 10.999999753689131,
+            "y": 10.999999753689131
+          }
+        }
+      ]
+    }
+  },
+  {
+    "file": "tangent-timeout-original-pair.json",
+    "operation": "arrangement",
+    "reverse": false,
+    "status": "timeout",
+    "seconds": 15
+  },
+  {
+    "file": "tangent-timeout-original-pair.json",
+    "operation": "arrangement",
+    "reverse": true,
+    "status": "timeout",
+    "seconds": 15
+  },
+  {
+    "file": "tangent-timeout-reduced-pair.json",
+    "operation": "intersections",
+    "reverse": false,
+    "milliseconds": 838.0534170000028,
+    "result": {
+      "hits": [
+        {
+          "left_t": 0,
+          "right_t": 1,
+          "point": {
+            "x": 11.000000191533037,
+            "y": 11.000000191533037
+          }
+        },
+        {
+          "left_t": 0.2512002656369576,
+          "right_t": 0.7487997169401126,
+          "point": {
+            "x": 11.000000205293244,
+            "y": 11.000000205293242
+          }
+        },
+        {
+          "left_t": 0.5015431943894945,
+          "right_t": 0.49845663331708817,
+          "point": {
+            "x": 11.000000219006491,
+            "y": 11.00000021900649
+          }
+        },
+        {
+          "left_t": 1,
+          "right_t": 0,
+          "point": {
+            "x": 11.000000246310869,
+            "y": 11.000000246310869
+          }
+        }
+      ]
+    }
+  },
+  {
+    "file": "tangent-timeout-reduced-pair.json",
+    "operation": "intersections",
+    "reverse": true,
+    "milliseconds": 615.1580419999955,
+    "result": {
+      "hits": [
+        {
+          "left_t": 0,
+          "right_t": 1,
+          "point": {
+            "x": 11.000000246310869,
+            "y": 11.000000246310869
+          }
+        },
+        {
+          "left_t": 0.43827156138094703,
+          "right_t": 0.5617283882861447,
+          "point": {
+            "x": 11.000000222303301,
+            "y": 11.0000002223033
+          }
+        },
+        {
+          "left_t": 0.7278806110071272,
+          "right_t": 0.2721193318843805,
+          "point": {
+            "x": 11.000000206439145,
+            "y": 11.000000206439143
+          }
+        },
+        {
+          "left_t": 1,
+          "right_t": 0,
+          "point": {
+            "x": 11.000000191533037,
+            "y": 11.000000191533037
+          }
+        }
+      ]
+    }
+  },
+  {
+    "file": "tangent-timeout-reduced-pair.json",
+    "operation": "arrangement",
+    "reverse": false,
+    "status": "timeout",
+    "seconds": 15
+  },
+  {
+    "file": "tangent-timeout-reduced-pair.json",
+    "operation": "arrangement",
+    "reverse": true,
+    "status": "timeout",
+    "seconds": 15
+  }
+]

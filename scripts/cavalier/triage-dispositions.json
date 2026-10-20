@@ -485,5 +485,33 @@
     ],
     "status": "understood-open-band-trimming-policy",
     "reason": "NoTrimming preserves the raw walk; InBandTrimming retains 20 winding-compatible edges in seven chains then forced parity removes all chains, since each has an unprotected terminal. Direct band-winding samples agree with all 30 edge pairs at three distances. Complete deletion is allowed by the native contract. Cavalier retains an independently clipped open chain; no native defect established. See OFFSET-POST-REVERSAL-TRIAGE.md."
+  },
+  {
+    "ids": [
+      "CC01640",
+      "CC01644",
+      "CC01647",
+      "CC01648",
+      "CC01651",
+      "CC01652",
+      "CC01655",
+      "CC01656"
+    ],
+    "status": "confirmed-numerical-subdivision-performance-problem",
+    "reason": "Identical native calls despite upstream option variants. Longer CC01640 completes in roughly 90s and matches properties, with 116 segments. 291 general intersections consume almost all time. Isolated original arc pair arranges slowly; 80-digit circle oracle and one-pair oracle-seeding experiment reduce full offset to 7.8s/30 segments. No production fix yet; see TANGENT-ARC-SUBDIVISION-PERFORMANCE.md."
+  },
+  {
+    "ids": [
+      "CC01640",
+      "CC01644",
+      "CC01647",
+      "CC01648",
+      "CC01651",
+      "CC01652",
+      "CC01655",
+      "CC01656"
+    ],
+    "status": "validated-circular-root-localization-performance-repair",
+    "reason": "Uncommitted compensated circular intersection candidate reduces all eight identical native calls to 824\u2013922 ms. Preserve variants match; Separate variants retain known grouping difference with agreeing aggregate geometry. All 402 offset records replayed without previously matching cases becoming flagged. Full validation tracked in TANGENT-CIRCLE-REPAIR.md; F# deferred. Full release suite passes (2098 + 31 + 844 per portable target); 47 figures regenerated, one README centering-only last-bit difference. Uncommitted."
   }
 ]

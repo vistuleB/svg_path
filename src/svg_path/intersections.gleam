@@ -12,6 +12,10 @@
 //// In particular, tolerance is not an endpoint snapping or merging radius, and
 //// endpoints closer than tolerance are not guaranteed an intersection result.
 ////
+//// Distinct circular arcs also use a compensated circle calculation when its
+//// conditioning permits; unresolved cases retain the general search. Candidates
+//// are clipped to both finite arcs and checked by the same public tolerance.
+////
 //// General curve pairs use a bounded numerical search. Returned candidates
 //// satisfy the geometric tolerance, but the search is not a proof that every
 //// mathematical intersection was found. Nearby parameter pairs are merged;
@@ -50,6 +54,7 @@ import svg_path.{
 }
 import svg_path/bezier
 import svg_path/ellipse
+import svg_path/internal/ellipse_precision
 import svg_path/internal/number
 import svg_path/internal/overlap_detection
 import svg_path/internal/query
@@ -2507,10 +2512,115 @@ fn nonconstant_segment_intersections(
       ))
       case found {
         Some(found) -> Ok(found)
-        None -> curve_curve_intersections(left, right, options)
+        None -> {
+          use circles <- result.try(precise_circle_intersections(
+            left,
+            right,
+            options,
+          ))
+          case circles {
+            Some(found) -> Ok(found)
+            None -> curve_curve_intersections(left, right, options)
+          }
+        }
       }
     }
     _, _ -> curve_curve_intersections(left, right, options)
+  }
+}
+
+fn precise_circle_intersections(
+  left: Segment,
+  right: Segment,
+  options: IntersectionOptions,
+) -> Result(Option(List(SegmentIntersection)), svg_path.Error) {
+  case left, right {
+    Arc(start: a, radius: ra, large_arc: la, sweep: sa, end: b, ..),
+      Arc(start: c, radius: rb, large_arc: lb, sweep: sb, end: d, ..)
+      if ra.x == ra.y && rb.x == rb.y
+    -> {
+      case
+        ellipse_precision.circle_intersections(
+          #(a.x, a.y, b.x, b.y, ra.x, la, sa),
+          #(c.x, c.y, d.x, d.y, rb.x, lb, sb),
+        )
+      {
+        Error(_) -> Ok(None)
+        Ok(points) -> {
+          use numerical <- result.try(numerical_search_tolerance(
+            left,
+            right,
+            options,
+          ))
+          case
+            list.try_map(points, fn(p) {
+              let p = Point(p.0, p.1)
+              case
+                query.segment_projection(p, left),
+                query.segment_projection(p, right)
+              {
+                Ok(l), Ok(r) -> {
+                  let tolerance = float.min(numerical, options.tolerance)
+                  case l.distance <=. tolerance && r.distance <=. tolerance {
+                    True ->
+                      Ok([
+                        SegmentIntersection(
+                          left_t: l.at,
+                          right_t: r.at,
+                          point: p,
+                        ),
+                      ])
+                    False -> {
+                      // A circle root outside either finite arc projects to an
+                      // endpoint. An interior projection with excess residual
+                      // instead signals evaluator disagreement: use the fallback.
+                      case
+                        {
+                          l.distance >. tolerance
+                          && { l.at == 0.0 || l.at == 1.0 }
+                        }
+                        || {
+                          r.distance >. tolerance
+                          && { r.at == 0.0 || r.at == 1.0 }
+                        }
+                      {
+                        True -> Ok([])
+                        False -> Error(Nil)
+                      }
+                    }
+                  }
+                }
+                _, _ -> Error(Nil)
+              }
+            })
+          {
+            Error(_) -> Ok(None)
+            Ok(found) -> {
+              let found =
+                found
+                |> list.flatten
+                |> dedupe_segment_intersections
+                |> sort_segment_intersections
+              // Projection can use a more accurate evaluation than segment_point.
+              // Keep the public evaluator's certificate authoritative, including
+              // callers requesting tolerances below coordinate resolution.
+              case
+                certify_segment_intersections(
+                  left,
+                  right,
+                  found,
+                  options.tolerance,
+                )
+              {
+                Ok(found) -> Ok(Some(found))
+                Error(_) -> Ok(None)
+              }
+            }
+          }
+        }
+      }
+    }
+    _, _ -> Ok(None)
   }
 }
 

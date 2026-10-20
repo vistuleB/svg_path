@@ -827,3 +827,37 @@ in copied generated JS, so the latest join repair is not necessary for the timeo
 See `scripts/cavalier/OFFSET-POST-REVERSAL-TRIAGE.md` and its replay table.
 No production changes, full-suite/figure rerun, commit or F# work in this step.
 New records remain uncommitted. The broader audit is still open.
+
+
+### Tangent arc performance localized — 2026-10-20
+
+Committed preceding offset replay findings as `90c6565`. The eight timeout IDs
+are identical native input/offset calls under different upstream options.
+CC01640 completes in a longer diagnostic run: about 90 seconds, matching area/
+length/bounds, 116 output segments. Progressive arrangement spends almost all
+that time on 291 general curve-intersection calls involving short arc fragments.
+The first two quarter-arc roots are poorly localized near tangency; an 80-digit
+circle oracle and one-pair copied-build intervention reduce the full operation
+to 7.8 seconds/30 segments without changing aggregate properties.
+
+See `scripts/cavalier/TANGENT-ARC-SUBDIVISION-PERFORMANCE.md`. Suggested next
+experiment is stable circular-arc root localization near tangency, with fallback
+and genuine double-root preservation. No production implementation, full tests,
+figures or F# work. New investigation evidence is uncommitted.
+
+
+### Circular intersection correction validated — 2026-10-20
+
+An uncommitted production candidate retains double-double circle-center and
+near-tangent discriminant precision before clipping/certifying roots. Uncertain
+configurations keep the existing solver. CC01640 falls from roughly 90 seconds/
+116 segments to about one second/18 segments. All eight former timeout records
+complete in 824–922 ms; grouping differences remain where upstream requests
+Separate. All 402 captured offsets replay with no previously matching record
+becoming flagged.
+
+Full release validation passes: 2,098 ordinary + 31 slow + 844 per portable target.
+All 47 published figures regenerate; all Gallery figures and 12 README figures
+are byte-identical. The last README changes only three centering coordinates by
+2.22e-16, with identical path data. See `scripts/cavalier/TANGENT-CIRCLE-REPAIR.md`.
+No public API change; no commit or F# port in this step. Broader audit still open.
