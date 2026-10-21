@@ -797,16 +797,16 @@
       "CC01706",
       "CC01707"
     ],
-    "status": "original-topology-round-retrace-source-distance-policy",
-    "reason": "Current 192-record topology batch on 1b4113b: no errors/timeouts. See ORIGINAL-OFFSET-TOPOLOGY-TRIAGE.md and per-ID boundary checks for evidence and limits. Boundary samples are not a proof of exact equivalence; winding/parity policy remains eligible for deferred review."
+    "status": "intended-round-retrace-trimming-different-contract",
+    "reason": "Revisited and accepted by user on 2026-10-21. Source 0\u219210\u21925\u219210\u21925\u219215 produces two copies of each semicircle in the same direction before trimming. The final bottom component is a closed zero-area walk: the bottom line and each surviving quarter arc are traversed in opposite directions. User confirms this follows the intended algorithm; no repair requested. Cavalier source-distance filtering removes the arc excursions. See ORIGINAL-OFFSET-TOPOLOGY-TRIAGE.md; fresh replay three-way-lines-preview.json."
   },
   {
     "ids": [
       "CC01738",
       "CC01739"
     ],
-    "status": "original-topology-winding-parity-removal",
-    "reason": "Current 192-record topology batch on 1b4113b: no errors/timeouts. See ORIGINAL-OFFSET-TOPOLOGY-TRIAGE.md and per-ID boundary checks for evidence and limits. Boundary samples are not a proof of exact equivalence; winding/parity policy remains eligible for deferred review."
+    "status": "intended-winding-parity-trimming-different-contract",
+    "reason": "Revisited and closed with user agreement on 2026-10-21. The lower component is an open walk present in raw output and removed by the intended winding/parity algorithm. Fresh CC01738 default and in-band-only calls return identical upper triangles; disabling offside does not recover the lower walk. The README final-trimming figure illustrates the intended broader deletion behavior. Different Cavalier trimming contract, not a pending native bug investigation. Alternative policies remain a separate design question; this is not a proof of every winding label. See ORIGINAL-OFFSET-TOPOLOGY-TRIAGE.md."
   },
   {
     "ids": [
@@ -834,7 +834,7 @@
       "CC01308"
     ],
     "status": "understood-beyond-center-normal-extrusion-policy",
-    "reason": "Current results confirm earlier circle collapse analysis; no filled-region erosion guarantee. Policy reconsideration deferred. See ORIGINAL-INVENTORY-RECONCILIATION.md."
+    "reason": "Current results confirm earlier circle collapse analysis; no filled-region erosion guarantee. Policy reconsideration deferred. See ORIGINAL-INVENTORY-RECONCILIATION.md. Follow-up closed by user on 2026-10-21 as expected under the current implementation, after reviewing square distances 0.5, 1, 1.5, 2 and 2.5 with offside disabled and the default 2.5 control. No policy change requested; not a pending repair. See SQUARE-COLLAPSE-WINDING-TRIAGE.md."
   },
   {
     "ids": [
@@ -844,7 +844,7 @@
       "CC01386"
     ],
     "status": "understood-post-collapse-square-winding-policy",
-    "reason": "Current results confirm prior SQUARE-COLLAPSE-WINDING-TRIAGE.md; policy reconsideration deferred. See ORIGINAL-INVENTORY-RECONCILIATION.md."
+    "reason": "Current results confirm prior SQUARE-COLLAPSE-WINDING-TRIAGE.md; policy reconsideration deferred. See ORIGINAL-INVENTORY-RECONCILIATION.md. Follow-up closed by user on 2026-10-21 as expected under the current implementation, after reviewing square distances 0.5, 1, 1.5, 2 and 2.5 with offside disabled and the default 2.5 control. No policy change requested; not a pending repair. See SQUARE-COLLAPSE-WINDING-TRIAGE.md."
   },
   {
     "ids": [

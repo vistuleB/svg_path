@@ -1,0 +1,211 @@
+[
+  {
+    "mode": "none",
+    "normalization": [
+      [
+        {
+          "type": "Line",
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "end": {
+            "x": 10,
+            "y": 0
+          }
+        },
+        {
+          "type": "Line",
+          "start": {
+            "x": 10,
+            "y": 0
+          },
+          "end": {
+            "x": 5,
+            "y": 0
+          }
+        },
+        {
+          "type": "Line",
+          "start": {
+            "x": 5,
+            "y": 0
+          },
+          "end": {
+            "x": 10,
+            "y": 0
+          }
+        },
+        {
+          "type": "Line",
+          "start": {
+            "x": 10,
+            "y": 0
+          },
+          "end": {
+            "x": 5,
+            "y": 0
+          }
+        },
+        {
+          "type": "Line",
+          "start": {
+            "x": 5,
+            "y": 0
+          },
+          "end": {
+            "x": 15,
+            "y": 0
+          }
+        }
+      ]
+    ],
+    "tolerance": 0.01,
+    "milliseconds": 50.992417,
+    "result": [
+      {
+        "bounds": {
+          "min": {
+            "x": 0,
+            "y": -1
+          },
+          "max": {
+            "x": 15,
+            "y": 1
+          }
+        },
+        "area": -26.283185307179586,
+        "length": 47.56637061435917,
+        "segments": [
+          {
+            "type": "Line",
+            "start": {
+              "x": 0,
+              "y": 1
+            },
+            "end": {
+              "x": 10,
+              "y": 1
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 10,
+              "y": 1
+            },
+            "radius": {
+              "x": 1,
+              "y": 1
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": 10,
+              "y": -1
+            }
+          },
+          {
+            "type": "Line",
+            "start": {
+              "x": 10,
+              "y": -1
+            },
+            "end": {
+              "x": 5,
+              "y": -1
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 5,
+              "y": -1
+            },
+            "radius": {
+              "x": 1,
+              "y": 1
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": 5,
+              "y": 1
+            }
+          },
+          {
+            "type": "Line",
+            "start": {
+              "x": 5,
+              "y": 1
+            },
+            "end": {
+              "x": 10,
+              "y": 1
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 10,
+              "y": 1
+            },
+            "radius": {
+              "x": 1,
+              "y": 1
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": 10,
+              "y": -1
+            }
+          },
+          {
+            "type": "Line",
+            "start": {
+              "x": 10,
+              "y": -1
+            },
+            "end": {
+              "x": 5,
+              "y": -1
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 5,
+              "y": -1
+            },
+            "radius": {
+              "x": 1,
+              "y": 1
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": 5,
+              "y": 1
+            }
+          },
+          {
+            "type": "Line",
+            "start": {
+              "x": 5,
+              "y": 1
+            },
+            "end": {
+              "x": 15,
+              "y": 1
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

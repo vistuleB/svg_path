@@ -1827,42 +1827,42 @@
   {
     "id": "CC01697",
     "kind": "offset",
-    "status": "original-topology-round-retrace-source-distance-policy"
+    "status": "intended-round-retrace-trimming-different-contract"
   },
   {
     "id": "CC01701",
     "kind": "offset",
-    "status": "original-topology-round-retrace-source-distance-policy"
+    "status": "intended-round-retrace-trimming-different-contract"
   },
   {
     "id": "CC01702",
     "kind": "offset",
-    "status": "original-topology-round-retrace-source-distance-policy"
+    "status": "intended-round-retrace-trimming-different-contract"
   },
   {
     "id": "CC01703",
     "kind": "offset",
-    "status": "original-topology-round-retrace-source-distance-policy"
+    "status": "intended-round-retrace-trimming-different-contract"
   },
   {
     "id": "CC01704",
     "kind": "offset",
-    "status": "original-topology-round-retrace-source-distance-policy"
+    "status": "intended-round-retrace-trimming-different-contract"
   },
   {
     "id": "CC01705",
     "kind": "offset",
-    "status": "original-topology-round-retrace-source-distance-policy"
+    "status": "intended-round-retrace-trimming-different-contract"
   },
   {
     "id": "CC01706",
     "kind": "offset",
-    "status": "original-topology-round-retrace-source-distance-policy"
+    "status": "intended-round-retrace-trimming-different-contract"
   },
   {
     "id": "CC01707",
     "kind": "offset",
-    "status": "original-topology-round-retrace-source-distance-policy"
+    "status": "intended-round-retrace-trimming-different-contract"
   },
   {
     "id": "CC01727",
@@ -1907,12 +1907,12 @@
   {
     "id": "CC01738",
     "kind": "offset",
-    "status": "original-topology-winding-parity-removal"
+    "status": "intended-winding-parity-trimming-different-contract"
   },
   {
     "id": "CC01739",
     "kind": "offset",
-    "status": "original-topology-winding-parity-removal"
+    "status": "intended-winding-parity-trimming-different-contract"
   },
   {
     "id": "CC01751",

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="380" viewBox="0 0 1120 380">
+<rect x="0" y="0" width="1120" height="380" fill="white"/>
+<text x="560" y="28" text-anchor="middle" font-family="sans-serif" font-size="21">Square inward offsets — offside disabled, in-band enabled</text>
+<text x="140" y="64" text-anchor="middle" font-family="sans-serif" font-size="18">Inward distance 0.5</text>
+<g transform="translate(140 197) scale(85)">
+<path d="M -1 -1 H 1 V 1 H -1 Z" fill="none" stroke="#94a3b8" stroke-width="0.015"/>
+<path d="M -1 -0.5 H 1 A 0.5 0.5 0 0 1 0.5 -1 V 1 A 0.5 0.5 0 0 1 1 0.5 H -1 A 0.5 0.5 0 0 1 -0.5 1 V -1 A 0.5 0.5 0 0 1 -1 -0.5 Z" fill="none" stroke="#e2a665" stroke-width="0.016"/>
+<path d="M -0.5 -0.5 H 0.5 V 0.5 H -0.5 Z" fill="none" stroke="#164eae" stroke-width="0.04"/>
+</g>
+<text x="140" y="323" text-anchor="middle" font-family="sans-serif" font-size="14">1 output contour(s)</text>
+<text x="420" y="64" text-anchor="middle" font-family="sans-serif" font-size="18">Inward distance 1</text>
+<g transform="translate(420 197) scale(85)">
+<path d="M -1 -1 H 1 V 1 H -1 Z" fill="none" stroke="#94a3b8" stroke-width="0.015"/>
+<path d="M -1 0 H 1 A 1 1 0 0 1 0 -1 V 1 A 1 1 0 0 1 1 0 H -1 A 1 1 0 0 1 0 1 V -1 A 1 1 0 0 1 -1 0 Z" fill="none" stroke="#e2a665" stroke-width="0.016"/>
+<path d="" fill="none" stroke="#164eae" stroke-width="0.04"/>
+</g>
+<text x="420" y="323" text-anchor="middle" font-family="sans-serif" font-size="14">0 output contour(s)</text>
+<text x="700" y="64" text-anchor="middle" font-family="sans-serif" font-size="18">Inward distance 1.5</text>
+<g transform="translate(700 197) scale(85)">
+<path d="M -1 -1 H 1 V 1 H -1 Z" fill="none" stroke="#94a3b8" stroke-width="0.015"/>
+<path d="M -1 0.5 H 1 A 1.5 1.5 0 0 1 -0.5 -1 V 1 A 1.5 1.5 0 0 1 1 -0.5 H -1 A 1.5 1.5 0 0 1 0.5 1 V -1 A 1.5 1.5 0 0 1 -1 0.5 Z" fill="none" stroke="#e2a665" stroke-width="0.016"/>
+<path d="M 0 0.11803 A 1.5 1.5 0 0 1 -0.11803 0 A 1.5 1.5 0 0 1 0 -0.11803 A 1.5 1.5 0 0 1 0.11803 0 A 1.5 1.5 0 0 1 0 0.11803 Z" fill="none" stroke="#164eae" stroke-width="0.04"/>
+</g>
+<text x="700" y="323" text-anchor="middle" font-family="sans-serif" font-size="14">1 output contour(s)</text>
+<text x="980" y="64" text-anchor="middle" font-family="sans-serif" font-size="18">Inward distance 2</text>
+<g transform="translate(980 197) scale(85)">
+<path d="M -1 -1 H 1 V 1 H -1 Z" fill="none" stroke="#94a3b8" stroke-width="0.015"/>
+<path d="M -1 1 H 1 A 2 2 0 0 1 -1 -1 V 1 A 2 2 0 0 1 1 -1 H -1 A 2 2 0 0 1 1 1 V -1 A 2 2 0 0 1 -1 1 Z" fill="none" stroke="#e2a665" stroke-width="0.016"/>
+<path d="M 1 -1 H -1 V 1 H 1 Z M 0 0.73205 A 2 2 0 0 1 -0.73205 0 A 2 2 0 0 1 0 -0.73205 A 2 2 0 0 1 0.73205 0 A 2 2 0 0 1 0 0.73205 Z" fill="none" stroke="#164eae" stroke-width="0.04"/>
+</g>
+<text x="980" y="323" text-anchor="middle" font-family="sans-serif" font-size="14">2 output contour(s)</text>
+<text x="560" y="357" text-anchor="middle" font-family="sans-serif" font-size="15">Gray: source square · Orange: raw offset · Blue: in-band-only trimmed output</text>
+</svg>

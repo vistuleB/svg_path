@@ -107,3 +107,55 @@ CC01738. Default, no-offside, untrimmed and stage records are
 No full suite, figure generation, F# port or production repair in this batch.
 Findings uncommitted. Remaining original inventory reconciliation and Boolean
 classification precede the deferred-policy review; this is not audit closure.
+
+
+## Bow-tie follow-up closed — 2026-10-21
+
+CC01738/CC01739 are now classified as intended winding/parity trimming behavior
+under a different contract from Cavalier, with explicit user agreement. The
+lower component is an **open walk**, not a closed lobe. The earlier tracing
+identified its removal in winding/parity reconstruction. A fresh CC01738 replay
+on the current JavaScript build gives exactly identical segment coordinates for
+default trimming and `SingleOffsetTrimming(False, InBandTrimming)`: one upper
+triangle, three line segments, length 8.491168824543141, signed area
+3.092598846298224. Disabling offside trimming does not recover the lower walk.
+
+The README single-offset final-trimming figure illustrates this broader deletion
+behavior. After reviewing that figure, the user accepted the bow-tie result as
+following the intended algorithm. No further winding-label investigation is
+required for this case; this disposition does not claim a proof of every label
+or close the other deferred offset questions. A more intuitive trimming policy
+is separate design work, not an outstanding repair for this example.
+
+The native adapter uses offset -0.1 for Cavalier's +0.1 convention. Fresh replay:
+
+```sh
+AUDIT_CASE_ID=CC01738 AUDIT_TOLERANCE=0.01 AUDIT_TRIMMING=no-offside node scripts/cavalier/probe-offset-detail.mjs
+AUDIT_CASE_ID=CC01738 AUDIT_TOLERANCE=0.01 AUDIT_TRIMMING=default node scripts/cavalier/probe-offset-detail.mjs
+```
+
+Preview: `examples/debug/bow-tie-trimming-comparison.svg`, generated from the
+recorded audit geometry by `scripts/cavalier/draw-bow-tie-trimming.py`.
+No production change or new full-suite run for this classification update.
+
+
+## Round-retrace follow-up closed — 2026-10-21
+
+The user reviewed CC01697's drawing and exact traversal and accepted the result
+as intended algorithm behavior. The source goes 0 → 10 → 5 → 10 → 5 → 15 along
+one line, reversing four times. Untrimmed construction emits two identical
+semicircles at x=10 and two at x=5, each pair with the same traversal direction.
+The final lower component is one closed zero-area walk: bottom line 5→10,
+right quarter arc out-and-back, bottom line 10→5, left quarter arc out-and-back.
+The bottom line is therefore traversed twice. Opposite-direction retracing
+appears in reconstruction; it is accepted behavior, not a pending bug.
+
+Fresh current native replay reproduces lengths 16.283185307179586 and 25 for
+its two output walks, versus total 35 for Cavalier Preserve. The extra 2π is
+the round excursions. This closes CC01697/CC01701–CC01707's follow-up; it does
+not independently close the distinct case11/case5 distance-filtering examples
+or self-intersecting-case1/case2 missing-walk examples in
+ORIGINAL-OFFSET-SPECIFIC-TRIAGE.md. No production change requested.
+
+Evidence: `three-way-lines-preview.json`, `three-way-lines-untrimmed-preview.json`;
+`draw-three-way-lines.py` produces `examples/debug/three-way-lines-trimming.svg`.

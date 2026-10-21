@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="470" viewBox="0 0 1280 470">
+<rect x="0" y="0" width="1280" height="470" fill="white"/>
+<text x="20" y="30" font-family="Arial,sans-serif" font-size="23" fill="#334155" font-weight="bold">Bow-tie offset: the lower open component disappears during trimming</text>
+<text x="20" y="56" font-family="Arial,sans-serif" font-size="15" fill="#334155" font-weight="normal">CC01738 · signed offset +0.1 · round joins · recorded audit outputs · y increases upward</text>
+<rect x="16" y="78" width="300" height="350" rx="8" fill="#f8fafc" stroke="#dbe3ec"/>
+<text x="30" y="105" font-family="Arial,sans-serif" font-size="18" fill="#334155" font-weight="bold">1. Source</text>
+<g transform="translate(50 373) scale(58 -58)" fill="none" stroke-linejoin="round" stroke-linecap="round">
+<path d="M 0 0 L 4 4 L 0 4 L 4 0 L 0 0 Z" stroke="#94a3b8" stroke-width="0.027" stroke-dasharray="0.07 0.07"/>
+<path d="M 0 0 L 4 4 L 0 4 L 4 0 L 0 0 Z" stroke="#475569" stroke-width="0.045"/>
+<path d="M 2.4563603896932107 2.357365440327094 L 2.52 2.52 L 2.357365440327094 2.4563603896932107" stroke="#475569" stroke-width="0.035"/>
+<path d="M 1.64 4.07 L 1.48 4.0 L 1.64 3.93" stroke="#475569" stroke-width="0.035"/>
+<path d="M 2.357365440327094 1.5436396103067893 L 2.52 1.48 L 2.4563603896932107 1.642634559672906" stroke="#475569" stroke-width="0.035"/>
+<path d="M 1.64 0.07 L 1.48 0.0 L 1.64 -0.07" stroke="#475569" stroke-width="0.035"/>
+</g>
+<text x="30" y="408" font-family="Arial,sans-serif" font-size="14" fill="#334155" font-weight="normal">Closed, self-crossing path</text>
+<rect x="332" y="78" width="300" height="350" rx="8" fill="#f8fafc" stroke="#dbe3ec"/>
+<text x="346" y="105" font-family="Arial,sans-serif" font-size="18" fill="#334155" font-weight="bold">2. Our untrimmed offset</text>
+<g transform="translate(366 373) scale(58 -58)" fill="none" stroke-linejoin="round" stroke-linecap="round">
+<path d="M 0 0 L 4 4 L 0 4 L 4 0 L 0 0 Z" stroke="#94a3b8" stroke-width="0.027" stroke-dasharray="0.07 0.07"/>
+<path d="M -0.070710678118655 0.070710678118655 L 3.9292893218813 4.0707106781187 A 0.1 0.1 0 0 1 4 3.9 L 0 3.9 A 0.1 0.1 0 0 1 0.070710678118655 4.0707106781187 L 4.0707106781187 0.070710678118655 A 0.1 0.1 0 0 0 4 -0.1 L 0 -0.1 A 0.1 0.1 0 0 0 -0.070710678118655 0.070710678118655" stroke="#087f8c" stroke-width="0.045"/>
+</g>
+<text x="346" y="408" font-family="Arial,sans-serif" font-size="14" fill="#334155" font-weight="normal">Both regions present in raw geometry</text>
+<rect x="648" y="78" width="300" height="350" rx="8" fill="#f8fafc" stroke="#dbe3ec"/>
+<text x="662" y="105" font-family="Arial,sans-serif" font-size="18" fill="#334155" font-weight="bold">3. Our default result</text>
+<g transform="translate(682 373) scale(58 -58)" fill="none" stroke-linejoin="round" stroke-linecap="round">
+<path d="M 0 0 L 4 4 L 0 4 L 4 0 L 0 0 Z" stroke="#94a3b8" stroke-width="0.027" stroke-dasharray="0.07 0.07"/>
+<path d="M 2 2.1414213562373 L 3.7585786437627 3.9 L 0.24142135623731 3.9 L 2 2.1414213562373" stroke="#6d28d9" stroke-width="0.045"/>
+</g>
+<text x="662" y="408" font-family="Arial,sans-serif" font-size="14" fill="#334155" font-weight="normal">Only the upper closed triangle</text>
+<rect x="964" y="78" width="300" height="350" rx="8" fill="#f8fafc" stroke="#dbe3ec"/>
+<text x="978" y="105" font-family="Arial,sans-serif" font-size="18" fill="#334155" font-weight="bold">4. Cavalier result</text>
+<g transform="translate(998 373) scale(58 -58)" fill="none" stroke-linejoin="round" stroke-linecap="round">
+<path d="M 0 0 L 4 4 L 0 4 L 4 0 L 0 0 Z" stroke="#94a3b8" stroke-width="0.027" stroke-dasharray="0.07 0.07"/>
+<path d="M 1.9999999999999998 2.1414213562373092 L 3.7585786437626907 3.9 L 0.24142135623730931 3.9 L 1.9999999999999998 2.1414213562373092 Z" stroke="#6d28d9" stroke-width="0.045"/>
+<path d="M 2.1414213562373092 2.0 L 4.070710678118655 0.07071067811865475 A 0.09999999999999995 0.09999999999999995 0 0 0 4.0 -0.1 L 0.0 -0.1 A 0.1 0.1 0 0 0 -0.07071067811865475 0.07071067811865475 L 1.8585786437626903 2.0" stroke="#d97706" stroke-width="0.045"/>
+<circle cx="2.1414213562373092" cy="2.0" r="0.055" fill="#d97706" stroke="white" stroke-width="0.018"/>
+<circle cx="1.8585786437626903" cy="2.0" r="0.055" fill="#d97706" stroke="white" stroke-width="0.018"/>
+</g>
+<text x="978" y="408" font-family="Arial,sans-serif" font-size="14" fill="#334155" font-weight="normal">Upper triangle + lower open walk</text>
+<text x="20" y="453" font-family="Arial,sans-serif" font-size="15" fill="#334155" font-weight="normal">Orange: component present in Cavalier but absent from our trimmed output. Dots mark its two open endpoints.</text>
+</svg>

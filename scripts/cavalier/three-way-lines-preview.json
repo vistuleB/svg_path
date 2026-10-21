@@ -1,0 +1,249 @@
+[
+  {
+    "mode": "default",
+    "normalization": [
+      [
+        {
+          "type": "Line",
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "end": {
+            "x": 10,
+            "y": 0
+          }
+        },
+        {
+          "type": "Line",
+          "start": {
+            "x": 10,
+            "y": 0
+          },
+          "end": {
+            "x": 5,
+            "y": 0
+          }
+        },
+        {
+          "type": "Line",
+          "start": {
+            "x": 5,
+            "y": 0
+          },
+          "end": {
+            "x": 10,
+            "y": 0
+          }
+        },
+        {
+          "type": "Line",
+          "start": {
+            "x": 10,
+            "y": 0
+          },
+          "end": {
+            "x": 5,
+            "y": 0
+          }
+        },
+        {
+          "type": "Line",
+          "start": {
+            "x": 5,
+            "y": 0
+          },
+          "end": {
+            "x": 15,
+            "y": 0
+          }
+        }
+      ]
+    ],
+    "tolerance": 0.01,
+    "milliseconds": 71.594667,
+    "result": [
+      {
+        "bounds": {
+          "min": {
+            "x": 4,
+            "y": -1
+          },
+          "max": {
+            "x": 11,
+            "y": 0
+          }
+        },
+        "area": 0,
+        "length": 16.283185307179586,
+        "segments": [
+          {
+            "type": "Line",
+            "start": {
+              "x": 5,
+              "y": -1
+            },
+            "end": {
+              "x": 10,
+              "y": -1
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 10,
+              "y": -1
+            },
+            "radius": {
+              "x": 1,
+              "y": 1
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": 11,
+              "y": 0
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 11,
+              "y": 0
+            },
+            "radius": {
+              "x": 1,
+              "y": 1
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": 10,
+              "y": -1
+            }
+          },
+          {
+            "type": "Line",
+            "start": {
+              "x": 10,
+              "y": -1
+            },
+            "end": {
+              "x": 5,
+              "y": -1
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 5,
+              "y": -1
+            },
+            "radius": {
+              "x": 1,
+              "y": 1
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": 4,
+              "y": 0
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 4,
+              "y": 0
+            },
+            "radius": {
+              "x": 1,
+              "y": 1
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": 5,
+              "y": -1
+            }
+          }
+        ]
+      },
+      {
+        "bounds": {
+          "min": {
+            "x": 0,
+            "y": 1
+          },
+          "max": {
+            "x": 15,
+            "y": 1
+          }
+        },
+        "area": 0,
+        "length": 25,
+        "segments": [
+          {
+            "type": "Line",
+            "start": {
+              "x": 0,
+              "y": 1
+            },
+            "end": {
+              "x": 5,
+              "y": 1
+            }
+          },
+          {
+            "type": "Line",
+            "start": {
+              "x": 5,
+              "y": 1
+            },
+            "end": {
+              "x": 10,
+              "y": 1
+            }
+          },
+          {
+            "type": "Line",
+            "start": {
+              "x": 10,
+              "y": 1
+            },
+            "end": {
+              "x": 5,
+              "y": 1
+            }
+          },
+          {
+            "type": "Line",
+            "start": {
+              "x": 5,
+              "y": 1
+            },
+            "end": {
+              "x": 10,
+              "y": 1
+            }
+          },
+          {
+            "type": "Line",
+            "start": {
+              "x": 10,
+              "y": 1
+            },
+            "end": {
+              "x": 15,
+              "y": 1
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

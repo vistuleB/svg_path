@@ -95,3 +95,19 @@ validation. This investigation has not implemented or validated that algorithm.
 
 Targeted native JS/Erlang diagnostics only; no full suite or figure regeneration
 was needed or claimed for this investigation. No production changes or commits.
+
+
+## Follow-up closed — 2026-10-21
+
+The user reviewed the Gallery example and fresh previews with offside disabled,
+in-band enabled. Distances 0.5, 1, 1.5 and 2 have identical serialized output to
+the default calls. At distance 2.5 default trimming returns empty; disabling
+offside preserves one closed self-intersecting walk. The user accepted these as
+expected behavior under the current implementation and closed the beyond-collapse
+review. No algorithm change is requested. Morphological erosion would be a
+separate contract, not a pending repair to this example.
+
+Reproduction: `node scripts/cavalier/draw-square-no-offside.mjs` and the same
+command with `--2.5`. Records: `square-no-offside-preview.json` and
+`square-2-5-preview.json`. Preview SVGs are under `examples/debug/`.
+No production change or new test-suite run for this classification update.
