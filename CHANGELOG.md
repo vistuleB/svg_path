@@ -9,7 +9,20 @@ older tags are attached just before the matching `gleam.toml` version bump; in
 those cases the entries below follow the published release/version history
 rather than only the tag object.
 
-## Unreleased
+## 3.1.5 - 2026-10-21
+
+- Stabilize shallow-arc projection and circular radial projection; improve
+  near-semicircle ellipse conversion and near-tangent circle intersections.
+- Repair arrangement cyclic ordering, disconnected component placement and
+  bounded arc reconstruction after endpoint adjustment.
+- Straighten offset segments conservatively before trimming, preserve traversal
+  and collapsed stalled runs through join construction, and correct curved cusp
+  join direction, reversal metadata, rescue ambiguity and offside route selection.
+- Arc cleanup now returns one certified chord or the original arc, never a
+  polyline. Fully collapsed offsets can retain a zero-length line.
+- Complete the Cavalier Contours audit with documented trimming-policy
+  differences and remaining accepted limitations; this is not a claim of exact
+  upstream parity. Public API-001 remains deferred to 4.0.0.
 
 - Preserve validated full overlap for exactly identical or reversed arcs when
   rounded endpoint proposals conflict, avoiding false point intersections and

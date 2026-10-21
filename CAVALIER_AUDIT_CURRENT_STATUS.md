@@ -1304,3 +1304,27 @@ This closes the reopened case1 review. No active Cavalier investigations remain;
 known limitations are retained, and exact upstream parity is not claimed.
 See ORIGINAL-OFFSET-SPECIFIC-TRIAGE.md for evidence and mode distinctions.
 F# migration and final release validation remain outstanding.
+
+
+## F# migration completed — 2026-10-21
+
+The user requested the F# migration after the final trimming-policy review.
+All accepted production changes from the `75970a6e` collection baseline through
+`e816806c` are now mirrored in the sibling F# worktree. The commit-by-commit
+source map and validation record are in `svg_path_fsharp/docs/cavalier-migration.md`.
+This work is uncommitted; no migration commit was requested.
+
+- 28 added native regression tests cover the migrated algorithms, including
+  64 independent unequal-ellipse precision fixtures and the reviewed case-11
+  clean-route/inner-rectangle policies.
+- Final F# `scripts/test-release`: 2,064 main and 30 slow tests passed, no skips.
+- All 34 F# Gallery figures and 13 README figures regenerated successfully.
+  README output is unchanged; the square inward-collapse Gallery row is now
+  generated in F# too. Figure differences are recorded in the migration note.
+- The deferred API-001 public error diagnostic remains reserved for 4.0.0.
+  Existing public error mapping is preserved. Accepted policy differences and
+  the documented case-11 failure without offside trimming remain limitations.
+
+This closes the implementation migration, not package publication or a fresh
+replay of the entire upstream capture in F#. Release versioning, packaging,
+commits/tags and publishing remain separate work.
