@@ -92,13 +92,18 @@ no replacement API contract has been chosen. See
 
 ## Remaining distinct policy examples
 
-The accepted bow-tie, beyond-collapse and three-way round-retrace cases are
-closed. The original offset-specific report still contains examples not reviewed
-individually with the user: case11/case5 retain geometry nearer the source than
-Cavalier permits, and self_intersecting_case1/case2 omit upstream walks during
-winding/parity trimming. These have recorded contract explanations, not confirmed
-native defects. Do not silently treat acceptance of another example as acceptance
-of these. See ORIGINAL-OFFSET-SPECIFIC-TRIAGE.md.
+The bow-tie, beyond-collapse, three-way round-retrace and case5 examples are
+closed as accepted policy differences. Case5 (CC01470, offset magnitude 30)
+was explicitly accepted by the user on 2026-10-21 after reviewing the comparison.
+No repair is requested.
+
+The user reviewed drawings of self_intersecting_case1/case2 on 2026-10-21 and
+accepted the omitted upstream walks as consequences of the current trimming
+policy. Both follow-up investigations are closed without a repair. See
+ORIGINAL-OFFSET-SPECIFIC-TRIAGE.md. Case11's remaining cusp-only failure is a
+known algorithm misbehavior, recorded below, rather than an active investigation.
+There are no remaining active investigations in this audit register. This does
+not imply exact Cavalier parity or that documented limitations have been fixed.
 
 ### Case11 follow-up repair — 2026-10-21
 
@@ -114,8 +119,30 @@ regression and original README offside figure are preserved.
 See CUSP-JOIN-SIDE-EXPERIMENT.md for validation and intermediate failures.
 Without offside trimming, the recorded case11 cusp-only probe still produces two
 cycles and returns InternalIToKSubpathCount(2), wrapped in ConstructionFailed;
-that limitation has not been separately accepted or repaired. The case5 and
-self_intersecting_case1/case2 policy examples above still await individual review.
-Thus this repair does not close all deferred investigations or complete the F#
-port. The full release suite passed before the final heuristic restriction;
+the user explicitly retained this as a documented algorithm discrepancy/misbehavior
+on 2026-10-21. It is not fixed and must not be described as correct output or
+upstream parity, but further repair is not requested in this audit. Case5 was
+separately closed as an accepted policy difference. The self_intersecting_case1/case2 policy examples were subsequently reviewed
+and accepted as current-policy consequences; their investigations are closed.
+F# migration remains outstanding. The full release suite passed before the final heuristic restriction;
 focused tests and all 12 selected Gallery figures passed after it.
+
+### Case1 reopened — 2026-10-21
+
+The user withdrew acceptance of self_intersecting_case1 pending inspection of
+its pre-trimming arrangement. CC01499 is active again; case2 remains accepted.
+Fresh trace: 60 arrangement edges, 29 offset-image edges, 16 winding-compatible,
+13 submerged, and 2 surviving parity. See self-case1-graph.json and
+examples/debug/self-case1-arrangement-pre-trimming.svg. Earlier statements that
+all investigations are closed are superseded by this reopening.
+
+### Case1 mode comparison accepted; review closed — 2026-10-21
+
+The user reviewed the cusp-only drawing and accepted the finding as documented.
+With `CuspTrimming` instead of default `InBandTrimming`, CC01499 retains the
+large geometry as one open 11-segment walk, length 1154.2864439731295. This is
+not identical to Cavalier's two open walks. The different terminal modes and
+reversed-run rescue explain the reviewed behavior. See the final policy review
+in ORIGINAL-OFFSET-SPECIFIC-TRIAGE.md. This supersedes the reopening above:
+no active Cavalier investigations remain. Documented limitations, F# migration,
+and final release validation remain separate outstanding work.

@@ -102,3 +102,32 @@ node scripts/cavalier/probe-original-offset-boundaries.mjs
 No production changes, full-suite rerun, figure regeneration or F# work.
 These findings are uncommitted. Original topology-policy offset families and
 Boolean classifications still remain; this is not audit closure.
+
+## Final policy review — 2026-10-21
+
+Case5 was accepted by the user as a trimming-policy difference. Case11's later
+repair and its remaining documented cusp-only limitation are recorded in
+CUSP-JOIN-SIDE-EXPERIMENT.md and ORIGINAL-AUDIT-CLOSURE.md.
+
+Fresh CC01499 default (`InBandTrimming`) replay still returns the short open
+walk, length 24.810068463598622. Its pre-trimming arrangement has 60 edges:
+29 offset-image edges, of which 16 are winding-compatible and 13 submerged.
+Winding deletion followed by forced parity leaves two edges.
+
+Changing only the terminal mode to `CuspTrimming` returns one open walk with
+11 segments and length 1154.2864439731295, retaining the large geometry.
+Offside remains enabled but does not trim this open source. Cusp trimming
+applies the reversed-run rescue rule; in-band trimming does not. This result
+is not claimed to equal Cavalier's two separate open walks. After reviewing
+both drawings, the user accepted the mode-dependent result as documented policy
+and closed case1. Case2 was also accepted as a policy difference.
+
+Evidence: `self-intersecting-case1-preview.json`,
+`self-intersecting-case2-preview.json`, `self-case1-graph.json`, and
+`self-case1-cusp-output.json`. Drawing scripts are
+`draw-self-intersecting-comparisons.py`, `draw-self-case1-graph.py`, and
+`draw-self-case1-cusp.py`. `prepare-self-intersecting-graph.py` instruments a
+copied JavaScript build without changing production decisions. For cusp mode,
+use `prepare-case11-cusp-trace.py` with `AUDIT_CASE_ID=CC01499` and
+`AUDIT_TRIMMING=cusp-offside` (the helper name reflects its original case).
+No production code changed during this review.

@@ -214,3 +214,11 @@ including both route-selection regressions. All 12 selected Gallery figures
 regenerated successfully and remain byte-for-byte unchanged. `git diff --check`
 passed. The full release suite passed before this restriction; it was not rerun
 for the restriction. No commit created.
+
+## Disposition of remaining cusp-only failure — 2026-10-21
+
+The user retained case11 without offside trimming as a documented discrepancy /
+misbehavior of the algorithm. Two surviving cycles still lead to
+InternalIToKSubpathCount(2), wrapped in ConstructionFailed. This is not repaired
+or claimed as correct behavior; further investigation is deferred outside this
+audit. The offside-enabled repair remains in commit 84b5bd1.

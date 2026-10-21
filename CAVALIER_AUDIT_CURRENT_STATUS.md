@@ -1112,3 +1112,195 @@ Cavalier closed-component area and length in both orientations. No production
 bug established; no production edits. See scripts/cavalier/CC01504-SEMICIRCLE-RESIDUAL.md.
 Four targeted offset calls completed. New investigation records are uncommitted.
 Open-component policy, remaining deferred issues and F# work remain separate.
+
+### 2026-10-20: CC01301 extra fragment traced
+
+Semicircle findings committed as `e4d7255`. The CC01301 extra left-hand arc
+passes winding classification; parity reduction deletes it with the dangling
+chain after a different right-hand edge is rejected. Separate side queries
+agree with the rejected edge winding pair. Classified as the existing general
+trimming-policy limitation, not a new construction bug. See
+scripts/cavalier/CC01301-FRAGMENT-POLICY.md. Two targeted native calls and the
+pinned upstream export succeeded. No production changes or full-suite rerun.
+New fragment investigation records remain uncommitted.
+
+### 2026-10-20: trimming limitation accepted and recorded
+
+User accepted the CC01301 / 320-degree-turn behavior as a non-intuitive
+shortcoming of the current trimming policy, whose requirements include
+non-round joins. Recorded in scripts/cavalier/OFFSET-TRIMMING-SHORTCOMING.md,
+with the derived three-line source, actual empty trimmed output, untrimmed
+control and SVG previews. No replacement contract selected; no production
+change or API proposal approved. Documentation and probes remain uncommitted.
+
+### 2026-10-20: CSG reconstruction candidate measured
+
+Isolated post-processing experiment splits adjusted stored arcs before moving
+the outer endpoints. Across 181 original Boolean cases (165 successful, 16 known
+guard errors), 384 arcs sampled at 65 parameters reduce maximum observed movement
+from 4.7473e-4 to 4.9151e-7. Roundoff-scale increases on 24 arcs are retained.
+See scripts/cavalier/CSG-SPLIT-RECONSTRUCTION-EXPERIMENT.md. This is a candidate
+for selective conditioning, not a production fix or certified error guarantee;
+output correspondence/arc-parameter contract needs explicit consideration.
+No production changes or full tests. Investigation records are uncommitted.
+
+### 2026-10-21: CSG reconstruction candidate tests
+
+Baseline `scripts/test-portable javascript all` and isolated candidate runtime
+both pass 855 tests. Complete candidate CSG outputs: 165 audit cases succeed
+with exactly joined boundaries, same 16 default guard errors. Independent
+scanlines maximum sampled clearance 1.1125e-7; four known oracle exceptions
+complete on the orthogonal axis. All 72 synthetic cases produce joined pieces,
+but a near-full eccentric ellipse still moves 0.0316 for ~1.4e-7 endpoint shifts.
+Fixed one-split is therefore not ready as a general bounded-error solution.
+Selective/adaptive conditioning is the next proposed design step. See the
+2026-10-21 section of scripts/cavalier/CSG-SPLIT-RECONSTRUCTION-EXPERIMENT.md.
+No production source change, Erlang candidate, figures, F# work or commit.
+
+### 2026-10-21: single-arc midpoint-affine candidate implemented
+
+User authorized implementation and focused tests. CSG now has an uncommitted
+Arc-to-Arc candidate: normalized midpoint-fixed affine solve, conditioning and
+residual checks, endpoint-pair similarity fallback. Shared ellipse eigenvector
+extraction was corrected to retain small shears of nearly circular ellipses.
+Focused CSG/arc/transform suite: 100 JavaScript + 100 Erlang tests pass. Original
+Boolean replay: same 165 successes/16 known errors, arc midpoint residual <=8.3e-9.
+Synthetic near-full ellipses expose large similarity-fallback deformation (~324
+in one case); explicitly unresolved, not release-ready. See
+scripts/cavalier/CSG-AFFINE-RECONSTRUCTION.md. No commit, full tests, figures or F#.
+
+### 2026-10-21: constrained affine least-squares experiment
+
+User authorized trying the least-squares alternative. Isolated JS prototype uses
+arc-length-weighted quadrature and closed-form endpoint-constrained affine fit.
+Across 72 synthetic cases sampled RMS is no worse than similarity. Problematic
+near-full ellipse maximum movement falls from 324.11 to 1.62057, but eight
+optima reflect and shallow transverse response remains weakly determined.
+Copied-build fallback control: 99 passes/1 failure (the old similarity-radius
+assertion). See scripts/cavalier/CSG-LEAST-SQUARES-EXPERIMENT.md. No production
+changes in this step; earlier midpoint/similarity candidate remains uncommitted
+and not release-ready. Acceptance/rejection policy is still unresolved.
+
+### 2026-10-21: free constrained ellipse fitting experiment
+
+User authorized a standalone optimizer experiment, starting from the original
+ellipse despite violated endpoints. Five-parameter SLSQP with chord-normalized
+endpoint constraints and symmetric geometric distance converges from four starts
+to a feasible ellipse: endpoint errors ~1e-14, sampled max arc distance 0.00379,
+RMS 0.001864. Prior affine geometric max is 0.3952 (the earlier 1.62057 measured
+equal-parameter movement). This finds a much closer ellipse, but none near the
+1e-6 tolerance scale; no impossibility/global optimality proof. See
+scripts/cavalier/CONSTRAINED-ELLIPSE-FIT.md. No source changes or commit.
+
+### 2026-10-21 — bounded affine subdivision candidate
+
+The current uncommitted candidate replaces the similarity fallback with adaptive
+midpoint-fixed affine arc reconstruction, capped at depth 3/eight pieces. See
+`scripts/cavalier/CSG-ADAPTIVE-AFFINE-EXPERIMENT.md` for the bound, reproduction
+commands, and raw records. Focused tests: 103 passed on each target. The 181-case
+Boolean replay retains 165 successes/16 existing failures. The synthetic sweep
+has 64/72 successes (at most four pieces); eight extremely shallow cases fail
+explicitly at the cap. No full-suite or figure validation for this candidate yet.
+F# remains deferred. No commit was requested for this experiment.
+
+
+### 2026-10-21 — restore bounded similarity fallback
+
+Correction to the preceding experiment: its eight shallow failures were introduced
+by removing the previously successful similarity fallback. The current candidate
+tries midpoint-fixed affine, then similarity, applying the same displacement
+bound to both before subdivision. All 72 synthetic cases now succeed, using at
+most three arcs. The 104 focused tests pass on both targets. The capped failure
+for excessive displacement remains; the shallow fallback regression is restored
+and extended to rotated/eccentric cases. See the updated adaptive experiment
+record. Full-suite/figure verification and F# remain outstanding; uncommitted.
+
+
+### 2026-10-21 — bounded reconstruction fully validated
+
+The user authorized a commit after full validation. `scripts/test-release` passed
+2,119 main, 31 slow, and 865 portable tests on each target. Published figures
+regenerated successfully (13 README, 34 Gallery); only two Gallery SVGs changed,
+solely in geometrically irrelevant circle-axis rotations. See
+`scripts/cavalier/CSG-ADAPTIVE-AFFINE-EXPERIMENT.md` for the committed record.
+F# port remains deferred.
+
+
+### 2026-10-21 — bow-tie trimming follow-up closed
+
+User reviewed the bow-tie and README final-trimming figure and accepted the
+missing lower open walk as intended winding/parity behavior. Fresh CC01738
+in-band-only and default calls return identical upper triangles. CC01738/CC01739
+are closed as different-contract cases; alternative trimming policies remain a
+separate design question. Other deferred offset cases remain separate. Updated
+the disposition register and final snapshot; no production edits or commit.
+
+
+### 2026-10-21 — beyond-collapse review closed
+
+After inspecting the four Gallery distances with offside disabled and the 2.5
+comparison, the user accepted the results as expected and closed this review.
+Updated the circle/square disposition explanations and square report. Next
+remaining policy group: retraced joins and minimum-source-distance filtering
+(CC01697/CC01701–CC01707; related CC01405 and CC01470 families). No production
+changes or commit in this bookkeeping step.
+
+
+### 2026-10-21 — round retraces closed; accepted-policy bookkeeping
+
+The user accepted the three-way coincident-line output as intended, including
+the closed lower out-and-back component. The bow-tie, beyond-collapse and
+round-retrace follow-ups are now closed. Current dispositions and the closure
+report distinguish these from the individually unreviewed case11/case5
+source-distance examples and self-intersecting-case1/case2 missing walks.
+No new confirmed native bug is established; no production changes in this step.
+
+
+### 2026-10-21 — curved-cusp join-side candidate
+
+User requested implementation after reviewing case11 raw joins. The candidate
+uses agreeing source endpoint curvatures to resolve antiparallel tangent ties,
+feeds shared inner/outer dispatch and Round sweep, and retains the straight-
+retrace fallback. Focused tests pass 10/target; portable all-profile tests pass
+867/target. Case11 raw semicircles change to the intended side, but final trimmed
+area/length remain unchanged: the final discrepancy is unresolved. See
+`scripts/cavalier/CUSP-JOIN-SIDE-EXPERIMENT.md`. Uncommitted; full root suite,
+published figures and F# have not been run for this candidate.
+
+### 2026-10-21 — case5 and cusp-only case11 dispositions
+
+After commit 84b5bd1, the user accepted case5 (CC01470, magnitude 30) as a policy
+difference and requested no repair. The remaining case11 cusp-only failure with
+offside disabled is retained as documented algorithm misbehavior, not fixed or
+claimed as parity. These are no longer active investigations. The individually
+unreviewed self_intersecting_case1/case2 examples remain; F# migration remains
+outstanding. See ORIGINAL-AUDIT-CLOSURE.md and CUSP-JOIN-SIDE-EXPERIMENT.md.
+
+### 2026-10-21 — remaining self-intersection reviews closed
+
+Fresh default-output replays of CC01499 and CC01504 reproduced the omitted walks.
+After reviewing drawings against pinned Cavalier output, the user accepted both
+as consequences of the current trimming policy. No repair requested. All active
+Cavalier investigations are now closed; documented limitations remain, including
+case11 cusp-only failure with offside disabled. F# migration and final release
+validation remain separate outstanding work. These documentation updates are
+uncommitted. See ORIGINAL-AUDIT-CLOSURE.md for the current disposition.
+
+### Case1 reopened — 2026-10-21
+
+The user withdrew acceptance of self_intersecting_case1 pending inspection of
+its pre-trimming arrangement. CC01499 is active again; case2 remains accepted.
+Fresh trace: 60 arrangement edges, 29 offset-image edges, 16 winding-compatible,
+13 submerged, and 2 surviving parity. See self-case1-graph.json and
+examples/debug/self-case1-arrangement-pre-trimming.svg. Earlier statements that
+all investigations are closed are superseded by this reopening.
+
+### 2026-10-21 — case1 cusp-mode review accepted; investigations closed
+
+CC01499 with CuspTrimming (no InBandTrimming) returns one open 11-segment walk,
+length 1154.2864439731295, retaining the large geometry. After viewing the
+result, the user accepted the finding as documented and requested its commit.
+This closes the reopened case1 review. No active Cavalier investigations remain;
+known limitations are retained, and exact upstream parity is not claimed.
+See ORIGINAL-OFFSET-SPECIFIC-TRIAGE.md for evidence and mode distinctions.
+F# migration and final release validation remain outstanding.
