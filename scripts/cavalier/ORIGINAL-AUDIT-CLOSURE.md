@@ -99,3 +99,23 @@ Cavalier permits, and self_intersecting_case1/case2 omit upstream walks during
 winding/parity trimming. These have recorded contract explanations, not confirmed
 native defects. Do not silently treat acceptance of another example as acceptance
 of these. See ORIGINAL-OFFSET-SPECIFIC-TRIAGE.md.
+
+### Case11 follow-up repair — 2026-10-21
+
+The later investigation established a curved-cusp join-side/metadata defect and
+an offside route-selection problem. The repair resolves curved reversal joins
+using source curvature, aligns reversal metadata, retries ambiguous cusp parity
+by revoking eligible rescues, and prefers wholly non-submerged competing offside
+routes before the existing score. Mixed submerged alternatives retain the old
+score. Case11 with offside plus cusp trimming now returns one 44-segment contour,
+area 141959.84850931115, matching the pinned Cavalier area. The isolated rectangle
+regression and original README offside figure are preserved.
+
+See CUSP-JOIN-SIDE-EXPERIMENT.md for validation and intermediate failures.
+Without offside trimming, the recorded case11 cusp-only probe still produces two
+cycles and returns InternalIToKSubpathCount(2), wrapped in ConstructionFailed;
+that limitation has not been separately accepted or repaired. The case5 and
+self_intersecting_case1/case2 policy examples above still await individual review.
+Thus this repair does not close all deferred investigations or complete the F#
+port. The full release suite passed before the final heuristic restriction;
+focused tests and all 12 selected Gallery figures passed after it.

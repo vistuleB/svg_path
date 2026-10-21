@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="570" viewBox="0 0 1200 570">
+<rect x="0" y="0" width="1200" height="570" fill="white"/>
+<text x="20" y="32" font-family="Arial,sans-serif" font-size="23" fill="#334155">Inner rectangle alone — offset +1.2, Round joins, offside only</text>
+<text x="20" y="61" font-family="Arial,sans-serif" font-size="18" fill="#334155">No outer rectangle. No final cusp or in-band trimming. Panels 2 and 3 use the same enlarged scale.</text>
+<text x="15" y="103" font-family="Arial,sans-serif" font-size="20" fill="#334155">Source + untrimmed offset</text>
+<defs><clipPath id="p0"><rect x="10" y="120" width="380" height="365"/></clipPath></defs><g clip-path="url(#p0)"><g transform="translate(200 300) scale(130 -130)">
+<path d="M -1 -0.5 L -1 0.5 L 1 0.5 L 1 -0.5 L -1 -0.5" fill="none" stroke="#94a3b8" stroke-width="0.015384615384615385"/>
+<path d="M 0.2 -0.5 L 0.2 0.5 A 1.2 1.2 0 0 0 -1 -0.7 L 1 -0.7 A 1.2 1.2 0 0 0 -0.2 0.5 L -0.2 -0.5 A 1.2 1.2 0 0 0 1 0.7 L -1 0.7 A 1.2 1.2 0 0 0 0.2 -0.5" fill="none" stroke="#2563eb" stroke-width="0.021538461538461538"/>
+</g></g>
+<text x="415" y="103" font-family="Arial,sans-serif" font-size="20" fill="#334155">Previous score: one contour</text>
+<defs><clipPath id="p1"><rect x="410" y="120" width="380" height="365"/></clipPath></defs><g clip-path="url(#p1)"><g transform="translate(600 300) scale(330 -330)">
+<path d="M -1 -0.5 L -1 0.5 L 1 0.5 L 1 -0.5 L -1 -0.5" fill="none" stroke="#94a3b8" stroke-width="0.006060606060606061"/>
+<path d="M 0.2 -0.5 L 0.2 -0.394427190999916 L 0.2 0.394427190999916 L 0.2 0.5 A 1.2 1.2 0 0 0 0.194935886896179 0.389871773792358 A 1.2 1.2 0 0 0 0.0908712114635715 -1.11022302462516e-16 A 1.2 1.2 0 0 0 -1.11022302462516e-16 -0.16332495807108 A 1.2 1.2 0 0 0 -0.0908712114635715 5.55111512312578e-17 A 1.2 1.2 0 0 0 -0.194935886896179 0.389871773792358 A 1.2 1.2 0 0 0 -0.2 0.5 L -0.2 0.394427190999916 L -0.2 -0.394427190999916 L -0.2 -0.5 A 1.2 1.2 0 0 0 -0.194935886896179 -0.389871773792359 A 1.2 1.2 0 0 0 -0.0908712114635715 -1.11022302462516e-16 A 1.2 1.2 0 0 0 5.55111512312578e-17 0.16332495807108 A 1.2 1.2 0 0 0 0.0908712114635715 -1.11022302462516e-16 A 1.2 1.2 0 0 0 0.194935886896179 -0.389871773792359 A 1.2 1.2 0 0 0 0.2 -0.5" fill="none" stroke="#2563eb" stroke-width="0.008484848484848484"/>
+</g></g>
+<text x="815" y="103" font-family="Arial,sans-serif" font-size="20" fill="#334155">New score: three contours</text>
+<defs><clipPath id="p2"><rect x="810" y="120" width="380" height="365"/></clipPath></defs><g clip-path="url(#p2)"><g transform="translate(1000 300) scale(330 -330)">
+<path d="M -1 -0.5 L -1 0.5 L 1 0.5 L 1 -0.5 L -1 -0.5" fill="none" stroke="#94a3b8" stroke-width="0.006060606060606061"/>
+<path d="M -0.0908712114635715 5.55111512312578e-17 A 1.2 1.2 0 0 0 -0.194935886896179 0.389871773792358 A 1.2 1.2 0 0 0 -0.2 0.5 L -0.2 0.394427190999916 L -0.2 -0.394427190999916 L -0.2 -0.5 A 1.2 1.2 0 0 0 -0.194935886896179 -0.389871773792359 A 1.2 1.2 0 0 0 -0.0908712114635715 5.55111512312578e-17" fill="none" stroke="#2563eb" stroke-width="0.008484848484848484"/>
+<path d="M 0.2 0.394427190999916 L 0.2 0.5 A 1.2 1.2 0 0 0 0.194935886896179 0.389871773792358 A 1.2 1.2 0 0 0 0.0908712114635715 -1.11022302462516e-16 A 1.2 1.2 0 0 0 -1.11022302462516e-16 -0.16332495807108 A 1.2 1.2 0 0 0 -0.0908712114635715 -2.77555756156289e-17 A 1.2 1.2 0 0 0 1.11022302462516e-16 0.16332495807108 A 1.2 1.2 0 0 0 0.194935886896179 0.389871773792359 A 1.2 1.2 0 0 0 0.2 0.394427190999916" fill="none" stroke="#a855f7" stroke-width="0.008484848484848484"/>
+<path d="M 0.2 -0.5 L 0.2 -0.394427190999916 A 1.2 1.2 0 0 0 0.194935886896179 -0.389871773792358 A 1.2 1.2 0 0 0 0.2 -0.5" fill="none" stroke="#d97706" stroke-width="0.008484848484848484"/>
+</g></g>
+<text x="20" y="515" font-family="Arial,sans-serif" font-size="18" fill="#334155">Cause: minimizing submerged span can prefer a short submerged shortcut over a longer mixed route.</text>
+<text x="20" y="545" font-family="Arial,sans-serif" font-size="18" fill="#334155">The remaining edges are then reconstructed as separate contours. This is a route-selection change, not rounding.</text>
+</svg>

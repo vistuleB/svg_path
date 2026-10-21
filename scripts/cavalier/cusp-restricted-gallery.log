@@ -1,0 +1,25 @@
+START gallery-stroke-caps.svg pid=<0.83.0>
+START gallery-dashed-strokes.svg pid=<0.84.0>
+START gallery-recursive-dashes.svg pid=<0.85.0>
+START gallery-figure-eight-band.svg pid=<0.86.0>
+START gallery-symmetric-figure-eight-bands.svg pid=<0.87.0>
+START gallery-stroke-offset-tracks.svg pid=<0.88.0>
+START gallery-earth-tone-offsets.svg pid=<0.89.0>
+START gallery-package-title-first-offset.svg pid=<0.90.0>
+START gallery-package-title-second-offset-arrangement.svg pid=<0.91.0>
+START gallery-lazy-dog-offset-coil.svg pid=<0.92.0>
+START gallery-lazy-dog-offset-decaying-spiral.svg pid=<0.93.0>
+START gallery-package-title-nine-offsets.svg pid=<0.94.0>
+DONE gallery-earth-tone-offsets.svg elapsed=0.19s reductions=13189788
+DONE gallery-stroke-offset-tracks.svg elapsed=0.35s reductions=30616930
+DONE gallery-stroke-caps.svg elapsed=0.60s reductions=61937443
+DONE gallery-figure-eight-band.svg elapsed=0.91s reductions=108755671
+DONE gallery-symmetric-figure-eight-bands.svg elapsed=1.57s reductions=214032834
+DONE gallery-recursive-dashes.svg elapsed=2.62s reductions=336022590
+DONE gallery-dashed-strokes.svg elapsed=2.97s reductions=342605087
+DONE gallery-package-title-first-offset.svg elapsed=8.86s reductions=2379755329
+DONE gallery-package-title-second-offset-arrangement.svg elapsed=11.76s reductions=2857
+DONE gallery-lazy-dog-offset-coil.svg elapsed=19.85s reductions=2175621419
+DONE gallery-lazy-dog-offset-decaying-spiral.svg elapsed=28.35s reductions=3212414347
+DONE gallery-package-title-nine-offsets.svg elapsed=31.25s reductions=7687792725
+Gallery: 12 succeeded, 0 failed.

@@ -1,0 +1,1661 @@
+[
+  {
+    "mode": "none",
+    "normalization": [
+      [
+        {
+          "type": "Line",
+          "start": {
+            "x": -225,
+            "y": 0
+          },
+          "end": {
+            "x": -175,
+            "y": 0
+          }
+        },
+        {
+          "type": "Arc",
+          "start": {
+            "x": -175,
+            "y": 0
+          },
+          "radius": {
+            "x": 12.5,
+            "y": 12.5
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": -150,
+            "y": 0
+          }
+        },
+        {
+          "type": "Arc",
+          "start": {
+            "x": -150,
+            "y": 0
+          },
+          "radius": {
+            "x": 12.5,
+            "y": 12.5
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": -125,
+            "y": 0
+          }
+        },
+        {
+          "type": "Arc",
+          "start": {
+            "x": -125,
+            "y": 0
+          },
+          "radius": {
+            "x": 12.5,
+            "y": 12.5
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": -100,
+            "y": 0
+          }
+        },
+        {
+          "type": "Line",
+          "start": {
+            "x": -100,
+            "y": 0
+          },
+          "end": {
+            "x": -75,
+            "y": 0
+          }
+        },
+        {
+          "type": "Arc",
+          "start": {
+            "x": -75,
+            "y": 0
+          },
+          "radius": {
+            "x": 12.5,
+            "y": 12.5
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": false,
+          "end": {
+            "x": -50,
+            "y": 0
+          }
+        },
+        {
+          "type": "Arc",
+          "start": {
+            "x": -50,
+            "y": 0
+          },
+          "radius": {
+            "x": 12.5,
+            "y": 12.5
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": false,
+          "end": {
+            "x": -25,
+            "y": 0
+          }
+        },
+        {
+          "type": "Arc",
+          "start": {
+            "x": -25,
+            "y": 0
+          },
+          "radius": {
+            "x": 12.5,
+            "y": 12.5
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": false,
+          "end": {
+            "x": 0,
+            "y": 0
+          }
+        },
+        {
+          "type": "Line",
+          "start": {
+            "x": 0,
+            "y": 0
+          },
+          "end": {
+            "x": 25,
+            "y": 0
+          }
+        },
+        {
+          "type": "Arc",
+          "start": {
+            "x": 25,
+            "y": 0
+          },
+          "radius": {
+            "x": 12.5,
+            "y": 12.5
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 50,
+            "y": 0
+          }
+        },
+        {
+          "type": "Line",
+          "start": {
+            "x": 50,
+            "y": 0
+          },
+          "end": {
+            "x": 75,
+            "y": 0
+          }
+        },
+        {
+          "type": "Arc",
+          "start": {
+            "x": 75,
+            "y": 0
+          },
+          "radius": {
+            "x": 12.5,
+            "y": 12.5
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 100,
+            "y": 0
+          }
+        },
+        {
+          "type": "Line",
+          "start": {
+            "x": 100,
+            "y": 0
+          },
+          "end": {
+            "x": 125,
+            "y": 0
+          }
+        },
+        {
+          "type": "Arc",
+          "start": {
+            "x": 125,
+            "y": 0
+          },
+          "radius": {
+            "x": 12.5,
+            "y": 12.5
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 150,
+            "y": 0
+          }
+        },
+        {
+          "type": "Arc",
+          "start": {
+            "x": 150,
+            "y": 0
+          },
+          "radius": {
+            "x": 7.5,
+            "y": 7.5
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 165,
+            "y": 0
+          }
+        },
+        {
+          "type": "Arc",
+          "start": {
+            "x": 165,
+            "y": 0
+          },
+          "radius": {
+            "x": 12.5,
+            "y": 12.5
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 190,
+            "y": 0
+          }
+        },
+        {
+          "type": "Line",
+          "start": {
+            "x": 190,
+            "y": 0
+          },
+          "end": {
+            "x": 215,
+            "y": 0
+          }
+        },
+        {
+          "type": "Arc",
+          "start": {
+            "x": 215,
+            "y": 0
+          },
+          "radius": {
+            "x": 7.5,
+            "y": 7.5
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 230,
+            "y": 0
+          }
+        },
+        {
+          "type": "Arc",
+          "start": {
+            "x": 230,
+            "y": 0
+          },
+          "radius": {
+            "x": 12.5,
+            "y": 12.5
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 255,
+            "y": 0
+          }
+        },
+        {
+          "type": "Arc",
+          "start": {
+            "x": 255,
+            "y": 0
+          },
+          "radius": {
+            "x": 7.5,
+            "y": 7.5
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 270,
+            "y": 0
+          }
+        },
+        {
+          "type": "Line",
+          "start": {
+            "x": 270,
+            "y": 0
+          },
+          "end": {
+            "x": 280,
+            "y": 0
+          }
+        },
+        {
+          "type": "Line",
+          "start": {
+            "x": 280,
+            "y": 0
+          },
+          "end": {
+            "x": 390,
+            "y": 200
+          }
+        },
+        {
+          "type": "Line",
+          "start": {
+            "x": 390,
+            "y": 200
+          },
+          "end": {
+            "x": 365,
+            "y": 200
+          }
+        },
+        {
+          "type": "Arc",
+          "start": {
+            "x": 365,
+            "y": 200
+          },
+          "radius": {
+            "x": 12.5,
+            "y": 12.5
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 340,
+            "y": 200
+          }
+        },
+        {
+          "type": "Arc",
+          "start": {
+            "x": 340,
+            "y": 200
+          },
+          "radius": {
+            "x": 6.25,
+            "y": 6.25
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 352.5,
+            "y": 200
+          }
+        },
+        {
+          "type": "Arc",
+          "start": {
+            "x": 352.5,
+            "y": 200
+          },
+          "radius": {
+            "x": 31.25,
+            "y": 31.25
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": false,
+          "end": {
+            "x": 290,
+            "y": 200
+          }
+        },
+        {
+          "type": "Line",
+          "start": {
+            "x": 290,
+            "y": 200
+          },
+          "end": {
+            "x": 310,
+            "y": 200
+          }
+        },
+        {
+          "type": "Arc",
+          "start": {
+            "x": 310,
+            "y": 200
+          },
+          "radius": {
+            "x": 20,
+            "y": 20
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 270,
+            "y": 200
+          }
+        },
+        {
+          "type": "Arc",
+          "start": {
+            "x": 270,
+            "y": 200
+          },
+          "radius": {
+            "x": 5,
+            "y": 5
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": false,
+          "end": {
+            "x": 280,
+            "y": 200
+          }
+        },
+        {
+          "type": "Arc",
+          "start": {
+            "x": 280,
+            "y": 200
+          },
+          "radius": {
+            "x": 27.5,
+            "y": 27.5
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": false,
+          "end": {
+            "x": 225,
+            "y": 200
+          }
+        },
+        {
+          "type": "Arc",
+          "start": {
+            "x": 225,
+            "y": 200
+          },
+          "radius": {
+            "x": 12.5,
+            "y": 12.5
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 200,
+            "y": 200
+          }
+        },
+        {
+          "type": "Arc",
+          "start": {
+            "x": 200,
+            "y": 200
+          },
+          "radius": {
+            "x": 12.5,
+            "y": 12.5
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": false,
+          "end": {
+            "x": 175,
+            "y": 200
+          }
+        },
+        {
+          "type": "Arc",
+          "start": {
+            "x": 175,
+            "y": 200
+          },
+          "radius": {
+            "x": 12.5,
+            "y": 12.5
+          },
+          "x_axis_rotation": 0,
+          "large_arc": false,
+          "sweep": true,
+          "end": {
+            "x": 150,
+            "y": 200
+          }
+        },
+        {
+          "type": "Line",
+          "start": {
+            "x": 150,
+            "y": 200
+          },
+          "end": {
+            "x": -340,
+            "y": 200
+          }
+        },
+        {
+          "type": "Line",
+          "start": {
+            "x": -340,
+            "y": 200
+          },
+          "end": {
+            "x": -225,
+            "y": 0
+          }
+        }
+      ]
+    ],
+    "tolerance": 0.01,
+    "milliseconds": 679.495625,
+    "result": [
+      {
+        "bounds": {
+          "min": {
+            "x": -348.99999999999994,
+            "y": -21.5
+          },
+          "max": {
+            "x": 398.99999999999994,
+            "y": 229
+          }
+        },
+        "area": 143013.51803819483,
+        "length": 2966.5259040040455,
+        "segments": [
+          {
+            "type": "Line",
+            "start": {
+              "x": -225,
+              "y": -9
+            },
+            "end": {
+              "x": -175,
+              "y": -9
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": -175,
+              "y": -9
+            },
+            "radius": {
+              "x": 9,
+              "y": 9
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": -184,
+              "y": 0
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": -184,
+              "y": 0
+            },
+            "radius": {
+              "x": 21.5,
+              "y": 21.5
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": -141,
+              "y": 0
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": -141,
+              "y": 0
+            },
+            "radius": {
+              "x": 9,
+              "y": 9
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": -159,
+              "y": 0
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": -159,
+              "y": 0
+            },
+            "radius": {
+              "x": 21.5,
+              "y": 21.5
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": -116,
+              "y": 0
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": -116,
+              "y": 0
+            },
+            "radius": {
+              "x": 9,
+              "y": 9
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": -134,
+              "y": 0
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": -134,
+              "y": 0
+            },
+            "radius": {
+              "x": 21.5,
+              "y": 21.5
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": -91,
+              "y": 0
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": -91,
+              "y": 0
+            },
+            "radius": {
+              "x": 9,
+              "y": 9
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": -100,
+              "y": -9
+            }
+          },
+          {
+            "type": "Line",
+            "start": {
+              "x": -100,
+              "y": -9
+            },
+            "end": {
+              "x": -75,
+              "y": -9
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": -75,
+              "y": -9
+            },
+            "radius": {
+              "x": 9,
+              "y": 9
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": -66,
+              "y": 0
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": -66,
+              "y": 0
+            },
+            "radius": {
+              "x": 3.5,
+              "y": 3.5
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": -59,
+              "y": 0
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": -59,
+              "y": 0
+            },
+            "radius": {
+              "x": 9,
+              "y": 9
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": -41,
+              "y": 0
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": -41,
+              "y": 0
+            },
+            "radius": {
+              "x": 3.5,
+              "y": 3.5
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": -34,
+              "y": 0
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": -34,
+              "y": 0
+            },
+            "radius": {
+              "x": 9,
+              "y": 9
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": -16,
+              "y": 0
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": -16,
+              "y": 0
+            },
+            "radius": {
+              "x": 3.5,
+              "y": 3.5
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": -9,
+              "y": 0
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": -9,
+              "y": 0
+            },
+            "radius": {
+              "x": 9,
+              "y": 9
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": 0,
+              "y": -9
+            }
+          },
+          {
+            "type": "Line",
+            "start": {
+              "x": 0,
+              "y": -9
+            },
+            "end": {
+              "x": 25,
+              "y": -9
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 25,
+              "y": -9
+            },
+            "radius": {
+              "x": 9,
+              "y": 9
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": 16,
+              "y": 0
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 16,
+              "y": 0
+            },
+            "radius": {
+              "x": 21.5,
+              "y": 21.5
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": 59,
+              "y": 0
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 59,
+              "y": 0
+            },
+            "radius": {
+              "x": 9,
+              "y": 9
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": 50,
+              "y": -9
+            }
+          },
+          {
+            "type": "Line",
+            "start": {
+              "x": 50,
+              "y": -9
+            },
+            "end": {
+              "x": 75,
+              "y": -9
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 75,
+              "y": -9
+            },
+            "radius": {
+              "x": 9,
+              "y": 9
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": 66,
+              "y": 0
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 66,
+              "y": 0
+            },
+            "radius": {
+              "x": 21.5,
+              "y": 21.5
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": 109,
+              "y": 0
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 109,
+              "y": 0
+            },
+            "radius": {
+              "x": 9,
+              "y": 9
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": 100,
+              "y": -9
+            }
+          },
+          {
+            "type": "Line",
+            "start": {
+              "x": 100,
+              "y": -9
+            },
+            "end": {
+              "x": 125,
+              "y": -9
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 125,
+              "y": -9
+            },
+            "radius": {
+              "x": 9,
+              "y": 9
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": 116,
+              "y": 0
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 116,
+              "y": 0
+            },
+            "radius": {
+              "x": 21.5,
+              "y": 21.5
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": 159,
+              "y": 0
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 159,
+              "y": 0
+            },
+            "radius": {
+              "x": 9,
+              "y": 9
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": 141,
+              "y": 0
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 141,
+              "y": 0
+            },
+            "radius": {
+              "x": 16.5,
+              "y": 16.5
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": 174,
+              "y": 0
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 174,
+              "y": 0
+            },
+            "radius": {
+              "x": 9,
+              "y": 9
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": 156,
+              "y": 0
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 156,
+              "y": 0
+            },
+            "radius": {
+              "x": 21.5,
+              "y": 21.5
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": 199,
+              "y": 0
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 199,
+              "y": 0
+            },
+            "radius": {
+              "x": 9,
+              "y": 9
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": 190,
+              "y": -9
+            }
+          },
+          {
+            "type": "Line",
+            "start": {
+              "x": 190,
+              "y": -9
+            },
+            "end": {
+              "x": 215,
+              "y": -9
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 215,
+              "y": -9
+            },
+            "radius": {
+              "x": 9,
+              "y": 9
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": 206,
+              "y": 0
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 206,
+              "y": 0
+            },
+            "radius": {
+              "x": 16.5,
+              "y": 16.5
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": 239,
+              "y": 0
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 239,
+              "y": 0
+            },
+            "radius": {
+              "x": 9,
+              "y": 9
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": 221,
+              "y": 0
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 221,
+              "y": 0
+            },
+            "radius": {
+              "x": 21.5,
+              "y": 21.5
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": 264,
+              "y": 0
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 264,
+              "y": 0
+            },
+            "radius": {
+              "x": 9,
+              "y": 9
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": 246,
+              "y": 0
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 246,
+              "y": 0
+            },
+            "radius": {
+              "x": 16.5,
+              "y": 16.5
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": 279,
+              "y": 0
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 279,
+              "y": 0
+            },
+            "radius": {
+              "x": 9,
+              "y": 9
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": 270,
+              "y": -9
+            }
+          },
+          {
+            "type": "Line",
+            "start": {
+              "x": 270,
+              "y": -9
+            },
+            "end": {
+              "x": 280,
+              "y": -9
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 280,
+              "y": -9
+            },
+            "radius": {
+              "x": 9,
+              "y": 9
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": 287.8859431780898,
+              "y": -4.337268747949403
+            }
+          },
+          {
+            "type": "Line",
+            "start": {
+              "x": 287.8859431780898,
+              "y": -4.337268747949403
+            },
+            "end": {
+              "x": 397.8859431780898,
+              "y": 195.6627312520506
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 397.8859431780898,
+              "y": 195.6627312520506
+            },
+            "radius": {
+              "x": 9,
+              "y": 9
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": 390,
+              "y": 209
+            }
+          },
+          {
+            "type": "Line",
+            "start": {
+              "x": 390,
+              "y": 209
+            },
+            "end": {
+              "x": 365,
+              "y": 209
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 365,
+              "y": 209
+            },
+            "radius": {
+              "x": 9,
+              "y": 9
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": 374,
+              "y": 200
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 374,
+              "y": 200
+            },
+            "radius": {
+              "x": 21.5,
+              "y": 21.5
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": 331,
+              "y": 200
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 331,
+              "y": 200
+            },
+            "radius": {
+              "x": 15.25,
+              "y": 15.25
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": 361.5,
+              "y": 200
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 361.5,
+              "y": 200
+            },
+            "radius": {
+              "x": 9,
+              "y": 9
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": 343.5,
+              "y": 200
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 343.5,
+              "y": 200
+            },
+            "radius": {
+              "x": 22.25,
+              "y": 22.25
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": 299,
+              "y": 200
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 299,
+              "y": 200
+            },
+            "radius": {
+              "x": 9,
+              "y": 9
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": 290,
+              "y": 191
+            }
+          },
+          {
+            "type": "Line",
+            "start": {
+              "x": 290,
+              "y": 191
+            },
+            "end": {
+              "x": 310,
+              "y": 191
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 310,
+              "y": 191
+            },
+            "radius": {
+              "x": 9,
+              "y": 9
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": 319,
+              "y": 200
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 319,
+              "y": 200
+            },
+            "radius": {
+              "x": 29,
+              "y": 29
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": 261,
+              "y": 200
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 261,
+              "y": 200
+            },
+            "radius": {
+              "x": 9,
+              "y": 9
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": 279,
+              "y": 200
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 279,
+              "y": 200
+            },
+            "radius": {
+              "x": 4,
+              "y": 4
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": 271,
+              "y": 200
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 271,
+              "y": 200
+            },
+            "radius": {
+              "x": 18.5,
+              "y": 18.5
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": 234,
+              "y": 200
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 234,
+              "y": 200
+            },
+            "radius": {
+              "x": 21.5,
+              "y": 21.5
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": 191,
+              "y": 200
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 191,
+              "y": 200
+            },
+            "radius": {
+              "x": 3.5,
+              "y": 3.5
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": 184,
+              "y": 200
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 184,
+              "y": 200
+            },
+            "radius": {
+              "x": 21.5,
+              "y": 21.5
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": 141,
+              "y": 200
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": 141,
+              "y": 200
+            },
+            "radius": {
+              "x": 9,
+              "y": 9
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": false,
+            "end": {
+              "x": 150,
+              "y": 209
+            }
+          },
+          {
+            "type": "Line",
+            "start": {
+              "x": 150,
+              "y": 209
+            },
+            "end": {
+              "x": -340,
+              "y": 209
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": -340,
+              "y": 209
+            },
+            "radius": {
+              "x": 9,
+              "y": 9
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": -347.8021567275178,
+              "y": 195.51375988167726
+            }
+          },
+          {
+            "type": "Line",
+            "start": {
+              "x": -347.8021567275178,
+              "y": 195.51375988167726
+            },
+            "end": {
+              "x": -232.80215672751783,
+              "y": -4.486240118322744
+            }
+          },
+          {
+            "type": "Arc",
+            "start": {
+              "x": -232.80215672751783,
+              "y": -4.486240118322744
+            },
+            "radius": {
+              "x": 9,
+              "y": 9
+            },
+            "x_axis_rotation": 0,
+            "large_arc": false,
+            "sweep": true,
+            "end": {
+              "x": -225,
+              "y": -9
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -131,3 +131,36 @@ pub fn inner_join_override_includes_closed_seam_test() {
   assert arc_count(rounded) == 4
   assert svg_path.subpath_is_closed(rounded)
 }
+
+pub fn curved_cusp_uses_inner_join_override_test() {
+  let assert Ok(source) =
+    svg_path.subpath([
+      svg_path.Arc(
+        Point(-4.0, 0.0),
+        Point(2.0, 2.0),
+        0.0,
+        False,
+        True,
+        Point(0.0, 0.0),
+      ),
+      svg_path.Arc(
+        Point(0.0, 0.0),
+        Point(1.0, 1.0),
+        0.0,
+        False,
+        True,
+        Point(2.0, 0.0),
+      ),
+    ])
+  let options =
+    offset.Options(
+      ..offset.default_options(),
+      inner_join: Some(offset.InnerRound),
+    )
+  list.each([offset.Miter(4.0), offset.MiterClip(4.0)], fn(join) {
+    let assert Ok(raw) = offset.subpath_untrimmed(source, 0.25, join)
+    let assert [_, svg_path.Line(..), _] = svg_path.subpath_segments(raw)
+    assert offset.subpath_untrimmed_with(source, 0.25, join, options)
+      == offset.subpath_untrimmed(source, 0.25, offset.Round)
+  })
+}

@@ -3650,6 +3650,7 @@ type ArrangementSplitTracedSegment {
     end_vertex: Int,
     reversed: Bool,
     deletion_candidate: Bool,
+    submerged: Bool,
   )
 }
 
@@ -3980,7 +3981,22 @@ fn offside_trimmed_single_offset_subpath(
         dual,
         contaminated,
       ))
-      let chains = offside_survivor_chains(split.segments)
+      use windings <- result.try(arrangement_edge_windings(arrangement))
+      use classified <- result.try(
+        list.try_map(split.segments, fn(segment) {
+          use edge <- result.try(
+            arrangement_edge_by_id(arrangement.graph.edges, segment.edge_id)
+            |> result.map_error(InternalArrangementGraphError),
+          )
+          use matches <- result.try(arrangement_edge_winding_matches_opinion(
+            arrangement,
+            edge,
+            windings,
+          ))
+          Ok(ArrangementSplitTracedSegment(..segment, submerged: !matches))
+        }),
+      )
+      let chains = offside_survivor_chains(classified)
       chains
       |> list.try_map(fn(chain) {
         use traced <- result.try(traced_subpath_from_survivor_chain(
@@ -4234,6 +4250,7 @@ fn arrangement_split_segments_from_j_contamination_edges(
             end_vertex:,
             reversed: i_preimage_is_reversed(source.preimage),
             deletion_candidate: offside,
+            submerged: False,
           ),
           ..split
         ],
@@ -6204,10 +6221,11 @@ fn finish_cusp_trim_with_parity(
         True -> []
         False -> [expected_start, expected_end]
       }
-      use chains <- result.try(cusp_trim_parity_survivor_chains(
-        retained,
+      use chains <- result.try(cusp_trim_parity_with_rescue_fallback(
+        original,
+        rescued,
         graph,
-        protected_vertices: protected,
+        protected,
       ))
       case chains {
         // Parity may erase the last retained segment. Empty has the same
@@ -6224,6 +6242,49 @@ fn finish_cusp_trim_with_parity(
         _ -> Error(InternalIToKSubpathCount(list.length(chains)))
       }
     }
+  }
+}
+
+// Preserve occurrence order so original/current flags refer to the same piece.
+// Each retry revokes at least one rescue; originally non-submerged occurrences
+// are never removed by this fallback. All eligible incident pieces are marked
+// together, avoiding a dependency on edge iteration order.
+fn cusp_trim_parity_with_rescue_fallback(
+  original: List(ArrangementSplitTracedSegment),
+  current: List(ArrangementSplitTracedSegment),
+  graph: arrangement_graph.ArrangementGraph,
+  protected: List(Int),
+) -> Result(List(SurvivorChain), InternalError) {
+  let attempt = cusp_trim_parity_survivor_chains(current, graph, protected)
+  case attempt {
+    Error(InternalForcedParityPruningError(ForcedParityAmbiguous(vertices))) -> {
+      let updated =
+        list.map2(original, current, fn(before, now) {
+          case
+            before.deletion_candidate
+            && !now.deletion_candidate
+            && {
+              list.contains(vertices, now.start_vertex)
+              || list.contains(vertices, now.end_vertex)
+            }
+          {
+            True ->
+              ArrangementSplitTracedSegment(..now, deletion_candidate: True)
+            False -> now
+          }
+        })
+      case updated == current {
+        True -> attempt
+        False ->
+          cusp_trim_parity_with_rescue_fallback(
+            original,
+            updated,
+            graph,
+            protected,
+          )
+      }
+    }
+    _ -> attempt
   }
 }
 
@@ -6553,6 +6614,7 @@ fn arrangement_split_segments_from_j_edge_images(
             end_vertex:,
             reversed: i_preimage_is_reversed(source.preimage),
             deletion_candidate: !matches,
+            submerged: !matches,
           ),
           ..split
         ],
@@ -6813,6 +6875,53 @@ fn offside_closed_walk_is_better(
   candidate: OffsideClosedWalkState,
   current: OffsideClosedWalkState,
 ) -> Bool {
+  // Compare only competing occurrences between the same endpoints. Shared
+  // submerged geometry must not bias the choice of a local alternative.
+  let comparable =
+    candidate.first_start_vertex == current.first_start_vertex
+    && candidate.end_vertex == current.end_vertex
+    && list.any(candidate.segments_reversed, fn(segment) {
+      !list.contains(current.segments_reversed, segment)
+    })
+    && list.any(current.segments_reversed, fn(segment) {
+      !list.contains(candidate.segments_reversed, segment)
+    })
+  let candidate_submerged =
+    competing_submerged_span(
+      candidate.segments_reversed,
+      current.segments_reversed,
+    )
+  let current_submerged =
+    competing_submerged_span(
+      current.segments_reversed,
+      candidate.segments_reversed,
+    )
+  // A clean alternative wins over one containing submerged pieces. When
+  // both alternatives are submerged, their amounts do not rank their quality:
+  // minimizing that amount can reward shortcuts and split attached loops.
+  case comparable, candidate_submerged == 0.0, current_submerged == 0.0 {
+    True, True, False -> True
+    True, False, True -> False
+    _, _, _ -> offside_closed_walk_fallback_is_better(candidate, current)
+  }
+}
+
+fn competing_submerged_span(
+  segments: List(ArrangementSplitTracedSegment),
+  shared: List(ArrangementSplitTracedSegment),
+) -> Float {
+  list.fold(segments, 0.0, fn(total, segment) {
+    case segment.submerged && !list.contains(shared, segment) {
+      True -> total +. offside_segment_span(segment)
+      False -> total
+    }
+  })
+}
+
+fn offside_closed_walk_fallback_is_better(
+  candidate: OffsideClosedWalkState,
+  current: OffsideClosedWalkState,
+) -> Bool {
   case
     candidate.retained_span >. current.retained_span,
     candidate.retained_span <. current.retained_span
@@ -6919,8 +7028,9 @@ fn parametric_join_segments(
       // Positive SVG cross product is a visual clockwise turn. Positive
       // offsets lie on the visual left, so opposite turn/offset signs mean
       // the local inner side. Use source tangents, not possibly reversed
-      // offset tangents. Collinear corners retain the ordinary join policy.
-      let turn = point_helpers.cross(incoming, outgoing)
+      // offset tangents. At a cusp, source curvature resolves the otherwise
+      // ambiguous inner/outer side when the neighboring bends agree.
+      let turn = source_join_turn(left, right, incoming, outgoing)
       let is_inner =
         turn <. 0.0 && offset >. 0.0 || turn >. 0.0 && offset <. 0.0
       let join = case is_inner, inner_join {
@@ -6955,6 +7065,44 @@ fn parametric_join_segments(
         Round -> round_join(left, right, start, end, offset)
       }
     }
+  }
+}
+
+// At antiparallel tangents, sample the limiting turn conceptually just before
+// and after the corner at equal arc-length distances. Its sign is the sum of
+// the left-normal curvatures (the negative of the SVG signed curvatures).
+// Only resolve agreeing bends, or a bend next to a straight segment. Opposing
+// bends, unavailable curvature and straight retraces retain the old tie policy.
+fn source_join_turn(
+  left: GHealedOffsetSegment,
+  right: GHealedOffsetSegment,
+  incoming: svg_path.Point,
+  outgoing: svg_path.Point,
+) -> Float {
+  let turn = point_helpers.cross(incoming, outgoing)
+  let angle = signed_angle(incoming, outgoing)
+  case
+    float.absolute_value(float.absolute_value(angle) -. 180.0)
+    <=. angle_tolerance_degrees
+  {
+    False -> turn
+    True ->
+      case
+        join_source_curvature(left.source, SegmentEnd),
+        join_source_curvature(right.source, SegmentStart)
+      {
+        Some(a), Some(b) ->
+          case a >=. 0.0 && b >=. 0.0 || a <=. 0.0 && b <=. 0.0 {
+            True ->
+              case a +. b {
+                sum if sum >. 0.0 -> 1.0
+                sum if sum <. 0.0 -> -1.0
+                _ -> 0.0
+              }
+            False -> 0.0
+          }
+        _, _ -> 0.0
+      }
   }
 }
 
@@ -7072,12 +7220,14 @@ fn synchronized_join_correspondence(
     right_inner,
     inner_start,
     inner_end,
+    inner,
   ))
   use outer_reversed <- result.try(join_is_geometrically_reversed(
     left_outer,
     right_outer,
     outer_start,
     outer_end,
+    outer,
   ))
   Ok(OffsetJoinCorrespondence(
     after_portion_index: portion_index,
@@ -7097,6 +7247,7 @@ fn join_is_geometrically_reversed(
   right: List(GHealedOffsetSegment),
   join_start: svg_path.Point,
   join_end: svg_path.Point,
+  offset: Float,
 ) -> Result(Bool, InternalError) {
   use previous <- result.try(last_list_item(left))
   use next <- result.try(case right {
@@ -7113,7 +7264,19 @@ fn join_is_geometrically_reversed(
   ))
   let average_direction = point_helpers.add(incoming, outgoing)
   let join_chord = point_helpers.subtract(join_end, join_start)
-  Ok(point_helpers.dot(average_direction, join_chord) <. 0.0)
+  let angle = signed_angle(incoming, outgoing)
+  let turn = source_join_turn(previous, next, incoming, outgoing)
+  case
+    float.absolute_value(float.absolute_value(angle) -. 180.0)
+    <=. angle_tolerance_degrees
+    && turn != 0.0
+  {
+    // The source tangent sum vanishes at a cusp. Use the same limiting
+    // inner-side decision as join construction so cusp trimming can see
+    // the reversed join, including after traversal and offset reversal.
+    True -> Ok(turn <. 0.0 && offset >. 0.0 || turn >. 0.0 && offset <. 0.0)
+    False -> Ok(point_helpers.dot(average_direction, join_chord) <. 0.0)
+  }
 }
 
 fn offset_source_endpoint_unit_tangent(
@@ -10326,7 +10489,7 @@ fn clipped_miter_join(
 
 fn round_join(
   left: GHealedOffsetSegment,
-  _right: GHealedOffsetSegment,
+  right: GHealedOffsetSegment,
   start: svg_path.Point,
   end: svg_path.Point,
   offset: Float,
@@ -10344,16 +10507,31 @@ fn round_join(
       let start_radius = point_helpers.subtract(start, corner)
       let end_radius = point_helpers.subtract(end, corner)
       let angle = signed_angle(start_radius, end_radius)
-      // Antiparallel radii do not determine a turn sign. Resolve that tie
-      // using the signed offset so reversing traversal and offset reverses
-      // the join too. Keep the endpoint-based angle for other turns.
+      // Antiparallel radii do not determine a turn sign. Prefer the limiting
+      // source-cusp turn; otherwise retain the offset-side tie convention.
+      // Non-antiparallel radii retain their endpoint-based sweep.
       let sweep = case
         float.absolute_value(float.absolute_value(angle) -. 180.0)
         <=. angle_tolerance_degrees
       {
-        True -> offset >. 0.0
-        False -> angle >. 0.0
+        True -> {
+          use incoming <- result.try(offset_source_endpoint_unit_tangent(
+            left.source,
+            SegmentEnd,
+          ))
+          use outgoing <- result.try(offset_source_endpoint_unit_tangent(
+            right.source,
+            SegmentStart,
+          ))
+          let turn = source_join_turn(left, right, incoming, outgoing)
+          Ok(case turn == 0.0 {
+            True -> offset >. 0.0
+            False -> turn >. 0.0
+          })
+        }
+        False -> Ok(angle >. 0.0)
       }
+      use sweep <- result.try(sweep)
       case float.absolute_value(angle) <=. angle_tolerance_degrees {
         True -> Ok(polyline.segments(point_tolerance, [start, end]))
         False ->
