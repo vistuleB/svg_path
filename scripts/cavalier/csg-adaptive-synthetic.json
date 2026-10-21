@@ -1,0 +1,1524 @@
+[
+  {
+    "rx": 100,
+    "ry": 100,
+    "sweep": 0.00001,
+    "angle": 0,
+    "displacement": 1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.4142135203934557e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 100,
+    "sweep": 0.00001,
+    "angle": 0,
+    "displacement": -1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.4142135203934557e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 100,
+    "sweep": 0.00001,
+    "angle": 37,
+    "displacement": 1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.414213578899736e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 100,
+    "sweep": 0.00001,
+    "angle": 37,
+    "displacement": -1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.4142136291426992e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 100,
+    "sweep": 90,
+    "angle": 0,
+    "displacement": 1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.4142135203934557e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 100,
+    "sweep": 90,
+    "angle": 0,
+    "displacement": -1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.4142135636912605e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 100,
+    "sweep": 90,
+    "angle": 37,
+    "displacement": 1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.4142135286567748e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 100,
+    "sweep": 90,
+    "angle": 37,
+    "displacement": -1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.414213578899736e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 100,
+    "sweep": 179.99999,
+    "angle": 0,
+    "displacement": 1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.4142141416552432e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 100,
+    "sweep": 179.99999,
+    "angle": 0,
+    "displacement": -1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.4142135203934557e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 100,
+    "sweep": 179.99999,
+    "angle": 37,
+    "displacement": 1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.5058649624964467e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 100,
+    "sweep": 179.99999,
+    "angle": 37,
+    "displacement": -1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.4177555254854812e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 100,
+    "sweep": 180,
+    "angle": 0,
+    "displacement": 1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.4142135636912605e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 100,
+    "sweep": 180,
+    "angle": 0,
+    "displacement": -1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.4142135203934557e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 100,
+    "sweep": 180,
+    "angle": 37,
+    "displacement": 1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.41421367938565e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 100,
+    "sweep": 180,
+    "angle": 37,
+    "displacement": -1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.4142135286567748e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 100,
+    "sweep": 270,
+    "angle": 0,
+    "displacement": 1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.9998503285731467e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 100,
+    "sweep": 270,
+    "angle": 0,
+    "displacement": -1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.999849524685808e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 100,
+    "sweep": 270,
+    "angle": 37,
+    "displacement": 1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.9998492985924953e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 100,
+    "sweep": 270,
+    "angle": 37,
+    "displacement": -1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.9998497005362759e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 100,
+    "sweep": 359.99999,
+    "angle": 0,
+    "displacement": 1e-7,
+    "pieces": 2,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 0.5,
+        "depth": 2,
+        "maximum": 1.8772744164613823e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0.5,
+        "to": 1,
+        "depth": 2,
+        "maximum": 1.4142132929303167e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 100,
+    "sweep": 359.99999,
+    "angle": 0,
+    "displacement": -1e-7,
+    "pieces": 2,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 0.5,
+        "depth": 2,
+        "maximum": 1.4142135203934557e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0.5,
+        "to": 1,
+        "depth": 2,
+        "maximum": 2.2233154463514548e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 100,
+    "sweep": 359.99999,
+    "angle": 37,
+    "displacement": 1e-7,
+    "pieces": 3,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 0.5,
+        "depth": 2,
+        "maximum": 2.1001452503676207e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0.5,
+        "to": 0.75,
+        "depth": 1,
+        "maximum": 1.7346558842822478e-13,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0.75,
+        "to": 1,
+        "depth": 1,
+        "maximum": 1.4142138803574988e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 100,
+    "sweep": 359.99999,
+    "angle": 37,
+    "displacement": -1e-7,
+    "pieces": 3,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 0.25,
+        "depth": 1,
+        "maximum": 1.4142134784138154e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0.25,
+        "to": 0.5,
+        "depth": 1,
+        "maximum": 1.1099032343376302e-13,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0.5,
+        "to": 1,
+        "depth": 2,
+        "maximum": 1.4142131769560666e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 1,
+    "sweep": 0.00001,
+    "angle": 0,
+    "displacement": 1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.4142136208793734e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 1,
+    "sweep": 0.00001,
+    "angle": 0,
+    "displacement": -1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.4142136208793734e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 1,
+    "sweep": 0.00001,
+    "angle": 37,
+    "displacement": 1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.414213578899736e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 1,
+    "sweep": 0.00001,
+    "angle": 37,
+    "displacement": -1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.414213578899736e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 1,
+    "sweep": 90,
+    "angle": 0,
+    "displacement": 1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.4142135203934557e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 1,
+    "sweep": 90,
+    "angle": 0,
+    "displacement": -1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.4142136052987087e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 1,
+    "sweep": 90,
+    "angle": 37,
+    "displacement": 1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.414213578114689e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 1,
+    "sweep": 90,
+    "angle": 37,
+    "displacement": -1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.414213578899736e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 1,
+    "sweep": 179.99999,
+    "angle": 0,
+    "displacement": 1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.6800629226265597e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 1,
+    "sweep": 179.99999,
+    "angle": 0,
+    "displacement": -1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.4142135223461737e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 1,
+    "sweep": 179.99999,
+    "angle": 37,
+    "displacement": 1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.4142135286567748e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 1,
+    "sweep": 179.99999,
+    "angle": 37,
+    "displacement": -1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.4266378233960795e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 1,
+    "sweep": 180,
+    "angle": 0,
+    "displacement": 1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.4142135208264338e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 1,
+    "sweep": 180,
+    "angle": 0,
+    "displacement": -1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.4142135203934557e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 1,
+    "sweep": 180,
+    "angle": 37,
+    "displacement": 1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.4142134784138154e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 1,
+    "sweep": 180,
+    "angle": 37,
+    "displacement": -1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.414213578899736e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 1,
+    "sweep": 270,
+    "angle": 0,
+    "displacement": 1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.999858236363498e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 1,
+    "sweep": 270,
+    "angle": 0,
+    "displacement": -1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.9998493135083717e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 1,
+    "sweep": 270,
+    "angle": 37,
+    "displacement": 1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.9998492232284167e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 1,
+    "sweep": 270,
+    "angle": 37,
+    "displacement": -1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.9998495749295372e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 1,
+    "sweep": 359.99999,
+    "angle": 0,
+    "displacement": 1e-7,
+    "pieces": 3,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 0.25,
+        "depth": 1,
+        "maximum": 1.4142135203934557e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0.25,
+        "to": 0.5,
+        "depth": 1,
+        "maximum": 4.2639647011434926e-14,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0.5,
+        "to": 1,
+        "depth": 2,
+        "maximum": 1.4142135181188244e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 1,
+    "sweep": 359.99999,
+    "angle": 0,
+    "displacement": -1e-7,
+    "pieces": 2,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 0.5,
+        "depth": 2,
+        "maximum": 1.4142135203934557e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0.5,
+        "to": 1,
+        "depth": 2,
+        "maximum": 1.4142135226680867e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 1,
+    "sweep": 359.99999,
+    "angle": 37,
+    "displacement": 1e-7,
+    "pieces": 3,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 0.5,
+        "depth": 2,
+        "maximum": 1.4142133276849612e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0.5,
+        "to": 0.75,
+        "depth": 1,
+        "maximum": 1.1234667099445443e-13,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0.75,
+        "to": 1,
+        "depth": 1,
+        "maximum": 1.414213578899736e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 100,
+    "ry": 1,
+    "sweep": 359.99999,
+    "angle": 37,
+    "displacement": -1e-7,
+    "pieces": 2,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 0.5,
+        "depth": 2,
+        "maximum": 1.4142137296286164e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0.5,
+        "to": 1,
+        "depth": 2,
+        "maximum": 1.4142134784138294e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 1,
+    "ry": 100,
+    "sweep": 0.00001,
+    "angle": 0,
+    "displacement": 1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.4142135627859515e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 1,
+    "ry": 100,
+    "sweep": 0.00001,
+    "angle": 0,
+    "displacement": -1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.4142135620009052e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 1,
+    "ry": 100,
+    "sweep": 0.00001,
+    "angle": 37,
+    "displacement": 1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.4142135616287155e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 1,
+    "ry": 100,
+    "sweep": 0.00001,
+    "angle": 37,
+    "displacement": -1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.4142135616287155e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 1,
+    "ry": 100,
+    "sweep": 90,
+    "angle": 0,
+    "displacement": 1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.4142135635709977e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 1,
+    "ry": 100,
+    "sweep": 90,
+    "angle": 0,
+    "displacement": -1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.414213561215859e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 1,
+    "ry": 100,
+    "sweep": 90,
+    "angle": 37,
+    "displacement": 1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.414213578899736e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 1,
+    "ry": 100,
+    "sweep": 90,
+    "angle": 37,
+    "displacement": -1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.4142135616287192e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 1,
+    "ry": 100,
+    "sweep": 179.99999,
+    "angle": 0,
+    "displacement": 1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.456557419408299e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 1,
+    "ry": 100,
+    "sweep": 179.99999,
+    "angle": 0,
+    "displacement": -1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.6859273908953372e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 1,
+    "ry": 100,
+    "sweep": 179.99999,
+    "angle": 37,
+    "displacement": 1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.60766370858825e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 1,
+    "ry": 100,
+    "sweep": 179.99999,
+    "angle": 37,
+    "displacement": -1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.4255152569536377e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 1,
+    "ry": 100,
+    "sweep": 180,
+    "angle": 0,
+    "displacement": 1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.5516039411231055e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 1,
+    "ry": 100,
+    "sweep": 180,
+    "angle": 0,
+    "displacement": -1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.5553305667405218e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 1,
+    "ry": 100,
+    "sweep": 180,
+    "angle": 37,
+    "displacement": 1e-7,
+    "pieces": 2,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 0.5,
+        "depth": 2,
+        "maximum": 1.4142135616287155e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0.5,
+        "to": 1,
+        "depth": 2,
+        "maximum": 1.4142141072358468e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 1,
+    "ry": 100,
+    "sweep": 180,
+    "angle": 37,
+    "displacement": -1e-7,
+    "pieces": 2,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 0.5,
+        "depth": 2,
+        "maximum": 1.4142135616287155e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0.5,
+        "to": 1,
+        "depth": 2,
+        "maximum": 1.414213016021588e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 1,
+    "ry": 100,
+    "sweep": 270,
+    "angle": 0,
+    "displacement": 1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.999858338419949e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 1,
+    "ry": 100,
+    "sweep": 270,
+    "angle": 0,
+    "displacement": -1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.9998608450854393e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 1,
+    "ry": 100,
+    "sweep": 270,
+    "angle": 37,
+    "displacement": 1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.9998584679328135e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 1,
+    "ry": 100,
+    "sweep": 270,
+    "angle": 37,
+    "displacement": -1e-7,
+    "pieces": 1,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.999853895823317e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 1,
+    "ry": 100,
+    "sweep": 359.99999,
+    "angle": 0,
+    "displacement": 1e-7,
+    "pieces": 3,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 0.25,
+        "depth": 1,
+        "maximum": 1.4142135627859515e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0.25,
+        "to": 0.5,
+        "depth": 1,
+        "maximum": 7.8160016337243e-14,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0.5,
+        "to": 1,
+        "depth": 2,
+        "maximum": 1.4142134045646155e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 1,
+    "ry": 100,
+    "sweep": 359.99999,
+    "angle": 0,
+    "displacement": -1e-7,
+    "pieces": 3,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 0.5,
+        "depth": 2,
+        "maximum": 1.4142135620009052e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0.5,
+        "to": 0.75,
+        "depth": 1,
+        "maximum": 5.684873120321881e-14,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0.75,
+        "to": 1,
+        "depth": 1,
+        "maximum": 1.4142137194371993e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 1,
+    "ry": 100,
+    "sweep": 359.99999,
+    "angle": 37,
+    "displacement": 1e-7,
+    "pieces": 3,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 0.25,
+        "depth": 1,
+        "maximum": 1.4142135616287155e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0.25,
+        "to": 0.5,
+        "depth": 1,
+        "maximum": 1.5106345774618504e-13,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0.5,
+        "to": 1,
+        "depth": 2,
+        "maximum": 1.9496209668691714e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "rx": 1,
+    "ry": 100,
+    "sweep": 359.99999,
+    "angle": 37,
+    "displacement": -1e-7,
+    "pieces": 3,
+    "outerEndpointsExact": true,
+    "joinsExact": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 0.5,
+        "depth": 2,
+        "maximum": 1.4142135616287155e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0.5,
+        "to": 0.75,
+        "depth": 1,
+        "maximum": 2.387465885989775e-13,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0.75,
+        "to": 1,
+        "depth": 1,
+        "maximum": 1.4142139729929408e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  }
+]

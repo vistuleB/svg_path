@@ -1,0 +1,3899 @@
+[
+  {
+    "id": "CC00666",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": []
+  },
+  {
+    "id": "CC00670",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": []
+  },
+  {
+    "id": "CC00674",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": []
+  },
+  {
+    "id": "CC00678",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": []
+  },
+  {
+    "id": "CC00685",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.9790409838967277e-15,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 3.794299872214038e-15,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 3.66205343881779e-15,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 3.636721891222372e-15,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.965068306494546e-15,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.9860273225978185e-15,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00689",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.9790409838967277e-15,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 3.794299872214038e-15,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 3.972054645195637e-15,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.965068306494546e-15,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 3.66205343881779e-15,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00693",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 3.972054645195637e-15,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 3.66205343881779e-15,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 3.4684476073050944e-15,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 6.358389842764978e-15,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.782987168225454e-15,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00697",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 3.66205343881779e-15,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 3.794299872214038e-15,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 3.820199830714189e-15,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 3.66205343881779e-15,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00704",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.6485855875760586e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.6485855875760586e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.648585587575942e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00708",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.6485855875760586e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.6485855875760586e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.648585587575942e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00712",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.6485855875760586e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.648585587575942e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.6485855875760586e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00716",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.6485855875760586e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.648585587575942e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.6485855875760586e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00742",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.4938668397781776e-14,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0247593068766007e-13,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.5496934130773415e-14,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 8.286281022897839e-14,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00746",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0658141036401503e-13,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 8.286281022897839e-14,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00750",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 6.355287432313019e-14,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.0194366942304644e-14,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.4938668397781776e-14,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 8.987733679556355e-14,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00754",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.098207554046411e-13,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.652779469160726e-14,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00761",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.036884655428791e-13,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.234986049614836e-13,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00765",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.036884655428791e-13,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.234986049614836e-13,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00769",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.036884655428791e-13,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.234986049614836e-13,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00773",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.036884655428791e-13,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.234986049614836e-13,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00780",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": []
+  },
+  {
+    "id": "CC00784",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": []
+  },
+  {
+    "id": "CC00788",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": []
+  },
+  {
+    "id": "CC00792",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": []
+  },
+  {
+    "id": "CC00797",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.1076869818190687e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 9.969183021129555e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00798",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 9.969183021129555e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00799",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 9.969183021129555e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.1076869818190687e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.1076870370211474e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00801",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.1076869904594808e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 9.969183021129555e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00802",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 9.969183021129555e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00803",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 9.969183021129555e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.1076869904594808e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.107687028380736e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00804",
+    "operation": "Or",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.1076870370211474e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00805",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.1076869818190687e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 9.969183107396981e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00806",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 9.969183107396981e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00807",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 9.969183107396981e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.1076869818190687e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.1076870370211474e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00809",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.1076869904594808e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 9.969183107396981e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00810",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 9.969183107396981e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00811",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 9.969183107396981e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.1076869904594808e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.107687028380736e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00816",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.6849290135299334e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.930936032120451e-12,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 3.5595159425308917e-12,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 6.253421758472315e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00817",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 6.253421758472315e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00818",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 6.253421758472315e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.6849290135299334e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.6849287981894374e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.9305069759029966e-12,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00820",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.6849290135299334e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.931366101979597e-12,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 3.5577926493511683e-12,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 6.253421973886594e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00821",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 6.253421973886594e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00822",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 6.253421973886594e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.6849290135299334e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.6849287981894374e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.9305069759029966e-12,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00824",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 3.5599471894642906e-12,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 6.253421758472315e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.684928970546129e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.9305069759029966e-12,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00825",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 6.253421758472315e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00826",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 6.253421758472315e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.684928970546129e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.6849287981894374e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.9305069759029966e-12,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00828",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 3.5590855299326127e-12,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 6.253421973886594e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.684928970546129e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.9287831194517763e-12,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00829",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 6.253421973886594e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00830",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 6.253421973886594e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.684928970546129e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.6849287981894374e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.9305069759029966e-12,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00835",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0477804557012395e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.567803534190127e-12,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.858353804146245e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00836",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.858353804146245e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00837",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.858353804146245e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0477804557012395e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0477804557012395e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.5700267889862362e-12,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00839",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0477804834224464e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.567803534190127e-12,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.858353804146245e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00840",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.858353804146245e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00841",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.858353804146245e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0477804834224464e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0477804834224464e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.5700267889862362e-12,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00843",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.567803534190127e-12,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.858353804146245e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0477804557012395e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00844",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.858353804146245e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00845",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.858353804146245e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0477804557012395e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0477804557012395e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.5700267889862362e-12,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00847",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.567803534190127e-12,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.858353804146245e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0477804834224464e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00848",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.858353804146245e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00849",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.858353804146245e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0477804834224464e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0477804834224464e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.5700267889862362e-12,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00854",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160631563826324e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.5033221201665352e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00855",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.5033221201665352e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00856",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.5033221201665352e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160631563826324e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160631563826324e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00858",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160631563826324e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.5033221201665352e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00859",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.5033221201665352e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00860",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.5033221201665352e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160631563826324e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160631563826324e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00862",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.5033221287831324e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160631563826324e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00863",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.5033221287831324e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00864",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.5033221287831324e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160631563826324e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160631563826324e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00866",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.5033221287831324e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160631563826324e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00867",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.5033221287831324e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00868",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.5033221287831324e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160631563826324e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160631563826324e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00875",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 3.252500665850886e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 3.22768434722425e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00879",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 3.252500665850886e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 3.22768434722425e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00883",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 3.252500665850886e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 3.22768434722425e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00887",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 3.252500665850886e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 3.22768434722425e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00894",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.91510007805227e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.915099935943541e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00898",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.91510007805227e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.915099935943541e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00902",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.91510007805227e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.915099935943541e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00906",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.91510007805227e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.915099935943541e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00913",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": []
+  },
+  {
+    "id": "CC00917",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": []
+  },
+  {
+    "id": "CC00921",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": []
+  },
+  {
+    "id": "CC00925",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": []
+  },
+  {
+    "id": "CC00930",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0477801921364313e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.612211099846594e-14,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.858356328671241e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00931",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.858356384155288e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00932",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.858356384155288e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0477801865815228e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0477802059970349e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.524677427749093e-14,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00934",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0477802059970349e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.612211099846594e-14,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.858356328671241e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00935",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.858356384155288e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00936",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.858356384155288e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0477802004421265e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0477802004421265e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.524677427749093e-14,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00938",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.612211099846594e-14,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.858356328671241e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0477801921364313e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00939",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.858356384155288e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00940",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.858356384155288e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0477801865815228e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0477802059970349e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.524677427749093e-14,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00942",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.612211099846594e-14,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.858356328671241e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0477802059970349e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00943",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.858356384155288e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00944",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.858356384155288e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0477802004421265e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0477802004421265e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.524677427749093e-14,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00949",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.744471574939535e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 8.897652179046668e-9,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0517378925074031e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00950",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0517378980558077e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00951",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0517378980558077e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.744471519391369e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.7444714918802e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.524677427749093e-14,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00953",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.744471574939535e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 8.897652179046668e-9,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0517378925074031e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00954",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0517378980558077e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00955",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0517378980558077e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.744471519391369e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.7444714918802e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.524677427749093e-14,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00957",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 8.897652179046668e-9,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0517378980558077e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.744471574939535e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00958",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0517379036042125e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00959",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0517379036042125e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.744471519391369e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.7444714918802e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.524677427749093e-14,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00961",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 8.897652179046668e-9,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0517378980558077e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.744471574939535e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00962",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0517379036042125e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00963",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.0517379036042125e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.744471519391369e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.7444714918802e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.524677427749093e-14,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00968",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.360727412023758e-12,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.5033220124590813e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.5033220124590813e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160632296236915e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160632296236915e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00969",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 8.881784197001252e-15,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160632296236915e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160631606821036e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00970",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 8.881784197001252e-15,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160632296236915e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160631606821036e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.5033220124590813e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00972",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.360727412023758e-12,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.503322008150783e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.5033219392180124e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160632296236915e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160632296236915e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00973",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 8.881784197001252e-15,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160632296236915e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160631606821036e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00974",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 8.881784197001252e-15,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160632296236915e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160631606821036e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.503322008150783e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00976",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160632296236915e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160632296236915e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.360296783954e-12,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.503321943526311e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.5033220124590813e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00977",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160631606821036e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 8.881784197001252e-15,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160632296236915e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00978",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160631606821036e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 8.881784197001252e-15,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160632296236915e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.503321943526311e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00980",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160632296236915e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160632296236915e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 7.360296783954e-12,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.5033219392180124e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.5033219392180124e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00981",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160631606821036e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 8.881784197001252e-15,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160632296236915e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00982",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160631606821036e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 8.881784197001252e-15,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.2160632296236915e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.5033219392180124e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00989",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.192352676997027e-14,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.528839093602941e-14,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.162137128766113e-14,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00993",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.192352676997027e-14,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.528839093602941e-14,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.162137128766113e-14,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC00997",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.3366397107056194e-14,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.440892098500626e-14,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.162137128766113e-14,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC01001",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.3366397107056194e-14,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.440892098500626e-14,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 4.162137128766113e-14,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC01006",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.1076870059800362e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 9.969183107396981e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC01007",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 9.969183107396981e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC01008",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 9.969183107396981e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.1076870059800362e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.1076870215005917e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC01010",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.1076870059800362e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 9.969183107396981e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC01011",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 9.969183107396981e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC01012",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 9.969183107396981e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.1076870059800362e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.1076870215005917e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC01014",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.1076870059800362e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 9.969183107396981e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC01015",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 9.969183107396981e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC01016",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 9.969183107396981e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.1076870059800362e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.1076870215005917e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC01018",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.1076870059800362e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 9.969183107396981e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC01019",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 9.969183107396981e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC01020",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 9.969183107396981e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.1076870059800362e-7,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.1076870215005917e-7,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC01025",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.632801148603234e-12,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 6.253421758471424e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 6.253421586141073e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.684928711905726e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.684928798084071e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC01026",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.6323703981362496e-12,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.684928798084071e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.684928798084071e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC01027",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.6323703981362496e-12,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.684928798084071e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.684928798084071e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 6.253421758471424e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC01029",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.632801148603234e-12,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 6.253421758471424e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 6.253421672305358e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.684928970440761e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.684928798084071e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC01030",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.6323703981362496e-12,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.684928798084071e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.684928798084071e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC01031",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.6323703981362496e-12,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.684928798084071e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.684928798084071e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 6.253421758471424e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC01033",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.684928711905726e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.684928798084071e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.632801148603234e-12,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 6.253421758471424e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 6.253421586141073e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC01034",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.684928798084071e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.6323703981362496e-12,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.684928798084071e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC01035",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.684928798084071e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.6323703981362496e-12,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.684928798084071e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 6.253421758471424e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC01037",
+    "operation": "And",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.684928927456956e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.684928798084071e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.632801148603234e-12,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 6.253421758471424e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 6.253421586139289e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC01038",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.684928798084071e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.6323703981362496e-12,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.684928798084071e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC01039",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.684928798084071e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 2.6323703981362496e-12,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 5.684928798084071e-8,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 6.253421758471424e-8,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC01046",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": []
+  },
+  {
+    "id": "CC01050",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": []
+  },
+  {
+    "id": "CC01054",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": []
+  },
+  {
+    "id": "CC01058",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": []
+  },
+  {
+    "id": "CC01059",
+    "operation": "Or",
+    "error": "ArrangementGraphError"
+  },
+  {
+    "id": "CC01063",
+    "operation": "And",
+    "error": "ArrangementGraphError"
+  },
+  {
+    "id": "CC01064",
+    "operation": "Not",
+    "error": "ArrangementGraphError"
+  },
+  {
+    "id": "CC01065",
+    "operation": "Xor",
+    "error": "ArrangementGraphError"
+  },
+  {
+    "id": "CC01066",
+    "operation": "Or",
+    "error": "ArrangementGraphError"
+  },
+  {
+    "id": "CC01067",
+    "operation": "And",
+    "error": "ArrangementGraphError"
+  },
+  {
+    "id": "CC01068",
+    "operation": "Not",
+    "error": "ArrangementGraphError"
+  },
+  {
+    "id": "CC01069",
+    "operation": "Xor",
+    "error": "ArrangementGraphError"
+  },
+  {
+    "id": "CC01070",
+    "operation": "Or",
+    "error": "ArrangementGraphError"
+  },
+  {
+    "id": "CC01071",
+    "operation": "And",
+    "error": "ArrangementGraphError"
+  },
+  {
+    "id": "CC01072",
+    "operation": "Not",
+    "error": "ArrangementGraphError"
+  },
+  {
+    "id": "CC01073",
+    "operation": "Xor",
+    "error": "ArrangementGraphError"
+  },
+  {
+    "id": "CC01074",
+    "operation": "Or",
+    "error": "ArrangementGraphError"
+  },
+  {
+    "id": "CC01075",
+    "operation": "And",
+    "error": "ArrangementGraphError"
+  },
+  {
+    "id": "CC01076",
+    "operation": "Not",
+    "error": "ArrangementGraphError"
+  },
+  {
+    "id": "CC01077",
+    "operation": "Xor",
+    "error": "ArrangementGraphError"
+  },
+  {
+    "id": "CC01084",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": []
+  },
+  {
+    "id": "CC01088",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": []
+  },
+  {
+    "id": "CC01092",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": []
+  },
+  {
+    "id": "CC01096",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": []
+  },
+  {
+    "id": "CC01102",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": []
+  },
+  {
+    "id": "CC01103",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": []
+  },
+  {
+    "id": "CC01106",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.831026719408895e-15,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC01107",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": [
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 1.831026719408895e-15,
+        "tolerance": 0.000001
+      },
+      {
+        "from": 0,
+        "to": 1,
+        "depth": 3,
+        "maximum": 9.930136612989092e-16,
+        "tolerance": 0.000001
+      }
+    ]
+  },
+  {
+    "id": "CC01110",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": []
+  },
+  {
+    "id": "CC01111",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": []
+  },
+  {
+    "id": "CC01114",
+    "operation": "Not",
+    "exactJoins": true,
+    "checks": []
+  },
+  {
+    "id": "CC01115",
+    "operation": "Xor",
+    "exactJoins": true,
+    "checks": []
+  }
+]

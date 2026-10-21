@@ -15,6 +15,7 @@ import svg_path
 import svg_path/arrangement.{
   type ArrangementEdge, type ArrangementGraph, ArrangementEdge,
 }
+import svg_path/internal/arc_reconstruction
 import svg_path/point
 
 const default_minimum_length = 0.00001
@@ -69,9 +70,15 @@ pub type BoundaryTopologyFailure {
 /// path follows the arrangement's geometry rather than silently claiming the
 /// original input geometry as its source of truth. Binary operations construct
 /// output segments with endpoints at the corresponding arrangement vertex points;
-/// each endpoint moves by at most the build tolerance. Control points and arc
-/// parameters are retained. This endpoint bound is not a bound on the interior
-/// displacement of an elliptical arc. Stored arrangement edges remain unchanged.
+/// each endpoint moves by at most the build tolerance. Bezier control points
+/// are retained. Arcs try midpoint-fixed affine adjustment, then endpoint-matching
+/// similarity (rotation and uniform scale). Both must pass a positional deviation
+/// bound; otherwise the original arc is subdivided. At most
+/// eight arcs replace one edge; internal split points stay on the source ellipse.
+/// Radius and rotation can change. The floating-point deviation bound must not
+/// exceed the build tolerance; tangent continuity is not guaranteed. Exhausting
+/// the subdivision limit returns `ArrangementGraphError(ConstructionFailed)`.
+/// Stored arrangement edges are unchanged.
 pub type CsgResult {
   CsgResult(
     /// The reconstructed result path for the requested operation.
@@ -115,6 +122,7 @@ pub fn union_with(
     list.length(csg_path_segments([left], segments: [])),
     fill_rule,
     UnionOperation,
+    options.tolerance,
   ))
   Ok(CsgResult(path:, build: built))
 }
@@ -144,6 +152,7 @@ pub fn intersection_with(
     list.length(csg_path_segments([left], segments: [])),
     fill_rule,
     IntersectionOperation,
+    options.tolerance,
   ))
   Ok(CsgResult(path:, build: built))
 }
@@ -178,6 +187,7 @@ pub fn difference_with(
     list.length(csg_path_segments([left], segments: [])),
     fill_rule,
     DifferenceOperation,
+    options.tolerance,
   ))
   Ok(CsgResult(path:, build: built))
 }
@@ -212,6 +222,7 @@ pub fn symmetric_difference_with(
     list.length(csg_path_segments([left], segments: [])),
     fill_rule,
     SymmetricDifferenceOperation,
+    options.tolerance,
   ))
   Ok(CsgResult(path:, build: built))
 }
@@ -409,6 +420,7 @@ fn boolean_from_arrangement(
   left_segment_count: Int,
   fill_rule: svg_path.FillRule,
   operation: BooleanOperation,
+  tolerance: Float,
 ) -> Result(svg_path.Path, Error) {
   let graph = built.graph
   use dual <- result.try(
@@ -442,9 +454,13 @@ fn boolean_from_arrangement(
     ),
   )
   use links <- result.try(pair_boundary_sectors(graph, boundary))
-  use subpaths <- result.try(
-    trace_boundary_edges(boundary, links, vertex_points(graph), []),
-  )
+  use subpaths <- result.try(trace_boundary_edges(
+    boundary,
+    links,
+    vertex_points(graph),
+    [],
+    tolerance,
+  ))
   Ok(svg_path.Path(subpaths))
 }
 
@@ -679,17 +695,26 @@ fn vertex_points(graph: ArrangementGraph) -> Dict(Int, svg_path.Point) {
 fn boundary_output_segment(
   edge: BoundaryEdge,
   vertices: Dict(Int, svg_path.Point),
-) -> svg_path.Segment {
+  tolerance: Float,
+) -> Result(List(svg_path.Segment), Error) {
   let assert Ok(start) = dict.get(vertices, edge.start_vertex)
   let assert Ok(end) = dict.get(vertices, edge.end_vertex)
   case edge.segment {
-    svg_path.Line(..) -> svg_path.Line(start:, end:)
+    svg_path.Line(..) -> Ok([svg_path.Line(start:, end:)])
     svg_path.QuadraticBezier(control:, ..) ->
-      svg_path.QuadraticBezier(start:, control:, end:)
+      Ok([svg_path.QuadraticBezier(start:, control:, end:)])
     svg_path.CubicBezier(control1:, control2:, ..) ->
-      svg_path.CubicBezier(start:, control1:, control2:, end:)
-    svg_path.Arc(radius:, x_axis_rotation:, large_arc:, sweep:, ..) ->
-      svg_path.Arc(start:, radius:, x_axis_rotation:, large_arc:, sweep:, end:)
+      Ok([svg_path.CubicBezier(start:, control1:, control2:, end:)])
+    svg_path.Arc(..) ->
+      arc_reconstruction.adjust_with_tolerance(
+        edge.segment,
+        start,
+        end,
+        tolerance,
+      )
+      |> result.replace_error(ArrangementGraphError(
+        arrangement.ConstructionFailed,
+      ))
   }
 }
 
@@ -698,6 +723,7 @@ fn trace_boundary_edges(
   links: List(BoundaryLink),
   vertices: Dict(Int, svg_path.Point),
   subpaths: List(svg_path.Subpath),
+  tolerance: Float,
 ) -> Result(List(svg_path.Subpath), Error) {
   case remaining {
     [] -> Ok(list.reverse(subpaths))
@@ -710,8 +736,12 @@ fn trace_boundary_edges(
         list.length(remaining) + 1,
       ))
       let #(cycle, remaining) = traced
-      let segments =
-        list.map(cycle, fn(edge) { boundary_output_segment(edge, vertices) })
+      use pieces <- result.try(
+        list.try_map(cycle, fn(edge) {
+          boundary_output_segment(edge, vertices, tolerance)
+        }),
+      )
+      let segments = list.flatten(pieces)
       // Distinct source edges can collapse to an exact opposite pair when
       // their endpoints are reconstructed at cluster centers. Such a closed
       // retrace has no filled boundary. Do not discard loops by signed area:
@@ -728,7 +758,8 @@ fn trace_boundary_edges(
           }
         })
       case reduced {
-        [] -> trace_boundary_edges(remaining, links, vertices, subpaths)
+        [] ->
+          trace_boundary_edges(remaining, links, vertices, subpaths, tolerance)
         _ -> {
           use subpath <- result.try(
             svg_path.subpath(segments) |> result.map_error(PathError),
@@ -736,7 +767,13 @@ fn trace_boundary_edges(
           use closed <- result.try(
             svg_path.subpath_close(subpath) |> result.map_error(PathError),
           )
-          trace_boundary_edges(remaining, links, vertices, [closed, ..subpaths])
+          trace_boundary_edges(
+            remaining,
+            links,
+            vertices,
+            [closed, ..subpaths],
+            tolerance,
+          )
         }
       }
     }

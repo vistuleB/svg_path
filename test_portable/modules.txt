@@ -90,3 +90,4 @@ svg_path_collapsed_offset_test.gleam
 svg_path_offset_straightening_test.gleam
 
 svg_path_arrangement_arc_subdivision_test.gleam
+svg_path_csg_arc_reconstruction_test.gleam

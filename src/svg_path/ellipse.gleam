@@ -1250,7 +1250,7 @@ fn extract_axes(
   {
     True -> Error(DegenerateInputArc)
     False -> {
-      let axis1 = eigenvector(sxx, sxy, syy, lambda1)
+      let axis1 = eigenvector(sxx, sxy, syy)
       let axis2 = EllipsePoint(0.0 -. axis1.y, axis1.x)
       let choose_axis1 =
         float.absolute_value(dot(axis1, x_axis))
@@ -1274,24 +1274,16 @@ fn extract_axes(
   }
 }
 
-fn eigenvector(
-  sxx: Float,
-  sxy: Float,
-  syy: Float,
-  lambda: Float,
-) -> EllipsePoint {
-  let matrix_scale =
-    float.max(float.absolute_value(sxx), float.absolute_value(syy))
-
-  case float.absolute_value(sxy) >. scalar_tolerance *. matrix_scale {
-    True -> normalize(EllipsePoint(sxy, lambda -. sxx))
-    False -> {
-      case sxx >=. syy {
-        True -> EllipsePoint(1.0, 0.0)
-        False -> EllipsePoint(0.0, 1.0)
-      }
-    }
-  }
+fn eigenvector(sxx: Float, sxy: Float, syy: Float) -> EllipsePoint {
+  // A fixed off-diagonal cutoff discards small shears of nearly circular
+  // ellipses. Their eigenvectors can rotate substantially even when the
+  // eigenvalues differ only slightly. The half-angle formula avoids both
+  // that cutoff and cancellation in lambda - sxx.
+  let scale = float.max(float.absolute_value(sxx), float.absolute_value(syy))
+  let angle =
+    0.5
+    *. trig.atan2_degrees(2.0 *. { sxy /. scale }, sxx /. scale -. syy /. scale)
+  EllipsePoint(trig.cos_degrees(angle), trig.sin_degrees(angle))
 }
 
 fn vector_angle(a: EllipsePoint, b: EllipsePoint) -> Float {
@@ -1324,15 +1316,6 @@ fn cross(a: EllipsePoint, b: EllipsePoint) -> Float {
 
 fn length(point: EllipsePoint) -> Float {
   square_root(point.x *. point.x +. point.y *. point.y)
-}
-
-fn normalize(point: EllipsePoint) -> EllipsePoint {
-  // The eigenvector caller guarantees a nonzero x component. Its magnitude
-  // reflects the ellipse's squared scale, not the reliability of its direction.
-  let largest =
-    float.max(float.absolute_value(point.x), float.absolute_value(point.y))
-  let scaled = EllipsePoint(point.x /. largest, point.y /. largest)
-  scale(scaled, 1.0 /. number.hypot(scaled.x, scaled.y))
 }
 
 fn scale(point: EllipsePoint, factor: Float) -> EllipsePoint {
