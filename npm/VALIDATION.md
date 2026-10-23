@@ -41,6 +41,22 @@ installed source metadata with the packed build. Machine-readable results,
 archive integrity, toolchain and fingerprints are in `test-output/report.json`.
 The preview is not published; no package name is reserved.
 
+## Second cleanup pass
+
+Committed the initial preview as `df70240`, then reran
+`node npm/tools/verify.mjs` with the same Chromium override after cleanup:
+**429 generator/adapter checks and 15 installed-package tests passed**, along
+with strict TypeScript, all exports, browser bundling, and Chromium checks.
+All 38 generated declaration files are byte-for-byte unchanged. No Gleam source
+changed; the numerical suite was not rerun for this tooling-only pass.
+
+Naming rules now share one implementation between code generation and runtime
+conversion. Declaration/schema helpers are separate from build orchestration.
+Metadata removal preserves symbols named like metadata fields, parameter-name
+extraction ignores documentation examples, and unsupported type kinds produce
+an explicit diagnostic. Verification clears the previous success report before
+starting and creates its output directory explicitly.
+
 ## Limits of these checks
 
 These checks exercise conversion mechanics broadly and selected real operations
