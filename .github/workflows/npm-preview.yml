@@ -1,0 +1,30 @@
+name: npm preview
+
+on:
+  push:
+    branches: [main, master]
+    paths: ['src/**', 'gleam.toml', 'manifest.toml', 'npm/**', '.github/workflows/npm-preview.yml']
+  pull_request:
+    paths: ['src/**', 'gleam.toml', 'manifest.toml', 'npm/**', '.github/workflows/npm-preview.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  installed-package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: '29'
+          gleam-version: '1.18.1'
+          rebar3-version: '3'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: npm/tools/package-lock.json
+      - run: npm ci --prefix npm/tools --ignore-scripts
+      - run: npm exec --prefix npm/tools -- playwright install --with-deps chromium
+      - run: npm test --prefix npm/tools

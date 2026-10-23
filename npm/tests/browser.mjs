@@ -1,0 +1,11 @@
+import {parse,serialize,measure,unwrap,stroke,offset,area,Nonzero} from 'svg-path-geometry-preview';
+const p=unwrap(parse.path('M0 0 L3 4'));
+if(unwrap(measure.pathLength(p))!==5)throw new Error('Browser length mismatch');
+const outline=unwrap(stroke.path(unwrap(parse.path('M0 0 L10 0')),2,offset.Round(),offset.Butt()));
+if(Math.abs(unwrap(area.path(outline,Nonzero()))-20)>1e-7)throw new Error('Browser area mismatch');
+const ns='http://www.w3.org/2000/svg';
+const element=document.createElementNS(ns,'path');
+element.setAttribute('d',serialize.path(p));
+document.body.appendChild(element);
+if(element.getAttribute('d')!=='M 0 0 L 3 4')throw new Error('Browser serialization mismatch');
+globalThis.__geometryTestPassed=true;

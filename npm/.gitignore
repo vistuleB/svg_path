@@ -1,0 +1,5 @@
+/generated/
+/artifacts/
+/tools/node_modules/
+/tools/gleam/build/
+/test-output/
