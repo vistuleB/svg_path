@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import * as svg from 'svg-path-geometry-preview';
-import * as parsing from 'svg-path-geometry-preview/parse';
-import { unwrap, SvgPathError } from 'svg-path-geometry-preview/result';
+import * as svg from 'svg-path-geometry';
+import * as parsing from 'svg-path-geometry/parse';
+import { unwrap, SvgPathError } from 'svg-path-geometry/result';
 
 const {parse,serialize,measure,Point,Line,Nonzero,offset,stroke,csg,area,transform,affine,arrangement,distance} = svg;
 const path = d => unwrap(parse.path(d));
@@ -93,7 +93,7 @@ test('SVG arc normalization stays explicit', () => {
   const normalized=svg.pathNormalizeSvgArcs(p);close(unwrap(measure.pathLength(normalized)),10);
 });
 test('internal modules are not public package exports', async () => {
-  await assert.rejects(import('svg-path-geometry-preview/lib/registry.mjs'),{code:'ERR_PACKAGE_PATH_NOT_EXPORTED'});
+  await assert.rejects(import('svg-path-geometry/lib/registry.mjs'),{code:'ERR_PACKAGE_PATH_NOT_EXPORTED'});
 });
 
 

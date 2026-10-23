@@ -1,11 +1,12 @@
-# SVG path geometry — local preview
+# SVG path geometry
 
 JavaScript and TypeScript access to the `svg_path` Gleam geometry library.
-The package name and version are provisional. This package is private and is
-not published. Geometry algorithms are compiled from Gleam, not reimplemented.
+Geometry algorithms are compiled from Gleam, not reimplemented.
+
+Install with `npm install svg-path-geometry`.
 
 ```js
-import { parse, serialize, measure, unwrap } from 'svg-path-geometry-preview';
+import { parse, serialize, measure, unwrap } from 'svg-path-geometry';
 
 const path = unwrap(parse.path('M 0 0 L 3 4'));
 console.log(unwrap(measure.pathLength(path))); // 5
@@ -21,7 +22,7 @@ dependencies, Node built-ins, install scripts, or network requests. CommonJS
 All 36 public Gleam modules are available. Root exports include core types and
 constructors, and module namespaces such as `parse`, `offset`, and `csg`.
 Subpath imports are also available, for example
-`import * as offset from 'svg-path-geometry-preview/offset'`.
+`import * as offset from 'svg-path-geometry/offset'`.
 Nested modules use subpaths (`transform/parse`) and root namespace names
 (`transformParse`). See [API.md](API.md) and the included TypeScript declarations
 for the complete generated function signatures and original Gleam documentation.
@@ -55,7 +56,7 @@ for the complete generated function signatures and original Gleam documentation.
 
 The adapter converts public data at call boundaries. It does not cache mutable
 record inputs. Large arrays therefore incur conversion work; opaque subpaths
-are reused. This preview does not claim fine-grained tree shaking or benchmark
+are reused. This package does not claim fine-grained tree shaking or benchmark
 parity with direct calls to compiled Gleam.
 
 ## Common tasks
@@ -64,7 +65,7 @@ Configuration records require every field. Start with defaults and override only
 what you need. This example uses a round join on both sides of the corner:
 
 ```js
-import { parse, offset, serialize, unwrap } from 'svg-path-geometry-preview';
+import { parse, offset, serialize, unwrap } from 'svg-path-geometry';
 
 const source = unwrap(parse.path('M 0 0 L 10 0 L 10 10'));
 const options = { ...offset.defaultOptions(), innerJoin: offset.InnerRound() };
@@ -79,7 +80,7 @@ You can handle a failure without throwing. Narrow the Result using `ok` before
 reading `value` or `error` (TypeScript checks this):
 
 ```js
-import { parse, serialize } from 'svg-path-geometry-preview';
+import { parse, serialize } from 'svg-path-geometry';
 
 const result = parse.path('M nope');
 if (result.ok) {
@@ -92,7 +93,7 @@ if (result.ok) {
 Point-mapping callbacks receive ordinary objects and must return synchronously:
 
 ```js
-import { parse, pathMapPoints, measure, unwrap } from 'svg-path-geometry-preview';
+import { parse, pathMapPoints, measure, unwrap } from 'svg-path-geometry';
 
 const source = unwrap(parse.path('M 0 0 L 3 4'));
 const doubled = unwrap(pathMapPoints(source, point => ({

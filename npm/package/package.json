@@ -1,7 +1,6 @@
 {
-  "name": "svg-path-geometry-preview",
+  "name": "svg-path-geometry",
   "version": "0.1.0",
-  "private": true,
   "description": "SVG path parsing, serialization, and computational geometry, compiled from Gleam.",
   "type": "module",
   "license": "MIT",
@@ -22,5 +21,9 @@
     "type": "git",
     "url": "https://github.com/vistuleB/svg_path",
     "directory": "npm"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }

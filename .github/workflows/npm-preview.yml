@@ -1,4 +1,4 @@
-name: npm preview
+name: npm package
 
 on:
   push:

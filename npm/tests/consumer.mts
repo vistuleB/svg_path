@@ -1,6 +1,6 @@
-import {parse,measure,serialize,unwrap,Point,Line,Nonzero,csg,area,pathTryMapPoints,transform, type Path, type Point as PointType, type Result} from 'svg-path-geometry-preview';
-import * as offsets from 'svg-path-geometry-preview/offset';
-import * as transformParse from 'svg-path-geometry-preview/transform/parse';
+import {parse,measure,serialize,unwrap,Point,Line,Nonzero,csg,area,pathTryMapPoints,transform, type Path, type Point as PointType, type Result} from 'svg-path-geometry';
+import * as offsets from 'svg-path-geometry/offset';
+import * as transformParse from 'svg-path-geometry/transform/parse';
 const p: Path=unwrap(parse.path('M0 0 L3 4'));
 const length: number=unwrap(measure.pathLength(p));
 const string: string=serialize.path(p);

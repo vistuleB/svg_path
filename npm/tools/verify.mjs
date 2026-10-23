@@ -17,7 +17,10 @@ const output = path.join(npmRoot, 'generated');
 const pkg = JSON.parse(await readFile(path.join(output, 'package.json'), 'utf8'));
 await mkdir(path.join(npmRoot, 'artifacts'), { recursive: true });
 const pack = JSON.parse(run('npm', ['pack', '--json', '--ignore-scripts', '--cache', path.join(npmRoot, 'test-output/cache'), '--pack-destination', path.join(npmRoot, 'artifacts')], output))[0];
-assert.equal(pkg.private, true);
+assert.notEqual(pkg.private, true);
+assert.equal(pkg.name, 'svg-path-geometry');
+assert.equal(pkg.publishConfig.access, 'public');
+assert.equal(pkg.publishConfig.registry, 'https://registry.npmjs.org/');
 assert.equal(pkg.dependencies, undefined);
 for (const f of pack.files) {
     assert.ok(!/node_modules|\/test\/|\/tools\//.test(f.path), `Unexpected shipped tooling ${f.path}`);
@@ -28,7 +31,7 @@ await writeFile(path.join(consumer, 'package.json'), JSON.stringify({ name: 'svg
 run('npm', ['install', '--offline', '--ignore-scripts', '--no-audit', '--no-fund', '--cache', path.join(npmRoot, 'test-output/cache'), path.join(npmRoot, 'artifacts', pack.filename)], consumer);
 assert.deepEqual(JSON.parse(await readFile(path.join(consumer, 'node_modules', pkg.name, 'source.json'), 'utf8')), JSON.parse(await readFile(path.join(output, 'source.json'), 'utf8')));
 for (const f of ['consumer.test.mjs', 'consumer.mts', 'browser.mjs']) {
-    const content = (await readFile(path.join(npmRoot, 'tests', f), 'utf8')).replaceAll('svg-path-geometry-preview', pkg.name);
+    const content = (await readFile(path.join(npmRoot, 'tests', f), 'utf8')).replaceAll('svg-path-geometry', pkg.name);
     await writeFile(path.join(consumer, f), content);
 }
 // Exercise the README shipped in the archive, rather than a copied recipe.

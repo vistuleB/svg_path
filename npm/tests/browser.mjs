@@ -1,4 +1,4 @@
-import {parse,serialize,measure,unwrap,stroke,offset,area,Nonzero} from 'svg-path-geometry-preview';
+import {parse,serialize,measure,unwrap,stroke,offset,area,Nonzero} from 'svg-path-geometry';
 const p=unwrap(parse.path('M0 0 L3 4'));
 if(unwrap(measure.pathLength(p))!==5)throw new Error('Browser length mismatch');
 const outline=unwrap(stroke.path(unwrap(parse.path('M0 0 L10 0')),2,offset.Round(),offset.Butt()));

@@ -25,11 +25,11 @@ for every public operation or eliminate the limitations below.
   asynchronous-callback rejection, and forged/wrong-kind opaque handles.
 - CI now requests both Node 20 (the advertised minimum) and Node 24.
 
-## Before publication
+## Before publication (updated for release preparation)
 
-1. Choose the package name/version and approve the JavaScript representation
-   conventions. The package remains private and the builder enforces that guard.
-   Removing the guard and publishing require explicit authorization.
+1. Release preparation now selects `svg-path-geometry@0.1.0`; the distribution
+   is public and the tools remain private. Registry availability was checked
+   on 2026-10-22 (HTTP 404). Actual publication remains a separate action.
 2. Obtain successful CI results for Node 20 and 24. Node 20 is not installed
    locally; this pass verified Node 24.10.0 and Chromium 156.0.8078.4 only.
 3. Commit the final adapter/docs, rebuild and verify the final archive, and retain

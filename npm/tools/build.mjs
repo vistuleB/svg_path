@@ -16,8 +16,10 @@ const stdlibVersion = rootLock.match(/name = "gleam_stdlib", version = "([^"]+)"
 if (compiler !== 'gleam 1.18.1')
     throw new Error(`This adapter is verified with Gleam 1.18.1; found ${compiler}`);
 const manifest = JSON.parse(await readFile(path.join(here, 'package/package.json'), 'utf8'));
-if (!manifest.private)
-    throw new Error('Preview packaging must remain private until a publication review');
+if (manifest.name !== 'svg-path-geometry' || manifest.private === true)
+    throw new Error('Expected the public svg-path-geometry distribution manifest');
+if (manifest.publishConfig?.registry !== 'https://registry.npmjs.org/' || manifest.publishConfig?.access !== 'public')
+    throw new Error('Distribution must target the public npm registry');
 await mkdir(output, { recursive: true });
 run('gleam', ['export', 'package-interface', '--out', path.join(output, 'interface.json')]);
 const schema = JSON.parse(await readFile(path.join(output, 'interface.json'), 'utf8'));

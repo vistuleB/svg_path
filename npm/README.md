@@ -1,6 +1,6 @@
 # JavaScript package preparation
 
-This directory holds a **local, unpublished npm preview**. Gleam remains the
+This directory holds a **npm distribution `svg-path-geometry`**. Gleam remains the
 source of all geometry algorithms. No changes to the Gleam or F# API are needed.
 
 ## Release package versus local tools
@@ -15,10 +15,10 @@ source of all geometry algorithms. No changes to the Gleam or F# API are needed.
 | `artifacts/` | Verified `.tgz` files; ignored by Git | Ready for local installation |
 | `test-output/` | Consumer install, cache, browser bundle, verification report | Never |
 
-The two `package.json` files are intentionally separate. Both are private.
-Run tooling commands with `--prefix npm/tools`; do not run `npm publish` in this
-repository. Naming and publication are deferred. The provisional distribution
-name is `svg-path-geometry-preview`, version `0.1.0`.
+The two `package.json` files are intentionally separate. Only the local tools
+are private. Run tooling commands with `--prefix npm/tools`. Publish only the
+verified archive as described below; never run bare `npm publish` in the root
+or tools directory. The initial distribution version is `0.1.0`.
 
 ## Build and verify
 
@@ -55,15 +55,15 @@ README, bundles for the browser, and runs geometry/DOM checks in
 headless Chromium. Its local install is offline, with scripts disabled. The
 package needs no runtime dependencies or build steps on the consumer's machine.
 
-To install the resulting local preview in another project:
+To install the resulting local package in another project:
 
 ```sh
-npm install /absolute/path/to/svg_path/npm/artifacts/svg-path-geometry-preview-0.1.0.tgz
+npm install /absolute/path/to/svg_path/npm/artifacts/svg-path-geometry-0.1.0.tgz
 ```
 
 The archive is self-contained. Consumers need neither Gleam nor a checkout of
 this repository. ESM is supported; CommonJS and fine-grained tree shaking are
-not promised in this preview.
+not promised.
 
 ## Keeping Gleam authoritative
 
@@ -87,12 +87,54 @@ This is packaging and interoperability work, not a new geometry audit. The
 portable Gleam JavaScript suite remains the numerical regression suite. Existing
 policy limitations and the deferred API-001 error variant are unchanged.
 
-## Before eventual publication
+## Release and publication
 
-Choose the distribution name and initial version, decide whether the preview's
-JavaScript conventions are acceptable, and explicitly authorize removing the
-private-package guard. Rerun verification after any change. Publication itself
-remains a separate action; the build and verification scripts never publish.
+Run commands from the repository root. Use Node 24 and Gleam 1.18.1 for the
+release build; CI checks consumers on both Node 20 and 24. The builder and
+verifier never publish. The distribution manifest is public, while the tools
+manifest must stay private.
 
-Consumer-readiness findings and remaining publication checks are recorded in
-[CONSUMER-REVIEW.md](CONSUMER-REVIEW.md).
+1. Update `package/package.json` for the intended npm version and review the
+   packaged README. npm versions are independent of Gleam/F# versions.
+2. Commit the release inputs, push, and wait for the `npm package` workflow's
+   Node 20 and 24 jobs to pass. Do not include unrelated workspace changes.
+3. From that commit, run the verification below. It rebuilds, packs, installs,
+   and tests the exact archive. If using an existing Chromium installation, set
+   `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` to its executable first.
+
+```sh
+npm ci --prefix npm/tools --ignore-scripts
+npm exec --prefix npm/tools -- playwright install chromium
+npm test --prefix npm/tools
+```
+
+4. Inspect `test-output/report.json`: package/version, source commit,
+   `sourceDirty: false`, adapter/source fingerprints, and archive integrity.
+   Keep that report with the release archive. A pre-commit archive is not the
+   final release artifact. Archive paths below are for the initial `0.1.0`;
+   substitute the new version for subsequent releases.
+5. Log into the intended npm account and inspect the publication dry run:
+
+```sh
+npm login
+npm whoami
+npm publish ./npm/artifacts/svg-path-geometry-0.1.0.tgz --access public --dry-run
+```
+
+6. Only when publication is explicitly authorized, publish that same archive.
+   Complete npm's interactive authentication/2FA prompts:
+
+```sh
+npm publish ./npm/artifacts/svg-path-geometry-0.1.0.tgz --access public
+npm view svg-path-geometry@0.1.0 version dist.integrity
+```
+
+7. Compare registry integrity with the verified report. Install the exact
+   registry version in a fresh consumer and run the README recipe. After
+   successful publication, tag the source commit `npm-v0.1.0` and push that tag.
+   npm tags are separate from Gleam tags. Do not reuse a published version for
+   different package contents.
+
+Consumer-readiness findings and remaining limitations are recorded in
+[CONSUMER-REVIEW.md](CONSUMER-REVIEW.md). `VALIDATION.md` retains the historical
+preview checks; `test-output/report.json` describes the latest verified archive.
