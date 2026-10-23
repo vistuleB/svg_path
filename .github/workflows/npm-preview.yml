@@ -13,6 +13,10 @@ permissions:
 jobs:
   installed-package:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [20, 24]
     steps:
       - uses: actions/checkout@v6
       - uses: erlef/setup-beam@v1
@@ -22,7 +26,7 @@ jobs:
           rebar3-version: '3'
       - uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: ${{ matrix.node }}
           cache: npm
           cache-dependency-path: npm/tools/package-lock.json
       - run: npm ci --prefix npm/tools --ignore-scripts

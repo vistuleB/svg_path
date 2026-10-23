@@ -95,3 +95,23 @@ test('SVG arc normalization stays explicit', () => {
 test('internal modules are not public package exports', async () => {
   await assert.rejects(import('svg-path-geometry-preview/lib/registry.mjs'),{code:'ERR_PACKAGE_PATH_NOT_EXPORTED'});
 });
+
+
+test('optional fields require explicit null or a valid payload', () => {
+  const p=path('M0 0 L10 0 L10 10');
+  const options={...offset.defaultOptions()};
+  delete options.innerJoin;
+  assert.throws(()=>offset.pathWith(p,1,offset.Round(),offset.Butt(),options,offset.defaultSingleOffsetTrimming()), /Missing .*innerJoin/);
+  options.innerJoin=undefined;
+  assert.throws(()=>offset.pathWith(p,1,offset.Round(),offset.Butt(),options,offset.defaultSingleOffsetTrimming()), TypeError);
+  options.innerJoin=null;
+  assert.equal(offset.pathWith(p,1,offset.Round(),offset.Butt(),options,offset.defaultSingleOffsetTrimming()).ok,true);
+});
+
+test('segment inspection returns snapshots, not edits to an opaque subpath', () => {
+  const p=path('M0 0 L3 4');
+  const segments=svg.subpathSegments(p.subpaths[0]);
+  segments[0].end.x=300;
+  segments.length=0;
+  assert.equal(serialize.path(p),'M 0 0 L 3 4');
+});

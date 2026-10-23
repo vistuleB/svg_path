@@ -57,6 +57,19 @@ extraction ignores documentation examples, and unsupported type kinds produce
 an explicit diagnostic. Verification clears the previous success report before
 starting and creates its output directory explicitly.
 
+## Third pass: installed consumer review
+
+`node npm/tools/verify.mjs` with the existing Chromium override passed **429**
+generator/adapter checks, **17** installed-package tests, and **4** examples
+extracted directly from the installed README. All four examples also passed
+strict TypeScript checking, alongside the existing consumer/declaration checks.
+Export, required documentation/license, bundling, and Chromium checks passed.
+The resulting archive is 647,165 bytes packed, 4,138,637 bytes unpacked.
+
+No runtime adapter or Gleam source changes were needed. CI now selects Node 20
+and 24; that matrix has not run remotely. Local validation used Node 24 only.
+See [CONSUMER-REVIEW.md](CONSUMER-REVIEW.md) for the findings and publication gates.
+
 ## Limits of these checks
 
 These checks exercise conversion mechanics broadly and selected real operations

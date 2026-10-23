@@ -50,7 +50,8 @@ Alternatively set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` to an existing Chromium
 executable. Verification is not silently skipped if no browser is available.
 `npm test` rebuilds, checks conversions, packs, installs the **actual tarball** in
 an isolated consumer, runs Node tests and strict TypeScript checks, verifies
-all export paths, bundles for the browser, and runs geometry/DOM checks in
+all export paths, executes and type-checks the examples extracted from the packed
+README, bundles for the browser, and runs geometry/DOM checks in
 headless Chromium. Its local install is offline, with scripts disabled. The
 package needs no runtime dependencies or build steps on the consumer's machine.
 
@@ -92,3 +93,6 @@ Choose the distribution name and initial version, decide whether the preview's
 JavaScript conventions are acceptable, and explicitly authorize removing the
 private-package guard. Rerun verification after any change. Publication itself
 remains a separate action; the build and verification scripts never publish.
+
+Consumer-readiness findings and remaining publication checks are recorded in
+[CONSUMER-REVIEW.md](CONSUMER-REVIEW.md).
